@@ -17,3 +17,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.rekast.momoapi
+
+import org.junit.Assert
+import org.junit.Test
+
+/**
+ * Example local unit test, which will execute on the development machine (host).
+ *
+ * See [testing documentation](http://d.android.com/tools/testing).
+ */
+class ExampleUnitTest {
+    @Test
+    fun addition_isCorrect() {
+        Assert.assertEquals(4, 2 + 2)
+    }
+}

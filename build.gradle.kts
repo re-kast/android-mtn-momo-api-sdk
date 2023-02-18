@@ -1,5 +1,4 @@
 plugins {
-    id(BuildPlugins.ktlintPlugin) version Versions.ktlint
     id(BuildPlugins.detektPlugin) version Versions.detekt
     id(BuildPlugins.spotlessPlugin) version Versions.spotless
     id(BuildPlugins.androidLibrary) version Versions.library apply false
@@ -19,18 +18,25 @@ allprojects {
 
     apply(plugin = BuildPlugins.dokkaPlugin)
     apply(plugin = BuildPlugins.spotlessPlugin)
-    apply(plugin = BuildPlugins.ktlintPlugin)
-    ktlint {
-        android.set(true)
-        verbose.set(true)
-        filter {
-            exclude { element -> element.file.path.contains("generated/") }
+
+    spotless {
+        kotlin {
+            target("**/src/**/*.kt", "**/src/**/*.kts")
+            targetExclude("**/buildSrc/src/main/kotlin/*.kt")
+            ktlint("0.48.2")
+                .userData(mapOf("android" to "true"))
+            licenseHeaderFile("$projectDir/license-header.txt")
+        }
+        kotlinGradle {
+            target("*.gradle.kts")
+            licenseHeaderFile("$projectDir/license-header.txt", "")
+            ktlint()
         }
     }
 }
 
 buildscript {
-    val kotlinVersion by extra("1.5.21")
+    val kotlinVersion by extra("1.8.10")
     val jacocoVersion by extra("0.2")
     val nexusPublishVersion by extra("1.1.0")
 
