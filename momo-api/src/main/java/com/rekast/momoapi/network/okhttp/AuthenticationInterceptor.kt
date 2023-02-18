@@ -24,7 +24,7 @@ import java.io.IOException
  * @param [authToken]
  */
 
-class AuthInterceptor(
+class AuthenticationInterceptor(
     private var authToken: String,
 ) : Interceptor {
 

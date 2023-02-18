@@ -26,8 +26,8 @@ import java.io.IOException
 /**
  * PaymentCallback for Mpesa Payments.
  */
-class DarajaPaymentCallback(
-    private val callback: (darajaResult: DarajaResult<PaymentResult>) -> Unit,
+class MomoAPIPaymentCallback(
+    private val callback: (momoAPIResult: MomoAPIResult<PaymentResult>) -> Unit,
 ) : Callback<PaymentResult> {
 
     override fun onResponse(call: Call<PaymentResult>, response: Response<PaymentResult>) {
@@ -35,10 +35,10 @@ class DarajaPaymentCallback(
             val result: PaymentResult? = response.body()
             if (result != null) {
                 if (result.ResponseCode == "0") {
-                    callback.invoke(DarajaResult.Success(result))
+                    callback.invoke(MomoAPIResult.Success(result))
                 } else {
                     val error = "${result.ResponseCode} : ${result.ResponseDescription}"
-                    callback.invoke(DarajaResult.Failure(false, DarajaException(error)))
+                    callback.invoke(MomoAPIResult.Failure(false, MomoAPIException(error)))
                 }
                 return
             }
@@ -46,15 +46,15 @@ class DarajaPaymentCallback(
             try {
                 val gson = GsonBuilder().create()
                 val error = gson.fromJson(response.errorBody()?.string(), ErrorResponse::class.java)
-                callback.invoke(DarajaResult.Failure(false, DarajaException(error)))
+                callback.invoke(MomoAPIResult.Failure(false, MomoAPIException(error)))
             } catch (e: IOException) {
                 e.printStackTrace()
-                callback.invoke(DarajaResult.Failure(false, DarajaException("${response.code()}")))
+                callback.invoke(MomoAPIResult.Failure(false, MomoAPIException("${response.code()}")))
             }
         }
     }
 
     override fun onFailure(call: Call<PaymentResult>, t: Throwable) {
-        callback.invoke(DarajaResult.Failure(true, DarajaException(t.localizedMessage)))
+        callback.invoke(MomoAPIResult.Failure(true, MomoAPIException(t.localizedMessage)))
     }
 }

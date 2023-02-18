@@ -18,10 +18,10 @@ package com.rekast.momoapi.callback
 /**
  * Holds the state for Payment status.
  */
-sealed class DarajaResult<out T> {
-    data class Success<out T>(val value: T) : DarajaResult<T>()
+sealed class MomoAPIResult<out T> {
+    data class Success<out T>(val value: T) : MomoAPIResult<T>()
     data class Failure(
         val isNetworkError: Boolean,
-        val darajaException: DarajaException?,
-    ) : DarajaResult<Nothing>()
+        val momoAPIException: MomoAPIException?,
+    ) : MomoAPIResult<Nothing>()
 }

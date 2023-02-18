@@ -28,7 +28,7 @@ import java.util.concurrent.TimeUnit
  * Provides an instance of retrofit to all classes that need it.
  */
 
-object ApiClient {
+object MomoApiClient {
 
     fun getAPI(baseUrl: String, interceptor: Interceptor): LNMAPI = getRetrofit(baseUrl, interceptor).create(
         LNMAPI::class.java,

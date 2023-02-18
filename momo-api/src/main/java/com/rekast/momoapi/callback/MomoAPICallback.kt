@@ -20,31 +20,31 @@ import retrofit2.Callback
 import retrofit2.Response
 
 /**
- * Callback for Daraja API Response
+ * Callback for MomoAPI API Response
  * returns [onResponse] for successful calls and
  * [onFailure] for errors.
  */
-class DarajaCallback<T>(
-    private val callback: (darajaResult: DarajaResult<T>) -> Unit,
+class MomoAPICallback<T>(
+    private val callback: (momoAPIResult: MomoAPIResult<T>) -> Unit,
 ) : Callback<T> {
 
     override fun onResponse(call: Call<T>, response: Response<T>) {
         if (response.isSuccessful) {
             val data: T? = response.body()
-            if (data != null) callback.invoke(DarajaResult.Success(data))
+            if (data != null) callback.invoke(MomoAPIResult.Success(data))
         } else {
             val code = "${response.code()}"
             var error = ""
 
             runCatching { error = "$code : ${response.errorBody()!!.string()}" }
-            callback.invoke(DarajaResult.Failure(false, DarajaException(error)))
+            callback.invoke(MomoAPIResult.Failure(false, MomoAPIException(error)))
         }
     }
 
     override fun onFailure(call: Call<T>, t: Throwable) = callback.invoke(
-        DarajaResult.Failure(
+        MomoAPIResult.Failure(
             true,
-            DarajaException(t.localizedMessage),
+            MomoAPIException(t.localizedMessage),
         ),
     )
 }
