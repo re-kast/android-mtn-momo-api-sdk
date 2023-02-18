@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.rekast.momoapi.sample.activity
+package com.rekast.momoapi.utils
 
-class MainActivityTest
+object Constants {
+    const val TIMESTAMP_FORMAT = "yyyyMMddHHmmss"
+}

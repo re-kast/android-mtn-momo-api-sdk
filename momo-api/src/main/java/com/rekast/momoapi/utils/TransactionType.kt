@@ -1,8 +1,4 @@
 /*
- *              Apache License
- *        Version 2.0, January 2004
- *     http://www.apache.org/licenses/
- *
  * Copyright 2023, Benjamin Mwalimu Mulyungi
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,4 +15,9 @@
  */
 package com.rekast.momoapi.utils
 
-enum class TransactionType
+enum class TransactionType {
+    COLLECTION,
+    DISBURSEMENTS,
+    REMITTANCE,
+    USER_PROVISIONING,
+}

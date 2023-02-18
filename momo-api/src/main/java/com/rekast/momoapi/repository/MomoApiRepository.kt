@@ -13,6 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.rekast.momoapi.sample.activity
+package com.rekast.momoapi.repository
 
-class MainActivityTest
+class MomoApiRepository(
+    var consumerKey: String,
+    var consumerSecret: String,
+    var baseUrl: String,
+)

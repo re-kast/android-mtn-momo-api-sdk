@@ -13,6 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.rekast.momoapi.sample.activity
+package com.rekast.momoapi.model
 
-class MainActivityTest
+import com.google.gson.annotations.SerializedName
+
+/**
+ * Data class for mapping the error response.
+ */
+data class ErrorResponse(
+    @SerializedName("requestId")
+    var requestId: String,
+    @SerializedName("errorCode")
+    var code: String,
+    @SerializedName("errorMessage")
+    var message: String,
+)

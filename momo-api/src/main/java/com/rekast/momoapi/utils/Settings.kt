@@ -1,8 +1,4 @@
 /*
- *              Apache License
- *        Version 2.0, January 2004
- *     http://www.apache.org/licenses/
- *
  * Copyright 2023, Benjamin Mwalimu Mulyungi
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -43,20 +39,20 @@ object Settings {
      */
     const val WRITE_TIMEOUT: Long = 60 * 1000
 
-    // TODO('Raise exception')
     /**
      * The MSISDN sending the funds
      *
-     * @param [phoneNumber]
+     * @param [phoneNumber] The Phonenumber the money is sent to.
+     * @param [countryCode] The country code the Money is to be sent from.
      * @return a formatted String
      */
-    fun formatPhoneNumber(phoneNumber: String): String? {
+    fun formatPhoneNumber(phoneNumber: String, countryCode: String): String? {
         if (phoneNumber.isBlank()) return null
         if (phoneNumber.length < 11 && phoneNumber.startsWith("0")) {
             // here we can just remove the inline variable instead of the p. Like you did with the rest
             // String p = phoneNumber.replaceFirst("^0", "254");
             // return p
-            return phoneNumber.replaceFirst("^0".toRegex(), "254")
+            return phoneNumber.replaceFirst("^0".toRegex(), countryCode)
         }
         return if (phoneNumber.length == 13 && phoneNumber.startsWith("+")) phoneNumber.replaceFirst("^+".toRegex(), "") else phoneNumber
     }
@@ -64,7 +60,7 @@ object Settings {
     /**
      * The Timestamp of the Transaction
      */
-    fun generateTimestamp(): String = SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault()).format(Date())
+    fun generateTimestamp(): String = SimpleDateFormat(Constants.TIMESTAMP_FORMAT, Locale.getDefault()).format(Date())
 
     /**
      * The password for Encrypting the Request
