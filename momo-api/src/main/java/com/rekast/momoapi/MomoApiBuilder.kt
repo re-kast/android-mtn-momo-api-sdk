@@ -15,16 +15,16 @@
  */
 package com.rekast.momoapi
 
-import com.rekast.momoapi.repository.MomoApiRepository
+import com.rekast.momoapi.repository.MomoAPIRepository
 import com.rekast.momoapi.utils.TransactionType
 
 /**
- * Keys Builder. Creates a [MomoApi] payment load.
+ * Keys Builder. Creates a [MomoAPI] payment load.
  * @param [consumerKey] for your application
  * @param [consumerSecret] for your application
  */
 
-class MomoApiBuilder(private var consumerKey: String, private var consumerSecret: String) {
+class MomoAPIBuilder(private var consumerKey: String, private var consumerSecret: String) {
 
     private lateinit var businessShortCode: String
     private lateinit var passKey: String
@@ -32,22 +32,22 @@ class MomoApiBuilder(private var consumerKey: String, private var consumerSecret
     private lateinit var callbackUrl: String
     // private lateinit var environment: Environment
 
-    fun setPassKey(passKey: String): MomoApiBuilder {
+    fun setPassKey(passKey: String): MomoAPIBuilder {
         this.passKey = passKey
         return this
     }
 
-    fun setTransactionType(transactionType: TransactionType): MomoApiBuilder {
+    fun setTransactionType(transactionType: TransactionType): MomoAPIBuilder {
         this.transactionType = transactionType
         return this
     }
 
-    fun setCallbackUrl(callbackUrl: String): MomoApiBuilder {
+    fun setCallbackUrl(callbackUrl: String): MomoAPIBuilder {
         this.callbackUrl = callbackUrl
         return this
     }
 
-    fun setBusinessShortCode(businessShortCode: String): MomoApiBuilder {
+    fun setBusinessShortCode(businessShortCode: String): MomoAPIBuilder {
         this.businessShortCode = businessShortCode
         return this
     }
@@ -57,20 +57,20 @@ class MomoApiBuilder(private var consumerKey: String, private var consumerSecret
         return this
     }*/
 
-    fun build(): MomoApi {
-        val momoApi = MomoApi
-        MomoApi.consumerKey = consumerKey
-        MomoApi.consumerSecret = consumerSecret
-        MomoApi.businessShortCode = businessShortCode
-        MomoApi.passKey = passKey
-        MomoApi.transactionType = transactionType
-        MomoApi.callbackUrl = callbackUrl
+    fun build(): MomoAPI {
+        val momoApi = MomoAPI
+        MomoAPI.consumerKey = consumerKey
+        MomoAPI.consumerSecret = consumerSecret
+        MomoAPI.businessShortCode = businessShortCode
+        MomoAPI.passKey = passKey
+        MomoAPI.transactionType = transactionType
+        MomoAPI.callbackUrl = callbackUrl
         // MomoApi.baseUrl = environment.url
 
-        MomoApi.repo = MomoApiRepository(
-            MomoApi.consumerKey,
-            MomoApi.consumerSecret,
-            MomoApi.baseUrl,
+        MomoAPI.repo = MomoAPIRepository(
+            MomoAPI.consumerKey,
+            MomoAPI.consumerSecret,
+            MomoAPI.baseUrl,
         )
 
         return momoApi
