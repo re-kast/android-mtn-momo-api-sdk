@@ -13,6 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.rekast.momoapi.sample.activity
+package com.rekast.momoapi.callback
 
-class MainActivityTest
+/**
+ * Holds the state for Payment status.
+ */
+sealed class DarajaResult<out T> {
+    data class Success<out T>(val value: T) : DarajaResult<T>()
+    data class Failure(
+        val isNetworkError: Boolean,
+        val darajaException: DarajaException?,
+    ) : DarajaResult<Nothing>()
+}

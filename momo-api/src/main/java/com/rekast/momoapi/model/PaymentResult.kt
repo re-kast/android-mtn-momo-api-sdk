@@ -13,6 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.rekast.momoapi.sample.activity
+package com.rekast.momoapi.model
 
-class MainActivityTest
+/**
+ * Data class for Payment Response.
+ */
+data class PaymentResult(
+    var MerchantRequestID: String,
+    var CheckoutRequestID: String,
+    var ResponseCode: String,
+    var ResponseDescription: String,
+    var CustomerMessage: String,
+)

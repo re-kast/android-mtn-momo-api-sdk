@@ -13,6 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.rekast.momoapi.sample.activity
+package com.rekast.momoapi.model
 
-class MainActivityTest
+/**
+ * AccessToken Data Class.
+ */
+class AccessToken(var access_token: String, var expiresIn: String)
