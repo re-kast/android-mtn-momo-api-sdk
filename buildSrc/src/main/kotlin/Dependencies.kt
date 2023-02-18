@@ -23,6 +23,7 @@ object Versions {
 
     // Lifecycle
     const val lifecycle = "2.2.0-rc02"
+    const val lifecycleViewModel = "2.2.0-rc02"
 
     // Logging - debug builds
     const val timber = "4.7.1"
@@ -36,9 +37,9 @@ object Versions {
 
     // Gradle Plugins
     const val ktlint = "10.1.0"
-    const val detekt = "1.18.0"
-    const val spotless = "5.9.0"
-    const val jacoco = "0.8.4"
+    const val detekt = "1.22.0"
+    const val spotless = "6.15.0"
+    const val jacoco = "0.8.5"
     const val dokka = "1.5.0"
     const val gradleVersionsPlugin = "0.29.0"
 
@@ -57,13 +58,14 @@ object Versions {
     const val mockK = "1.10.0"
     const val liveDataTesting = "1.1.2"
     const val kotlinxCoroutines = "1.2.1"
+    const val androidXTestMonitor = "1.6.1"
+    const val androidXJunitTest = "1.1.5"
 }
 
 object BuildPlugins {
     const val androidLibrary = "com.android.library"
     const val kapt = "kotlin-kapt"
     const val dagger = "kotlin-android"
-    const val ktlintPlugin = "org.jlleitschuh.gradle.ktlint"
     const val detektPlugin = "io.gitlab.arturbosch.detekt"
     const val dokkaPlugin = "org.jetbrains.dokka"
     const val spotlessPlugin = "com.diffplug.spotless"
@@ -101,7 +103,7 @@ object Libraries {
     const val lifecycleComposeViewModel = "androidx.lifecycle:lifecycle-viewmodel-compose:${Versions.lifecycleComposeViewModel}"
 
     //Compose
-    const val composeBom = "androidx.compose:compose-bom${Versions.composeBom}"
+    const val composeBom = "androidx.compose:compose-bom:${Versions.composeBom}"
 
     // Firebase
     const val bom = "com.google.firebase:firebase-bom:${Versions.firebase}"
@@ -116,6 +118,7 @@ object Libraries {
 
     // Lifecycle
     const val lifecycle = "androidx.lifecycle:lifecycle-extensions:${Versions.lifecycle}"
+    const val lifecycleViewModel = "androidx.lifecycle:lifecycle-viewmodel-ktx:${Versions.lifecycleViewModel}"
 
     // Debug - for debug builds only
     const val timber = "com.jakewharton.timber:timber:${Versions.timber}"
@@ -126,6 +129,8 @@ object Libraries {
     // Kotlin
     const val kotlinStdLib = "org.jetbrains.kotlin:kotlin-stdlib:${Versions.kotlinVersion}"
     const val coreKtx = "androidx.core:core-ktx:${Versions.coreKtx}"
+    const val androidXTestMonitor = "androidx.test:monitor:${Versions.androidXTestMonitor}"
+    const val androidXJunitTest = "androidx.test.ext:junit-ktx:${Versions.androidXJunitTest}"
 }
 
 object TestLibraries {

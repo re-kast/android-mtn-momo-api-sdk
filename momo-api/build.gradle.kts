@@ -60,6 +60,8 @@ dependencies {
     implementation(Libraries.gson)
     implementation(Libraries.ohttp)
     implementation(Libraries.loggingInterceptor)
+    implementation(Libraries.androidXTestMonitor)
+    implementation(Libraries.androidXJunitTest)
     debugImplementation(Libraries.chunkerDebug)
     releaseImplementation(Libraries.chunkerRelease)
 
@@ -75,7 +77,7 @@ tasks {
         isFailOnError = false
         dependsOn(android.libraryVariants.toList().last().javaCompileProvider)
 
-        if (! project.plugins.hasPlugin("org.jetbrains.kotlin.android")) {
+        if (!project.plugins.hasPlugin("org.jetbrains.kotlin.android")) {
             setSource(sourceFiles)
         }
         android.bootClasspath.forEach { classpath += project.fileTree(it) }

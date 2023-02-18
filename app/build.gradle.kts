@@ -1,7 +1,6 @@
 plugins {
     id(BuildPlugins.androidApplication)
     id(BuildPlugins.kotlinAndroid)
-    id(BuildPlugins.ktlintPlugin)
     id(BuildPlugins.jacocoAndroid)
     id(BuildPlugins.kapt)
 }
@@ -10,21 +9,20 @@ jacoco {
     toolVersion = Versions.jacoco
 }
 
-
 android {
-    namespace = "com.rekast.momo_api.sample"
+    namespace = "com.rekast.momoapi.sample"
     compileSdk = AndroidSdk.compileSdkVersion
     android.buildFeatures.dataBinding = true
     android.buildFeatures.viewBinding = true
 
     defaultConfig {
-        applicationId = "com.rekast.momo_api.sample"
+        applicationId = "com.rekast.momoapi.sample"
         minSdk = AndroidSdk.minSdkVersion
         targetSdk = AndroidSdk.targetSdkVersion
         versionCode = AndroidSdk.versionCode
         versionName = AndroidSdk.versionName
         vectorDrawables.useSupportLibrary = true
-        testInstrumentationRunner = "com.rekast.momo_api.sample.runner.MockTestRunner"
+        testInstrumentationRunner = "com.rekast.momoapi.sample.runner.MockTestRunner"
     }
 
     testOptions {
@@ -66,7 +64,7 @@ android {
             isDebuggable = true
             versionNameSuffix = " - debug"
             applicationIdSuffix = ".debug"
-            //signingConfig = signingConfigs.getByName("debug")
+            // signingConfig = signingConfigs.getByName("debug")
         }
 
         getByName("release") {
@@ -83,6 +81,8 @@ kapt {
 dependencies {
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
     implementation(project(BuildModules.momoModule))
+    implementation(Libraries.coreKtx)
+    implementation(Libraries.lifecycleComposeViewModel)
     // Compose
     val composeBom = platform(Libraries.composeBom)
     implementation(composeBom)
@@ -98,7 +98,8 @@ dependencies {
     implementation(BuildPlugins.runtimeLiveData)
     implementation(BuildPlugins.runtimeRxJava)
     implementation(Libraries.kotlinStdLib)
-    implementation(Libraries.coreKtx)
+    implementation(Libraries.androidXTestMonitor)
+    implementation(Libraries.androidXJunitTest)
     // Material and AndroidX
     implementation(Libraries.constraintLayout)
     implementation(Libraries.material)
