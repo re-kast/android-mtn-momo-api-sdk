@@ -15,13 +15,13 @@
  */
 package com.rekast.momoapi
 
-import com.rekast.momoapi.repository.MomoApiRepository
+import com.rekast.momoapi.repository.MomoAPIRepository
 import com.rekast.momoapi.utils.TransactionType
 
 /**
  * Creates the MOMO Payment Details
  */
-object MomoApi {
+object MomoAPI {
 
     lateinit var consumerKey: String
     lateinit var consumerSecret: String
@@ -31,15 +31,15 @@ object MomoApi {
     lateinit var callbackUrl: String
     lateinit var baseUrl: String
 
-    lateinit var repo: MomoApiRepository
+    lateinit var repo: MomoAPIRepository
 
-    fun builder(consumerKey: String, consumerSecret: String): MomoApiBuilder = MomoApiBuilder(consumerKey, consumerSecret)
+    fun builder(consumerKey: String, consumerSecret: String): MomoAPIBuilder = MomoAPIBuilder(consumerKey, consumerSecret)
 
-   /* fun getAccessToken(callback: ((darajaResult: DarajaResult<AccessToken>) -> Unit)) {
-        repo.accessToken.enqueue(DarajaCallback(callback))
+   /* fun getAccessToken(callback: ((momoAPIResult: MomoAPIResult<AccessToken>) -> Unit)) {
+        repo.accessToken.enqueue(MomoAPICallback(callback))
     }*/
 
-    /*fun initiatePayment(token: String, phoneNumber: String, amount: String, accountReference: String, description: String, callback: ((darajaResult: DarajaResult<PaymentResult>) -> Unit)) {
+    /*fun initiatePayment(token: String, phoneNumber: String, amount: String, accountReference: String, description: String, callback: ((momoAPIResult: MomoAPIResult<PaymentResult>) -> Unit)) {
         repo.initiatePayment(
             token = token,
             phoneNumber = phoneNumber,
@@ -50,6 +50,6 @@ object MomoApi {
             passKey = passKey,
             transactionType = transactionType,
             callbackUrl = callbackUrl
-        ).enqueue(DarajaPaymentCallback(callback))
+        ).enqueue(MomoAPIPaymentCallback(callback))
     }*/
 }

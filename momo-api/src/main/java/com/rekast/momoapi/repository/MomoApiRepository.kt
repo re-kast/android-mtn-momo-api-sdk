@@ -15,7 +15,7 @@
  */
 package com.rekast.momoapi.repository
 
-class MomoApiRepository(
+class MomoAPIRepository(
     var consumerKey: String,
     var consumerSecret: String,
     var baseUrl: String,
