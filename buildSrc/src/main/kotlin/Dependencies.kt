@@ -35,6 +35,9 @@ object Versions {
     const val coreKtx = "1.10.0-alpha02"
     const val kotlinAndroid = "1.8.10"
 
+    //Apache Commons
+    const val commonsLang3 = "3.12.0"
+
     // Gradle Plugins
     const val ktlint = "10.1.0"
     const val detekt = "1.22.0"
@@ -42,6 +45,7 @@ object Versions {
     const val jacoco = "0.8.5"
     const val dokka = "1.5.0"
     const val gradleVersionsPlugin = "0.29.0"
+    const val secrets = "2.0.1"
 
     // tests
     const val junit = "4.13"
@@ -86,6 +90,8 @@ object BuildPlugins {
     const val runtimeRxJava = "androidx.compose.runtime:runtime-rxjava2"
     const val testJunit4 = "androidx.compose.ui:ui-test-junit4"
     const val testManifest = "androidx.compose.ui:ui-test-manifest"
+    const val mapsSecret = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin"
+
 
     //Publishing
     const val mavenPublish = "maven-publish"
@@ -131,6 +137,7 @@ object Libraries {
     const val coreKtx = "androidx.core:core-ktx:${Versions.coreKtx}"
     const val androidXTestMonitor = "androidx.test:monitor:${Versions.androidXTestMonitor}"
     const val androidXJunitTest = "androidx.test.ext:junit-ktx:${Versions.androidXJunitTest}"
+    const val commonsLang3 = "org.apache.commons:commons-lang3:${Versions.commonsLang3}"
 }
 
 object TestLibraries {

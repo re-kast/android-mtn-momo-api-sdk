@@ -18,4 +18,4 @@ package com.rekast.momoapi.model
 /**
  * AccessToken Data Class.
  */
-class AccessToken(var access_token: String, var expiresIn: String)
+class AccessToken(var access_token: String, var token_type: String, var expires_in: String)

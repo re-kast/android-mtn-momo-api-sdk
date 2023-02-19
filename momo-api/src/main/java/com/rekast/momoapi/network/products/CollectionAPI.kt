@@ -13,11 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.rekast.momoapi.utils
+package com.rekast.momoapi.network.products
 
-enum class TransactionType {
-    COLLECTION,
-    DISBURSEMENTS,
-    REMITTANCE,
-    USER_PROVISIONING,
-}
+sealed interface CollectionAPI

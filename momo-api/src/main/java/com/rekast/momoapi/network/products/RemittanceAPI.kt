@@ -13,9 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.rekast.momoapi.repository
+package com.rekast.momoapi.network.products
 
-class MomoAPIRepository(
-    var apiUserIf: String,
-    var baseUrl: String,
-)
+import com.rekast.momoapi.model.LNMExpress
+import com.rekast.momoapi.model.PaymentResult
+import retrofit2.Call
+import retrofit2.http.Body
+import retrofit2.http.POST
+
+/**
+ * This is the retrofit interface to handle the various calls to the Lipa Na MPESA API. This interface defines the
+ * method, the request and response from the API.
+ */
+sealed interface RemittanceAPI {
+
+    @POST("mpesa/stkpush/v1/processrequest")
+    fun getLNMPesa(@Body lnmExpress: LNMExpress): Call<PaymentResult>
+}

@@ -13,9 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.rekast.momoapi.repository
+package com.rekast.momoapi.model
 
-class MomoAPIRepository(
-    var apiUserIf: String,
-    var baseUrl: String,
-)
+class ApiUser(providerCallbackHost: String, targetEnvironment: String)

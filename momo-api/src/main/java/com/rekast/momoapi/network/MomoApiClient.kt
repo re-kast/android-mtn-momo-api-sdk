@@ -16,6 +16,7 @@
 package com.rekast.momoapi.network
 
 import com.rekast.momoapi.network.okhttp.UnsafeOkHttpClient
+import com.rekast.momoapi.network.products.RemittanceAPI
 import com.rekast.momoapi.utils.Settings
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -30,12 +31,12 @@ import java.util.concurrent.TimeUnit
 
 object MomoApiClient {
 
-    fun getAPI(baseUrl: String, interceptor: Interceptor): LNMAPI = getRetrofit(baseUrl, interceptor).create(
-        LNMAPI::class.java,
+    fun getAPI(baseUrl: String, interceptor: Interceptor): RemittanceAPI = getRetrofit(baseUrl, interceptor).create(
+        RemittanceAPI::class.java,
     )
 
-    fun getAuthAPI(baseUrl: String, interceptor: Interceptor): AuthAPI = getRetrofit(baseUrl, interceptor).create(
-        AuthAPI::class.java,
+    fun getAuthAPI(baseUrl: String, interceptor: Interceptor): AuthenticationAPI = getRetrofit(baseUrl, interceptor).create(
+        AuthenticationAPI::class.java,
     )
 
     private fun getRetrofit(baseUrl: String, interceptor: Interceptor): Retrofit {

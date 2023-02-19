@@ -3,6 +3,7 @@ plugins {
     id(BuildPlugins.kotlinAndroid)
     id(BuildPlugins.jacocoAndroid)
     id(BuildPlugins.kapt)
+    id(BuildPlugins.mapsSecret)
 }
 
 jacoco {
@@ -14,6 +15,10 @@ android {
     compileSdk = AndroidSdk.compileSdkVersion
     android.buildFeatures.dataBinding = true
     android.buildFeatures.viewBinding = true
+
+    secrets {
+        ignoreList.add("sdk.*")
+    }
 
     defaultConfig {
         applicationId = "com.rekast.momoapi.sample"
@@ -114,6 +119,7 @@ dependencies {
     implementation(Libraries.lifecycle)
     // Debug - for debug builds only
     implementation(Libraries.timber)
+    implementation(Libraries.commonsLang3)
     debugImplementation(Libraries.leakCanary)
     debugImplementation(BuildPlugins.composeUiTooling)
     debugImplementation(BuildPlugins.testManifest)
