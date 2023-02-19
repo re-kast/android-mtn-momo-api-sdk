@@ -16,7 +16,7 @@
 package com.rekast.momoapi
 
 import com.rekast.momoapi.repository.MomoAPIRepository
-import com.rekast.momoapi.utils.TransactionType
+import com.rekast.momoapi.utils.ProductType
 
 /**
  * Keys Builder. Creates a [MomoAPI] payment load.
@@ -24,11 +24,11 @@ import com.rekast.momoapi.utils.TransactionType
  * @param [consumerSecret] for your application
  */
 
-class MomoAPIBuilder(private var consumerKey: String, private var consumerSecret: String) {
+class MomoAPIBuilder(private var consumerKey: String) {
 
     private lateinit var businessShortCode: String
     private lateinit var passKey: String
-    private lateinit var transactionType: TransactionType
+    private lateinit var productType: ProductType
     private lateinit var callbackUrl: String
     // private lateinit var environment: Environment
 
@@ -37,8 +37,8 @@ class MomoAPIBuilder(private var consumerKey: String, private var consumerSecret
         return this
     }
 
-    fun setTransactionType(transactionType: TransactionType): MomoAPIBuilder {
-        this.transactionType = transactionType
+    fun setTransactionType(productType: ProductType): MomoAPIBuilder {
+        this.productType = productType
         return this
     }
 
@@ -59,17 +59,16 @@ class MomoAPIBuilder(private var consumerKey: String, private var consumerSecret
 
     fun build(): MomoAPI {
         val momoApi = MomoAPI
-        MomoAPI.consumerKey = consumerKey
-        MomoAPI.consumerSecret = consumerSecret
+        // MomoAPI.consumerKey = consumerKey
+        // MomoAPI.consumerSecret = consumerSecret
         MomoAPI.businessShortCode = businessShortCode
         MomoAPI.passKey = passKey
-        MomoAPI.transactionType = transactionType
+        MomoAPI.productType = productType
         MomoAPI.callbackUrl = callbackUrl
         // MomoApi.baseUrl = environment.url
 
         MomoAPI.repo = MomoAPIRepository(
-            MomoAPI.consumerKey,
-            MomoAPI.consumerSecret,
+            MomoAPI.apiUserId,
             MomoAPI.baseUrl,
         )
 

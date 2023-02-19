@@ -16,28 +16,25 @@
 package com.rekast.momoapi
 
 import com.rekast.momoapi.repository.MomoAPIRepository
-import com.rekast.momoapi.utils.TransactionType
+import com.rekast.momoapi.utils.ProductType
 
 /**
  * Creates the MOMO Payment Details
  */
 object MomoAPI {
-
-    lateinit var consumerKey: String
+    lateinit var apiUserId: String
     lateinit var consumerSecret: String
     lateinit var businessShortCode: String
     lateinit var passKey: String
-    lateinit var transactionType: TransactionType
+    lateinit var productType: ProductType
     lateinit var callbackUrl: String
     lateinit var baseUrl: String
-
     lateinit var repo: MomoAPIRepository
+    fun builder(apiUserId: String): MomoAPIBuilder = MomoAPIBuilder(apiUserId)
 
-    fun builder(consumerKey: String, consumerSecret: String): MomoAPIBuilder = MomoAPIBuilder(consumerKey, consumerSecret)
-
-   /* fun getAccessToken(callback: ((momoAPIResult: MomoAPIResult<AccessToken>) -> Unit)) {
-        repo.accessToken.enqueue(MomoAPICallback(callback))
-    }*/
+    /* fun getAccessToken(callback: ((momoAPIResult: MomoAPIResult<AccessToken>) -> Unit)) {
+         repo.accessToken.enqueue(MomoAPICallback(callback))
+     }*/
 
     /*fun initiatePayment(token: String, phoneNumber: String, amount: String, accountReference: String, description: String, callback: ((momoAPIResult: MomoAPIResult<PaymentResult>) -> Unit)) {
         repo.initiatePayment(
