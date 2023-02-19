@@ -33,18 +33,18 @@ class SettingsTest {
     @Test
     fun getProductSubscriptionKeysForRemittance() {
         val productType = Settings.getProductSubscriptionKeys(ProductType.REMITTANCE)
-        Assert.assertEquals(productType, BuildConfig.MTN_REMITTANCE_PRIMARY_KEY)
+        Assert.assertEquals(productType, BuildConfig.MOMO_REMITTANCE_PRIMARY_KEY)
     }
 
     @Test
     fun getProductSubscriptionKeysForDisbursements() {
         val productType = Settings.getProductSubscriptionKeys(ProductType.DISBURSEMENTS)
-        Assert.assertEquals(productType, BuildConfig.MTN_DISBURSEMENTS_PRIMARY_KEY)
+        Assert.assertEquals(productType, BuildConfig.MOMO_DISBURSEMENTS_PRIMARY_KEY)
     }
 
     @Test
     fun getProductSubscriptionKeysForCollection() {
         val productType = Settings.getProductSubscriptionKeys(ProductType.COLLECTION)
-        Assert.assertEquals(productType, BuildConfig.MTN_COLLECTION_PRIMARY_KEY)
+        Assert.assertEquals(productType, BuildConfig.MOMO_COLLECTION_PRIMARY_KEY)
     }
 }
