@@ -29,10 +29,10 @@ import retrofit2.http.POST
  */
 sealed interface AuthenticationAPI {
 
-    @get:GET("${BuildConfig.MOMO_API_VERSION}/apiuser/${BuildConfig.API_USER_ID}")
+    @get:GET("${BuildConfig.MOMO_API_VERSION}/apiuser/${BuildConfig.MOMO_API_USER_ID}")
     val apiUser: Call<ApiUser>
 
-    @get:POST("${BuildConfig.MOMO_API_VERSION}/apiuser/${BuildConfig.API_USER_ID}/apikey")
+    @get:POST("${BuildConfig.MOMO_API_VERSION}/apiuser/${BuildConfig.MOMO_API_USER_ID}/apikey")
     val apiUserKey: Call<ApiUserKey>
 
     @get:GET("oauth/v1/generate?grant_type=client_credentials")

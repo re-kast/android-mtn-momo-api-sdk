@@ -84,24 +84,24 @@ object Settings {
     fun getProductSubscriptionKeys(productType: ProductType): String {
         val productKey: String = when (productType) {
             ProductType.COLLECTION -> {
-                if ((StringUtils.isNotBlank(BuildConfig.MTN_COLLECTION_PRIMARY_KEY))) {
-                    BuildConfig.MTN_COLLECTION_PRIMARY_KEY
+                if ((StringUtils.isNotBlank(BuildConfig.MOMO_COLLECTION_PRIMARY_KEY))) {
+                    BuildConfig.MOMO_COLLECTION_PRIMARY_KEY
                 } else {
-                    BuildConfig.MTN_COLLECTION_SECONDARY_KEY
+                    BuildConfig.MOMO_COLLECTION_SECONDARY_KEY
                 }
             }
             ProductType.REMITTANCE -> {
-                if (StringUtils.isNotBlank(BuildConfig.MTN_REMITTANCE_PRIMARY_KEY)) {
-                    BuildConfig.MTN_REMITTANCE_PRIMARY_KEY
+                if (StringUtils.isNotBlank(BuildConfig.MOMO_REMITTANCE_PRIMARY_KEY)) {
+                    BuildConfig.MOMO_REMITTANCE_PRIMARY_KEY
                 } else {
-                    BuildConfig.MTN_REMITTANCE_SECONDARY_KEY
+                    BuildConfig.MOMO_REMITTANCE_SECONDARY_KEY
                 }
             }
             ProductType.DISBURSEMENTS -> {
-                if (StringUtils.isNotBlank(BuildConfig.MTN_DISBURSEMENTS_PRIMARY_KEY)) {
-                    BuildConfig.MTN_DISBURSEMENTS_PRIMARY_KEY
+                if (StringUtils.isNotBlank(BuildConfig.MOMO_DISBURSEMENTS_PRIMARY_KEY)) {
+                    BuildConfig.MOMO_DISBURSEMENTS_PRIMARY_KEY
                 } else {
-                    BuildConfig.MTN_DISBURSEMENTS_SECONDARY_KEY
+                    BuildConfig.MOMO_DISBURSEMENTS_SECONDARY_KEY
                 }
             }
         }
