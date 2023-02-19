@@ -16,6 +16,8 @@
 package com.rekast.momoapi.utils
 
 import android.util.Base64
+import com.rekast.momoapi.BuildConfig
+import org.apache.commons.lang3.StringUtils
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -54,7 +56,11 @@ object Settings {
             // return p
             return phoneNumber.replaceFirst("^0".toRegex(), countryCode)
         }
-        return if (phoneNumber.length == 13 && phoneNumber.startsWith("+")) phoneNumber.replaceFirst("^+".toRegex(), "") else phoneNumber
+        return if (phoneNumber.length == 13 && phoneNumber.startsWith("+")) {
+            phoneNumber.replaceFirst("^+".toRegex(), "")
+        } else {
+            phoneNumber
+        }
     }
 
     /**
@@ -68,5 +74,37 @@ object Settings {
     fun generatePassword(businessShortCode: String, passKey: String, timeStamp: String): String {
         val password = "$businessShortCode$passKey$timeStamp"
         return Base64.encodeToString(password.toByteArray(), Base64.NO_WRAP)
+    }
+
+    /**
+     * @param [productType] this is the MTN MOMO API product of choice
+     * Return the [productKey] based on the [productType]. It gets the product keys defined on the `local.properties` file.
+     * It gets them through the [BuildConfig] generated file.
+     */
+    fun getProductSubscriptionKeys(productType: ProductType): String {
+        val productKey: String = when (productType) {
+            ProductType.COLLECTION -> {
+                if ((StringUtils.isNotBlank(BuildConfig.MTN_COLLECTION_PRIMARY_KEY))) {
+                    BuildConfig.MTN_COLLECTION_PRIMARY_KEY
+                } else {
+                    BuildConfig.MTN_COLLECTION_SECONDARY_KEY
+                }
+            }
+            ProductType.REMITTANCE -> {
+                if (StringUtils.isNotBlank(BuildConfig.MTN_REMITTANCE_PRIMARY_KEY)) {
+                    BuildConfig.MTN_REMITTANCE_PRIMARY_KEY
+                } else {
+                    BuildConfig.MTN_REMITTANCE_SECONDARY_KEY
+                }
+            }
+            ProductType.DISBURSEMENTS -> {
+                if (StringUtils.isNotBlank(BuildConfig.MTN_DISBURSEMENTS_PRIMARY_KEY)) {
+                    BuildConfig.MTN_DISBURSEMENTS_PRIMARY_KEY
+                } else {
+                    BuildConfig.MTN_DISBURSEMENTS_SECONDARY_KEY
+                }
+            }
+        }
+        return productKey
     }
 }

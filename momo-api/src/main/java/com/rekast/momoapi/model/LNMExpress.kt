@@ -16,7 +16,7 @@
 package com.rekast.momoapi.model
 
 import com.google.gson.annotations.SerializedName
-import com.rekast.momoapi.utils.TransactionType
+import com.rekast.momoapi.utils.ProductType
 
 /**
  *Data class for Payment Body.
@@ -32,7 +32,7 @@ class LNMExpress {
 
     @SerializedName("Timestamp")
     private lateinit var timestamp: String
-    private lateinit var type: TransactionType
+    private lateinit var type: ProductType
 
     @SerializedName("Amount")
     private var amount: String
@@ -87,7 +87,7 @@ class LNMExpress {
     constructor(
         businessShortCode: String,
         passKey: String,
-        transactionType: TransactionType,
+        productType: ProductType,
         amount: String,
         partyA: String,
         partyB: String,
@@ -98,7 +98,7 @@ class LNMExpress {
     ) {
         this.businessShortCode = businessShortCode
         this.passKey = passKey
-        type = transactionType
+        type = productType
         this.amount = amount
         this.partyA = partyA
         this.partyB = partyB

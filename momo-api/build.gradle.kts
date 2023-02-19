@@ -4,6 +4,7 @@ plugins {
     id(BuildPlugins.dagger)
     id(BuildPlugins.kapt)
     id(BuildPlugins.jacocoAndroid)
+    id(BuildPlugins.mapsSecret)
     id(BuildPlugins.mavenPublish)
     id(BuildPlugins.signing)
 }
@@ -17,6 +18,10 @@ android {
 
     android.buildFeatures.dataBinding = true
     android.buildFeatures.viewBinding = true
+
+    secrets {
+        ignoreList.add("sdk.*")
+    }
 
     defaultConfig {
         minSdk = AndroidSdk.minSdkVersion
@@ -62,6 +67,7 @@ dependencies {
     implementation(Libraries.loggingInterceptor)
     implementation(Libraries.androidXTestMonitor)
     implementation(Libraries.androidXJunitTest)
+    implementation(Libraries.commonsLang3)
     debugImplementation(Libraries.chunkerDebug)
     releaseImplementation(Libraries.chunkerRelease)
 

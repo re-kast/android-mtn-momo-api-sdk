@@ -15,15 +15,25 @@
  */
 package com.rekast.momoapi.network
 
+import com.rekast.momoapi.BuildConfig
 import com.rekast.momoapi.model.AccessToken
+import com.rekast.momoapi.model.ApiUser
+import com.rekast.momoapi.model.ApiUserKey
 import retrofit2.Call
 import retrofit2.http.GET
+import retrofit2.http.POST
 
 /**
  * This is the retrofit interface to handle the various calls to the Auth api. This interface defines the
  * method, the request and response from the API.
  */
-interface AuthAPI {
+sealed interface AuthenticationAPI {
+
+    @get:GET("${BuildConfig.MOMO_API_VERSION}/apiuser/${BuildConfig.API_USER_ID}")
+    val apiUser: Call<ApiUser>
+
+    @get:POST("${BuildConfig.MOMO_API_VERSION}/apiuser/${BuildConfig.API_USER_ID}/apikey")
+    val apiUserKey: Call<ApiUserKey>
 
     @get:GET("oauth/v1/generate?grant_type=client_credentials")
     val accessToken: Call<AccessToken>

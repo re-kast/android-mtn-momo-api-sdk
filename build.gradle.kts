@@ -4,6 +4,7 @@ plugins {
     id(BuildPlugins.androidLibrary) version Versions.library apply false
     id(BuildPlugins.androidApplication) version Versions.application apply false
     id(BuildPlugins.kotlinAndroid) version Versions.kotlinAndroid apply false
+    id(BuildPlugins.mapsSecret) version Versions.secrets apply false
     id(BuildPlugins.dokkaPlugin) version Versions.dokka
     id(BuildPlugins.gradleVersionsPlugin) version Versions.gradleVersionsPlugin
 }
@@ -24,6 +25,7 @@ allprojects {
             target("**/src/**/*.kt", "**/src/**/*.kts")
             targetExclude("**/buildSrc/src/main/kotlin/*.kt")
             ktlint("0.48.2")
+                .setEditorConfigPath(".editorconfig")
                 .userData(mapOf("android" to "true"))
             licenseHeaderFile("$projectDir/license-header.txt")
         }

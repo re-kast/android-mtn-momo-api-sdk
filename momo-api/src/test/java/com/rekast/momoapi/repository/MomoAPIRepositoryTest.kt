@@ -15,7 +15,4 @@
  */
 package com.rekast.momoapi.repository
 
-class MomoAPIRepository(
-    var apiUserIf: String,
-    var baseUrl: String,
-)
+class MomoAPIRepositoryTest
