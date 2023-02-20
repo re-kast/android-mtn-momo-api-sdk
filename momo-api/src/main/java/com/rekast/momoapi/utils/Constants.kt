@@ -27,10 +27,10 @@ object Constants {
         const val X_CALLBACK_URL = "X-Callback-Url"
         const val X_REFERENCE_ID = "X-Reference-Id"
         const val X_TARGET_ENVIRONMENT = "X-Target-Environment"
-        const val  LANGUAGE = "Language"
-        const val  NOTIFICATION_MESSAGE = "notificationMessage"
-        const val  CONTENT_TYPE = "Content-Type"
-        const val  AUTHORIZATION = "Authorization"
+        const val LANGUAGE = "Language"
+        const val NOTIFICATION_MESSAGE = "notificationMessage"
+        const val CONTENT_TYPE = "Content-Type"
+        const val AUTHORIZATION = "Authorization"
     }
 
     object TokenTypes {

@@ -40,7 +40,7 @@ class AuthenticationTokenInterceptor(
         val request = chain.request().newBuilder()
             .addHeader(
                 Constants.Headers.AUTHORIZATION,
-                "${Constants.TokenTypes.BASIC} " + Base64.encodeToString(keys.toByteArray(), Base64.NO_WRAP)
+                "${Constants.TokenTypes.BASIC} " + Base64.encodeToString(keys.toByteArray(), Base64.NO_WRAP),
             )
             .build()
 
