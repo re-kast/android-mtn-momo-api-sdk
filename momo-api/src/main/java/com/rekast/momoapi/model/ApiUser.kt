@@ -15,4 +15,7 @@
  */
 package com.rekast.momoapi.model
 
+/**
+ * This class represents the MTN MOMO API User
+ */
 class ApiUser(providerCallbackHost: String, targetEnvironment: String)

@@ -20,11 +20,11 @@ import com.rekast.momoapi.utils.ProductType
 
 /**
  * Keys Builder. Creates a [MomoAPI] payment load.
- * @param [consumerKey] for your application
+ * @param [apiUserId] for your application
  * @param [consumerSecret] for your application
  */
 
-class MomoAPIBuilder(private var consumerKey: String) {
+class MomoAPIBuilder(private var apiUserId: String) {
 
     private lateinit var businessShortCode: String
     private lateinit var passKey: String

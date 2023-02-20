@@ -15,29 +15,26 @@
  */
 package com.rekast.momoapi.network.okhttp
 
-import android.util.Base64
+import com.rekast.momoapi.model.AccessToken
+import com.rekast.momoapi.utils.Constants
 import okhttp3.Interceptor
 import okhttp3.Response
 import java.io.IOException
 
 /**
- * Interceptor for Access Token. It adds [CONSUMER_KEY] and [CONSUMER_SECRET] encoded to base 64
- * to all endpoints that need auth.
- *
- * @param [CONSUMER_KEY]
- * @param [CONSUMER_SECRET]
+ * This is an authentication Interceptor. It is used after the client has received and Access Token.
+ * It adds access token  to all endpoints that need Access Token Authentication.
+ * @param [accessToken]
  */
+
 class AccessTokenInterceptor(
-    private val CONSUMER_KEY: String,
-    private val CONSUMER_SECRET: String,
+    private var accessToken: AccessToken,
 ) : Interceptor {
 
     @Throws(IOException::class)
     override fun intercept(chain: Interceptor.Chain): Response {
-        val keys = "$CONSUMER_KEY:$CONSUMER_SECRET"
-
         val request = chain.request().newBuilder()
-            .addHeader("Authorization", "Basic " + Base64.encodeToString(keys.toByteArray(), Base64.NO_WRAP))
+            .addHeader(Constants.Headers.AUTHORIZATION, "${Constants.TokenTypes.BEARER} ${accessToken.access_token}")
             .build()
 
         return chain.proceed(request)

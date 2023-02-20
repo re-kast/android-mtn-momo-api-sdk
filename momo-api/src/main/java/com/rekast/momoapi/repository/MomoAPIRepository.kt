@@ -16,6 +16,6 @@
 package com.rekast.momoapi.repository
 
 class MomoAPIRepository(
-    var apiUserIf: String,
+    var apiUserId: String,
     var baseUrl: String,
 )
