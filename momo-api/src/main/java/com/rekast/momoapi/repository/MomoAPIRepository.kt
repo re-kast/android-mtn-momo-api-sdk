@@ -15,7 +15,27 @@
  */
 package com.rekast.momoapi.repository
 
-class MomoAPIRepository(
+abstract class MomoAPIRepository(
     var apiUserId: String,
     var baseUrl: String,
-)
+) {
+    /**
+     * Get the API Key based on the User Id and OCP Subscription Id
+     */
+    abstract fun getUserApiKey()
+
+    /**
+     * Get the Access Token based on the User ID, OCP Subscription Id and the API Key
+     */
+    abstract fun getAccessToken()
+
+    /**
+     * Gets the account balance of the entity/user initiating the transaction.
+     */
+    abstract fun getAccountBalance()
+
+    /**
+     * Get the basic user information for a certain MTN MOMO User
+     */
+    abstract fun getBasicUserInfo()
+}

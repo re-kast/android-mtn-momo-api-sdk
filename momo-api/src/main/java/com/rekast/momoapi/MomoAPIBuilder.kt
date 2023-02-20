@@ -16,6 +16,7 @@
 package com.rekast.momoapi
 
 import com.rekast.momoapi.repository.MomoAPIRepository
+import com.rekast.momoapi.repository.products.MomoCollectionAPIRepository
 import com.rekast.momoapi.utils.ProductType
 
 /**
@@ -67,7 +68,7 @@ class MomoAPIBuilder(private var apiUserId: String) {
         MomoAPI.callbackUrl = callbackUrl
         // MomoApi.baseUrl = environment.url
 
-        MomoAPI.repo = MomoAPIRepository(
+        MomoAPI.repo = MomoCollectionAPIRepository(
             MomoAPI.apiUserId,
             MomoAPI.baseUrl,
         )
