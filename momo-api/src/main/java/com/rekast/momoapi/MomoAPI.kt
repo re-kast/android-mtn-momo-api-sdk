@@ -23,14 +23,15 @@ import com.rekast.momoapi.utils.ProductType
  */
 object MomoAPI {
     lateinit var apiUserId: String
-    lateinit var consumerSecret: String
-    lateinit var businessShortCode: String
-    lateinit var passKey: String
     lateinit var productType: ProductType
-    lateinit var callbackUrl: String
-    lateinit var baseUrl: String
-    lateinit var repo: MomoAPIRepository
+    lateinit var baseURL: String
+    lateinit var environment: String
+    lateinit var momoAPIRepository: MomoAPIRepository
     fun builder(apiUserId: String): MomoAPIBuilder = MomoAPIBuilder(apiUserId)
+
+    fun getBasicAuthenticationToken() {
+
+    }
 
     /* fun getAccessToken(callback: ((momoAPIResult: MomoAPIResult<AccessToken>) -> Unit)) {
          repo.accessToken.enqueue(MomoAPICallback(callback))

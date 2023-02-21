@@ -15,4 +15,8 @@
  */
 package com.rekast.momoapi.model
 
+/**
+ * This class represents the MTN MOMO API Key that is received by using the
+ * Subscription Key and the API User ID
+ */
 class ApiUserKey(apiKey: String)
