@@ -27,6 +27,4 @@ import retrofit2.http.POST
  */
 sealed interface RemittanceAPI {
 
-    @POST("mpesa/stkpush/v1/processrequest")
-    fun getLNMPesa(@Body lnmExpress: LNMExpress): Call<PaymentResult>
 }

@@ -18,4 +18,24 @@ class MomoRemittanceAPIRepository(apiUserId: String, baseUrl: String) : MomoAPIR
     override fun getBasicUserInfo() {
         TODO("Not yet implemented")
     }
+
+    fun getTransferStatus() {
+
+    }
+
+    fun getUserInfoWithUserConsent() {
+
+    }
+
+    fun requestToPayDeliveryNotification() {
+
+    }
+
+    fun transfer() {
+
+    }
+
+    fun validateAccountHolderStatus() {
+
+    }
 }

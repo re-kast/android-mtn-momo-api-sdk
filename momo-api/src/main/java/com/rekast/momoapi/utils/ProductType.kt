@@ -15,8 +15,8 @@
  */
 package com.rekast.momoapi.utils
 
-enum class ProductType {
-    COLLECTION,
-    DISBURSEMENTS,
-    REMITTANCE,
+enum class ProductType(productType: String) {
+    COLLECTION ("collection"),
+    DISBURSEMENTS ("disbursements"),
+    REMITTANCE("remittance"),
 }

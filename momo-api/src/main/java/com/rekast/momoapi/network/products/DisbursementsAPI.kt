@@ -15,4 +15,6 @@
  */
 package com.rekast.momoapi.network.products
 
-sealed interface DisbursementsAPI
+sealed interface DisbursementsAPI {
+
+}

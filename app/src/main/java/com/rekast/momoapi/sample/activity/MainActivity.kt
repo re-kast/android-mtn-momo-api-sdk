@@ -24,8 +24,11 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.google.android.material.snackbar.Snackbar
+import com.rekast.momoapi.BuildConfig
+import com.rekast.momoapi.MomoAPI
 import com.rekast.momoapi.sample.R
 import com.rekast.momoapi.sample.databinding.ActivityMainBinding
+import com.rekast.momoapi.utils.ProductType
 
 class MainActivity : AppCompatActivity() {
 
@@ -48,6 +51,8 @@ class MainActivity : AppCompatActivity() {
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show()
         }
+
+        getMomoRemittanceApi();
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -70,5 +75,13 @@ class MainActivity : AppCompatActivity() {
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         return navController.navigateUp(appBarConfiguration) ||
             super.onSupportNavigateUp()
+    }
+
+    private fun getMomoRemittanceApi(): MomoAPI {
+        return MomoAPI.builder(BuildConfig.MOMO_API_USER_ID)
+            .setTransactionType(ProductType.REMITTANCE)
+            .setEnvironment(BuildConfig.MOMO_ENVIRONMENT)
+            .getBaseURL(BuildConfig.MOMO_BASE_URL)
+            .build()
     }
 }

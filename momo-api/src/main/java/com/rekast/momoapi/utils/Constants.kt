@@ -17,11 +17,6 @@ package com.rekast.momoapi.utils
 
 object Constants {
     const val TIMESTAMP_FORMAT = "yyyyMMddHHmmss"
-
-    object Url {
-        const val REMITTANCE = "remittance"
-    }
-
     object Headers {
         const val OCP_APIM_SUBSCRIPTION_KEY = "Ocp-Apim-Subscription-Key"
         const val X_CALLBACK_URL = "X-Callback-Url"
