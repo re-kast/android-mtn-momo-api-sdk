@@ -15,6 +15,4 @@
  */
 package com.rekast.momoapi.network.products
 
-sealed interface CollectionAPI {
-
-}
+sealed interface CollectionAPI

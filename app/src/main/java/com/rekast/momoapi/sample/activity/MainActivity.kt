@@ -52,7 +52,7 @@ class MainActivity : AppCompatActivity() {
                 .setAction("Action", null).show()
         }
 
-        getMomoRemittanceApi();
+        getMomoRemittanceApi()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

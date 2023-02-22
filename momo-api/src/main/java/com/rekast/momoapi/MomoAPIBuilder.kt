@@ -31,13 +31,13 @@ class MomoAPIBuilder(private var apiUserId: String) {
     private lateinit var environment: String
     private lateinit var baseURL: String
 
-    fun getBaseURL(baseURL: String): MomoAPIBuilder{
-        this.baseURL = baseURL;
+    fun getBaseURL(baseURL: String): MomoAPIBuilder {
+        this.baseURL = baseURL
         return this
     }
     fun setEnvironment(environment: String): MomoAPIBuilder {
         this.environment = environment
-        return  this
+        return this
     }
 
     fun setTransactionType(productType: ProductType): MomoAPIBuilder {

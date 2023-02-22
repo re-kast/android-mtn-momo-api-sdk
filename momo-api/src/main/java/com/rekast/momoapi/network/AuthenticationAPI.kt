@@ -16,7 +16,6 @@
 package com.rekast.momoapi.network
 
 import com.rekast.momoapi.BuildConfig
-import com.rekast.momoapi.model.AccessToken
 import com.rekast.momoapi.model.ApiUser
 import com.rekast.momoapi.model.ApiUserKey
 import retrofit2.Call
@@ -29,9 +28,9 @@ import retrofit2.http.POST
  */
 sealed interface AuthenticationAPI {
 
-    @get:GET("${BuildConfig.MOMO_API_VERSION}/apiuser/${BuildConfig.MOMO_API_USER_ID}")
+    @get:GET("${BuildConfig.MOMO_API_VERSION_V1}/apiuser/${BuildConfig.MOMO_API_USER_ID}")
     val apiUser: Call<ApiUser>
 
-    @get:POST("${BuildConfig.MOMO_API_VERSION}/apiuser/${BuildConfig.MOMO_API_USER_ID}/apikey")
+    @get:POST("${BuildConfig.MOMO_API_VERSION_V1}/apiuser/${BuildConfig.MOMO_API_USER_ID}/apikey")
     val apiUserKey: Call<ApiUserKey>
 }

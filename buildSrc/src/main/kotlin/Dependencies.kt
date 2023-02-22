@@ -106,7 +106,8 @@ object Libraries {
     const val navigationFragment = "androidx.navigation:navigation-fragment-ktx:${Versions.navigation}"
     const val navigationUi = "androidx.navigation:navigation-ui-ktx:${Versions.navigation}"
     const val composeActivity = "androidx.activity:activity-compose:${Versions.composeActivity}"
-    const val lifecycleComposeViewModel = "androidx.lifecycle:lifecycle-viewmodel-compose:${Versions.lifecycleComposeViewModel}"
+    const val lifecycleComposeViewModel =
+        "androidx.lifecycle:lifecycle-viewmodel-compose:${Versions.lifecycleComposeViewModel}"
 
     //Compose
     const val composeBom = "androidx.compose:compose-bom:${Versions.composeBom}"

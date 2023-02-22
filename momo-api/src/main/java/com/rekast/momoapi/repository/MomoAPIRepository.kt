@@ -38,4 +38,7 @@ abstract class MomoAPIRepository(
      * Get the basic user information for a certain MTN MOMO User
      */
     abstract fun getBasicUserInfo()
+
+    abstract fun getAccountBalanceInSpecificCurrency()
+    abstract fun getUserInfoWithoutConsent()
 }
