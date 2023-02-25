@@ -32,4 +32,10 @@ object Constants {
         const val BASIC = "Basic"
         const val BEARER = "Bearer"
     }
+
+    object ProductTypes {
+        const val COLLECTION = "collection"
+        const val DISBURSEMENTS = "disbursements"
+        const val REMITTANCE = "remittance"
+    }
 }

@@ -18,30 +18,9 @@ package com.rekast.momoapi.repository.products
 import com.rekast.momoapi.repository.MomoAPIRepository
 
 class MomoDisbursementsAPIRepository(apiUserId: String, baseUrl: String) : MomoAPIRepository(apiUserId, baseUrl) {
-    override fun getUserApiKey() {
-        TODO("Not yet implemented")
-    }
 
-    override fun getAccessToken() {
-        TODO("Not yet implemented")
+    fun getAccountBalanceInSpecificCurrency() {
     }
-
-    override fun getAccountBalance() {
-        TODO("Not yet implemented")
-    }
-
-    override fun getBasicUserInfo() {
-        TODO("Not yet implemented")
-    }
-
-    override fun getAccountBalanceInSpecificCurrency() {
-        TODO("Not yet implemented")
-    }
-
-    override fun getUserInfoWithoutConsent() {
-        TODO("Not yet implemented")
-    }
-
     fun requestToPay() {
         TODO("Not yet implemented")
     }

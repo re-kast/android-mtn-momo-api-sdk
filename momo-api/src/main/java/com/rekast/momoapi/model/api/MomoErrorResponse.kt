@@ -22,4 +22,5 @@ import kotlinx.serialization.Serializable
 data class MomoErrorResponse(
     @SerializedName("code") var code: String,
     @SerializedName("message") var message: String,
+    @SerializedName("error") var error: String,
 )

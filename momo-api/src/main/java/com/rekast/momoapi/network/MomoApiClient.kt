@@ -16,7 +16,7 @@
 package com.rekast.momoapi.network
 
 import com.rekast.momoapi.network.okhttp.UnsafeOkHttpClient
-import com.rekast.momoapi.network.products.RemittanceAPI
+import com.rekast.momoapi.network.products.ProductSharedAPI
 import com.rekast.momoapi.utils.Settings
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -30,22 +30,54 @@ import java.util.concurrent.TimeUnit
  */
 
 open class MomoApiClient {
-    fun getAuthenticationAPI(baseUrl: String, interceptor: Interceptor): AuthenticationAPI =
-        getRetrofit(baseUrl, interceptor).create(AuthenticationAPI::class.java)
+    fun checkApiUser(baseUrl: String): AuthenticationAPI =
+        getRetrofit(baseUrl, null).create(AuthenticationAPI::class.java)
 
-    private fun getRetrofit(baseUrl: String, interceptor: Interceptor): Retrofit {
+    fun getApiUserKey(baseUrl: String): AuthenticationAPI =
+        getRetrofit(baseUrl, null).create(AuthenticationAPI::class.java)
+
+    fun getAccessToken(baseUrl: String, authentication: Interceptor): AuthenticationAPI =
+        getRetrofit(baseUrl, authentication).create(AuthenticationAPI::class.java)
+
+    fun getAccountBalance(baseUrl: String, authentication: Interceptor): ProductSharedAPI =
+        getRetrofit(baseUrl, authentication).create(ProductSharedAPI::class.java)
+
+    fun getBasicUserInfo(baseUrl: String, authentication: Interceptor): ProductSharedAPI =
+        getRetrofit(baseUrl, authentication).create(ProductSharedAPI::class.java)
+
+    fun getUserInfoWithoutConsent(baseUrl: String, authentication: Interceptor): ProductSharedAPI =
+        getRetrofit(baseUrl, authentication).create(ProductSharedAPI::class.java)
+
+    private fun getRetrofit(baseUrl: String, authentication: Interceptor?): Retrofit {
         val httpLoggingInterceptor = HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
         val builder = if (/*baseUrl == Environment.SANDBOX.url*/ true) {
             UnsafeOkHttpClient().unsafeOkHttpClient.addInterceptor(httpLoggingInterceptor)
         } else {
             OkHttpClient.Builder()
         }
-        val client = builder.connectTimeout(Settings.CONNECT_TIMEOUT, TimeUnit.SECONDS)
-            .writeTimeout(Settings.WRITE_TIMEOUT, TimeUnit.SECONDS)
-            .readTimeout(Settings.READ_TIMEOUT, TimeUnit.SECONDS)
-            .addInterceptor(interceptor).build()
-        return Retrofit.Builder().baseUrl(baseUrl)
+        val client = returnOkHttpClient(builder, authentication)
+        return Retrofit.Builder()
+            .baseUrl(baseUrl)
             .addConverterFactory(GsonConverterFactory.create())
-            .client(client).build()
+            .client(client)
+            .build()
+    }
+
+    private fun returnOkHttpClient(
+        builder: OkHttpClient.Builder,
+        authentication: Interceptor?,
+    ): OkHttpClient {
+        return if (authentication == null) {
+            builder.connectTimeout(Settings.CONNECT_TIMEOUT, TimeUnit.SECONDS)
+                .writeTimeout(Settings.WRITE_TIMEOUT, TimeUnit.SECONDS)
+                .readTimeout(Settings.READ_TIMEOUT, TimeUnit.SECONDS)
+                .build()
+        } else {
+            builder.connectTimeout(Settings.CONNECT_TIMEOUT, TimeUnit.SECONDS)
+                .writeTimeout(Settings.WRITE_TIMEOUT, TimeUnit.SECONDS)
+                .readTimeout(Settings.READ_TIMEOUT, TimeUnit.SECONDS)
+                .addInterceptor(authentication)
+                .build()
+        }
     }
 }

@@ -21,9 +21,8 @@ import kotlinx.serialization.Serializable
 /**
  * This class represents the MTN MOMO API Key that is received by using the
  * Subscription Key and the API User ID
- *
  */
 @Serializable
 data class ApiUserKey(
-    @SerializedName("apiKey") val apiKey: String
+    @SerializedName("apiKey") val apiKey: String,
 )
