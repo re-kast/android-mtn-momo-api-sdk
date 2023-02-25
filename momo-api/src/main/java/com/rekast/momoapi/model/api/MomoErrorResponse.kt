@@ -13,18 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.rekast.momoapi.model
+package com.rekast.momoapi.model.api
 
 import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.Serializable
 
-/**
- * Data class for mapping the error response.
- */
-data class ErrorResponse(
-    @SerializedName("requestId")
-    var requestId: String,
-    @SerializedName("errorCode")
-    var code: String,
-    @SerializedName("errorMessage")
-    var message: String,
+@Serializable
+data class MomoErrorResponse(
+    @SerializedName("code") var code: String,
+    @SerializedName("message") var message: String,
 )

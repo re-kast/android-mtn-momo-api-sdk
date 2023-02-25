@@ -7,6 +7,7 @@ plugins {
     id(BuildPlugins.mapsSecret) version Versions.secrets apply false
     id(BuildPlugins.dokkaPlugin) version Versions.dokka
     id(BuildPlugins.gradleVersionsPlugin) version Versions.gradleVersionsPlugin
+    id(BuildPlugins.kotlinSerialization) version Versions.kotlinAndroid
 }
 
 allprojects {

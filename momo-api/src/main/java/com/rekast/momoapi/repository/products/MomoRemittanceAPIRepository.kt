@@ -19,7 +19,6 @@ import com.rekast.momoapi.repository.MomoAPIRepository
 
 class MomoRemittanceAPIRepository(apiUserId: String, baseUrl: String) : MomoAPIRepository(apiUserId, baseUrl) {
     override fun getUserApiKey() {
-        TODO("Not yet implemented")
     }
 
     override fun getAccessToken() {

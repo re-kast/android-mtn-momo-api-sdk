@@ -13,9 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.rekast.momoapi.model
+package com.rekast.momoapi.model.authentication
+
+import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.Serializable
 
 /**
- * This class represents the MTN MOMO API User
+ * This class represents the MTN MOMO API Key that is received by using the
+ * Subscription Key and the API User ID
+ *
  */
-class ApiUser(providerCallbackHost: String, targetEnvironment: String)
+@Serializable
+data class ApiUserKey(
+    @SerializedName("apiKey") val apiKey: String
+)

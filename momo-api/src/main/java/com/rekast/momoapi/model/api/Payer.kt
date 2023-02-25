@@ -13,10 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.rekast.momoapi.model
+package com.rekast.momoapi.model.api
 
-/**
- * This class represents the MTN MOMO API Key that is received by using the
- * Subscription Key and the API User ID
- */
-class ApiUserKey(apiKey: String)
+import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class Payer(
+    @SerializedName("partyIdType") var partyIdType: String,
+    @SerializedName("partyId") var partyId: String,
+)

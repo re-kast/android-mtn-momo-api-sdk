@@ -19,4 +19,6 @@ package com.rekast.momoapi.network.products
  * This is the retrofit interface to handle the various calls to the Lipa Na MPESA API. This interface defines the
  * method, the request and response from the API.
  */
-sealed interface RemittanceAPI
+sealed interface RemittanceAPI {
+
+}

@@ -13,24 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.rekast.momoapi.callback
+package com.rekast.momoapi.model.authentication
 
-import com.rekast.momoapi.model.api.MomoErrorResponse
+import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.Serializable
 
 /**
- * Handles exceptions and messages for the exceptions.
+ * AccessToken Data Class.
  */
-class MomoAPIException : Exception {
 
-    lateinit var errorResponse: MomoErrorResponse
-
-    constructor(message: String?) : super(message)
-
-    constructor(errorResponse: MomoErrorResponse) : super("${errorResponse.code} : ${errorResponse.message}") {
-        this.errorResponse = errorResponse
-    }
-
-    constructor(message: String, cause: Throwable) : super(message, cause)
-
-    constructor(cause: Throwable) : super(cause)
-}
+@Serializable
+data class AccessToken(
+    @SerializedName("access_token") var accessToken: String,
+    @SerializedName("token_type") var tokenType: String,
+    @SerializedName("expires_in") var expiresIn: String,
+)

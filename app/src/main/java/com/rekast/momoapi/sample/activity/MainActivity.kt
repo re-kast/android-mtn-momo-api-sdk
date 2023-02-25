@@ -52,7 +52,7 @@ class MainActivity : AppCompatActivity() {
                 .setAction("Action", null).show()
         }
 
-        getMomoRemittanceApi()
+        momoAPI()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -77,7 +77,7 @@ class MainActivity : AppCompatActivity() {
             super.onSupportNavigateUp()
     }
 
-    private fun getMomoRemittanceApi(): MomoAPI {
+    private fun momoAPI(): MomoAPI {
         return MomoAPI.builder(BuildConfig.MOMO_API_USER_ID)
             .setTransactionType(ProductType.REMITTANCE)
             .setEnvironment(BuildConfig.MOMO_ENVIRONMENT)

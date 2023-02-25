@@ -23,7 +23,6 @@ import com.rekast.momoapi.utils.ProductType
 /**
  * Keys Builder. Creates a [MomoAPI] payment load.
  * @param [apiUserId] for your application
- * @param [consumerSecret] for your application
  */
 
 class MomoAPIBuilder(private var apiUserId: String) {
@@ -56,14 +55,14 @@ class MomoAPIBuilder(private var apiUserId: String) {
     }
 
     private fun getRepository(momoApi: MomoAPI) {
-        when {
-            productType.equals(ProductType.COLLECTION) -> {
+        when (productType) {
+            ProductType.COLLECTION -> {
                 momoApi.momoAPIRepository = MomoCollectionAPIRepository(
                     momoApi.apiUserId,
                     momoApi.baseURL,
                 )
             }
-            productType.equals(ProductType.DISBURSEMENTS) -> {
+            ProductType.DISBURSEMENTS -> {
                 momoApi.momoAPIRepository = MomoDisbursementsAPIRepository(
                     momoApi.apiUserId,
                     momoApi.baseURL,

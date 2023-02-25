@@ -16,8 +16,8 @@
 package com.rekast.momoapi.callback
 
 import com.google.gson.GsonBuilder
-import com.rekast.momoapi.model.ErrorResponse
 import com.rekast.momoapi.model.PaymentResult
+import com.rekast.momoapi.model.api.MomoErrorResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -45,7 +45,7 @@ class MomoAPIPaymentCallback(
         } else {
             try {
                 val gson = GsonBuilder().create()
-                val error = gson.fromJson(response.errorBody()?.string(), ErrorResponse::class.java)
+                val error = gson.fromJson(response.errorBody()?.string(), MomoErrorResponse::class.java)
                 callback.invoke(MomoAPIResult.Failure(false, MomoAPIException(error)))
             } catch (e: IOException) {
                 e.printStackTrace()

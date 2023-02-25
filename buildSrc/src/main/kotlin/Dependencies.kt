@@ -34,6 +34,7 @@ object Versions {
     const val kotlinVersion = "1.5.21"
     const val coreKtx = "1.10.0-alpha02"
     const val kotlinAndroid = "1.8.10"
+    const val kotlinxSerializationJson = "1.4.1"
 
     //Apache Commons
     const val commonsLang3 = "3.12.0"
@@ -76,6 +77,7 @@ object BuildPlugins {
     const val androidApplication = "com.android.application"
     const val kotlinAndroid = "org.jetbrains.kotlin.android"
     const val kotlinAndroidExtensions = "org.jetbrains.kotlin.android.extensions"
+    const val kotlinSerialization = "org.jetbrains.kotlin.plugin.serialization"
     const val gradleVersionsPlugin = "com.github.ben-manes.versions"
     const val jacocoAndroid = "com.hiya.jacoco-android"
     const val mvnPublishPlugin = "com.vanniktech.maven.publish"
@@ -135,6 +137,7 @@ object Libraries {
 
     // Kotlin
     const val kotlinStdLib = "org.jetbrains.kotlin:kotlin-stdlib:${Versions.kotlinVersion}"
+    const val kotlinxSerializationJson = "org.jetbrains.kotlinx:kotlinx-serialization-json:${Versions.kotlinxSerializationJson}"
     const val coreKtx = "androidx.core:core-ktx:${Versions.coreKtx}"
     const val androidXTestMonitor = "androidx.test:monitor:${Versions.androidXTestMonitor}"
     const val androidXJunitTest = "androidx.test.ext:junit-ktx:${Versions.androidXJunitTest}"

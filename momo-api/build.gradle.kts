@@ -7,6 +7,7 @@ plugins {
     id(BuildPlugins.mapsSecret)
     id(BuildPlugins.mavenPublish)
     id(BuildPlugins.signing)
+    id(BuildPlugins.kotlinSerialization) version Versions.kotlinAndroid
 }
 
 jacoco {
@@ -59,11 +60,13 @@ android {
 dependencies {
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
     implementation(Libraries.coreKtx)
+    implementation(Libraries.kotlinxSerializationJson)
 
     // Network - Retrofit, OKHTTP, chucker
     implementation(Libraries.retrofit)
     implementation(Libraries.gson)
     implementation(Libraries.ohttp)
+
     implementation(Libraries.loggingInterceptor)
     implementation(Libraries.androidXTestMonitor)
     implementation(Libraries.androidXJunitTest)

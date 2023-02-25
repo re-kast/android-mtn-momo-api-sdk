@@ -13,24 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.rekast.momoapi.callback
+package com.rekast.momoapi.utils
 
-import com.rekast.momoapi.model.api.MomoErrorResponse
-
-/**
- * Handles exceptions and messages for the exceptions.
- */
-class MomoAPIException : Exception {
-
-    lateinit var errorResponse: MomoErrorResponse
-
-    constructor(message: String?) : super(message)
-
-    constructor(errorResponse: MomoErrorResponse) : super("${errorResponse.code} : ${errorResponse.message}") {
-        this.errorResponse = errorResponse
-    }
-
-    constructor(message: String, cause: Throwable) : super(message, cause)
-
-    constructor(cause: Throwable) : super(cause)
+enum class TransactionStatus {
+    SUCCESSFUL, PENDING, FAILED
 }

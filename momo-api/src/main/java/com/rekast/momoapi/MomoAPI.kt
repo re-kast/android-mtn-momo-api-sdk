@@ -19,7 +19,7 @@ import com.rekast.momoapi.repository.MomoAPIRepository
 import com.rekast.momoapi.utils.ProductType
 
 /**
- * Creates the MOMO Payment Details
+ * Creates the different MOMO API calls
  */
 object MomoAPI {
     lateinit var apiUserId: String
@@ -30,6 +30,9 @@ object MomoAPI {
     fun builder(apiUserId: String): MomoAPIBuilder = MomoAPIBuilder(apiUserId)
 
     fun getBasicAuthenticationToken() {
+    }
+
+    fun getAccessToken() {
     }
 
     /* fun getAccessToken(callback: ((momoAPIResult: MomoAPIResult<AccessToken>) -> Unit)) {
