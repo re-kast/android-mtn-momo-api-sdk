@@ -15,25 +15,27 @@
  */
 package com.rekast.momoapi
 
-import com.rekast.momoapi.repository.MomoAPIRepository
+import com.rekast.momoapi.repository.products.MomoCollectionAPIRepository
+import com.rekast.momoapi.repository.products.MomoDisbursementsAPIRepository
+import com.rekast.momoapi.repository.products.MomoRemittanceAPIRepository
 import com.rekast.momoapi.utils.ProductType
 
 /**
  * Keys Builder. Creates a [MomoAPI] payment load.
- * @param [consumerKey] for your application
- * @param [consumerSecret] for your application
+ * @param [apiUserId] for your application
  */
 
-class MomoAPIBuilder(private var consumerKey: String) {
-
-    private lateinit var businessShortCode: String
-    private lateinit var passKey: String
+class MomoAPIBuilder(private var apiUserId: String) {
     private lateinit var productType: ProductType
-    private lateinit var callbackUrl: String
-    // private lateinit var environment: Environment
+    private lateinit var environment: String
+    private lateinit var baseURL: String
 
-    fun setPassKey(passKey: String): MomoAPIBuilder {
-        this.passKey = passKey
+    fun getBaseURL(baseURL: String): MomoAPIBuilder {
+        this.baseURL = baseURL
+        return this
+    }
+    fun setEnvironment(environment: String): MomoAPIBuilder {
+        this.environment = environment
         return this
     }
 
@@ -42,36 +44,36 @@ class MomoAPIBuilder(private var consumerKey: String) {
         return this
     }
 
-    fun setCallbackUrl(callbackUrl: String): MomoAPIBuilder {
-        this.callbackUrl = callbackUrl
-        return this
-    }
-
-    fun setBusinessShortCode(businessShortCode: String): MomoAPIBuilder {
-        this.businessShortCode = businessShortCode
-        return this
-    }
-
-/*    fun setEnvironment(environment: Environment): MomoApiBuilder {
-        this.environment = environment
-        return this
-    }*/
-
     fun build(): MomoAPI {
         val momoApi = MomoAPI
-        // MomoAPI.consumerKey = consumerKey
-        // MomoAPI.consumerSecret = consumerSecret
-        MomoAPI.businessShortCode = businessShortCode
-        MomoAPI.passKey = passKey
-        MomoAPI.productType = productType
-        MomoAPI.callbackUrl = callbackUrl
-        // MomoApi.baseUrl = environment.url
-
-        MomoAPI.repo = MomoAPIRepository(
-            MomoAPI.apiUserId,
-            MomoAPI.baseUrl,
-        )
-
+        momoApi.apiUserId = apiUserId
+        momoApi.productType = productType
+        momoApi.baseURL = baseURL
+        momoApi.environment = environment
+        getRepository(momoApi)
         return momoApi
+    }
+
+    private fun getRepository(momoApi: MomoAPI) {
+        when (productType) {
+            ProductType.COLLECTION -> {
+                momoApi.momoAPIRepository = MomoCollectionAPIRepository(
+                    momoApi.apiUserId,
+                    momoApi.baseURL,
+                )
+            }
+            ProductType.DISBURSEMENTS -> {
+                momoApi.momoAPIRepository = MomoDisbursementsAPIRepository(
+                    momoApi.apiUserId,
+                    momoApi.baseURL,
+                )
+            }
+            else -> {
+                momoApi.momoAPIRepository = MomoRemittanceAPIRepository(
+                    momoApi.apiUserId,
+                    momoApi.baseURL,
+                )
+            }
+        }
     }
 }

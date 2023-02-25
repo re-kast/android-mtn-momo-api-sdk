@@ -13,9 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.rekast.momoapi.model
+package com.rekast.momoapi.model.api
 
-/**
- * AccessToken Data Class.
- */
-class AccessToken(var access_token: String, var token_type: String, var expires_in: String)
+import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class MomoErrorResponse(
+    @SerializedName("code") var code: String,
+    @SerializedName("message") var message: String,
+)

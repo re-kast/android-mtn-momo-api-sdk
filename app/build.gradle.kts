@@ -4,6 +4,7 @@ plugins {
     id(BuildPlugins.jacocoAndroid)
     id(BuildPlugins.kapt)
     id(BuildPlugins.mapsSecret)
+    id(BuildPlugins.kotlinSerialization) version Versions.kotlinAndroid
 }
 
 jacoco {
@@ -105,6 +106,7 @@ dependencies {
     implementation(Libraries.kotlinStdLib)
     implementation(Libraries.androidXTestMonitor)
     implementation(Libraries.androidXJunitTest)
+    implementation(Libraries.kotlinxSerializationJson)
     // Material and AndroidX
     implementation(Libraries.constraintLayout)
     implementation(Libraries.material)

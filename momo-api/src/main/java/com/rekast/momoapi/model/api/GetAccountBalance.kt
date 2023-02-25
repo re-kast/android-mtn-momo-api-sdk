@@ -13,10 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.rekast.momoapi.utils
+package com.rekast.momoapi.model.api
 
-enum class ProductType(productType: String) {
-    COLLECTION("collection"),
-    DISBURSEMENTS("disbursements"),
-    REMITTANCE("remittance"),
-}
+import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class GetAccountBalance(
+    @SerializedName("availableBalance") var availableBalance: String,
+    @SerializedName("currency") var currency: String,
+)

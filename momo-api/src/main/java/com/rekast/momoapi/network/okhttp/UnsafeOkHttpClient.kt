@@ -51,7 +51,7 @@ class UnsafeOkHttpClient {
             builder.hostnameVerifier { _, _ -> true }
 
             builder
-        } catch (e: Exception) {
-            throw RuntimeException(e)
+        } catch (exception: Exception) {
+            throw RuntimeException(exception)
         }
 }
