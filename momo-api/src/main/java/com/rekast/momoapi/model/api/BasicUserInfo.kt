@@ -19,11 +19,13 @@ import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class GetBasicUserInfo(
+data class BasicUserInfo(
+    @SerializedName("sub") var sub: String,
+    @SerializedName("name") var name: String,
     @SerializedName("given_name") var givenName: String,
     @SerializedName("family_name") var familyName: String,
     @SerializedName("birthdate") var birthDate: String,
     @SerializedName("locale") var locale: String,
     @SerializedName("gender") var gender: String,
-    @SerializedName("status") var status: String,
+    @SerializedName("updated_at") var updatedAt: String,
 )

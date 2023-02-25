@@ -19,7 +19,7 @@ import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class GetAccountBalance(
+data class AccountBalance(
     @SerializedName("availableBalance") var availableBalance: String,
     @SerializedName("currency") var currency: String,
 )
