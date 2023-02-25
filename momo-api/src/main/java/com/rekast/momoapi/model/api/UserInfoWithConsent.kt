@@ -19,10 +19,9 @@ import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class GetUserInfoWithConsent(
-    var userBasicInfo: GetBasicUserInfo,
-    @SerializedName("sub") var sub: String,
-    @SerializedName("name") var name: String,
+data class UserInfoWithConsent(
+    var userBasicInfo: BasicUserInfo,
+    @SerializedName("status") var status: String,
     @SerializedName("middle_name") var middleName: String,
     @SerializedName("email") var email: String,
     @SerializedName("email_verified") var emailVerified: Boolean,

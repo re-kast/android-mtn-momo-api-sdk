@@ -28,7 +28,7 @@ import java.io.IOException
  * @param [apiUserId]
  * @param [apiKey]
  */
-class AuthenticationTokenInterceptor(
+class BasicAuthInterceptor(
     private val apiUserId: String,
     private val apiKey: String,
 ) : Interceptor {

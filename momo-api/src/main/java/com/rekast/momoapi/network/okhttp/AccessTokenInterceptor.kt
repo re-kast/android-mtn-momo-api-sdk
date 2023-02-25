@@ -15,7 +15,6 @@
  */
 package com.rekast.momoapi.network.okhttp
 
-import com.rekast.momoapi.model.authentication.AccessToken
 import com.rekast.momoapi.utils.Constants
 import okhttp3.Interceptor
 import okhttp3.Response
@@ -28,13 +27,13 @@ import java.io.IOException
  */
 
 class AccessTokenInterceptor(
-    private var accessToken: AccessToken,
+    private var accessToken: String,
 ) : Interceptor {
 
     @Throws(IOException::class)
     override fun intercept(chain: Interceptor.Chain): Response {
         val request = chain.request().newBuilder()
-            .addHeader(Constants.Headers.AUTHORIZATION, "${Constants.TokenTypes.BEARER} ${accessToken.accessToken}")
+            .addHeader(Constants.Headers.AUTHORIZATION, "${Constants.TokenTypes.BEARER} $accessToken")
             .build()
 
         return chain.proceed(request)
