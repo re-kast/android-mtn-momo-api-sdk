@@ -13,10 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.rekast.momoapi.utils
+package com.rekast.momoapi.model.authentication
 
-enum class ProductType(productType: String) {
-    COLLECTION("collection"),
-    DISBURSEMENTS("disbursements"),
-    REMITTANCE("remittance"),
-}
+import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.Serializable
+
+/**
+ * AccessToken Data Class.
+ */
+
+@Serializable
+data class AccessToken(
+    @SerializedName("access_token") var accessToken: String,
+    @SerializedName("token_type") var tokenType: String,
+    @SerializedName("expires_in") var expiresIn: String,
+)

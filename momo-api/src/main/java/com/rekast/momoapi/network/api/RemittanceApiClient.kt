@@ -13,10 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.rekast.momoapi.utils
+package com.rekast.momoapi.network.api
 
-enum class ProductType(productType: String) {
-    COLLECTION("collection"),
-    DISBURSEMENTS("disbursements"),
-    REMITTANCE("remittance"),
-}
+import com.rekast.momoapi.network.MomoApiClient
+
+object RemittanceApiClient : MomoApiClient()

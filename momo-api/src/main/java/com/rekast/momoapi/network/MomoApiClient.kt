@@ -29,15 +29,9 @@ import java.util.concurrent.TimeUnit
  * Provides an instance of retrofit to all classes that need it.
  */
 
-object MomoApiClient {
-
-    fun getAPI(baseUrl: String, interceptor: Interceptor): RemittanceAPI = getRetrofit(baseUrl, interceptor).create(
-        RemittanceAPI::class.java,
-    )
-
-    fun getAuthAPI(baseUrl: String, interceptor: Interceptor): AuthenticationAPI = getRetrofit(baseUrl, interceptor).create(
-        AuthenticationAPI::class.java,
-    )
+open class MomoApiClient {
+    fun getAuthenticationAPI(baseUrl: String, interceptor: Interceptor): AuthenticationAPI =
+        getRetrofit(baseUrl, interceptor).create(AuthenticationAPI::class.java)
 
     private fun getRetrofit(baseUrl: String, interceptor: Interceptor): Retrofit {
         val httpLoggingInterceptor = HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
@@ -49,12 +43,9 @@ object MomoApiClient {
         val client = builder.connectTimeout(Settings.CONNECT_TIMEOUT, TimeUnit.SECONDS)
             .writeTimeout(Settings.WRITE_TIMEOUT, TimeUnit.SECONDS)
             .readTimeout(Settings.READ_TIMEOUT, TimeUnit.SECONDS)
-            .addInterceptor(interceptor)
-            .build()
-        return Retrofit.Builder()
-            .baseUrl(baseUrl)
+            .addInterceptor(interceptor).build()
+        return Retrofit.Builder().baseUrl(baseUrl)
             .addConverterFactory(GsonConverterFactory.create())
-            .client(client)
-            .build()
+            .client(client).build()
     }
 }
