@@ -29,15 +29,17 @@ import com.google.gson.Gson
 import com.rekast.momoapi.BuildConfig
 import com.rekast.momoapi.MomoAPI
 import com.rekast.momoapi.callback.APIResult
-import com.rekast.momoapi.model.api.DebitTransaction
-import com.rekast.momoapi.model.api.Payer
+import com.rekast.momoapi.model.api.AccountHolder
+import com.rekast.momoapi.model.api.AccountHolderStatus
+import com.rekast.momoapi.model.api.Notification
+import com.rekast.momoapi.model.api.Transaction
 import com.rekast.momoapi.sample.R
 import com.rekast.momoapi.sample.databinding.ActivityMainBinding
 import com.rekast.momoapi.sample.utils.Utils
+import com.rekast.momoapi.utils.AccountHolderType
 import com.rekast.momoapi.utils.Constants
 import com.rekast.momoapi.utils.ProductType
 import com.rekast.momoapi.utils.Settings
-import com.rekast.momoapi.utils.TransactionType
 import org.apache.commons.lang3.StringUtils
 import timber.log.Timber
 
@@ -45,7 +47,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
     private lateinit var momoRemittanceApi: MomoAPI
-    private lateinit var momoCollectionApi: MomoAPI
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -146,8 +147,11 @@ class MainActivity : AppCompatActivity() {
                         val accessToken = momoAPIResult.value
                         Utils.saveAccessToken(this, accessToken)
                         // getAccountBalance()
-                        getBasicUserInfo()
-                        transferRemittance()
+                        // getBasicUserInfo()
+                        // transferRemittance()
+                        // validateAccountHolderStatus()
+                        // requestToPay()
+                        requestToWithdraw()
                     }
                     is APIResult.Failure -> {
                         val momoAPIException = momoAPIResult.APIException
@@ -162,11 +166,11 @@ class MainActivity : AppCompatActivity() {
         val accessToken = Utils.getAccessToken(this)
         if (StringUtils.isNotBlank(accessToken)) {
             momoRemittanceApi.getBalance(
+                "EUR",
                 Settings.getProductSubscriptionKeys(ProductType.REMITTANCE),
                 accessToken,
                 BuildConfig.MOMO_API_VERSION_V1,
                 Constants.ProductTypes.REMITTANCE,
-                BuildConfig.MOMO_ENVIRONMENT,
             ) { momoAPIResult ->
                 when (momoAPIResult) {
                     is APIResult.Success -> {
@@ -191,7 +195,6 @@ class MainActivity : AppCompatActivity() {
                 accessToken,
                 BuildConfig.MOMO_API_VERSION_V1,
                 Constants.ProductTypes.REMITTANCE,
-                BuildConfig.MOMO_ENVIRONMENT,
             ) { momoAPIResult ->
                 when (momoAPIResult) {
                     is APIResult.Success -> {
@@ -207,15 +210,14 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun getUserInfoWithoutConsent() {
+    private fun getUserInfoWithConsent() {
         val accessToken = Utils.getAccessToken(this)
         if (StringUtils.isNotBlank(accessToken)) {
-            momoRemittanceApi.getUserInfoWithoutConsent(
+            momoRemittanceApi.getUserInfoWithConsent(
                 Settings.getProductSubscriptionKeys(ProductType.REMITTANCE),
                 accessToken,
                 BuildConfig.MOMO_API_VERSION_V1,
                 Constants.ProductTypes.REMITTANCE,
-                BuildConfig.MOMO_ENVIRONMENT,
             ) { momoAPIResult ->
                 when (momoAPIResult) {
                     is APIResult.Success -> {
@@ -237,16 +239,17 @@ class MainActivity : AppCompatActivity() {
         val transactionUuid = Utils.generateUUID()
         if (StringUtils.isNotBlank(accessToken)) {
             momoRemittanceApi.transfer(
-                creditTransaction,
-                Settings.getProductSubscriptionKeys(ProductType.REMITTANCE),
                 accessToken,
+                creditTransaction,
                 BuildConfig.MOMO_API_VERSION_V1,
-                BuildConfig.MOMO_ENVIRONMENT,
+                Constants.ProductTypes.REMITTANCE,
+                Settings.getProductSubscriptionKeys(ProductType.REMITTANCE),
                 transactionUuid,
             ) { momoAPIResult ->
                 when (momoAPIResult) {
                     is APIResult.Success -> {
                         getTransferStatus(transactionUuid)
+                        // requestToPayDeliveryNotification(transactionUuid)
                     }
                     is APIResult.Failure -> {
                         val momoAPIException = momoAPIResult.APIException
@@ -257,13 +260,14 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun createDebitTransaction(): DebitTransaction {
-        return DebitTransaction(
+    private fun createDebitTransaction(): Transaction {
+        return Transaction(
             "10000",
             "EUR",
             null,
             Utils.generateUUID(),
-            Payer(TransactionType.MSISDN.name, "346736732646"),
+            AccountHolder(AccountHolderType.MSISDN.name, "346736732646"),
+            null,
             "Testing",
             "The Good Company",
             null,
@@ -279,14 +283,192 @@ class MainActivity : AppCompatActivity() {
                 BuildConfig.MOMO_API_VERSION_V1,
                 Constants.ProductTypes.REMITTANCE,
                 Settings.getProductSubscriptionKeys(ProductType.REMITTANCE),
-                BuildConfig.MOMO_ENVIRONMENT,
                 accessToken,
             ) { momoAPIResult ->
                 when (momoAPIResult) {
                     is APIResult.Success -> {
-                        val string = momoAPIResult.value!!.source().readUtf8()
                         val completeTransfer =
-                            Gson().fromJson(string, DebitTransaction::class.java)
+                            Gson().fromJson(momoAPIResult.value!!.source().readUtf8(), Transaction::class.java)
+                        Timber.d(completeTransfer.toString())
+                    }
+                    is APIResult.Failure -> {
+                        val momoAPIException = momoAPIResult.APIException
+                        toast(momoAPIException?.message ?: "An error occurred!")
+                    }
+                }
+            }
+        }
+    }
+
+    private fun requestToPayDeliveryNotification(referenceId: String, productType: String) {
+        val accessToken = Utils.getAccessToken(this)
+        val notification = Notification(
+            notificationMessage =
+            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur pellentesque mi" +
+                " erat, vel placerat erat sollicitudin et. Sed id ex nisi. Quisque luctus metus",
+        )
+        if (StringUtils.isNotBlank(accessToken) &&
+            Settings.checkNotificationMessageLength(notification.notificationMessage)
+        ) {
+            momoRemittanceApi.requestToPayDeliveryNotification(
+                notification,
+                referenceId,
+                BuildConfig.MOMO_API_VERSION_V1,
+                productType,
+                Settings.getProductSubscriptionKeys(ProductType.COLLECTION),
+                accessToken,
+            ) { momoAPIResult ->
+                when (momoAPIResult) {
+                    is APIResult.Success -> {
+                        toast("Delivery note sent")
+                    }
+                    is APIResult.Failure -> {
+                        val momoAPIException = momoAPIResult.APIException
+                        toast(momoAPIException?.message ?: "An error occurred!")
+                    }
+                }
+            }
+        }
+    }
+
+    private fun validateAccountHolderStatus() {
+        val accessToken = Utils.getAccessToken(this)
+        val accountHolder =
+            AccountHolder(
+                partyId = "346736732646",
+                partyIdType = Constants.EndpointPaths.AccountHolderTypes.MSISDN,
+            )
+        if (StringUtils.isNotBlank(accessToken)) {
+            momoRemittanceApi.validateAccountHolderStatus(
+                accountHolder,
+                BuildConfig.MOMO_API_VERSION_V1,
+                Constants.ProductTypes.REMITTANCE,
+                Settings.getProductSubscriptionKeys(ProductType.REMITTANCE),
+                accessToken,
+            ) { momoAPIResult ->
+                when (momoAPIResult) {
+                    is APIResult.Success -> {
+                        val accountHolderStatus =
+                            Gson().fromJson(
+                                momoAPIResult.value!!.source().readUtf8(),
+                                AccountHolderStatus::class.java,
+                            )
+                        Timber.d(accountHolderStatus.result.toString())
+                    }
+                    is APIResult.Failure -> {
+                        val momoAPIException = momoAPIResult.APIException
+                        toast(momoAPIException?.message ?: "An error occurred!")
+                    }
+                }
+            }
+        }
+    }
+
+    private fun requestToPay() {
+        val accessToken = Utils.getAccessToken(this)
+        val creditTransaction = createRequestTpPayTransaction()
+        val transactionUuid = Utils.generateUUID()
+        if (StringUtils.isNotBlank(accessToken)) {
+            momoRemittanceApi.requestToPay(
+                accessToken,
+                creditTransaction,
+                BuildConfig.MOMO_API_VERSION_V1,
+                Settings.getProductSubscriptionKeys(ProductType.COLLECTION),
+                transactionUuid,
+            ) { momoAPIResult ->
+                when (momoAPIResult) {
+                    is APIResult.Success -> {
+                        requestToPayDeliveryNotification(transactionUuid, Constants.ProductTypes.COLLECTION)
+                        requestToPayTransactionStatus(transactionUuid)
+                    }
+                    is APIResult.Failure -> {
+                        val momoAPIException = momoAPIResult.APIException
+                        toast(momoAPIException?.message ?: "An error occurred!")
+                    }
+                }
+            }
+        }
+    }
+
+    private fun createRequestTpPayTransaction(): Transaction {
+        return Transaction(
+            "10000",
+            "EUR",
+            null,
+            Utils.generateUUID(),
+            null,
+            AccountHolder(AccountHolderType.MSISDN.name, "346736732646"),
+            "Testing",
+            "The Good Company",
+            null,
+            null,
+        )
+    }
+
+    private fun requestToPayTransactionStatus(referenceId: String) {
+        val accessToken = Utils.getAccessToken(this)
+        if (StringUtils.isNotBlank(accessToken)) {
+            momoRemittanceApi.requestToPayTransactionStatus(
+                referenceId,
+                BuildConfig.MOMO_API_VERSION_V1,
+                Settings.getProductSubscriptionKeys(ProductType.COLLECTION),
+                accessToken,
+            ) { momoAPIResult ->
+                when (momoAPIResult) {
+                    is APIResult.Success -> {
+                        val completeTransfer =
+                            Gson().fromJson(momoAPIResult.value!!.source().readUtf8(), Transaction::class.java)
+                        toast("Request to pay is " + completeTransfer.status!!.lowercase())
+                        Timber.d(completeTransfer.toString())
+                    }
+                    is APIResult.Failure -> {
+                        val momoAPIException = momoAPIResult.APIException
+                        toast(momoAPIException?.message ?: "An error occurred!")
+                    }
+                }
+            }
+        }
+    }
+
+    private fun requestToWithdraw() {
+        val accessToken = Utils.getAccessToken(this)
+        val creditTransaction = createRequestTpPayTransaction()
+        val transactionUuid = Utils.generateUUID()
+        if (StringUtils.isNotBlank(accessToken)) {
+            momoRemittanceApi.requestToWithdraw(
+                accessToken,
+                creditTransaction,
+                BuildConfig.MOMO_API_VERSION_V2,
+                Settings.getProductSubscriptionKeys(ProductType.COLLECTION),
+                transactionUuid,
+            ) { momoAPIResult ->
+                when (momoAPIResult) {
+                    is APIResult.Success -> {
+                        requestToWithdrawTransactionStatus(transactionUuid)
+                    }
+                    is APIResult.Failure -> {
+                        val momoAPIException = momoAPIResult.APIException
+                        toast(momoAPIException?.message ?: "An error occurred!")
+                    }
+                }
+            }
+        }
+    }
+
+    private fun requestToWithdrawTransactionStatus(referenceId: String) {
+        val accessToken = Utils.getAccessToken(this)
+        if (StringUtils.isNotBlank(accessToken)) {
+            momoRemittanceApi.requestToWithdrawTransactionStatus(
+                referenceId,
+                BuildConfig.MOMO_API_VERSION_V1,
+                Settings.getProductSubscriptionKeys(ProductType.COLLECTION),
+                accessToken,
+            ) { momoAPIResult ->
+                when (momoAPIResult) {
+                    is APIResult.Success -> {
+                        val completeTransfer =
+                            Gson().fromJson(momoAPIResult.value!!.source().readUtf8(), Transaction::class.java)
+                        toast("Request to withdraw is " + completeTransfer.status!!.lowercase())
                         Timber.d(completeTransfer.toString())
                     }
                     is APIResult.Failure -> {

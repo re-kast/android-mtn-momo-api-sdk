@@ -16,9 +16,8 @@
 package com.rekast.momoapi.callback
 
 import com.google.gson.GsonBuilder
-import com.rekast.momoapi.model.api.CreditTransaction
-import com.rekast.momoapi.model.api.DebitTransaction
-import com.rekast.momoapi.model.api.MomoErrorResponse
+import com.rekast.momoapi.model.api.ErrorResponse
+import com.rekast.momoapi.model.api.Transaction
 import com.rekast.momoapi.utils.Settings
 import com.rekast.momoapi.utils.TransactionStatus
 import okhttp3.ResponseBody
@@ -31,16 +30,16 @@ import java.io.IOException
 /**
  * Transaction Callback for the MTN MOMO API
  * The MTN MOMO API returns the a 200 OK even for transfers that failed.
- * We use [CreditTransactionCallback] to identify the difference between 200 OK and 400
- * This returns the [CreditTransaction] on the [ResponseBody]
+ * We use [TransactionCallback] to identify the difference between 200 OK and 400
+ * This returns the [Transaction] on the [ResponseBody]
  */
-class CreditTransactionCallback(
+class TransactionCallback(
     private val callback: (APIResult: APIResult<ResponseBody?>) -> Unit,
 ) : Callback<ResponseBody?> {
 
     override fun onResponse(call: Call<ResponseBody?>, response: Response<ResponseBody?>) {
         if (response.isSuccessful) {
-            val transaction: DebitTransaction? = Settings.generateDebitTransaction(response)
+            val transaction: Transaction? = Settings.generateTransactionFromResponse(response)
             if (transaction?.status != null) {
                 if (transaction.status == TransactionStatus.SUCCESSFUL.name) {
                     callback.invoke(
@@ -49,14 +48,14 @@ class CreditTransactionCallback(
                         ),
                     )
                 } else {
-                    val error = "${transaction.reason} : ${transaction.reason}"
+                    val error = "${transaction.reason} : ${transaction.financialTransactionId}"
                     callback.invoke(APIResult.Failure(false, APIException(error)))
                 }
                 return
             }
         } else {
             try {
-                val error = GsonBuilder().create().fromJson(response.errorBody()?.string(), MomoErrorResponse::class.java)
+                val error = GsonBuilder().create().fromJson(response.errorBody()?.string(), ErrorResponse::class.java)
                 callback.invoke(APIResult.Failure(false, APIException(error)))
             } catch (e: IOException) {
                 e.printStackTrace()

@@ -37,12 +37,10 @@ class MomoAPIBuilder(private var apiUserId: String) {
 
     fun build(): MomoAPI {
         val momoApi = MomoAPI
-        momoApi.apiUserId = apiUserId
-        momoApi.baseURL = baseURL
-        momoApi.environment = environment
         momoApi.momoAPIRepository = MomoAPIRepository(
-            momoApi.apiUserId,
-            momoApi.baseURL,
+            apiUserId,
+            baseURL,
+            environment,
         )
         return momoApi
     }

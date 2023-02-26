@@ -37,10 +37,10 @@ sealed interface AuthenticationAPI {
      * @param[productSubscriptionKey] -- The Product subscription Key (Ocp-Apim-Subscription-Key)
      * @return[ApiUser] -- Returns the API User if available
      */
-    @GET("/{apiVersion}/apiuser/{apiUser}")
+    @GET(Constants.EndPoints.GET_API_USER)
     fun getApiUser(
-        @Path("apiVersion") apiVersion: String,
-        @Path("apiUser") apiUser: String,
+        @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
+        @Path(Constants.EndpointPaths.API_USER) apiUser: String,
         @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
     ): Call<ApiUser>
 
@@ -51,10 +51,10 @@ sealed interface AuthenticationAPI {
      * @param[productSubscriptionKey] -- The Product subscription Key (Ocp-Apim-Subscription-Key)
      * @return[ApiUserKey] -- Returns the API Key
      */
-    @POST("/{apiVersion}/apiuser/{apiUser}/apikey")
+    @POST(Constants.EndPoints.GET_API_USER_KEY)
     fun getApiUserKey(
-        @Path("apiVersion") apiVersion: String,
-        @Path("apiUser") apiUser: String,
+        @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
+        @Path(Constants.EndpointPaths.API_USER) apiUser: String,
         @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
     ): Call<ApiUserKey>
 
@@ -64,9 +64,9 @@ sealed interface AuthenticationAPI {
      * @param[productSubscriptionKey] -- The Product subscription Key (Ocp-Apim-Subscription-Key)
      * @return[AccessToken] -- Returns the Access Token
      */
-    @POST("/{productType}/token/")
+    @POST(Constants.EndPoints.GET_ACCESS_TOKEN)
     fun getAccessToken(
-        @Path("productType") productType: String,
+        @Path(Constants.EndpointPaths.PRODUCT_TYPE) productType: String,
         @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
     ): Call<AccessToken>
 }

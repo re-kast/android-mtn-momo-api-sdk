@@ -16,13 +16,13 @@
 package com.rekast.momoapi.callback
 
 import com.google.gson.GsonBuilder
-import com.rekast.momoapi.model.api.CreditTransaction
-import com.rekast.momoapi.model.api.DebitTransaction
-import com.rekast.momoapi.model.api.MomoErrorResponse
+import com.rekast.momoapi.model.api.ErrorResponse
+import com.rekast.momoapi.model.api.Notification
+import com.rekast.momoapi.model.api.Transaction
 import com.rekast.momoapi.utils.Settings
-import com.rekast.momoapi.utils.TransactionStatus
 import okhttp3.ResponseBody
 import okhttp3.ResponseBody.Companion.toResponseBody
+import org.apache.commons.lang3.StringUtils
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -31,32 +31,27 @@ import java.io.IOException
 /**
  * Transaction Callback for the MTN MOMO API
  * The MTN MOMO API returns the a 200 OK even for transfers that failed.
- * We use [DebitTransactionCallback] to identify the difference between 200 OK and 400
- * This returns the [DebitTransaction] on the [ResponseBody]
+ * We use [NotificationCallback] to identify the difference between 200 OK and 400
+ * This returns the [Transaction] on the [ResponseBody]
  */
-class DebitTransactionCallback(
+class NotificationCallback(
     private val callback: (APIResult: APIResult<ResponseBody?>) -> Unit,
 ) : Callback<ResponseBody?> {
 
     override fun onResponse(call: Call<ResponseBody?>, response: Response<ResponseBody?>) {
         if (response.isSuccessful) {
-            val transaction: CreditTransaction? = Settings.generateCreditTransaction(response)
-            if (transaction?.status != null) {
-                if (transaction.status == TransactionStatus.SUCCESSFUL.name) {
-                    callback.invoke(
-                        APIResult.Success(
-                            GsonBuilder().setPrettyPrinting().create().toJson(transaction).toResponseBody(),
-                        ),
-                    )
-                } else {
-                    val error = "${transaction.reason} : ${transaction.reason}"
-                    callback.invoke(APIResult.Failure(false, APIException(error)))
-                }
+            val notification: Notification? = Settings.generateNotificationFromResponse(response)
+            if (StringUtils.isNotBlank(notification!!.notificationMessage)) {
+                callback.invoke(
+                    APIResult.Success(
+                        GsonBuilder().setPrettyPrinting().create().toJson(notification).toResponseBody(),
+                    ),
+                )
                 return
             }
         } else {
             try {
-                val error = GsonBuilder().create().fromJson(response.errorBody()?.string(), MomoErrorResponse::class.java)
+                val error = GsonBuilder().create().fromJson(response.errorBody()?.string(), ErrorResponse::class.java)
                 callback.invoke(APIResult.Failure(false, APIException(error)))
             } catch (e: IOException) {
                 e.printStackTrace()

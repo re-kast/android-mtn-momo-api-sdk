@@ -35,7 +35,6 @@ class APICallback<T>(
         } else {
             val code = "${response.code()}"
             var error = ""
-
             runCatching { error = "$code : ${response.errorBody()!!.string()}" }
             callback.invoke(APIResult.Failure(false, APIException(error)))
         }

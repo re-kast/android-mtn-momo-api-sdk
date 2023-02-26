@@ -48,10 +48,19 @@ open class MomoApiClient {
     fun getBasicUserInfo(baseUrl: String, authentication: Interceptor): ProductSharedAPI =
         getRetrofit(baseUrl, authentication).create(ProductSharedAPI::class.java)
 
-    fun getUserInfoWithoutConsent(baseUrl: String, authentication: Interceptor): ProductSharedAPI =
+    fun getUserInfoWithConsent(baseUrl: String, authentication: Interceptor): ProductSharedAPI =
+        getRetrofit(baseUrl, authentication).create(ProductSharedAPI::class.java)
+
+    fun transfer(baseUrl: String, authentication: Interceptor): ProductSharedAPI =
         getRetrofit(baseUrl, authentication).create(ProductSharedAPI::class.java)
 
     fun getTransferStatus(baseUrl: String, authentication: Interceptor): ProductSharedAPI =
+        getRetrofit(baseUrl, authentication).create(ProductSharedAPI::class.java)
+
+    fun requestToPayDeliveryNotification(baseUrl: String, authentication: Interceptor): ProductSharedAPI =
+        getRetrofit(baseUrl, authentication).create(ProductSharedAPI::class.java)
+
+    fun validateAccountHolderStatus(baseUrl: String, authentication: Interceptor): ProductSharedAPI =
         getRetrofit(baseUrl, authentication).create(ProductSharedAPI::class.java)
 
     fun getRetrofit(baseUrl: String, authentication: Interceptor?): Retrofit {

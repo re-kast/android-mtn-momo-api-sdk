@@ -15,6 +15,6 @@
  */
 package com.rekast.momoapi.utils
 
-enum class TransactionType {
+enum class AccountHolderType {
     MSISDN, EMAIL, PARTY_CODE
 }
