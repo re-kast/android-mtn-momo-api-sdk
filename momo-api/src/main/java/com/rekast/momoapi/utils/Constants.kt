@@ -59,7 +59,7 @@ object Constants {
         const val GET_API_USER = "/{apiVersion}/apiuser/{apiUser}"
         const val GET_API_USER_KEY = "/{apiVersion}/apiuser/{apiUser}/apikey"
         const val GET_ACCESS_TOKEN = "/{productType}/token/"
-        const val TRANSFER = "/remittance/{apiVersion}/transfer"
+        const val TRANSFER = "/{productType}/{apiVersion}/transfer"
         const val GET_ACCOUNT_BALANCE = "/{productType}/{apiVersion}/account/balance"
         const val GET_BASIC_USER_INFO = "/{productType}/{apiVersion}/accountholder/msisdn/{accountHolderId}/basicuserinfo"
         const val GET_USER_INFO_WITH_CONSENT = "/{productType}/oauth2/{apiVersion}/userinfo"

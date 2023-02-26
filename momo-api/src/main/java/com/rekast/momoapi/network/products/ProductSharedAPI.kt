@@ -18,6 +18,7 @@ package com.rekast.momoapi.network.products
 import com.rekast.momoapi.model.api.AccountBalance
 import com.rekast.momoapi.model.api.BasicUserInfo
 import com.rekast.momoapi.model.api.Notification
+import com.rekast.momoapi.model.api.Transaction
 import com.rekast.momoapi.model.api.UserInfoWithConsent
 import com.rekast.momoapi.utils.Constants
 import okhttp3.ResponseBody
@@ -162,4 +163,22 @@ sealed interface ProductSharedAPI {
         @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
         @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String,
     ): Call<AccountBalance>
+
+    /**
+     * Makes a request to get the User Info with Consent
+     * @param[transaction] -- This is the Transfer Payload [Transaction]
+     * @param[apiVersion] -- The app Version (v1_0 or v2_0)
+     * @param[productSubscriptionKey] -- The Product subscription Key (Ocp-Apim-Subscription-Key)
+     * @param[environment] -- The API environment (X-Target-Environment)
+     * @return[Unit] -- Returns the Transfer Status
+     */
+    @POST(Constants.EndPoints.TRANSFER)
+    fun transfer(
+        @Body transaction: Transaction,
+        @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
+        @Path(Constants.EndpointPaths.PRODUCT_TYPE) productType: String,
+        @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
+        @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String,
+        @Header(Constants.Headers.X_REFERENCE_ID) uuid: String,
+    ): Call<Unit>
 }

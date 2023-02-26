@@ -170,6 +170,7 @@ object MomoAPI {
      */
     fun transfer(
         transaction: Transaction,
+        productType: String,
         productSubscriptionKey: String,
         accessToken: String,
         apiVersion: String,
@@ -179,6 +180,7 @@ object MomoAPI {
         momoAPIRepository.transfer(
             transaction,
             apiVersion,
+            productType,
             productSubscriptionKey,
             accessToken,
             uuid,

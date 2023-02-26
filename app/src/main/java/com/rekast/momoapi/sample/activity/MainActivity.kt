@@ -148,8 +148,7 @@ class MainActivity : AppCompatActivity() {
                         Utils.saveAccessToken(this, accessToken)
                         getAccountBalance()
                         // getBasicUserInfo()
-                        // transferRemittance()
-                        // requestToPayDeliveryNotification()
+                        transferRemittance()
                         // validateAccountHolderStatus()
                     }
                     is APIResult.Failure -> {
@@ -239,6 +238,7 @@ class MainActivity : AppCompatActivity() {
         if (StringUtils.isNotBlank(accessToken)) {
             momoRemittanceApi.transfer(
                 creditTransaction,
+                Constants.ProductTypes.REMITTANCE,
                 Settings.getProductSubscriptionKeys(ProductType.REMITTANCE),
                 accessToken,
                 BuildConfig.MOMO_API_VERSION_V1,
@@ -247,6 +247,7 @@ class MainActivity : AppCompatActivity() {
                 when (momoAPIResult) {
                     is APIResult.Success -> {
                         getTransferStatus(transactionUuid)
+                        // requestToPayDeliveryNotification(transactionUuid)
                     }
                     is APIResult.Failure -> {
                         val momoAPIException = momoAPIResult.APIException
@@ -297,9 +298,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun requestToPayDeliveryNotification() {
+    private fun requestToPayDeliveryNotification(referenceId: String) {
         val accessToken = Utils.getAccessToken(this)
-        val referenceId = Utils.generateUUID()
         val notification = Notification(
             notificationMessage =
             "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur pellentesque mi" +
@@ -320,7 +320,7 @@ class MainActivity : AppCompatActivity() {
                     is APIResult.Success -> {
                         val string = momoAPIResult.value!!.source().readUtf8()
                         val completeTransfer =
-                            Gson().fromJson(string, Transaction::class.java)
+                            Gson().fromJson(string, Notification::class.java)
                         Timber.d(completeTransfer.toString())
                     }
                     is APIResult.Failure -> {

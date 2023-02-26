@@ -25,13 +25,11 @@ import com.rekast.momoapi.model.authentication.AccessToken
 import com.rekast.momoapi.model.authentication.ApiUser
 import com.rekast.momoapi.model.authentication.ApiUserKey
 import com.rekast.momoapi.network.MomoApiClient
-import com.rekast.momoapi.network.api.RemittanceApiClient
 import com.rekast.momoapi.network.okhttp.AccessTokenInterceptor
 import com.rekast.momoapi.network.okhttp.BasicAuthInterceptor
 import okhttp3.ResponseBody
 import org.apache.commons.lang3.StringUtils
 import retrofit2.Call
-import java.util.*
 
 /**
  * The BaseRepository Class. Responsible for making the actual network call to the MOMO APIs.
@@ -203,19 +201,20 @@ class MomoAPIRepository(
     }
 
     /**
-     * [ProductType.REMITTANCE] Sends a request to transfer to a payee
+     * Sends a request to transfer to an account
      */
     fun transfer(
         transaction: Transaction,
         apiVersion: String,
+        productType: String,
         productSubscriptionKey: String,
         accessToken: String,
         uuid: String,
     ): Call<Unit> {
-        return RemittanceApiClient.transfer(
+        return MomoApiClient().transfer(
             baseUrl,
             AccessTokenInterceptor(accessToken),
-        ).transfer(transaction, apiVersion, productSubscriptionKey, environment, uuid)
+        ).transfer(transaction, apiVersion, productType, productSubscriptionKey, environment, uuid)
     }
 
     fun requestToPay() {
