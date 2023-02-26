@@ -85,8 +85,27 @@ sealed interface ProductSharedAPI {
 
     /**
      * Makes a request to get the User Info with Consent
+     * @param[transaction] -- This is the Transfer Payload [Transaction]
+     * @param[apiVersion] -- The app Version (v1_0 or v2_0)
+     * @param[productType] -- The API Products ([Constants.ProductTypes])
+     * @param[productSubscriptionKey] -- The Product subscription Key (Ocp-Apim-Subscription-Key)
+     * @param[environment] -- The API environment (X-Target-Environment)
+     * @return[Unit] -- Returns the Transfer Status
+     */
+    @POST(Constants.EndPoints.TRANSFER)
+    fun transfer(
+        @Body transaction: Transaction,
+        @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
+        @Path(Constants.EndpointPaths.PRODUCT_TYPE) productType: String,
+        @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
+        @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String,
+        @Header(Constants.Headers.X_REFERENCE_ID) uuid: String,
+    ): Call<Unit>
+
+    /**
+     * Makes a request to get the User Info with Consent
      * @param[referenceId] -- The Transfer Reference ID. This is a UUID V4.
-     * This is the ID used here [RemittanceAPI.transfer]
+     * This is the ID used here [transfer]
      * @param[productType] -- The API Products ([Constants.ProductTypes])
      * @param[apiVersion] -- The app Version (v1_0 or v2_0)
      * @param[productSubscriptionKey] -- The Product subscription Key (Ocp-Apim-Subscription-Key)
@@ -123,7 +142,7 @@ sealed interface ProductSharedAPI {
         @Path(Constants.EndpointPaths.PRODUCT_TYPE) productType: String,
         @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
         @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String,
-        // @Header(Constants.Headers.NOTIFICATION_MESSAGE) notificationMessage: String,
+        @Header(Constants.Headers.NOTIFICATION_MESSAGE) notificationMessage: String,
     ): Call<ResponseBody>
 
     /**
@@ -163,22 +182,4 @@ sealed interface ProductSharedAPI {
         @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
         @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String,
     ): Call<AccountBalance>
-
-    /**
-     * Makes a request to get the User Info with Consent
-     * @param[transaction] -- This is the Transfer Payload [Transaction]
-     * @param[apiVersion] -- The app Version (v1_0 or v2_0)
-     * @param[productSubscriptionKey] -- The Product subscription Key (Ocp-Apim-Subscription-Key)
-     * @param[environment] -- The API environment (X-Target-Environment)
-     * @return[Unit] -- Returns the Transfer Status
-     */
-    @POST(Constants.EndPoints.TRANSFER)
-    fun transfer(
-        @Body transaction: Transaction,
-        @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
-        @Path(Constants.EndpointPaths.PRODUCT_TYPE) productType: String,
-        @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
-        @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String,
-        @Header(Constants.Headers.X_REFERENCE_ID) uuid: String,
-    ): Call<Unit>
 }

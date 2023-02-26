@@ -25,6 +25,7 @@ import com.rekast.momoapi.model.authentication.AccessToken
 import com.rekast.momoapi.model.authentication.ApiUser
 import com.rekast.momoapi.model.authentication.ApiUserKey
 import com.rekast.momoapi.network.MomoApiClient
+import com.rekast.momoapi.network.api.CollectionApiClient
 import com.rekast.momoapi.network.okhttp.AccessTokenInterceptor
 import com.rekast.momoapi.network.okhttp.BasicAuthInterceptor
 import okhttp3.ResponseBody
@@ -137,6 +138,23 @@ class MomoAPIRepository(
     }
 
     /**
+     * Sends a request to transfer to an account
+     */
+    fun transfer(
+        accessToken: String,
+        transaction: Transaction,
+        apiVersion: String,
+        productType: String,
+        productSubscriptionKey: String,
+        uuid: String,
+    ): Call<Unit> {
+        return MomoApiClient().transfer(
+            baseUrl,
+            AccessTokenInterceptor(accessToken),
+        ).transfer(transaction, apiVersion, productType, productSubscriptionKey, environment, uuid)
+    }
+
+    /**
      * Get the transfer status based on the transfer Id [referenceId]
      */
     fun getTransferStatus(
@@ -173,7 +191,7 @@ class MomoAPIRepository(
             productType,
             productSubscriptionKey,
             environment,
-            // notification.notificationMessage
+            notification.notificationMessage,
         )
     }
 
@@ -200,41 +218,54 @@ class MomoAPIRepository(
         )
     }
 
-    /**
-     * Sends a request to transfer to an account
-     */
-    fun transfer(
+    fun requestToPay(
+        accessToken: String,
         transaction: Transaction,
         apiVersion: String,
-        productType: String,
         productSubscriptionKey: String,
-        accessToken: String,
         uuid: String,
     ): Call<Unit> {
-        return MomoApiClient().transfer(
+        return CollectionApiClient.requestToPay(
             baseUrl,
             AccessTokenInterceptor(accessToken),
-        ).transfer(transaction, apiVersion, productType, productSubscriptionKey, environment, uuid)
+        ).requestToPay(transaction, apiVersion, productSubscriptionKey, environment, uuid)
     }
 
-    fun requestToPay() {
-        TODO("Not yet implemented")
+    fun requestToPayTransactionStatus(
+        referenceId: String,
+        apiVersion: String,
+        productSubscriptionKey: String,
+        accessToken: String,
+    ): Call<ResponseBody> {
+        return CollectionApiClient.requestToPayTransactionStatus(
+            baseUrl,
+            AccessTokenInterceptor(accessToken),
+        ).requestToPayTransactionStatus(referenceId, apiVersion, productSubscriptionKey, environment)
     }
 
-    fun requestToPayTransactionStatus() {
-        TODO("Not yet implemented")
+    fun requestToWithdraw(
+        accessToken: String,
+        transaction: Transaction,
+        apiVersion: String,
+        productSubscriptionKey: String,
+        uuid: String,
+    ): Call<Unit> {
+        return CollectionApiClient.requestToWithdraw(
+            baseUrl,
+            AccessTokenInterceptor(accessToken),
+        ).requestToWithdraw(transaction, apiVersion, productSubscriptionKey, environment, uuid)
     }
 
-    fun requestToWithdrawTransactionStatus() {
-        TODO("Not yet implemented")
-    }
-
-    fun requestToWithdrawV1() {
-        TODO("Not yet implemented")
-    }
-
-    fun requestToWithdrawV2() {
-        TODO("Not yet implemented")
+    fun requestToWithdrawTransactionStatus(
+        referenceId: String,
+        apiVersion: String,
+        productSubscriptionKey: String,
+        accessToken: String,
+    ): Call<ResponseBody> {
+        return CollectionApiClient.requestToWithdrawTransactionStatus(
+            baseUrl,
+            AccessTokenInterceptor(accessToken),
+        ).requestToWithdrawTransactionStatus(referenceId, apiVersion, productSubscriptionKey, environment)
     }
 
     fun depositV1() {
@@ -249,10 +280,6 @@ class MomoAPIRepository(
         TODO("Not yet implemented")
     }
 
-    fun getRefundStatus() {
-        TODO("Not yet implemented")
-    }
-
     fun refundV1() {
         TODO("Not yet implemented")
     }
@@ -261,7 +288,7 @@ class MomoAPIRepository(
         TODO("Not yet implemented")
     }
 
-    fun transfer() {
+    fun getRefundStatus() {
         TODO("Not yet implemented")
     }
 }

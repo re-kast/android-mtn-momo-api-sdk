@@ -17,7 +17,6 @@ package com.rekast.momoapi
 
 import com.rekast.momoapi.callback.APICallback
 import com.rekast.momoapi.callback.APIResult
-import com.rekast.momoapi.callback.NotificationCallback
 import com.rekast.momoapi.callback.TransactionCallback
 import com.rekast.momoapi.model.api.AccountBalance
 import com.rekast.momoapi.model.api.AccountHolder
@@ -160,8 +159,9 @@ object MomoAPI {
     }
 
     /**
-     * Prepares to fetch the User Information without consent
+     * Prepares to transfer to a payee
      * @param[transaction] -- The transfer payload from the [Transaction] class
+     * @param[productType] -- The API Products ([Constants.ProductTypes])
      * @param[productSubscriptionKey]  -- The Product subscription Key (Ocp-Apim-Subscription-Key)
      * @param[accessToken] -- The Access Token fetched here [MomoAPI.getAccessToken]
      * @param[apiVersion] -- The app Version (v1_0 or v2_0)
@@ -169,26 +169,26 @@ object MomoAPI {
      * @param[callback] -- The request callback. Returns @see [AccessToken]
      */
     fun transfer(
+        accessToken: String,
         transaction: Transaction,
+        apiVersion: String,
         productType: String,
         productSubscriptionKey: String,
-        accessToken: String,
-        apiVersion: String,
         uuid: String,
         callback: ((APIResult: APIResult<Unit>) -> Unit),
     ) {
         momoAPIRepository.transfer(
+            accessToken,
             transaction,
             apiVersion,
             productType,
             productSubscriptionKey,
-            accessToken,
             uuid,
         ).enqueue(APICallback(callback))
     }
 
     /**
-     * Prepares to fetch the User Information without consent
+     * Prepares to fetch the transfer status
      * @param[referenceId] -- This is new resource Id used here [MomoAPI.transfer]. It is a UUID V4
      * @param[apiVersion] -- The app Version (v1_0 or v2_0)
      * @param[productType] -- The API Products ([Constants.ProductTypes])
@@ -241,7 +241,7 @@ object MomoAPI {
             productType,
             productSubscriptionKey,
             accessToken,
-        ).enqueue(NotificationCallback(callback))
+        ).enqueue(APICallback(callback))
     }
 
     /**
@@ -269,5 +269,103 @@ object MomoAPI {
             productSubscriptionKey,
             accessToken,
         ).enqueue(APICallback(callback))
+    }
+
+    /**
+     * Prepares to send a payment request
+     * @param[transaction] -- The transfer payload from the [Transaction] class
+     * @param[productSubscriptionKey]  -- The Product subscription Key (Ocp-Apim-Subscription-Key)
+     * @param[accessToken] -- The Access Token fetched here [MomoAPI.getAccessToken]
+     * @param[apiVersion] -- The app Version (v1_0 or v2_0)
+     * @param[uuid] -- The new resource UUID. It's a UUID V4.
+     * @param[callback] -- The request callback. Returns @see [AccessToken]
+     */
+    fun requestToPay(
+        accessToken: String,
+        transaction: Transaction,
+        apiVersion: String,
+        productSubscriptionKey: String,
+        uuid: String,
+        callback: ((APIResult: APIResult<Unit>) -> Unit),
+    ) {
+        momoAPIRepository.requestToPay(
+            accessToken,
+            transaction,
+            apiVersion,
+            productSubscriptionKey,
+            uuid,
+        ).enqueue(APICallback(callback))
+    }
+
+    /**
+     * Prepares to fetch the request to pay transaction status
+     * @param[referenceId] -- This is new resource Id used here [MomoAPI.requestToPay]. It is a UUID V4
+     * @param[apiVersion] -- The app Version (v1_0 or v2_0)
+     * @param[productSubscriptionKey]  -- The Product subscription Key (Ocp-Apim-Subscription-Key)
+     * @param[accessToken] -- The Access Token fetched here [MomoAPI.getAccessToken]
+     * @param[callback] -- The request callback. Returns @see [AccessToken]
+     */
+    fun requestToPayTransactionStatus(
+        referenceId: String,
+        apiVersion: String,
+        productSubscriptionKey: String,
+        accessToken: String,
+        callback: ((APIResult: APIResult<ResponseBody?>) -> Unit),
+    ) {
+        momoAPIRepository.requestToPayTransactionStatus(
+            referenceId,
+            apiVersion,
+            productSubscriptionKey,
+            accessToken,
+        ).enqueue(TransactionCallback(callback))
+    }
+
+    /**
+     * Prepares to withdraw from an account
+     * @param[transaction] -- The transfer payload from the [Transaction] class
+     * @param[productSubscriptionKey]  -- The Product subscription Key (Ocp-Apim-Subscription-Key)
+     * @param[accessToken] -- The Access Token fetched here [MomoAPI.getAccessToken]
+     * @param[apiVersion] -- The app Version (v1_0 or v2_0)
+     * @param[uuid] -- The new resource UUID. It's a UUID V4.
+     * @param[callback] -- The request callback. Returns @see [AccessToken]
+     */
+    fun requestToWithdraw(
+        accessToken: String,
+        transaction: Transaction,
+        apiVersion: String,
+        productSubscriptionKey: String,
+        uuid: String,
+        callback: ((APIResult: APIResult<Unit>) -> Unit),
+    ) {
+        momoAPIRepository.requestToWithdraw(
+            accessToken,
+            transaction,
+            apiVersion,
+            productSubscriptionKey,
+            uuid,
+        ).enqueue(APICallback(callback))
+    }
+
+    /**
+     * Prepares to fetch the request to withdraw transaction status
+     * @param[referenceId] -- This is new resource Id used here [MomoAPI.requestToPay]. It is a UUID V4
+     * @param[apiVersion] -- The app Version (v1_0 or v2_0)
+     * @param[productSubscriptionKey]  -- The Product subscription Key (Ocp-Apim-Subscription-Key)
+     * @param[accessToken] -- The Access Token fetched here [MomoAPI.getAccessToken]
+     * @param[callback] -- The request callback. Returns @see [AccessToken]
+     */
+    fun requestToWithdrawTransactionStatus(
+        referenceId: String,
+        apiVersion: String,
+        productSubscriptionKey: String,
+        accessToken: String,
+        callback: ((APIResult: APIResult<ResponseBody?>) -> Unit),
+    ) {
+        momoAPIRepository.requestToWithdrawTransactionStatus(
+            referenceId,
+            apiVersion,
+            productSubscriptionKey,
+            accessToken,
+        ).enqueue(TransactionCallback(callback))
     }
 }

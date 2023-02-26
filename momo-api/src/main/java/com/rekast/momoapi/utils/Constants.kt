@@ -69,5 +69,9 @@ object Constants {
         const val VALIDATE_ACCOUNT_HOLDER_STATUS =
             "/{productType}/{apiVersion}/accountholder/{accountHolderIdType}/{accountHolderId}/active"
         const val GET_ACCOUNT_BALANCE_IN_SPECIFIC_CURRENCY = "/{productType}/{apiVersion}/account/balance/{currency}"
+        const val REQUEST_TO_PAY = "/collection/{apiVersion}/requesttopay"
+        const val REQUEST_TO_PAY_STATUS = "/collection/{apiVersion}/requesttopay/{referenceId}"
+        const val REQUEST_TO_WITHDRAW = "/collection/{apiVersion}/requesttowithdraw"
+        const val REQUEST_TO_WITHDRAW_STATUS = "/collection/{apiVersion}/requesttowithdraw/{referenceId}"
     }
 }

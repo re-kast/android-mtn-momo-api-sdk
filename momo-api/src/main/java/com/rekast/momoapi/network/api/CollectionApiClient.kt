@@ -16,5 +16,20 @@
 package com.rekast.momoapi.network.api
 
 import com.rekast.momoapi.network.MomoApiClient
+import com.rekast.momoapi.network.products.CollectionAPI
+import okhttp3.Interceptor
 
-object CollectionApiClient : MomoApiClient()
+object CollectionApiClient : MomoApiClient() {
+
+    fun requestToPay(baseUrl: String, authentication: Interceptor): CollectionAPI =
+        getRetrofit(baseUrl, authentication).create(CollectionAPI::class.java)
+
+    fun requestToPayTransactionStatus(baseUrl: String, authentication: Interceptor): CollectionAPI =
+        getRetrofit(baseUrl, authentication).create(CollectionAPI::class.java)
+
+    fun requestToWithdraw(baseUrl: String, authentication: Interceptor): CollectionAPI =
+        getRetrofit(baseUrl, authentication).create(CollectionAPI::class.java)
+
+    fun requestToWithdrawTransactionStatus(baseUrl: String, authentication: Interceptor): CollectionAPI =
+        getRetrofit(baseUrl, authentication).create(CollectionAPI::class.java)
+}
