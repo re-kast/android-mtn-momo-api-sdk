@@ -15,8 +15,25 @@
  */
 package com.rekast.momoapi.network.products
 
+import com.rekast.momoapi.model.api.DebitTransaction
+import com.rekast.momoapi.utils.Constants
+import retrofit2.Call
+import retrofit2.http.Body
+import retrofit2.http.Header
+import retrofit2.http.POST
+import retrofit2.http.Path
+
 /**
- * This is the retrofit interface to handle the various calls to the Lipa Na MPESA API. This interface defines the
+ * This is the retrofit interface to handle the various calls to the Remittance API. This interface defines the
  * method, the request and response from the API.
  */
-sealed interface RemittanceAPI : ProductSharedAPI
+sealed interface RemittanceAPI : ProductSharedAPI {
+    @POST("/remittance/{apiVersion}/transfer")
+    fun transfer(
+        @Body transaction: DebitTransaction,
+        @Path("apiVersion") apiVersion: String,
+        @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
+        @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String,
+        @Header(Constants.Headers.X_REFERENCE_ID) uuid: String,
+    ): Call<Unit>
+}

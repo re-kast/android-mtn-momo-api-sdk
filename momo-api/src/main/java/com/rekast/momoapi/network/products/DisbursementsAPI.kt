@@ -15,4 +15,8 @@
  */
 package com.rekast.momoapi.network.products
 
-sealed interface DisbursementsAPI
+/**
+ * This is the retrofit interface to handle the various calls to the Disbursements API. This interface defines the
+ * method, the request and response from the API.
+ */
+sealed interface DisbursementsAPI : ProductSharedAPI

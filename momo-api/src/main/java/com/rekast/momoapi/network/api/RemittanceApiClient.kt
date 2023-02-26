@@ -16,5 +16,10 @@
 package com.rekast.momoapi.network.api
 
 import com.rekast.momoapi.network.MomoApiClient
+import com.rekast.momoapi.network.products.RemittanceAPI
+import okhttp3.Interceptor
 
-object RemittanceApiClient : MomoApiClient()
+object RemittanceApiClient : MomoApiClient() {
+    fun transfer(baseUrl: String, authentication: Interceptor): RemittanceAPI =
+        getRetrofit(baseUrl, authentication).create(RemittanceAPI::class.java)
+}

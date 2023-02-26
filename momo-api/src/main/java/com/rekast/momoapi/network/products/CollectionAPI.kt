@@ -15,4 +15,8 @@
  */
 package com.rekast.momoapi.network.products
 
-sealed interface CollectionAPI
+/**
+ * This is the retrofit interface to handle the various calls to the Collection API. This interface defines the
+ * method, the request and response from the API.
+ */
+sealed interface CollectionAPI : ProductSharedAPI
