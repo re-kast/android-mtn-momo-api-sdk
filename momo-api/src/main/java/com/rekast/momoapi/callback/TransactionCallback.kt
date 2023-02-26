@@ -16,9 +16,8 @@
 package com.rekast.momoapi.callback
 
 import com.google.gson.GsonBuilder
-import com.rekast.momoapi.model.api.CreditTransaction
-import com.rekast.momoapi.model.api.DebitTransaction
 import com.rekast.momoapi.model.api.ErrorResponse
+import com.rekast.momoapi.model.api.Transaction
 import com.rekast.momoapi.utils.Settings
 import com.rekast.momoapi.utils.TransactionStatus
 import okhttp3.ResponseBody
@@ -31,16 +30,16 @@ import java.io.IOException
 /**
  * Transaction Callback for the MTN MOMO API
  * The MTN MOMO API returns the a 200 OK even for transfers that failed.
- * We use [DebitTransactionCallback] to identify the difference between 200 OK and 400
- * This returns the [DebitTransaction] on the [ResponseBody]
+ * We use [TransactionCallback] to identify the difference between 200 OK and 400
+ * This returns the [Transaction] on the [ResponseBody]
  */
-class DebitTransactionCallback(
+class TransactionCallback(
     private val callback: (APIResult: APIResult<ResponseBody?>) -> Unit,
 ) : Callback<ResponseBody?> {
 
     override fun onResponse(call: Call<ResponseBody?>, response: Response<ResponseBody?>) {
         if (response.isSuccessful) {
-            val transaction: CreditTransaction? = Settings.generateCreditTransaction(response)
+            val transaction: Transaction? = Settings.generateTransactionFromResponse(response)
             if (transaction?.status != null) {
                 if (transaction.status == TransactionStatus.SUCCESSFUL.name) {
                     callback.invoke(
@@ -49,7 +48,7 @@ class DebitTransactionCallback(
                         ),
                     )
                 } else {
-                    val error = "${transaction.reason} : ${transaction.reason}"
+                    val error = "${transaction.reason} : ${transaction.financialTransactionId}"
                     callback.invoke(APIResult.Failure(false, APIException(error)))
                 }
                 return

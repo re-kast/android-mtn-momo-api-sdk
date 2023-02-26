@@ -54,6 +54,12 @@ open class MomoApiClient {
     fun getTransferStatus(baseUrl: String, authentication: Interceptor): ProductSharedAPI =
         getRetrofit(baseUrl, authentication).create(ProductSharedAPI::class.java)
 
+    fun requestToPayDeliveryNotification(baseUrl: String, authentication: Interceptor): ProductSharedAPI =
+        getRetrofit(baseUrl, authentication).create(ProductSharedAPI::class.java)
+
+    fun validateAccountHolderStatus(baseUrl: String, authentication: Interceptor): ProductSharedAPI =
+        getRetrofit(baseUrl, authentication).create(ProductSharedAPI::class.java)
+
     fun getRetrofit(baseUrl: String, authentication: Interceptor?): Retrofit {
         val httpLoggingInterceptor = HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
         val builder = if (/*baseUrl == Environment.SANDBOX.url*/ true) {

@@ -15,7 +15,7 @@
  */
 package com.rekast.momoapi.network.products
 
-import com.rekast.momoapi.model.api.DebitTransaction
+import com.rekast.momoapi.model.api.Transaction
 import com.rekast.momoapi.utils.Constants
 import retrofit2.Call
 import retrofit2.http.Body
@@ -28,10 +28,17 @@ import retrofit2.http.Path
  * method, the request and response from the API.
  */
 sealed interface RemittanceAPI : ProductSharedAPI {
-
+    /**
+     * Makes a request to get the User Info with Consent
+     * @param[transaction] -- This is the Transfer Payload [Transaction]
+     * @param[apiVersion] -- The app Version (v1_0 or v2_0)
+     * @param[productSubscriptionKey] -- The Product subscription Key (Ocp-Apim-Subscription-Key)
+     * @param[environment] -- The API environment (X-Target-Environment)
+     * @return[Unit] -- Returns the Transfer Status
+     */
     @POST(Constants.EndPoints.TRANSFER)
     fun transfer(
-        @Body transaction: DebitTransaction,
+        @Body transaction: Transaction,
         @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
         @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
         @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String,

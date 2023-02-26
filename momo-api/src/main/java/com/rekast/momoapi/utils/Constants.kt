@@ -17,6 +17,7 @@ package com.rekast.momoapi.utils
 
 object Constants {
     const val TIMESTAMP_FORMAT = "yyyyMMddHHmmss"
+    const val NOTIFICATION_MESSAGE_LENGTH = 160L
     object Headers {
         const val OCP_APIM_SUBSCRIPTION_KEY = "Ocp-Apim-Subscription-Key"
         const val X_CALLBACK_URL = "X-Callback-Url"
@@ -44,7 +45,13 @@ object Constants {
         const val API_USER = "apiUser"
         const val PRODUCT_TYPE = "productType"
         const val REFERENCE_ID = "referenceId"
-        const val ACCOUNT_HOLDER = "acountHolder"
+        const val ACCOUNT_HOLDER_ID = "accountHolderId"
+        const val ACCOUNT_HOLDER_TYPE = "accountHolderIdType"
+        object AccountHolderTypes {
+            const val MSISDN = "msisdn"
+            const val EMAIL = "email"
+            const val PARTY_CODE = "party_code"
+        }
     }
 
     object EndPoints {
@@ -53,8 +60,12 @@ object Constants {
         const val GET_ACCESS_TOKEN = "/{productType}/token/"
         const val TRANSFER = "/remittance/{apiVersion}/transfer"
         const val GET_ACCOUNT_BALANCE = "/{productType}/{apiVersion}/account/balance"
-        const val GET_BASIC_USER_INFO = "/{productType}/{apiVersion}/accountholder/msisdn/{acountHolder}/basicuserinfo"
+        const val GET_BASIC_USER_INFO = "/{productType}/{apiVersion}/accountholder/msisdn/{accountHolderId}/basicuserinfo"
         const val GET_USER_INFO_WITHOUT_CONSENT = "/{productType}/oauth2/{apiVersion}/userinfo"
         const val GET_TRANSFER_STATUS = "/{productType}/{apiVersion}/transfer/{referenceId}"
+        const val REQUEST_TO_PAY_DELIVERY_NOTIFICATION =
+            "/{productType}/{apiVersion}/requesttopay/{referenceId}/deliverynotification"
+        const val VALIDATE_ACCOUNT_HOLDER_STATUS =
+            "/{productType}/{apiVersion}/accountholder/{accountHolderIdType}/{accountHolderId}/active"
     }
 }

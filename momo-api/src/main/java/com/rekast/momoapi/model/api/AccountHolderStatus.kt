@@ -19,7 +19,6 @@ import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Payer(
-    @SerializedName("partyIdType") var partyIdType: String,
-    @SerializedName("partyId") var partyId: String,
+data class AccountHolderStatus(
+    @SerializedName("result") var result: Boolean,
 )

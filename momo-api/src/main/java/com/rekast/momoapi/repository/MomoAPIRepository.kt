@@ -16,8 +16,10 @@
 package com.rekast.momoapi.repository
 
 import com.rekast.momoapi.model.api.AccountBalance
+import com.rekast.momoapi.model.api.AccountHolder
 import com.rekast.momoapi.model.api.BasicUserInfo
-import com.rekast.momoapi.model.api.DebitTransaction
+import com.rekast.momoapi.model.api.Notification
+import com.rekast.momoapi.model.api.Transaction
 import com.rekast.momoapi.model.api.UserInfoWithConsent
 import com.rekast.momoapi.model.authentication.AccessToken
 import com.rekast.momoapi.model.authentication.ApiUser
@@ -120,6 +122,9 @@ class MomoAPIRepository(
         ).getUserInfoWithoutConsent(productType, apiVersion, productSubscriptionKey, environment)
     }
 
+    /**
+     * Get the transfer status based on the transfer Id [referenceId]
+     */
     fun getTransferStatus(
         referenceId: String,
         apiVersion: String,
@@ -133,10 +138,52 @@ class MomoAPIRepository(
         ).getTransferStatus(referenceId, apiVersion, productType, productSubscriptionKey, environment)
     }
 
-    fun requestToPayDeliveryNotification() {
+    /**
+     * Sends a request to pay a user. The user is identified by the [referenceId]
+     */
+    fun requestToPayDeliveryNotification(
+        notification: Notification,
+        referenceId: String,
+        apiVersion: String,
+        productType: String,
+        productSubscriptionKey: String,
+        accessToken: String,
+    ): Call<ResponseBody> {
+        return MomoApiClient().requestToPayDeliveryNotification(
+            baseUrl,
+            AccessTokenInterceptor(accessToken),
+        ).requestToPayDeliveryNotification(
+            notification,
+            referenceId,
+            apiVersion,
+            productType,
+            productSubscriptionKey,
+            environment,
+            // notification.notificationMessage
+        )
     }
 
-    fun validateAccountHolderStatus() {
+    /**
+     * Validate an account status.
+     */
+    fun validateAccountHolderStatus(
+        accountHolder: AccountHolder,
+        apiVersion: String,
+        productType: String,
+        productSubscriptionKey: String,
+        accessToken: String,
+    ): Call<ResponseBody> {
+        return MomoApiClient().validateAccountHolderStatus(
+            baseUrl,
+            AccessTokenInterceptor(accessToken),
+        ).validateAccountHolderStatus(
+            accountHolder.partyId,
+            accountHolder.partyIdType,
+            apiVersion,
+            productType,
+            productSubscriptionKey,
+            environment,
+        )
     }
 
     fun getAccountBalanceInSpecificCurrency() {
@@ -146,7 +193,7 @@ class MomoAPIRepository(
      * Start the Remittance methods
      */
     fun transfer(
-        transaction: DebitTransaction,
+        transaction: Transaction,
         apiVersion: String,
         productSubscriptionKey: String,
         accessToken: String,

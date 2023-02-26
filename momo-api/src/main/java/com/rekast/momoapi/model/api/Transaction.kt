@@ -19,6 +19,16 @@ import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class DeliveryNotification(
-    @SerializedName("notificationMessage") var notificationMessage: String,
+data class Transaction(
+    @SerializedName("amount") var amount: String,
+    @SerializedName("currency") var currency: String,
+    @SerializedName("financialTransactionId") var financialTransactionId: String? = "",
+    @SerializedName("externalId") var externalId: String,
+    @SerializedName("payee") var payee: AccountHolder? = null,
+    @SerializedName("payer") var payer: AccountHolder? = null,
+    @SerializedName("payerMessage") var payerMessage: String,
+    @SerializedName("payeeNote") var payeeNote: String,
+    @SerializedName("status") var status: String? = "",
+    @SerializedName("reason") var reason: String? = "",
+    // @SerializedName("reason") var reason: MomoErrorResponse? = null,
 )
