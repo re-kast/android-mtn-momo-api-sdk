@@ -19,14 +19,15 @@ import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class TransactionStatus(
+data class CreditTransaction(
     @SerializedName("amount") var amount: String,
     @SerializedName("currency") var currency: String,
-    @SerializedName("financialTransactionId") var financialTransactionId: String,
+    @SerializedName("financialTransactionId") var financialTransactionId: String? = "",
     @SerializedName("externalId") var externalId: String,
     @SerializedName("payer") var payer: Payer,
     @SerializedName("payerMessage") var payerMessage: String,
     @SerializedName("payeeNote") var payeeNote: String,
-    @SerializedName("status") var status: String,
-    @SerializedName("reason") var reason: MomoErrorResponse,
+    @SerializedName("status") var status: String? = "",
+    @SerializedName("reason") var reason: String? = "",
+    // @SerializedName("reason") var reason: MomoErrorResponse? = null,
 )

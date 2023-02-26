@@ -19,11 +19,16 @@ import com.rekast.momoapi.model.api.AccountBalance
 import com.rekast.momoapi.model.api.BasicUserInfo
 import com.rekast.momoapi.model.api.UserInfoWithConsent
 import com.rekast.momoapi.utils.Constants
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Path
 
+/**
+ * This is the retrofit interface to handle the various calls to the Shared Product APIs. This interface defines the
+ * method, the request and response from the API.
+ */
 sealed interface ProductSharedAPI {
     /**
      * Makes a request to get the Account Balance
@@ -73,4 +78,13 @@ sealed interface ProductSharedAPI {
         @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
         @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String,
     ): Call<UserInfoWithConsent>
+
+    @GET("/{productType}/{apiVersion}/transfer/{referenceId}")
+    fun getTransferStatus(
+        @Path("referenceId") referenceId: String,
+        @Path("apiVersion") apiVersion: String,
+        @Path("productType") productType: String,
+        @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
+        @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String,
+    ): Call<ResponseBody>
 }

@@ -17,16 +17,23 @@ package com.rekast.momoapi.repository
 
 import com.rekast.momoapi.model.api.AccountBalance
 import com.rekast.momoapi.model.api.BasicUserInfo
+import com.rekast.momoapi.model.api.DebitTransaction
 import com.rekast.momoapi.model.api.UserInfoWithConsent
 import com.rekast.momoapi.model.authentication.AccessToken
 import com.rekast.momoapi.model.authentication.ApiUser
 import com.rekast.momoapi.model.authentication.ApiUserKey
 import com.rekast.momoapi.network.MomoApiClient
+import com.rekast.momoapi.network.api.RemittanceApiClient
 import com.rekast.momoapi.network.okhttp.AccessTokenInterceptor
 import com.rekast.momoapi.network.okhttp.BasicAuthInterceptor
+import okhttp3.ResponseBody
 import retrofit2.Call
 
-abstract class MomoAPIRepository(
+/**
+ * The BaseRepository Class. Responsible for making the actual network call to the MOMO APIs.
+ * This calls holds all the commons API methods for all the MTN MOMO Products
+ */
+class MomoAPIRepository(
     var apiUserId: String,
     var baseUrl: String,
 ) {
@@ -35,7 +42,6 @@ abstract class MomoAPIRepository(
      */
     fun checkApiUser(
         productSubscriptionKey: String,
-        apiUserId: String,
         apiVersion: String,
     ): Call<ApiUser> {
         return MomoApiClient().checkApiUser(baseUrl)
@@ -47,7 +53,6 @@ abstract class MomoAPIRepository(
      */
     fun getUserApiKey(
         productSubscriptionKey: String,
-        apiUserId: String,
         apiVersion: String,
     ): Call<ApiUserKey> {
         return MomoApiClient().getApiUserKey(baseUrl)
@@ -59,7 +64,6 @@ abstract class MomoAPIRepository(
      */
     fun getAccessToken(
         productSubscriptionKey: String,
-        apiUserId: String,
         apiKey: String,
         productType: String,
     ): Call<AccessToken> {
@@ -116,5 +120,99 @@ abstract class MomoAPIRepository(
             baseUrl,
             AccessTokenInterceptor(accessToken),
         ).getUserInfoWithoutConsent(productType, apiVersion, productSubscriptionKey, environment)
+    }
+
+    fun getTransferStatus(
+        referenceId: String,
+        apiVersion: String,
+        productType: String,
+        productSubscriptionKey: String,
+        environment: String,
+        accessToken: String,
+    ): Call<ResponseBody> {
+        return MomoApiClient().getTransferStatus(
+            baseUrl,
+            AccessTokenInterceptor(accessToken),
+        ).getTransferStatus(referenceId, apiVersion, productType, productSubscriptionKey, environment)
+    }
+
+    fun requestToPayDeliveryNotification() {
+    }
+
+    fun validateAccountHolderStatus() {
+    }
+
+    fun getAccountBalanceInSpecificCurrency() {
+    }
+
+    /**
+     * Start the Remittance methods
+     */
+    fun transfer(
+        transaction: DebitTransaction,
+        apiVersion: String,
+        productSubscriptionKey: String,
+        environment: String,
+        accessToken: String,
+        uuid: String,
+    ): Call<Unit> {
+        return RemittanceApiClient.transfer(
+            baseUrl,
+            AccessTokenInterceptor(accessToken),
+        ).transfer(transaction, apiVersion, productSubscriptionKey, environment, uuid)
+    }
+
+    fun getUserInfoWithUserConsent() {
+    }
+
+    /**
+     * Start the Disbursement methods
+     */
+    fun requestToPay() {
+        TODO("Not yet implemented")
+    }
+
+    fun requestToPayTransactionStatus() {
+        TODO("Not yet implemented")
+    }
+
+    fun requestToWithdrawTransactionStatus() {
+        TODO("Not yet implemented")
+    }
+
+    fun requestToWithdrawV1() {
+        TODO("Not yet implemented")
+    }
+
+    fun requestToWithdrawV2() {
+        TODO("Not yet implemented")
+    }
+
+    fun depositV1() {
+        TODO("Not yet implemented")
+    }
+
+    fun depositV2() {
+        TODO("Not yet implemented")
+    }
+
+    fun getDepositStatus() {
+        TODO("Not yet implemented")
+    }
+
+    fun getRefundStatus() {
+        TODO("Not yet implemented")
+    }
+
+    fun refundV1() {
+        TODO("Not yet implemented")
+    }
+
+    fun refundV2() {
+        TODO("Not yet implemented")
+    }
+
+    fun transfer() {
+        TODO("Not yet implemented")
     }
 }

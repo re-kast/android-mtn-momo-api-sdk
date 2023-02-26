@@ -16,8 +16,13 @@
 package com.rekast.momoapi.utils
 
 import android.util.Base64
+import com.google.gson.Gson
 import com.rekast.momoapi.BuildConfig
+import com.rekast.momoapi.model.api.CreditTransaction
+import com.rekast.momoapi.model.api.DebitTransaction
+import okhttp3.ResponseBody
 import org.apache.commons.lang3.StringUtils
+import retrofit2.Response
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -25,6 +30,8 @@ import java.util.*
  * Contains General Settings used in the library.
  */
 object Settings {
+
+    fun generateUUID(): String = UUID.randomUUID().toString()
 
     /**
      * Connection timeout duration
@@ -106,5 +113,15 @@ object Settings {
             }
         }
         return productKey
+    }
+
+    fun generateDebitTransaction(response: Response<ResponseBody?>): DebitTransaction? {
+        val data: String = response.body()!!.source().readUtf8()
+        return Gson().fromJson(data, DebitTransaction::class.java)
+    }
+
+    fun generateCreditTransaction(response: Response<ResponseBody?>): CreditTransaction? {
+        val data: String = response.body()!!.source().readUtf8()
+        return Gson().fromJson(data, CreditTransaction::class.java)
     }
 }

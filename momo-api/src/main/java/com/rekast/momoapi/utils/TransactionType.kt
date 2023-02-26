@@ -13,24 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.rekast.momoapi.repository.products
+package com.rekast.momoapi.utils
 
-import com.rekast.momoapi.repository.MomoAPIRepository
-
-class MomoRemittanceAPIRepository(apiUserId: String, baseUrl: String) : MomoAPIRepository(apiUserId, baseUrl) {
-
-    fun getTransferStatus() {
-    }
-
-    fun getUserInfoWithUserConsent() {
-    }
-
-    fun requestToPayDeliveryNotification() {
-    }
-
-    fun transfer() {
-    }
-
-    fun validateAccountHolderStatus() {
-    }
+enum class TransactionType {
+    MSISDN, EMAIL, PARTY_CODE
 }

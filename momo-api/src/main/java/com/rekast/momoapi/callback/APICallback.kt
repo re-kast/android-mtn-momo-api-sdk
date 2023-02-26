@@ -24,27 +24,27 @@ import retrofit2.Response
  * returns [onResponse] for successful calls and
  * [onFailure] for errors.
  */
-class MomoAPICallback<T>(
-    private val callback: (momoAPIResult: MomoAPIResult<T>) -> Unit,
+class APICallback<T>(
+    private val callback: (APIResult: APIResult<T>) -> Unit,
 ) : Callback<T> {
 
     override fun onResponse(call: Call<T>, response: Response<T>) {
         if (response.isSuccessful) {
             val data: T? = response.body()
-            if (data != null) callback.invoke(MomoAPIResult.Success(data))
+            if (data != null) callback.invoke(APIResult.Success(data))
         } else {
             val code = "${response.code()}"
             var error = ""
 
             runCatching { error = "$code : ${response.errorBody()!!.string()}" }
-            callback.invoke(MomoAPIResult.Failure(false, MomoAPIException(error)))
+            callback.invoke(APIResult.Failure(false, APIException(error)))
         }
     }
 
     override fun onFailure(call: Call<T>, t: Throwable) = callback.invoke(
-        MomoAPIResult.Failure(
+        APIResult.Failure(
             true,
-            MomoAPIException(t.localizedMessage),
+            APIException(t.localizedMessage),
         ),
     )
 }

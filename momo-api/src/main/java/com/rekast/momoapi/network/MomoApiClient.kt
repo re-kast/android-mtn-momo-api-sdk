@@ -30,6 +30,9 @@ import java.util.concurrent.TimeUnit
  */
 
 open class MomoApiClient {
+    /**
+     * Common APIs across all the Products
+     */
     fun checkApiUser(baseUrl: String): AuthenticationAPI =
         getRetrofit(baseUrl, null).create(AuthenticationAPI::class.java)
 
@@ -48,7 +51,10 @@ open class MomoApiClient {
     fun getUserInfoWithoutConsent(baseUrl: String, authentication: Interceptor): ProductSharedAPI =
         getRetrofit(baseUrl, authentication).create(ProductSharedAPI::class.java)
 
-    private fun getRetrofit(baseUrl: String, authentication: Interceptor?): Retrofit {
+    fun getTransferStatus(baseUrl: String, authentication: Interceptor): ProductSharedAPI =
+        getRetrofit(baseUrl, authentication).create(ProductSharedAPI::class.java)
+
+    fun getRetrofit(baseUrl: String, authentication: Interceptor?): Retrofit {
         val httpLoggingInterceptor = HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
         val builder = if (/*baseUrl == Environment.SANDBOX.url*/ true) {
             UnsafeOkHttpClient().unsafeOkHttpClient.addInterceptor(httpLoggingInterceptor)

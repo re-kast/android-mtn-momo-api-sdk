@@ -15,22 +15,13 @@
  */
 package com.rekast.momoapi.callback
 
-import com.rekast.momoapi.model.api.MomoErrorResponse
-
 /**
- * Handles exceptions and messages for the exceptions.
+ * Holds the state for Payment status.
  */
-class MomoAPIException : Exception {
-
-    lateinit var errorResponse: MomoErrorResponse
-
-    constructor(message: String?) : super(message)
-
-    constructor(errorResponse: MomoErrorResponse) : super("${errorResponse.code} : ${errorResponse.message}") {
-        this.errorResponse = errorResponse
-    }
-
-    constructor(message: String, cause: Throwable) : super(message, cause)
-
-    constructor(cause: Throwable) : super(cause)
+sealed class APIResult<out T> {
+    data class Success<out T>(val value: T) : APIResult<T>()
+    data class Failure(
+        val isNetworkError: Boolean,
+        val APIException: APIException?,
+    ) : APIResult<Nothing>()
 }
