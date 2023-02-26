@@ -208,10 +208,10 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun getUserInfoWithoutConsent() {
+    private fun getUserInfoWithConsent() {
         val accessToken = Utils.getAccessToken(this)
         if (StringUtils.isNotBlank(accessToken)) {
-            momoRemittanceApi.getUserInfoWithoutConsent(
+            momoRemittanceApi.getUserInfoWithConsent(
                 Settings.getProductSubscriptionKeys(ProductType.REMITTANCE),
                 accessToken,
                 BuildConfig.MOMO_API_VERSION_V1,

@@ -132,7 +132,7 @@ object MomoAPI {
     }
 
     /**
-     * Prepares to fetch the User Information without consent
+     * Prepares to fetch the User Information with consent
      * @param[productSubscriptionKey]  -- The Product subscription Key (Ocp-Apim-Subscription-Key)
      * @param[accessToken] -- The Access Token fetched here [MomoAPI.getAccessToken]
      * @param[apiVersion] -- The app Version (v1_0 or v2_0)
@@ -140,14 +140,14 @@ object MomoAPI {
      * @param[callback] -- The request callback. Returns @see [AccessToken]
      */
     // API Doesn't seem to work
-    fun getUserInfoWithoutConsent(
+    fun getUserInfoWithConsent(
         productSubscriptionKey: String,
         accessToken: String,
         apiVersion: String,
         productType: String,
         callback: ((APIResult: APIResult<UserInfoWithConsent>) -> Unit),
     ) {
-        momoAPIRepository.getUserInfoWithoutConsent(
+        momoAPIRepository.getUserInfoWithConsent(
             productSubscriptionKey,
             accessToken,
             apiVersion,

@@ -108,18 +108,18 @@ class MomoAPIRepository(
     }
 
     /**
-     * Get the user information for a certain MTN MOMO User without consent
+     * Get the user information for a certain MTN MOMO User with consent
      */
-    fun getUserInfoWithoutConsent(
+    fun getUserInfoWithConsent(
         productSubscriptionKey: String,
         accessToken: String,
         apiVersion: String,
         productType: String,
     ): Call<UserInfoWithConsent> {
-        return MomoApiClient().getUserInfoWithoutConsent(
+        return MomoApiClient().getUserInfoWithConsent(
             baseUrl,
             AccessTokenInterceptor(accessToken),
-        ).getUserInfoWithoutConsent(productType, apiVersion, productSubscriptionKey, environment)
+        ).getUserInfoWithConsent(productType, apiVersion, productSubscriptionKey, environment)
     }
 
     /**
@@ -186,11 +186,8 @@ class MomoAPIRepository(
         )
     }
 
-    fun getAccountBalanceInSpecificCurrency() {
-    }
-
     /**
-     * Start the Remittance methods
+     * [ProductType.REMITTANCE] Sends a request to transfer to a payee
      */
     fun transfer(
         transaction: Transaction,
@@ -205,7 +202,8 @@ class MomoAPIRepository(
         ).transfer(transaction, apiVersion, productSubscriptionKey, environment, uuid)
     }
 
-    fun getUserInfoWithUserConsent() {
+
+    fun getAccountBalanceInSpecificCurrency() {
     }
 
     /**

@@ -61,7 +61,7 @@ object Constants {
         const val TRANSFER = "/remittance/{apiVersion}/transfer"
         const val GET_ACCOUNT_BALANCE = "/{productType}/{apiVersion}/account/balance"
         const val GET_BASIC_USER_INFO = "/{productType}/{apiVersion}/accountholder/msisdn/{accountHolderId}/basicuserinfo"
-        const val GET_USER_INFO_WITHOUT_CONSENT = "/{productType}/oauth2/{apiVersion}/userinfo"
+        const val GET_USER_INFO_WITH_CONSENT = "/{productType}/oauth2/{apiVersion}/userinfo"
         const val GET_TRANSFER_STATUS = "/{productType}/{apiVersion}/transfer/{referenceId}"
         const val REQUEST_TO_PAY_DELIVERY_NOTIFICATION =
             "/{productType}/{apiVersion}/requesttopay/{referenceId}/deliverynotification"

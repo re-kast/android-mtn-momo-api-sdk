@@ -74,8 +74,8 @@ sealed interface ProductSharedAPI {
      * @param[environment] -- The API environment (X-Target-Environment)
      * @return[UserInfoWithConsent] -- Returns the User Info with Consent
      */
-    @GET(Constants.EndPoints.GET_USER_INFO_WITHOUT_CONSENT)
-    fun getUserInfoWithoutConsent(
+    @GET(Constants.EndPoints.GET_USER_INFO_WITH_CONSENT)
+    fun getUserInfoWithConsent(
         @Path(Constants.EndpointPaths.PRODUCT_TYPE) productType: String,
         @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
         @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
