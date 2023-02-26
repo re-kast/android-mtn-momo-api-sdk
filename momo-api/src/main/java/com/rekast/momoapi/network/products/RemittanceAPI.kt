@@ -28,6 +28,7 @@ import retrofit2.http.Path
  * method, the request and response from the API.
  */
 sealed interface RemittanceAPI : ProductSharedAPI {
+
     @POST(Constants.EndPoints.TRANSFER)
     fun transfer(
         @Body transaction: DebitTransaction,
