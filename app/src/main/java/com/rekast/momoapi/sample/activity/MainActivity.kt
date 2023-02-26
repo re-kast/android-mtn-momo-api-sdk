@@ -146,10 +146,10 @@ class MainActivity : AppCompatActivity() {
                     is APIResult.Success -> {
                         val accessToken = momoAPIResult.value
                         Utils.saveAccessToken(this, accessToken)
-                        // getAccountBalance()
+                        getAccountBalance()
                         // getBasicUserInfo()
                         // transferRemittance()
-                        requestToPayDeliveryNotification()
+                        // requestToPayDeliveryNotification()
                         // validateAccountHolderStatus()
                     }
                     is APIResult.Failure -> {
@@ -165,6 +165,7 @@ class MainActivity : AppCompatActivity() {
         val accessToken = Utils.getAccessToken(this)
         if (StringUtils.isNotBlank(accessToken)) {
             momoRemittanceApi.getBalance(
+                "EUR",
                 Settings.getProductSubscriptionKeys(ProductType.REMITTANCE),
                 accessToken,
                 BuildConfig.MOMO_API_VERSION_V1,

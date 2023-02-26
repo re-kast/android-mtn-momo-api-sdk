@@ -47,6 +47,7 @@ object Constants {
         const val REFERENCE_ID = "referenceId"
         const val ACCOUNT_HOLDER_ID = "accountHolderId"
         const val ACCOUNT_HOLDER_TYPE = "accountHolderIdType"
+        const val CURRENCY = "currency"
         object AccountHolderTypes {
             const val MSISDN = "msisdn"
             const val EMAIL = "email"
@@ -67,5 +68,6 @@ object Constants {
             "/{productType}/{apiVersion}/requesttopay/{referenceId}/deliverynotification"
         const val VALIDATE_ACCOUNT_HOLDER_STATUS =
             "/{productType}/{apiVersion}/accountholder/{accountHolderIdType}/{accountHolderId}/active"
+        const val GET_ACCOUNT_BALANCE_IN_SPECIFIC_CURRENCY = "/{productType}/{apiVersion}/account/balance/{currency}"
     }
 }

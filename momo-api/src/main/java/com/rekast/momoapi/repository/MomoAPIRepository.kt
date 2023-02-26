@@ -29,7 +29,9 @@ import com.rekast.momoapi.network.api.RemittanceApiClient
 import com.rekast.momoapi.network.okhttp.AccessTokenInterceptor
 import com.rekast.momoapi.network.okhttp.BasicAuthInterceptor
 import okhttp3.ResponseBody
+import org.apache.commons.lang3.StringUtils
 import retrofit2.Call
+import java.util.*
 
 /**
  * The BaseRepository Class. Responsible for making the actual network call to the MOMO APIs.
@@ -80,15 +82,29 @@ class MomoAPIRepository(
      * Gets the account balance of the entity/user initiating the transaction.
      */
     fun getAccountBalance(
+        currency: String?,
         productSubscriptionKey: String,
         accessToken: String,
         apiVersion: String,
         productType: String,
     ): Call<AccountBalance> {
-        return MomoApiClient().getAccountBalance(
-            baseUrl,
-            AccessTokenInterceptor(accessToken),
-        ).getAccountBalance(productType, apiVersion, productSubscriptionKey, environment)
+        return if (StringUtils.isNotBlank(currency)) {
+            MomoApiClient().getAccountBalance(
+                baseUrl,
+                AccessTokenInterceptor(accessToken),
+            ).getAccountBalanceInSpecificCurrency(
+                currency.toString(),
+                productType,
+                apiVersion,
+                productSubscriptionKey,
+                environment,
+            )
+        } else {
+            MomoApiClient().getAccountBalance(
+                baseUrl,
+                AccessTokenInterceptor(accessToken),
+            ).getAccountBalance(productType, apiVersion, productSubscriptionKey, environment)
+        }
     }
 
     /**
@@ -202,13 +218,6 @@ class MomoAPIRepository(
         ).transfer(transaction, apiVersion, productSubscriptionKey, environment, uuid)
     }
 
-
-    fun getAccountBalanceInSpecificCurrency() {
-    }
-
-    /**
-     * Start the Disbursement methods
-     */
     fun requestToPay() {
         TODO("Not yet implemented")
     }

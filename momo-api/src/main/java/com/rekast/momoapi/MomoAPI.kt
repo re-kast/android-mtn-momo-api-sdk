@@ -87,21 +87,25 @@ object MomoAPI {
     }
 
     /**
-     * Prepares to fetch the Balance
+     * Prepares to fetch the Balance with and without specific currency
+     * @param[currency] -- This is the Currency based on the ISO standard. Read more here https://www.iban.com/currency-codes
      * @param[productSubscriptionKey]  -- The Product subscription Key (Ocp-Apim-Subscription-Key)
      * @param[accessToken] -- The Access Token fetched here [MomoAPI.getAccessToken]
      * @param[apiVersion] -- The app Version (v1_0 or v2_0)
      * @param[productType] -- The API Products ([Constants.ProductTypes])
      * @param[callback] -- The request callback. Returns @see [AccessToken]
      */
+
+    // TODO Review this to see if the get balance with specific currency works.
     fun getBalance(
+        currency: String? = null,
         productSubscriptionKey: String,
         accessToken: String,
         apiVersion: String,
         productType: String,
         callback: ((APIResult: APIResult<AccountBalance>) -> Unit),
     ) {
-        momoAPIRepository.getAccountBalance(productSubscriptionKey, accessToken, apiVersion, productType)
+        momoAPIRepository.getAccountBalance(currency, productSubscriptionKey, accessToken, apiVersion, productType)
             .enqueue(APICallback(callback))
     }
 

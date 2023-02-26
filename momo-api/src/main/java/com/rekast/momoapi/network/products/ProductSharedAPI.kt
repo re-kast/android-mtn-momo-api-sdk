@@ -144,4 +144,22 @@ sealed interface ProductSharedAPI {
         @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
         @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String,
     ): Call<ResponseBody>
+
+    /**
+     * Makes a request to get the Account Balance with a currency.
+     * @param[currency] -- This is the Currency based on the ISO standard. Read more here https://www.iban.com/currency-codes
+     * @param[productType] -- The API Products ([Constants.ProductTypes])
+     * @param[apiVersion] -- The app Version (v1_0 or v2_0)
+     * @param[productSubscriptionKey] -- The Product subscription Key (Ocp-Apim-Subscription-Key)
+     * @param[environment] -- The API environment (X-Target-Environment)
+     * @return[AccountBalance] -- Returns the Account Balance
+     */
+    @GET(Constants.EndPoints.GET_ACCOUNT_BALANCE_IN_SPECIFIC_CURRENCY)
+    fun getAccountBalanceInSpecificCurrency(
+        @Path(Constants.EndpointPaths.CURRENCY) currency: String,
+        @Path(Constants.EndpointPaths.PRODUCT_TYPE) productType: String,
+        @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
+        @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
+        @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String,
+    ): Call<AccountBalance>
 }
