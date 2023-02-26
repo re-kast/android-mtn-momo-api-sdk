@@ -27,17 +27,12 @@ import com.rekast.momoapi.model.authentication.ApiUser
 import com.rekast.momoapi.model.authentication.ApiUserKey
 import com.rekast.momoapi.repository.MomoAPIRepository
 import com.rekast.momoapi.utils.Constants
-import com.rekast.momoapi.utils.ProductType
 import okhttp3.ResponseBody
 
 /**
  * Prepares the different MOMO API requests
  */
 object MomoAPI {
-    lateinit var apiUserId: String
-    lateinit var productType: ProductType
-    lateinit var baseURL: String
-    lateinit var environment: String
     lateinit var momoAPIRepository: MomoAPIRepository
     fun builder(apiUserId: String): MomoAPIBuilder = MomoAPIBuilder(apiUserId)
 
@@ -74,7 +69,6 @@ object MomoAPI {
     /**
      * Prepares to fetch the Access Token
      * @param[productSubscriptionKey]  -- The Product subscription Key (Ocp-Apim-Subscription-Key)
-     * @param[apiUserId] -- The API User ID (X-Reference-Id)
      * @param[apiKey] -- The API Key fetched here [MomoAPI.getUserApiKey]
      * @param[productType] -- The API Products ([Constants.ProductTypes])
      * @param[callback] -- The request callback. Returns @see [AccessToken]
@@ -95,7 +89,6 @@ object MomoAPI {
      * @param[accessToken] -- The Access Token fetched here [MomoAPI.getAccessToken]
      * @param[apiVersion] -- The app Version (v1_0 or v2_0)
      * @param[productType] -- The API Products ([Constants.ProductTypes])
-     * @param[environment] -- The API environment (X-Target-Environment)
      * @param[callback] -- The request callback. Returns @see [AccessToken]
      */
     fun getBalance(
@@ -103,10 +96,9 @@ object MomoAPI {
         accessToken: String,
         apiVersion: String,
         productType: String,
-        environment: String,
         callback: ((APIResult: APIResult<AccountBalance>) -> Unit),
     ) {
-        momoAPIRepository.getAccountBalance(productSubscriptionKey, accessToken, apiVersion, productType, environment)
+        momoAPIRepository.getAccountBalance(productSubscriptionKey, accessToken, apiVersion, productType)
             .enqueue(APICallback(callback))
     }
 
@@ -117,7 +109,6 @@ object MomoAPI {
      * @param[accessToken] -- The Access Token fetched here [MomoAPI.getAccessToken]
      * @param[apiVersion] -- The app Version (v1_0 or v2_0)
      * @param[productType] -- The API Products ([Constants.ProductTypes])
-     * @param[environment] -- The API environment (X-Target-Environment)
      * @param[callback] -- The request callback. Returns @see [AccessToken]
      */
     fun getBasicUserInfo(
@@ -126,7 +117,6 @@ object MomoAPI {
         accessToken: String,
         apiVersion: String,
         productType: String,
-        environment: String,
         callback: ((APIResult: APIResult<BasicUserInfo>) -> Unit),
     ) {
         momoAPIRepository.getBasicUserInfo(
@@ -135,7 +125,6 @@ object MomoAPI {
             accessToken,
             apiVersion,
             productType,
-            environment,
         ).enqueue(APICallback(callback))
     }
 
@@ -145,7 +134,6 @@ object MomoAPI {
      * @param[accessToken] -- The Access Token fetched here [MomoAPI.getAccessToken]
      * @param[apiVersion] -- The app Version (v1_0 or v2_0)
      * @param[productType] -- The API Products ([Constants.ProductTypes])
-     * @param[environment] -- The API environment (X-Target-Environment)
      * @param[callback] -- The request callback. Returns @see [AccessToken]
      */
     // API Doesn't seem to work
@@ -154,7 +142,6 @@ object MomoAPI {
         accessToken: String,
         apiVersion: String,
         productType: String,
-        environment: String,
         callback: ((APIResult: APIResult<UserInfoWithConsent>) -> Unit),
     ) {
         momoAPIRepository.getUserInfoWithoutConsent(
@@ -162,7 +149,6 @@ object MomoAPI {
             accessToken,
             apiVersion,
             productType,
-            environment,
         ).enqueue(APICallback(callback))
     }
 
@@ -172,7 +158,6 @@ object MomoAPI {
      * @param[productSubscriptionKey]  -- The Product subscription Key (Ocp-Apim-Subscription-Key)
      * @param[accessToken] -- The Access Token fetched here [MomoAPI.getAccessToken]
      * @param[apiVersion] -- The app Version (v1_0 or v2_0)
-     * @param[environment] -- The API environment (X-Target-Environment)
      * @param[uuid] -- The new resource UUID. It's a UUID V4.
      * @param[callback] -- The request callback. Returns @see [AccessToken]
      */
@@ -181,7 +166,6 @@ object MomoAPI {
         productSubscriptionKey: String,
         accessToken: String,
         apiVersion: String,
-        environment: String,
         uuid: String,
         callback: ((APIResult: APIResult<Unit>) -> Unit),
     ) {
@@ -189,7 +173,6 @@ object MomoAPI {
             transaction,
             apiVersion,
             productSubscriptionKey,
-            environment,
             accessToken,
             uuid,
         ).enqueue(APICallback(callback))
@@ -201,7 +184,6 @@ object MomoAPI {
      * @param[apiVersion] -- The app Version (v1_0 or v2_0)
      * @param[productType] -- The API Products ([Constants.ProductTypes])
      * @param[productSubscriptionKey]  -- The Product subscription Key (Ocp-Apim-Subscription-Key)
-     * @param[environment] -- The API environment (X-Target-Environment)
      * @param[accessToken] -- The Access Token fetched here [MomoAPI.getAccessToken]
      * @param[callback] -- The request callback. Returns @see [AccessToken]
      */
@@ -210,7 +192,6 @@ object MomoAPI {
         apiVersion: String,
         productType: String,
         productSubscriptionKey: String,
-        environment: String,
         accessToken: String,
         callback: ((APIResult: APIResult<ResponseBody?>) -> Unit),
     ) {
@@ -219,7 +200,6 @@ object MomoAPI {
             apiVersion,
             productType,
             productSubscriptionKey,
-            environment,
             accessToken,
         ).enqueue(DebitTransactionCallback(callback))
     }

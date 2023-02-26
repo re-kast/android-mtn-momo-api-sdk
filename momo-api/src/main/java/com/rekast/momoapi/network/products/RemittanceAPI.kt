@@ -28,10 +28,10 @@ import retrofit2.http.Path
  * method, the request and response from the API.
  */
 sealed interface RemittanceAPI : ProductSharedAPI {
-    @POST("/remittance/{apiVersion}/transfer")
+    @POST(Constants.EndPoints.TRANSFER)
     fun transfer(
         @Body transaction: DebitTransaction,
-        @Path("apiVersion") apiVersion: String,
+        @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
         @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
         @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String,
         @Header(Constants.Headers.X_REFERENCE_ID) uuid: String,

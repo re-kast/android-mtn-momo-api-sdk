@@ -15,18 +15,18 @@
  */
 package com.rekast.momoapi.callback
 
-import com.rekast.momoapi.model.api.MomoErrorResponse
+import com.rekast.momoapi.model.api.ErrorResponse
 
 /**
  * Handles exceptions and messages for the exceptions.
  */
 class APIException : Exception {
 
-    lateinit var errorResponse: MomoErrorResponse
+    lateinit var errorResponse: ErrorResponse
 
     constructor(message: String?) : super(message)
 
-    constructor(errorResponse: MomoErrorResponse) : super("${errorResponse.code} : ${errorResponse.message}") {
+    constructor(errorResponse: ErrorResponse) : super("${errorResponse.code} : ${errorResponse.message}") {
         this.errorResponse = errorResponse
     }
 

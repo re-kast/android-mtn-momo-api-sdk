@@ -38,10 +38,10 @@ sealed interface ProductSharedAPI {
      * @param[environment] -- The API environment (X-Target-Environment)
      * @return[AccountBalance] -- Returns the Account Balance
      */
-    @GET("/{productType}/{apiVersion}/account/balance")
+    @GET(Constants.EndPoints.GET_ACCOUNT_BALANCE)
     fun getAccountBalance(
-        @Path("productType") productType: String,
-        @Path("apiVersion") apiVersion: String,
+        @Path(Constants.EndpointPaths.PRODUCT_TYPE) productType: String,
+        @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
         @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
         @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String,
     ): Call<AccountBalance>
@@ -54,11 +54,11 @@ sealed interface ProductSharedAPI {
      * @param[environment] -- The API environment (X-Target-Environment)
      * @return[BasicUserInfo] -- Returns the Basic User Info
      */
-    @GET("/{productType}/{apiVersion}/accountholder/msisdn/{acountHolder}/basicuserinfo")
+    @GET(Constants.EndPoints.GET_BASIC_USER_INFO)
     fun getBasicUserInfo(
-        @Path("acountHolder") acountHolder: String,
-        @Path("productType") productType: String,
-        @Path("apiVersion") apiVersion: String,
+        @Path(Constants.EndpointPaths.ACCOUNT_HOLDER) acountHolder: String,
+        @Path(Constants.EndpointPaths.PRODUCT_TYPE) productType: String,
+        @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
         @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
         @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String,
     ): Call<BasicUserInfo>
@@ -71,19 +71,19 @@ sealed interface ProductSharedAPI {
      * @param[environment] -- The API environment (X-Target-Environment)
      * @return[UserInfoWithConsent] -- Returns the User Info with Consent
      */
-    @GET("/{productType}/oauth2/{apiVersion}/userinfo")
+    @GET(Constants.EndPoints.GET_USER_INFO_WITHOUT_CONSENT)
     fun getUserInfoWithoutConsent(
-        @Path("productType") productType: String,
-        @Path("apiVersion") apiVersion: String,
+        @Path(Constants.EndpointPaths.PRODUCT_TYPE) productType: String,
+        @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
         @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
         @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String,
     ): Call<UserInfoWithConsent>
 
-    @GET("/{productType}/{apiVersion}/transfer/{referenceId}")
+    @GET(Constants.EndPoints.GET_TRANSFER_STATUS)
     fun getTransferStatus(
-        @Path("referenceId") referenceId: String,
-        @Path("apiVersion") apiVersion: String,
-        @Path("productType") productType: String,
+        @Path(Constants.EndpointPaths.REFERENCE_ID) referenceId: String,
+        @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
+        @Path(Constants.EndpointPaths.PRODUCT_TYPE) productType: String,
         @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
         @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String,
     ): Call<ResponseBody>

@@ -38,4 +38,23 @@ object Constants {
         const val DISBURSEMENTS = "disbursements"
         const val REMITTANCE = "remittance"
     }
+
+    object EndpointPaths {
+        const val API_VERSION = "apiVersion"
+        const val API_USER = "apiUser"
+        const val PRODUCT_TYPE = "productType"
+        const val REFERENCE_ID = "referenceId"
+        const val ACCOUNT_HOLDER = "acountHolder"
+    }
+
+    object EndPoints {
+        const val GET_API_USER = "/{apiVersion}/apiuser/{apiUser}"
+        const val GET_API_USER_KEY = "/{apiVersion}/apiuser/{apiUser}/apikey"
+        const val GET_ACCESS_TOKEN = "/{productType}/token/"
+        const val TRANSFER = "/remittance/{apiVersion}/transfer"
+        const val GET_ACCOUNT_BALANCE = "/{productType}/{apiVersion}/account/balance"
+        const val GET_BASIC_USER_INFO = "/{productType}/{apiVersion}/accountholder/msisdn/{acountHolder}/basicuserinfo"
+        const val GET_USER_INFO_WITHOUT_CONSENT = "/{productType}/oauth2/{apiVersion}/userinfo"
+        const val GET_TRANSFER_STATUS = "/{productType}/{apiVersion}/transfer/{referenceId}"
+    }
 }

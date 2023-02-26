@@ -18,7 +18,7 @@ package com.rekast.momoapi.callback
 import com.google.gson.GsonBuilder
 import com.rekast.momoapi.model.api.CreditTransaction
 import com.rekast.momoapi.model.api.DebitTransaction
-import com.rekast.momoapi.model.api.MomoErrorResponse
+import com.rekast.momoapi.model.api.ErrorResponse
 import com.rekast.momoapi.utils.Settings
 import com.rekast.momoapi.utils.TransactionStatus
 import okhttp3.ResponseBody
@@ -56,7 +56,7 @@ class DebitTransactionCallback(
             }
         } else {
             try {
-                val error = GsonBuilder().create().fromJson(response.errorBody()?.string(), MomoErrorResponse::class.java)
+                val error = GsonBuilder().create().fromJson(response.errorBody()?.string(), ErrorResponse::class.java)
                 callback.invoke(APIResult.Failure(false, APIException(error)))
             } catch (e: IOException) {
                 e.printStackTrace()

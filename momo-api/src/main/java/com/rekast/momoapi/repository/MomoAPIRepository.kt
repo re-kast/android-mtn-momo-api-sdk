@@ -36,6 +36,7 @@ import retrofit2.Call
 class MomoAPIRepository(
     var apiUserId: String,
     var baseUrl: String,
+    var environment: String,
 ) {
     /**
      * Check whether the supplied user exists
@@ -81,7 +82,6 @@ class MomoAPIRepository(
         accessToken: String,
         apiVersion: String,
         productType: String,
-        environment: String,
     ): Call<AccountBalance> {
         return MomoApiClient().getAccountBalance(
             baseUrl,
@@ -98,7 +98,6 @@ class MomoAPIRepository(
         accessToken: String,
         apiVersion: String,
         productType: String,
-        environment: String,
     ): Call<BasicUserInfo> {
         return MomoApiClient().getBasicUserInfo(
             baseUrl,
@@ -114,7 +113,6 @@ class MomoAPIRepository(
         accessToken: String,
         apiVersion: String,
         productType: String,
-        environment: String,
     ): Call<UserInfoWithConsent> {
         return MomoApiClient().getUserInfoWithoutConsent(
             baseUrl,
@@ -127,7 +125,6 @@ class MomoAPIRepository(
         apiVersion: String,
         productType: String,
         productSubscriptionKey: String,
-        environment: String,
         accessToken: String,
     ): Call<ResponseBody> {
         return MomoApiClient().getTransferStatus(
@@ -152,7 +149,6 @@ class MomoAPIRepository(
         transaction: DebitTransaction,
         apiVersion: String,
         productSubscriptionKey: String,
-        environment: String,
         accessToken: String,
         uuid: String,
     ): Call<Unit> {

@@ -166,7 +166,6 @@ class MainActivity : AppCompatActivity() {
                 accessToken,
                 BuildConfig.MOMO_API_VERSION_V1,
                 Constants.ProductTypes.REMITTANCE,
-                BuildConfig.MOMO_ENVIRONMENT,
             ) { momoAPIResult ->
                 when (momoAPIResult) {
                     is APIResult.Success -> {
@@ -191,7 +190,6 @@ class MainActivity : AppCompatActivity() {
                 accessToken,
                 BuildConfig.MOMO_API_VERSION_V1,
                 Constants.ProductTypes.REMITTANCE,
-                BuildConfig.MOMO_ENVIRONMENT,
             ) { momoAPIResult ->
                 when (momoAPIResult) {
                     is APIResult.Success -> {
@@ -215,7 +213,6 @@ class MainActivity : AppCompatActivity() {
                 accessToken,
                 BuildConfig.MOMO_API_VERSION_V1,
                 Constants.ProductTypes.REMITTANCE,
-                BuildConfig.MOMO_ENVIRONMENT,
             ) { momoAPIResult ->
                 when (momoAPIResult) {
                     is APIResult.Success -> {
@@ -241,7 +238,6 @@ class MainActivity : AppCompatActivity() {
                 Settings.getProductSubscriptionKeys(ProductType.REMITTANCE),
                 accessToken,
                 BuildConfig.MOMO_API_VERSION_V1,
-                BuildConfig.MOMO_ENVIRONMENT,
                 transactionUuid,
             ) { momoAPIResult ->
                 when (momoAPIResult) {
@@ -279,7 +275,6 @@ class MainActivity : AppCompatActivity() {
                 BuildConfig.MOMO_API_VERSION_V1,
                 Constants.ProductTypes.REMITTANCE,
                 Settings.getProductSubscriptionKeys(ProductType.REMITTANCE),
-                BuildConfig.MOMO_ENVIRONMENT,
                 accessToken,
             ) { momoAPIResult ->
                 when (momoAPIResult) {
