@@ -19,7 +19,7 @@ import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class MomoErrorResponse(
+data class ErrorResponse(
     @SerializedName("code") var code: String,
     @SerializedName("message") var message: String,
     @SerializedName("error") var error: String,

@@ -13,8 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.rekast.momoapi.network.api
+package com.rekast.momoapi.callback
 
-import com.rekast.momoapi.network.MomoApiClient
-
-object RemittanceApiClient : MomoApiClient()
+/**
+ * Holds the state for Payment status.
+ */
+sealed class APIResult<out T> {
+    data class Success<out T>(val value: T) : APIResult<T>()
+    data class Failure(
+        val isNetworkError: Boolean,
+        val APIException: APIException?,
+    ) : APIResult<Nothing>()
+}

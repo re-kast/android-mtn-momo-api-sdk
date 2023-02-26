@@ -15,10 +15,7 @@
  */
 package com.rekast.momoapi
 
-import com.rekast.momoapi.repository.products.MomoCollectionAPIRepository
-import com.rekast.momoapi.repository.products.MomoDisbursementsAPIRepository
-import com.rekast.momoapi.repository.products.MomoRemittanceAPIRepository
-import com.rekast.momoapi.utils.ProductType
+import com.rekast.momoapi.repository.MomoAPIRepository
 
 /**
  * Keys Builder. Creates a [MomoAPI] payment load.
@@ -26,7 +23,6 @@ import com.rekast.momoapi.utils.ProductType
  */
 
 class MomoAPIBuilder(private var apiUserId: String) {
-    private lateinit var productType: ProductType
     private lateinit var environment: String
     private lateinit var baseURL: String
 
@@ -39,41 +35,13 @@ class MomoAPIBuilder(private var apiUserId: String) {
         return this
     }
 
-    fun setTransactionType(productType: ProductType): MomoAPIBuilder {
-        this.productType = productType
-        return this
-    }
-
     fun build(): MomoAPI {
         val momoApi = MomoAPI
-        momoApi.apiUserId = apiUserId
-        momoApi.productType = productType
-        momoApi.baseURL = baseURL
-        momoApi.environment = environment
-        getRepository(momoApi)
+        momoApi.momoAPIRepository = MomoAPIRepository(
+            apiUserId,
+            baseURL,
+            environment,
+        )
         return momoApi
-    }
-
-    private fun getRepository(momoApi: MomoAPI) {
-        when (productType) {
-            ProductType.COLLECTION -> {
-                momoApi.momoAPIRepository = MomoCollectionAPIRepository(
-                    momoApi.apiUserId,
-                    momoApi.baseURL,
-                )
-            }
-            ProductType.DISBURSEMENTS -> {
-                momoApi.momoAPIRepository = MomoDisbursementsAPIRepository(
-                    momoApi.apiUserId,
-                    momoApi.baseURL,
-                )
-            }
-            else -> {
-                momoApi.momoAPIRepository = MomoRemittanceAPIRepository(
-                    momoApi.apiUserId,
-                    momoApi.baseURL,
-                )
-            }
-        }
     }
 }

@@ -16,8 +16,13 @@
 package com.rekast.momoapi.utils
 
 import android.util.Base64
+import com.google.gson.Gson
 import com.rekast.momoapi.BuildConfig
+import com.rekast.momoapi.model.api.Notification
+import com.rekast.momoapi.model.api.Transaction
+import okhttp3.ResponseBody
 import org.apache.commons.lang3.StringUtils
+import retrofit2.Response
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -25,6 +30,8 @@ import java.util.*
  * Contains General Settings used in the library.
  */
 object Settings {
+
+    fun generateUUID(): String = UUID.randomUUID().toString()
 
     /**
      * Connection timeout duration
@@ -106,5 +113,25 @@ object Settings {
             }
         }
         return productKey
+    }
+
+    fun generateTransactionFromResponse(response: Response<ResponseBody?>): Transaction? {
+        val data: String = response.body()!!.source().readUtf8()
+        return Gson().fromJson(data, Transaction::class.java)
+    }
+
+    fun generateNotificationFromResponse(response: Response<ResponseBody?>): Notification {
+        val data: String = response.body()!!.source().readUtf8()
+        return Gson().fromJson(data, Notification::class.java)
+    }
+
+    fun checkNotificationMessageLength(
+        notificationMessage: String?,
+        notificationMessageMaxLength: Long = Constants.NOTIFICATION_MESSAGE_LENGTH,
+    ): Boolean {
+        if (StringUtils.isNotBlank(notificationMessage)) {
+            return notificationMessage!!.length <= notificationMessageMaxLength
+        }
+        return false
     }
 }

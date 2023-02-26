@@ -13,15 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.rekast.momoapi.callback
+package com.rekast.momoapi.utils
 
-/**
- * Holds the state for Payment status.
- */
-sealed class MomoAPIResult<out T> {
-    data class Success<out T>(val value: T) : MomoAPIResult<T>()
-    data class Failure(
-        val isNetworkError: Boolean,
-        val momoAPIException: MomoAPIException?,
-    ) : MomoAPIResult<Nothing>()
+enum class AccountHolderType {
+    MSISDN, EMAIL, PARTY_CODE
 }

@@ -13,10 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.rekast.momoapi.network.products
+package com.rekast.momoapi.model.api
 
-/**
- * This is the retrofit interface to handle the various calls to the Lipa Na MPESA API. This interface defines the
- * method, the request and response from the API.
- */
-sealed interface RemittanceAPI : ProductSharedAPI
+import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class Notification(
+    @SerializedName("notificationMessage") var notificationMessage: String,
+)
