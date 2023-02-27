@@ -30,5 +30,5 @@ data class Transaction(
     @SerializedName("payeeNote") var payeeNote: String,
     @SerializedName("status") var status: String? = "",
     @SerializedName("reason") var reason: String? = "",
-    // @SerializedName("reason") var reason: MomoErrorResponse? = null,
+    @SerializedName("referenceIdToRefund") var referenceIdToRefund: String? = "",
 )

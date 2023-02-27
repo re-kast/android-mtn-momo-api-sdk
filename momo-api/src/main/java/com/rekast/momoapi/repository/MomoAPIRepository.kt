@@ -26,6 +26,7 @@ import com.rekast.momoapi.model.authentication.ApiUser
 import com.rekast.momoapi.model.authentication.ApiUserKey
 import com.rekast.momoapi.network.MomoApiClient
 import com.rekast.momoapi.network.api.CollectionApiClient
+import com.rekast.momoapi.network.api.DisbursementsApiClient
 import com.rekast.momoapi.network.okhttp.AccessTokenInterceptor
 import com.rekast.momoapi.network.okhttp.BasicAuthInterceptor
 import okhttp3.ResponseBody
@@ -268,27 +269,53 @@ class MomoAPIRepository(
         ).requestToWithdrawTransactionStatus(referenceId, apiVersion, productSubscriptionKey, environment)
     }
 
-    fun depositV1() {
-        TODO("Not yet implemented")
+    fun deposit(
+        accessToken: String,
+        transaction: Transaction,
+        apiVersion: String,
+        productSubscriptionKey: String,
+        uuid: String,
+    ): Call<Unit> {
+        return DisbursementsApiClient.deposit(
+            baseUrl,
+            AccessTokenInterceptor(accessToken),
+        ).deposit(transaction, apiVersion, productSubscriptionKey, environment, uuid)
     }
 
-    fun depositV2() {
-        TODO("Not yet implemented")
+    fun getDepositStatus(
+        referenceId: String,
+        apiVersion: String,
+        productSubscriptionKey: String,
+        accessToken: String,
+    ): Call<ResponseBody> {
+        return DisbursementsApiClient.getDepositStatus(
+            baseUrl,
+            AccessTokenInterceptor(accessToken),
+        ).getDepositStatus(referenceId, apiVersion, productSubscriptionKey, environment)
     }
 
-    fun getDepositStatus() {
-        TODO("Not yet implemented")
+    fun refund(
+        accessToken: String,
+        transaction: Transaction,
+        apiVersion: String,
+        productSubscriptionKey: String,
+        uuid: String,
+    ): Call<Unit> {
+        return DisbursementsApiClient.refund(
+            baseUrl,
+            AccessTokenInterceptor(accessToken),
+        ).refund(transaction, apiVersion, productSubscriptionKey, environment, uuid)
     }
 
-    fun refundV1() {
-        TODO("Not yet implemented")
-    }
-
-    fun refundV2() {
-        TODO("Not yet implemented")
-    }
-
-    fun getRefundStatus() {
-        TODO("Not yet implemented")
+    fun getRefundStatus(
+        referenceId: String,
+        apiVersion: String,
+        productSubscriptionKey: String,
+        accessToken: String,
+    ): Call<ResponseBody> {
+        return DisbursementsApiClient.getRefundStatus(
+            baseUrl,
+            AccessTokenInterceptor(accessToken),
+        ).getRefundStatus(referenceId, apiVersion, productSubscriptionKey, environment)
     }
 }

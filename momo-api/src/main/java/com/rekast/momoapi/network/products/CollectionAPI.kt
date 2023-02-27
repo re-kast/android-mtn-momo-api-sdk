@@ -30,7 +30,6 @@ import retrofit2.http.Path
  * method, the request and response from the API.
  */
 sealed interface CollectionAPI : ProductSharedAPI {
-
     /**
      * Makes a request to pay a specific user
      * @param[transaction] -- This is the Transfer Payload [Transaction]
@@ -85,7 +84,7 @@ sealed interface CollectionAPI : ProductSharedAPI {
     /**
      * Makes a request to check the status fo the withdrawal
      * @param[referenceId] -- The Transfer Reference ID. This is a UUID V4.
-     * This is the ID used here [requestToPay]
+     * This is the ID used here [requestToWithdraw]
      * @param[apiVersion] -- The app Version (v1_0 or v2_0)
      * @param[productSubscriptionKey] -- The Product subscription Key (Ocp-Apim-Subscription-Key)
      * @param[environment] -- The API environment (X-Target-Environment)
