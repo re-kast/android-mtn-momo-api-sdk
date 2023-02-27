@@ -73,5 +73,9 @@ object Constants {
         const val REQUEST_TO_PAY_STATUS = "/collection/{apiVersion}/requesttopay/{referenceId}"
         const val REQUEST_TO_WITHDRAW = "/collection/{apiVersion}/requesttowithdraw"
         const val REQUEST_TO_WITHDRAW_STATUS = "/collection/{apiVersion}/requesttowithdraw/{referenceId}"
+        const val DEPOSIT = "/disbursement/{apiVersion}/deposit"
+        const val DEPOSIT_STATUS = "/disbursement/{apiVersion}/deposit/{referenceId}"
+        const val REFUND = "/disbursement/{apiVersion}/refund"
+        const val REFUND_STATUS = "/disbursement/{apiVersion}/refund/{referenceId}"
     }
 }
