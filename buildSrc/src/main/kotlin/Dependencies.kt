@@ -7,11 +7,13 @@ object Versions {
     const val composeBom = "2023.01.00"
     const val composeActivity = "1.6.1"
     const val lifecycleComposeViewModel = "2.5.1"
+    const val composeMaterial ="1.0.1"
+    const val composeUi ="1.3.3"
 
     // Material and androidX
     const val material = "1.3.0-alpha02"
     const val constraintLayout = "2.0.1"
-    const val navigation = "2.3.0"
+    const val navigation = "2.6.0-alpha06"
 
     // Firebase
     const val firebase = "26.2.0"
@@ -38,6 +40,9 @@ object Versions {
 
     //Apache Commons
     const val commonsLang3 = "3.12.0"
+
+    //Hilt
+    const val hilt = "2.45"
 
     // Gradle Plugins
     const val ktlint = "10.1.0"
@@ -93,7 +98,7 @@ object BuildPlugins {
     const val testJunit4 = "androidx.compose.ui:ui-test-junit4"
     const val testManifest = "androidx.compose.ui:ui-test-manifest"
     const val mapsSecret = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin"
-
+    const val hiltAndroid = "com.google.dagger.hilt.android"
 
     //Publishing
     const val mavenPublish = "maven-publish"
@@ -107,12 +112,18 @@ object Libraries {
         "androidx.constraintlayout:constraintlayout:${Versions.constraintLayout}"
     const val navigationFragment = "androidx.navigation:navigation-fragment-ktx:${Versions.navigation}"
     const val navigationUi = "androidx.navigation:navigation-ui-ktx:${Versions.navigation}"
+    const val navigationCompose = "androidx.navigation:navigation-compose:${Versions.navigation}"
     const val composeActivity = "androidx.activity:activity-compose:${Versions.composeActivity}"
     const val lifecycleComposeViewModel =
         "androidx.lifecycle:lifecycle-viewmodel-compose:${Versions.lifecycleComposeViewModel}"
 
     //Compose
+    const val composeUi = "androidx.compose.ui:ui:${Versions.composeUi}"
+    const val composeToolingPreview = "androidx.compose.ui:ui-tooling-preview:${Versions.composeUi}"
+    const val composeUiTooling = "androidx.compose.ui:ui-tooling:${Versions.composeUi}"
     const val composeBom = "androidx.compose:compose-bom:${Versions.composeBom}"
+    const val composeMaterial = "androidx.compose.material3:material3:${Versions.composeMaterial}"
+    const val composeMaterialWindow = "androidx.compose.material3:material3-window-size-class:${Versions.composeMaterial}"
 
     // Firebase
     const val bom = "com.google.firebase:firebase-bom:${Versions.firebase}"
@@ -142,6 +153,8 @@ object Libraries {
     const val androidXTestMonitor = "androidx.test:monitor:${Versions.androidXTestMonitor}"
     const val androidXJunitTest = "androidx.test.ext:junit-ktx:${Versions.androidXJunitTest}"
     const val commonsLang3 = "org.apache.commons:commons-lang3:${Versions.commonsLang3}"
+    const val hiltAndroid = "com.google.dagger:hilt-android:${Versions.hilt}"
+    const val hiltComplier = "com.google.dagger:hilt-compiler:${Versions.hilt}"
 }
 
 object TestLibraries {
@@ -160,6 +173,7 @@ object TestLibraries {
     const val androidMockK = "io.mockk:mockk-android:${Versions.mockK}"
     const val liveDataTesting = "com.jraska.livedata:testing-ktx:${Versions.liveDataTesting}"
     const val kotlinxCoroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-test:${Versions.kotlinxCoroutines}"
+    const val hiltAndroidTesting = "com.google.dagger:hilt-android-testing:${Versions.hilt}"
 }
 
 object BuildModules {

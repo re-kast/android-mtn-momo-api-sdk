@@ -15,14 +15,12 @@
  */
 package com.rekast.momoapi.utils
 
-import android.util.Base64
 import com.google.gson.Gson
 import com.rekast.momoapi.BuildConfig
 import com.rekast.momoapi.model.api.Transaction
 import okhttp3.ResponseBody
 import org.apache.commons.lang3.StringUtils
 import retrofit2.Response
-import java.text.SimpleDateFormat
 import java.util.*
 
 /**
