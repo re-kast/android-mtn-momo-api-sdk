@@ -55,6 +55,7 @@ android {
             isMinifyEnabled = false
         }
     }
+    namespace = "com.rekast.momoapi"
 }
 
 dependencies {

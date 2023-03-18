@@ -20,21 +20,28 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.fragment.app.FragmentContainerView
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.NavHostFragment
 import com.rekast.momoapi.MomoAPI
 import com.rekast.momoapi.sample.R
+import com.rekast.momoapi.sample.utils.DefaultDispatcherProvider
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 @ExperimentalMaterialApi
 open class AppMainActivity : AppCompatActivity() {
+    @Inject
+    lateinit var dispatcherProvider: DefaultDispatcherProvider
+
     private lateinit var momoAPI: MomoAPI
     private val appMainViewModel by viewModels<AppMainViewModel>()
     lateinit var navHostFragment: NavHostFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(FragmentContainerView(this).apply { id = R.id.nav_host })
+        setContentView(FragmentContainerView(this).apply { id = R.id.nav_host})
         navHostFragment =
             NavHostFragment.create(R.navigation.navigation_graph)
 
@@ -43,5 +50,10 @@ open class AppMainActivity : AppCompatActivity() {
             .replace(R.id.nav_host, navHostFragment)
             .setPrimaryNavigationFragment(navHostFragment)
             .commit()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        appMainViewModel.viewModelScope.launch(dispatcherProvider.io()){}
     }
 }
