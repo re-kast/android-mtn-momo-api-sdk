@@ -17,6 +17,7 @@ package com.rekast.momoapi.sample.ui.navigation.drawer
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -43,16 +44,18 @@ fun DrawerItem(item: NavigationDrawerItem, selected: Boolean, onItemClick: (Navi
         modifier = Modifier
             .fillMaxWidth()
             .clickable(onClick = { onItemClick(item) })
-            .height(45.dp)
+            .height(60.dp)
             .background(colorResource(id = background))
-            .padding(start = 10.dp),
+            .padding(start = 10.dp, end = 10.dp)
     ) {
         Spacer(modifier = Modifier.width(7.dp))
-        Text(
-            text = item.title,
-            fontSize = 18.sp,
-            color = Color.White,
-        )
+        Column() {
+            Text(
+                text = item.title,
+                fontSize = 18.sp,
+                color = Color.White
+            )
+        }
         Spacer(modifier = Modifier.width(7.dp))
     }
 }

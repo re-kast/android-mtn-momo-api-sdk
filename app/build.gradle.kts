@@ -112,9 +112,10 @@ dependencies {
     // Material and AndroidX
     implementation(Libraries.constraintLayout)
     implementation(Libraries.material)
+    implementation(Libraries.navigationCompose)
     implementation(Libraries.navigationFragment)
     implementation(Libraries.navigationUi)
-    implementation(Libraries.navigationCompose)
+    implementation(Libraries.dynamicNavigation)
     // Network - Retrofit, OKHTTP, chucker
     implementation(Libraries.retrofit)
     implementation(Libraries.gson)
@@ -154,6 +155,7 @@ dependencies {
     testImplementation(TestLibraries.runner)
     testImplementation(TestLibraries.androidXJUnit)
     testImplementation(TestLibraries.archComponentTest)
+    testImplementation(TestLibraries.navigationTesting)
     // hilt
     testImplementation(TestLibraries.hiltAndroidTesting)
     kaptAndroidTest(Libraries.hiltComplier)

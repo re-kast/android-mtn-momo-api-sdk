@@ -109,9 +109,10 @@ object Libraries {
     const val material = "com.google.android.material:material:${Versions.material}"
     const val constraintLayout =
         "androidx.constraintlayout:constraintlayout:${Versions.constraintLayout}"
+    const val navigationCompose = "androidx.navigation:navigation-compose:${Versions.navigation}"
     const val navigationFragment = "androidx.navigation:navigation-fragment-ktx:${Versions.navigation}"
     const val navigationUi = "androidx.navigation:navigation-ui-ktx:${Versions.navigation}"
-    const val navigationCompose = "androidx.navigation:navigation-compose:${Versions.navigation}"
+    const val dynamicNavigation = "androidx.navigation:navigation-dynamic-features-fragment:${Versions.navigation}"
     const val composeActivity = "androidx.activity:activity-compose:${Versions.composeActivity}"
     const val lifecycleComposeViewModel =
         "androidx.lifecycle:lifecycle-viewmodel-compose:${Versions.lifecycleComposeViewModel}"
@@ -180,6 +181,7 @@ object TestLibraries {
     const val liveDataTesting = "com.jraska.livedata:testing-ktx:${Versions.liveDataTesting}"
     const val kotlinxCoroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-test:${Versions.kotlinxCoroutines}"
     const val hiltAndroidTesting = "com.google.dagger:hilt-android-testing:${Versions.hilt}"
+    const val navigationTesting = "androidx.navigation:navigation-testing:${Versions.navigation}"
 }
 
 object BuildModules {

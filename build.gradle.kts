@@ -42,10 +42,12 @@ buildscript {
     val kotlinVersion by extra("1.8.10")
     val jacocoVersion by extra("0.2")
     val daggerHilt by extra("2.45")
+    val safeNavigation by extra("2.6.0-alpha06")
 
     dependencies {
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
         classpath("com.hiya:jacoco-android:$jacocoVersion")
         classpath("com.google.dagger:hilt-android-gradle-plugin:$daggerHilt")
+        classpath("androidx.navigation:navigation-safe-args-gradle-plugin:$safeNavigation")
     }
 }

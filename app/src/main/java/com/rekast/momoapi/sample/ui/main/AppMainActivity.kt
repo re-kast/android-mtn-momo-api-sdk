@@ -41,7 +41,7 @@ open class AppMainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(FragmentContainerView(this).apply { id = R.id.nav_host})
+        setContentView(FragmentContainerView(this).apply { id = R.id.nav_host })
         navHostFragment =
             NavHostFragment.create(R.navigation.navigation_graph)
 
@@ -50,10 +50,12 @@ open class AppMainActivity : AppCompatActivity() {
             .replace(R.id.nav_host, navHostFragment)
             .setPrimaryNavigationFragment(navHostFragment)
             .commit()
+
+        momoAPI = appMainViewModel.momoAPI()
     }
 
     override fun onResume() {
         super.onResume()
-        appMainViewModel.viewModelScope.launch(dispatcherProvider.io()){}
+        appMainViewModel.viewModelScope.launch(dispatcherProvider.io()) {}
     }
 }

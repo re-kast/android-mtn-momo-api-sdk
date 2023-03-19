@@ -26,34 +26,30 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation.compose.rememberNavController
+import androidx.navigation.NavController
 import com.rekast.momoapi.sample.R
 import com.rekast.momoapi.sample.ui.navigation.drawer.Drawer
-import com.rekast.momoapi.sample.ui.navigation.navigation.Navigation
 import com.rekast.momoapi.sample.ui.navigation.topbar.TopBar
 
 @Composable
-fun MainScreen() {
+fun MainScreen(navController: NavController?) {
     val scaffoldState = rememberScaffoldState(rememberDrawerState(DrawerValue.Closed))
     val scope = rememberCoroutineScope()
-    val navController = rememberNavController()
     Scaffold(
         scaffoldState = scaffoldState,
-        topBar = { TopBar(scope = scope, scaffoldState = scaffoldState) },
+        topBar = { TopBar(scope = scope, scaffoldState = scaffoldState, title = R.string.home_screen) },
         drawerBackgroundColor = colorResource(id = R.color.accent_secondary),
         drawerContent = {
-            Drawer(scope = scope, scaffoldState = scaffoldState, navController = navController)
+            navController?.let { Drawer(scope = scope, scaffoldState = scaffoldState, navController = it) }
         },
         backgroundColor = colorResource(id = R.color.white),
     ) { padding ->
-        Box(modifier = Modifier.padding(padding)) {
-            Navigation(navController = navController)
-        }
+        Box(modifier = Modifier.padding(padding)) {}
     }
 }
 
 @Preview(showBackground = true)
 @Composable
 fun MainScreenPreview() {
-    MainScreen()
+    MainScreen(navController = null)
 }

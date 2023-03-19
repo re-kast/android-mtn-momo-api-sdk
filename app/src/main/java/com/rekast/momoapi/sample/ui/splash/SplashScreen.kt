@@ -37,7 +37,6 @@ import com.rekast.momoapi.sample.R
 import com.rekast.momoapi.sample.utils.annotation.PreviewWithBackgroundExcludeGenerated
 import kotlinx.coroutines.delay
 
-@Preview(showSystemUi = true, showBackground = true)
 @Composable
 fun SplashScreen(
     modifier: Modifier = Modifier,
@@ -58,10 +57,10 @@ fun SplashScreen(
         Text(
             text = stringResource(R.string.app_name),
             fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.Justify,
+            textAlign = TextAlign.Center,
             fontSize = 34.sp,
             modifier = modifier
-                .padding(vertical = 8.dp, horizontal = 8.dp)
+                .padding(vertical = 20.dp, horizontal = 20.dp)
                 .align(Alignment.CenterHorizontally),
         )
     }

@@ -37,9 +37,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
-fun TopBar(scope: CoroutineScope, scaffoldState: ScaffoldState) {
+fun TopBar(scope: CoroutineScope, scaffoldState: ScaffoldState, title: Int) {
     TopAppBar(
-        title = { Text(text = stringResource(R.string.app_name), fontSize = 18.sp) },
+        title = { Text(text = stringResource(title), fontSize = 20.sp) },
         navigationIcon = {
             IconButton(onClick = {
                 scope.launch {
@@ -59,5 +59,5 @@ fun TopBar(scope: CoroutineScope, scaffoldState: ScaffoldState) {
 fun TopBarPreview() {
     val scope = rememberCoroutineScope()
     val scaffoldState = rememberScaffoldState(rememberDrawerState(DrawerValue.Closed))
-    TopBar(scope = scope, scaffoldState = scaffoldState)
+    TopBar(scope = scope, scaffoldState = scaffoldState, title = R.string.home_screen)
 }
