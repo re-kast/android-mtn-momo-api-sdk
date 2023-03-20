@@ -19,17 +19,12 @@ import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
-import android.content.res.Configuration
-import android.content.res.Resources
 import android.graphics.Color
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
-import android.os.Build
-import android.os.Bundle
-import android.os.LocaleList
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.os.bundleOf
+import androidx.compose.material.ScaffoldState
+import androidx.compose.material.SnackbarResult
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
@@ -39,8 +34,8 @@ import com.rekast.momoapi.sample.ui.theme.InfoColor
 import com.rekast.momoapi.sample.ui.theme.LightColors
 import com.rekast.momoapi.sample.ui.theme.SuccessColor
 import com.rekast.momoapi.sample.ui.theme.WarningColor
-import timber.log.Timber
-import java.util.*
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.collectLatest
 import androidx.compose.ui.graphics.Color as ComposeColor
 
 const val ERROR_COLOR = "errorColor"
@@ -52,57 +47,10 @@ const val WARNING_COLOR = "warningColor"
 const val DANGER_COLOR = "dangerColor"
 const val INFO_COLOR = "infoColor"
 
-fun Context.showToast(message: String, toastLength: Int = Toast.LENGTH_LONG) =
-    Toast.makeText(this, message, toastLength).show()
-
 fun Activity.refresh() {
     finish()
     startActivity(Intent(this, this.javaClass))
     finishAffinity()
-}
-
-fun Context.setAppLocale(languageTag: String): Configuration? {
-    val res: Resources = this.resources
-    val configuration: Configuration = res.configuration
-    try {
-        val locale = Locale.forLanguageTag(languageTag)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            configuration.setLocale(locale)
-            val localeList = LocaleList(locale)
-            LocaleList.setDefault(localeList)
-            configuration.setLocales(localeList)
-            this.createConfigurationContext(configuration)
-        } else {
-            configuration.locale = locale
-            res.updateConfiguration(configuration, res.displayMetrics)
-        }
-    } catch (e: Exception) {
-        Timber.e(e)
-    }
-
-    if (Build.VERSION.SDK_INT <= 23) {
-        Locale.setDefault(Locale(languageTag))
-    }
-
-    return configuration
-}
-
-fun <T : Enum<T>> Enum<T>.isIn(vararg values: Enum<T>): Boolean {
-    return values.any { this == it }
-}
-
-/** Return a pair of application versionCode and versionName e.g. Pair(1, 0.0.1) */
-fun Context.appVersion(): Pair<Int, String> =
-    Pair(
-        this.packageManager.getPackageInfo(this.packageName, 0)?.versionCode ?: 1,
-        this.packageManager.getPackageInfo(this.packageName, 0).versionName?.substringBefore("-")
-            ?: "0.0.1",
-    )
-
-fun Context.retrieveResourceId(resourceName: String?, resourceType: String = "drawable"): Int? {
-    if (resourceName.isNullOrEmpty()) return null
-    val resourceId = this.resources.getIdentifier(resourceName, resourceType, this.packageName)
-    return if (resourceId != 0) resourceId else null
 }
 
 /**
@@ -150,45 +98,45 @@ fun Activity.applyWindowInsetListener() {
     }
 }
 
-/**
- * This function launches another [Activity] on top of the current. The current [Activity] is
- * cleared from the back stack for launching the next activity then the current [Activity] is
- * finished based on [finishLauncherActivity] condition.
- */
-inline fun <reified A : Activity> Activity.launchActivityWithNoBackStackHistory(
-    finishLauncherActivity: Boolean = true,
-    bundle: Bundle = bundleOf(),
-) {
-    startActivity(
-        Intent(this, A::class.java).apply {
-            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-            addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
-            addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
-            putExtras(bundle)
-        },
-    )
-    if (finishLauncherActivity) finish()
-}
 
 /** This function checks if the device is online */
 fun Activity.isDeviceOnline(): Boolean {
     val connectivityManager =
         this.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-        val network = connectivityManager.activeNetwork ?: return false
-        val capabilities = connectivityManager.getNetworkCapabilities(network) ?: return false
+    val network = connectivityManager.activeNetwork ?: return false
+    val capabilities = connectivityManager.getNetworkCapabilities(network) ?: return false
 
-        // Device can be connected to the internet through any of these NetworkCapabilities
-        val transports: List<Int> =
-            listOf(
-                NetworkCapabilities.TRANSPORT_ETHERNET,
-                NetworkCapabilities.TRANSPORT_CELLULAR,
-                NetworkCapabilities.TRANSPORT_WIFI,
-                NetworkCapabilities.TRANSPORT_VPN,
-            )
-        return transports.any { capabilities.hasTransport(it) }
-    } else {
-        val networkInfo = connectivityManager.activeNetworkInfo ?: return false
-        return networkInfo.isConnected
+    // Device can be connected to the internet through any of these NetworkCapabilities
+    val transports: List<Int> =
+        listOf(
+            NetworkCapabilities.TRANSPORT_ETHERNET,
+            NetworkCapabilities.TRANSPORT_CELLULAR,
+            NetworkCapabilities.TRANSPORT_WIFI,
+            NetworkCapabilities.TRANSPORT_VPN,
+        )
+    return transports.any { capabilities.hasTransport(it) }
+}
+
+suspend fun SharedFlow<SnackBarComponentConfiguration>.hookSnackBar(
+    scaffoldState: ScaffoldState,
+    action: () -> Unit = {}
+) {
+    this.collectLatest { snackBarState ->
+        if (snackBarState.message.isNotEmpty()) {
+            val snackBarResult =
+                scaffoldState.snackbarHostState.showSnackbar(
+                    message = snackBarState.message,
+                    actionLabel = snackBarState.actionLabel,
+                    duration = snackBarState.duration
+                )
+            when (snackBarResult) {
+                SnackbarResult.ActionPerformed -> {
+                    /**/
+                }
+                SnackbarResult.Dismissed -> {
+                    /* Do nothing (for now) when snackBar is dismissed */
+                }
+            }
+        }
     }
 }

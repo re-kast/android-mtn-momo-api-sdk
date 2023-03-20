@@ -22,19 +22,36 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.rememberDrawerState
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import com.rekast.momoapi.sample.R
+import com.rekast.momoapi.sample.ui.components.SnackBarComponent
 import com.rekast.momoapi.sample.ui.navigation.drawer.Drawer
 import com.rekast.momoapi.sample.ui.navigation.topbar.TopBar
+import com.rekast.momoapi.sample.utils.SnackBarComponentConfiguration
+import com.rekast.momoapi.sample.utils.SnackBarThemeOptions
+import com.rekast.momoapi.sample.utils.hookSnackBar
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 
 @Composable
-fun MainScreen(navController: NavController?) {
+fun MainScreen(
+    navController: NavController?,
+    snackStateFlow: SharedFlow<SnackBarComponentConfiguration>
+) {
     val scaffoldState = rememberScaffoldState(rememberDrawerState(DrawerValue.Closed))
     val scope = rememberCoroutineScope()
+    val snackBarTheme = SnackBarThemeOptions()
+
+    LaunchedEffect(Unit) {
+        snackStateFlow.hookSnackBar(scaffoldState)
+    }
+
     Scaffold(
         scaffoldState = scaffoldState,
         topBar = { TopBar(scope = scope, scaffoldState = scaffoldState, title = R.string.home_screen) },
@@ -43,6 +60,14 @@ fun MainScreen(navController: NavController?) {
             navController?.let { Drawer(scope = scope, scaffoldState = scaffoldState, navController = it) }
         },
         backgroundColor = colorResource(id = R.color.white),
+        snackbarHost = { snackBarHostState ->
+            SnackBarComponent(
+                snackBarHostState = snackBarHostState,
+                backgroundColorHex = snackBarTheme.backgroundColor,
+                actionColorHex = snackBarTheme.actionTextColor,
+                contentColorHex = snackBarTheme.messageTextColor
+            )
+        }
     ) { padding ->
         Box(modifier = Modifier.padding(padding)) {}
     }
@@ -51,5 +76,5 @@ fun MainScreen(navController: NavController?) {
 @Preview(showBackground = true)
 @Composable
 fun MainScreenPreview() {
-    MainScreen(navController = null)
+    MainScreen(navController = null, snackStateFlow = MutableSharedFlow<SnackBarComponentConfiguration>().asSharedFlow())
 }

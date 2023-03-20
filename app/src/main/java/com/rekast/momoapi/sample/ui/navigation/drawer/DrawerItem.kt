@@ -46,14 +46,14 @@ fun DrawerItem(item: NavigationDrawerItem, selected: Boolean, onItemClick: (Navi
             .clickable(onClick = { onItemClick(item) })
             .height(60.dp)
             .background(colorResource(id = background))
-            .padding(start = 10.dp, end = 10.dp)
+            .padding(start = 10.dp, end = 10.dp),
     ) {
         Spacer(modifier = Modifier.width(7.dp))
         Column() {
             Text(
                 text = item.title,
                 fontSize = 18.sp,
-                color = Color.White
+                color = Color.White,
             )
         }
         Spacer(modifier = Modifier.width(7.dp))

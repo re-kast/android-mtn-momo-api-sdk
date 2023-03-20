@@ -34,7 +34,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class CollectionScreenFragment : Fragment() {
     val appMainViewModel by activityViewModels<AppMainViewModel>()
-    val collectionScreenViewModel by viewModels<CollectionScreenViewModel>()
+    private val collectionScreenViewModel by viewModels<CollectionScreenViewModel>()
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -44,10 +44,12 @@ class CollectionScreenFragment : Fragment() {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
                 AppTheme {
-                    CollectionScreen(navController = findNavController())
+                    CollectionScreen(
+                        navController = findNavController(),
+                        snackStateFlow = collectionScreenViewModel.snackBarStateFlow
+                    )
                 }
             }
         }
     }
-
 }

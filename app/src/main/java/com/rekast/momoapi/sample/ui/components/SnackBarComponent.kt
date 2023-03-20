@@ -23,20 +23,24 @@ import androidx.compose.ui.Modifier
 import com.rekast.momoapi.sample.utils.parseColor
 
 @Composable
-fun SnackBarMessage(
+fun SnackBarComponent(
     modifier: Modifier = Modifier,
     snackBarHostState: SnackbarHostState,
     backgroundColorHex: String,
     actionColorHex: String,
-    contentColorHex: String,
+    contentColorHex: String
 ) {
-    SnackbarHost(hostState = snackBarHostState, snackbar = { snackBarData ->
-        Snackbar(
-            snackbarData = snackBarData,
-            backgroundColor = backgroundColorHex.parseColor(),
-            contentColor = contentColorHex.parseColor(),
-            actionColor = actionColorHex.parseColor(),
-            modifier = modifier,
-        )
-    })
+    SnackbarHost(
+        hostState = snackBarHostState,
+        snackbar = { snackBarData ->
+            Snackbar(
+                snackbarData = snackBarData,
+                backgroundColor = backgroundColorHex.parseColor(),
+                contentColor = contentColorHex.parseColor(),
+                actionColor = actionColorHex.parseColor(),
+                modifier = modifier
+            )
+        }
+    )
 }
+

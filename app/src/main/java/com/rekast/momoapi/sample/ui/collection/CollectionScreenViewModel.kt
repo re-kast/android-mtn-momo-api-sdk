@@ -15,6 +15,22 @@
  */
 package com.rekast.momoapi.sample.ui.collection
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.rekast.momoapi.sample.utils.SnackBarComponentConfiguration
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.launch
 
-class CollectionScreenViewModel : ViewModel()
+class CollectionScreenViewModel : ViewModel() {
+
+    private val _snackBarStateFlow = MutableSharedFlow<SnackBarComponentConfiguration>()
+    val snackBarStateFlow: SharedFlow<SnackBarComponentConfiguration> = _snackBarStateFlow.asSharedFlow()
+    var context: Context? = null
+
+    private fun emitSnackBarState(snackBarComponentConfiguration: SnackBarComponentConfiguration) {
+        viewModelScope.launch { _snackBarStateFlow.emit(snackBarComponentConfiguration) }
+    }
+}

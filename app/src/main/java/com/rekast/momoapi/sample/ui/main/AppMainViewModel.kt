@@ -15,80 +15,29 @@
  */
 package com.rekast.momoapi.sample.ui.main
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.rekast.momoapi.BuildConfig
 import com.rekast.momoapi.MomoAPI
-import com.rekast.momoapi.callback.APIResult
-import com.rekast.momoapi.utils.Constants
-import com.rekast.momoapi.utils.ProductType
-import com.rekast.momoapi.utils.Settings
-import org.apache.commons.lang3.StringUtils
+import com.rekast.momoapi.sample.utils.SnackBarComponentConfiguration
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.launch
 
 class AppMainViewModel : ViewModel() {
     fun momoAPI(): MomoAPI {
-        return MomoAPI.builder(BuildConfig.MOMO_API_USER_ID)
-            .setEnvironment(BuildConfig.MOMO_ENVIRONMENT)
-            .getBaseURL(BuildConfig.MOMO_BASE_URL)
-            .build()
+        return MomoAPI.builder(BuildConfig.MOMO_API_USER_ID).setEnvironment(BuildConfig.MOMO_ENVIRONMENT)
+            .getBaseURL(BuildConfig.MOMO_BASE_URL).build()
     }
 
-    fun checkUser(momoAPi: MomoAPI) {
-        momoAPi.checkApiUser(
-            Settings.getProductSubscriptionKeys(ProductType.REMITTANCE),
-            BuildConfig.MOMO_API_VERSION_V1,
-        ) { momoAPIResult ->
-            when (momoAPIResult) {
-                is APIResult.Success -> {
-                    getApiKey(momoAPi)
-                }
-                is APIResult.Failure -> {
-                    val momoAPIException = momoAPIResult.APIException
-                    // showToast(momoAPIException?.message ?: "An error occurred!")
-                }
-            }
-        }
-    }
+    private val _snackBarStateFlow = MutableSharedFlow<SnackBarComponentConfiguration>()
+    val snackBarStateFlow: SharedFlow<SnackBarComponentConfiguration> = _snackBarStateFlow.asSharedFlow()
+    var context: Context? = null
 
-    private fun getApiKey(momoAPi: MomoAPI) {
-        momoAPi.getUserApiKey(
-            Settings.getProductSubscriptionKeys(ProductType.REMITTANCE),
-            BuildConfig.MOMO_API_VERSION_V1,
-        ) { momoAPIResult ->
-            when (momoAPIResult) {
-                is APIResult.Success -> {
-                    val apiUserKey = momoAPIResult.value
-                    // Utils.saveApiKey(, apiUserKey.apiKey)
-                    getAccessToken(momoAPi)
-                }
-                is APIResult.Failure -> {
-                    val momoAPIException = momoAPIResult.APIException
-                    // showToast(momoAPIException?.message ?: "An error occurred!")
-                }
-            }
-        }
-    }
-
-    private fun getAccessToken(momoAPi: MomoAPI) {
-        // val apiUserKey = Utils.getApiKey(this)
-        val apiUserKey: String = ""
-        if (StringUtils.isNotBlank(apiUserKey)) {
-            momoAPi.getAccessToken(
-                Settings.getProductSubscriptionKeys(ProductType.REMITTANCE),
-                apiUserKey,
-                Constants.ProductTypes.REMITTANCE,
-            ) { momoAPIResult ->
-                when (momoAPIResult) {
-                    is APIResult.Success -> {
-                        val accessToken = momoAPIResult.value
-                        // Utils.saveAccessToken(this, accessToken)
-                    }
-                    is APIResult.Failure -> {
-                        val momoAPIException = momoAPIResult.APIException
-                        // showToast(momoAPIException?.message ?: "An error occurred!")
-                    }
-                }
-            }
-        }
+    private fun emitSnackBarState(snackBarComponentConfiguration: SnackBarComponentConfiguration) {
+        viewModelScope.launch { _snackBarStateFlow.emit(snackBarComponentConfiguration) }
     }
 
 /*    private fun getAccountBalance() {

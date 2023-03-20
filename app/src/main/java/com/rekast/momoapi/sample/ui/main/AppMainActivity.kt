@@ -34,8 +34,7 @@ import javax.inject.Inject
 open class AppMainActivity : AppCompatActivity() {
     @Inject
     lateinit var dispatcherProvider: DefaultDispatcherProvider
-
-    private lateinit var momoAPI: MomoAPI
+    lateinit var momoAPI: MomoAPI
     private val appMainViewModel by viewModels<AppMainViewModel>()
     lateinit var navHostFragment: NavHostFragment
 
@@ -44,6 +43,8 @@ open class AppMainActivity : AppCompatActivity() {
         setContentView(FragmentContainerView(this).apply { id = R.id.nav_host })
         navHostFragment =
             NavHostFragment.create(R.navigation.navigation_graph)
+        // initialize the API
+        momoAPI = appMainViewModel.momoAPI()
 
         supportFragmentManager
             .beginTransaction()
@@ -51,7 +52,6 @@ open class AppMainActivity : AppCompatActivity() {
             .setPrimaryNavigationFragment(navHostFragment)
             .commit()
 
-        momoAPI = appMainViewModel.momoAPI()
     }
 
     override fun onResume() {

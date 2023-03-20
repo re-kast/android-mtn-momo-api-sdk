@@ -1,5 +1,5 @@
 /*
- * Copyright 2023, Benjamin Mwalimu Mulyungi
+ * Copyright 2021-2023 Ona Systems, Inc
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,19 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.rekast.momoapi.sample
 
-import android.app.Application
-import dagger.hilt.android.HiltAndroidApp
-import timber.log.Timber
+package com.rekast.momoapi.sample.utils
 
-@HiltAndroidApp
-class MomoApplication : Application() {
+import kotlinx.serialization.Serializable
 
-    override fun onCreate() {
-        super.onCreate()
-        if (BuildConfig.DEBUG) {
-            Timber.plant(Timber.DebugTree())
-        }
-    }
-}
+@Serializable
+data class SnackBarThemeOptions(
+    val messageTextColor: String = "#FFFFFF",
+    val actionTextColor: String = "#FFE400",
+    val backgroundColor: String = "#EB9779"
+) : java.io.Serializable

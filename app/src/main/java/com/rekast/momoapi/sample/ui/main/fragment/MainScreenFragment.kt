@@ -23,19 +23,19 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
-import com.rekast.momoapi.sample.ui.main.AppMainViewModel
+import com.rekast.momoapi.MomoAPI
+import com.rekast.momoapi.sample.ui.main.AppMainActivity
 import com.rekast.momoapi.sample.ui.theme.AppTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @ExperimentalMaterialApi
 @AndroidEntryPoint
 class MainScreenFragment : Fragment() {
-    val appMainViewModel by activityViewModels<AppMainViewModel>()
-    val mainScreenFragmentViewModel by viewModels<MainScreenFragmentViewModel>()
-
+    private lateinit var activity: AppMainActivity
+    private lateinit var fragmentMomoAPI: MomoAPI
+    private val mainScreenFragmentViewModel by viewModels<MainScreenFragmentViewModel>()
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -44,16 +44,22 @@ class MainScreenFragment : Fragment() {
         return ComposeView(requireContext()).apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
-                AppTheme { MainScreen(navController = findNavController()) }
+                AppTheme {
+                    MainScreen(
+                        navController = findNavController(), snackStateFlow = mainScreenFragmentViewModel.snackBarStateFlow
+                    )
+                }
             }
         }
     }
 
     override fun onResume() {
         super.onResume()
-    }
+        activity = requireActivity() as AppMainActivity
+        fragmentMomoAPI = activity.momoAPI
 
-    override fun onStop() {
-        super.onStop()
+        mainScreenFragmentViewModel.provideContext(activity)
+        mainScreenFragmentViewModel.provideMomoAPI(fragmentMomoAPI)
+        mainScreenFragmentViewModel.checkUser()
     }
 }
