@@ -29,9 +29,7 @@ allprojects {
                 .setEditorConfigPath(".editorconfig")
                 .userData(
                     mapOf(
-                        "android" to "true",
-                        "ij_kotlin_allow_trailing_comma" to "true",
-                        "ij_kotlin_allow_trailing_comma_on_call_site" to "true"
+                        "android" to "true"
                     )
                 )
             licenseHeaderFile("$projectDir/license-header.txt")

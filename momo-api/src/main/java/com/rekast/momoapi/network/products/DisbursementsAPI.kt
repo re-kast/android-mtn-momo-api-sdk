@@ -16,7 +16,7 @@
 package com.rekast.momoapi.network.products
 
 import com.rekast.momoapi.model.api.MomoTransaction
-import com.rekast.momoapi.utils.Constants
+import com.rekast.momoapi.utils.MomoConstants
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.Body
@@ -38,13 +38,13 @@ sealed interface DisbursementsAPI : ProductSharedAPI {
      * @param[environment] -- The API environment (X-Target-Environment)
      * @return[Unit] -- Returns the Transfer Status
      */
-    @POST(Constants.EndPoints.DEPOSIT)
+    @POST(MomoConstants.EndPoints.DEPOSIT)
     fun deposit(
         @Body momoTransaction: MomoTransaction,
-        @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
-        @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
-        @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String,
-        @Header(Constants.Headers.X_REFERENCE_ID) uuid: String
+        @Path(MomoConstants.EndpointPaths.API_VERSION) apiVersion: String,
+        @Header(MomoConstants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
+        @Header(MomoConstants.Headers.X_TARGET_ENVIRONMENT) environment: String,
+        @Header(MomoConstants.Headers.X_REFERENCE_ID) uuid: String
     ): Call<Unit>
 
     /**
@@ -56,12 +56,12 @@ sealed interface DisbursementsAPI : ProductSharedAPI {
      * @param[environment] -- The API environment (X-Target-Environment)
      * @return[ResponseBody] -- Returns the Transfer Status
      */
-    @GET(Constants.EndPoints.DEPOSIT_STATUS)
+    @GET(MomoConstants.EndPoints.DEPOSIT_STATUS)
     fun getDepositStatus(
-        @Path(Constants.EndpointPaths.REFERENCE_ID) referenceId: String,
-        @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
-        @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
-        @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String
+        @Path(MomoConstants.EndpointPaths.REFERENCE_ID) referenceId: String,
+        @Path(MomoConstants.EndpointPaths.API_VERSION) apiVersion: String,
+        @Header(MomoConstants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
+        @Header(MomoConstants.Headers.X_TARGET_ENVIRONMENT) environment: String
     ): Call<ResponseBody>
 
     /**
@@ -72,13 +72,13 @@ sealed interface DisbursementsAPI : ProductSharedAPI {
      * @param[environment] -- The API environment (X-Target-Environment)
      * @return[Unit] -- Returns the Transfer Status
      */
-    @POST(Constants.EndPoints.REFUND)
+    @POST(MomoConstants.EndPoints.REFUND)
     fun refund(
         @Body momoTransaction: MomoTransaction,
-        @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
-        @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
-        @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String,
-        @Header(Constants.Headers.X_REFERENCE_ID) uuid: String
+        @Path(MomoConstants.EndpointPaths.API_VERSION) apiVersion: String,
+        @Header(MomoConstants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
+        @Header(MomoConstants.Headers.X_TARGET_ENVIRONMENT) environment: String,
+        @Header(MomoConstants.Headers.X_REFERENCE_ID) uuid: String
     ): Call<Unit>
 
     /**
@@ -90,11 +90,11 @@ sealed interface DisbursementsAPI : ProductSharedAPI {
      * @param[environment] -- The API environment (X-Target-Environment)
      * @return[ResponseBody] -- Returns the Transfer Status
      */
-    @GET(Constants.EndPoints.REFUND_STATUS)
+    @GET(MomoConstants.EndPoints.REFUND_STATUS)
     fun getRefundStatus(
-        @Path(Constants.EndpointPaths.REFERENCE_ID) referenceId: String,
-        @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
-        @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
-        @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String
+        @Path(MomoConstants.EndpointPaths.REFERENCE_ID) referenceId: String,
+        @Path(MomoConstants.EndpointPaths.API_VERSION) apiVersion: String,
+        @Header(MomoConstants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
+        @Header(MomoConstants.Headers.X_TARGET_ENVIRONMENT) environment: String
     ): Call<ResponseBody>
 }
