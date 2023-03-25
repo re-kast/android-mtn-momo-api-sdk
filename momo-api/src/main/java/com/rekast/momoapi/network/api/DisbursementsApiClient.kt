@@ -16,5 +16,19 @@
 package com.rekast.momoapi.network.api
 
 import com.rekast.momoapi.network.MomoApiClient
+import com.rekast.momoapi.network.products.DisbursementsAPI
+import okhttp3.Interceptor
 
-object DisbursementsApiClient : MomoApiClient()
+object DisbursementsApiClient : MomoApiClient() {
+    fun deposit(baseUrl: String, authentication: Interceptor): DisbursementsAPI =
+        getRetrofit(baseUrl, authentication).create(DisbursementsAPI::class.java)
+
+    fun getDepositStatus(baseUrl: String, authentication: Interceptor): DisbursementsAPI =
+        getRetrofit(baseUrl, authentication).create(DisbursementsAPI::class.java)
+
+    fun refund(baseUrl: String, authentication: Interceptor): DisbursementsAPI =
+        getRetrofit(baseUrl, authentication).create(DisbursementsAPI::class.java)
+
+    fun getRefundStatus(baseUrl: String, authentication: Interceptor): DisbursementsAPI =
+        getRetrofit(baseUrl, authentication).create(DisbursementsAPI::class.java)
+}

@@ -27,5 +27,5 @@ data class BasicUserInfo(
     @SerializedName("birthdate") var birthDate: String,
     @SerializedName("locale") var locale: String,
     @SerializedName("gender") var gender: String,
-    @SerializedName("updated_at") var updatedAt: String,
+    @SerializedName("updated_at") var updatedAt: String
 )

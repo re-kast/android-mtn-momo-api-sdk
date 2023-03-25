@@ -24,5 +24,5 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class ApiUserKey(
-    @SerializedName("apiKey") val apiKey: String,
+    @SerializedName("apiKey") val apiKey: String
 )

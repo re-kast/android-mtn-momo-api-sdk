@@ -18,14 +18,15 @@ package com.rekast.momoapi.repository
 import com.rekast.momoapi.model.api.AccountBalance
 import com.rekast.momoapi.model.api.AccountHolder
 import com.rekast.momoapi.model.api.BasicUserInfo
+import com.rekast.momoapi.model.api.MomoTransaction
 import com.rekast.momoapi.model.api.Notification
-import com.rekast.momoapi.model.api.Transaction
 import com.rekast.momoapi.model.api.UserInfoWithConsent
 import com.rekast.momoapi.model.authentication.AccessToken
 import com.rekast.momoapi.model.authentication.ApiUser
 import com.rekast.momoapi.model.authentication.ApiUserKey
 import com.rekast.momoapi.network.MomoApiClient
 import com.rekast.momoapi.network.api.CollectionApiClient
+import com.rekast.momoapi.network.api.DisbursementsApiClient
 import com.rekast.momoapi.network.okhttp.AccessTokenInterceptor
 import com.rekast.momoapi.network.okhttp.BasicAuthInterceptor
 import okhttp3.ResponseBody
@@ -39,14 +40,14 @@ import retrofit2.Call
 class MomoAPIRepository(
     var apiUserId: String,
     var baseUrl: String,
-    var environment: String,
+    var environment: String
 ) {
     /**
      * Check whether the supplied user exists
      */
     fun checkApiUser(
         productSubscriptionKey: String,
-        apiVersion: String,
+        apiVersion: String
     ): Call<ApiUser> {
         return MomoApiClient().checkApiUser(baseUrl)
             .getApiUser(apiVersion, apiUserId, productSubscriptionKey)
@@ -57,7 +58,7 @@ class MomoAPIRepository(
      */
     fun getUserApiKey(
         productSubscriptionKey: String,
-        apiVersion: String,
+        apiVersion: String
     ): Call<ApiUserKey> {
         return MomoApiClient().getApiUserKey(baseUrl)
             .getApiUserKey(apiVersion, apiUserId, productSubscriptionKey)
@@ -69,11 +70,11 @@ class MomoAPIRepository(
     fun getAccessToken(
         productSubscriptionKey: String,
         apiKey: String,
-        productType: String,
+        productType: String
     ): Call<AccessToken> {
         return MomoApiClient().getAccessToken(
             baseUrl,
-            BasicAuthInterceptor(apiUserId, apiKey),
+            BasicAuthInterceptor(apiUserId, apiKey)
         ).getAccessToken(productType, productSubscriptionKey)
     }
 
@@ -85,23 +86,23 @@ class MomoAPIRepository(
         productSubscriptionKey: String,
         accessToken: String,
         apiVersion: String,
-        productType: String,
+        productType: String
     ): Call<AccountBalance> {
         return if (StringUtils.isNotBlank(currency)) {
             MomoApiClient().getAccountBalance(
                 baseUrl,
-                AccessTokenInterceptor(accessToken),
+                AccessTokenInterceptor(accessToken)
             ).getAccountBalanceInSpecificCurrency(
                 currency.toString(),
                 productType,
                 apiVersion,
                 productSubscriptionKey,
-                environment,
+                environment
             )
         } else {
             MomoApiClient().getAccountBalance(
                 baseUrl,
-                AccessTokenInterceptor(accessToken),
+                AccessTokenInterceptor(accessToken)
             ).getAccountBalance(productType, apiVersion, productSubscriptionKey, environment)
         }
     }
@@ -114,11 +115,11 @@ class MomoAPIRepository(
         productSubscriptionKey: String,
         accessToken: String,
         apiVersion: String,
-        productType: String,
+        productType: String
     ): Call<BasicUserInfo> {
         return MomoApiClient().getBasicUserInfo(
             baseUrl,
-            AccessTokenInterceptor(accessToken),
+            AccessTokenInterceptor(accessToken)
         ).getBasicUserInfo(accountHolder, productType, apiVersion, productSubscriptionKey, environment)
     }
 
@@ -129,11 +130,11 @@ class MomoAPIRepository(
         productSubscriptionKey: String,
         accessToken: String,
         apiVersion: String,
-        productType: String,
+        productType: String
     ): Call<UserInfoWithConsent> {
         return MomoApiClient().getUserInfoWithConsent(
             baseUrl,
-            AccessTokenInterceptor(accessToken),
+            AccessTokenInterceptor(accessToken)
         ).getUserInfoWithConsent(productType, apiVersion, productSubscriptionKey, environment)
     }
 
@@ -142,16 +143,16 @@ class MomoAPIRepository(
      */
     fun transfer(
         accessToken: String,
-        transaction: Transaction,
+        momoTransaction: MomoTransaction,
         apiVersion: String,
         productType: String,
         productSubscriptionKey: String,
-        uuid: String,
+        uuid: String
     ): Call<Unit> {
         return MomoApiClient().transfer(
             baseUrl,
-            AccessTokenInterceptor(accessToken),
-        ).transfer(transaction, apiVersion, productType, productSubscriptionKey, environment, uuid)
+            AccessTokenInterceptor(accessToken)
+        ).transfer(momoTransaction, apiVersion, productType, productSubscriptionKey, environment, uuid)
     }
 
     /**
@@ -162,11 +163,11 @@ class MomoAPIRepository(
         apiVersion: String,
         productType: String,
         productSubscriptionKey: String,
-        accessToken: String,
+        accessToken: String
     ): Call<ResponseBody> {
         return MomoApiClient().getTransferStatus(
             baseUrl,
-            AccessTokenInterceptor(accessToken),
+            AccessTokenInterceptor(accessToken)
         ).getTransferStatus(referenceId, apiVersion, productType, productSubscriptionKey, environment)
     }
 
@@ -179,11 +180,11 @@ class MomoAPIRepository(
         apiVersion: String,
         productType: String,
         productSubscriptionKey: String,
-        accessToken: String,
+        accessToken: String
     ): Call<ResponseBody> {
         return MomoApiClient().requestToPayDeliveryNotification(
             baseUrl,
-            AccessTokenInterceptor(accessToken),
+            AccessTokenInterceptor(accessToken)
         ).requestToPayDeliveryNotification(
             notification,
             referenceId,
@@ -191,7 +192,7 @@ class MomoAPIRepository(
             productType,
             productSubscriptionKey,
             environment,
-            notification.notificationMessage,
+            notification.notificationMessage
         )
     }
 
@@ -203,92 +204,118 @@ class MomoAPIRepository(
         apiVersion: String,
         productType: String,
         productSubscriptionKey: String,
-        accessToken: String,
+        accessToken: String
     ): Call<ResponseBody> {
         return MomoApiClient().validateAccountHolderStatus(
             baseUrl,
-            AccessTokenInterceptor(accessToken),
+            AccessTokenInterceptor(accessToken)
         ).validateAccountHolderStatus(
             accountHolder.partyId,
             accountHolder.partyIdType,
             apiVersion,
             productType,
             productSubscriptionKey,
-            environment,
+            environment
         )
     }
 
     fun requestToPay(
         accessToken: String,
-        transaction: Transaction,
+        momoTransaction: MomoTransaction,
         apiVersion: String,
         productSubscriptionKey: String,
-        uuid: String,
+        uuid: String
     ): Call<Unit> {
         return CollectionApiClient.requestToPay(
             baseUrl,
-            AccessTokenInterceptor(accessToken),
-        ).requestToPay(transaction, apiVersion, productSubscriptionKey, environment, uuid)
+            AccessTokenInterceptor(accessToken)
+        ).requestToPay(momoTransaction, apiVersion, productSubscriptionKey, environment, uuid)
     }
 
     fun requestToPayTransactionStatus(
         referenceId: String,
         apiVersion: String,
         productSubscriptionKey: String,
-        accessToken: String,
+        accessToken: String
     ): Call<ResponseBody> {
         return CollectionApiClient.requestToPayTransactionStatus(
             baseUrl,
-            AccessTokenInterceptor(accessToken),
+            AccessTokenInterceptor(accessToken)
         ).requestToPayTransactionStatus(referenceId, apiVersion, productSubscriptionKey, environment)
     }
 
     fun requestToWithdraw(
         accessToken: String,
-        transaction: Transaction,
+        momoTransaction: MomoTransaction,
         apiVersion: String,
         productSubscriptionKey: String,
-        uuid: String,
+        uuid: String
     ): Call<Unit> {
         return CollectionApiClient.requestToWithdraw(
             baseUrl,
-            AccessTokenInterceptor(accessToken),
-        ).requestToWithdraw(transaction, apiVersion, productSubscriptionKey, environment, uuid)
+            AccessTokenInterceptor(accessToken)
+        ).requestToWithdraw(momoTransaction, apiVersion, productSubscriptionKey, environment, uuid)
     }
 
     fun requestToWithdrawTransactionStatus(
         referenceId: String,
         apiVersion: String,
         productSubscriptionKey: String,
-        accessToken: String,
+        accessToken: String
     ): Call<ResponseBody> {
         return CollectionApiClient.requestToWithdrawTransactionStatus(
             baseUrl,
-            AccessTokenInterceptor(accessToken),
+            AccessTokenInterceptor(accessToken)
         ).requestToWithdrawTransactionStatus(referenceId, apiVersion, productSubscriptionKey, environment)
     }
 
-    fun depositV1() {
-        TODO("Not yet implemented")
+    fun deposit(
+        accessToken: String,
+        momoTransaction: MomoTransaction,
+        apiVersion: String,
+        productSubscriptionKey: String,
+        uuid: String
+    ): Call<Unit> {
+        return DisbursementsApiClient.deposit(
+            baseUrl,
+            AccessTokenInterceptor(accessToken)
+        ).deposit(momoTransaction, apiVersion, productSubscriptionKey, environment, uuid)
     }
 
-    fun depositV2() {
-        TODO("Not yet implemented")
+    fun getDepositStatus(
+        referenceId: String,
+        apiVersion: String,
+        productSubscriptionKey: String,
+        accessToken: String
+    ): Call<ResponseBody> {
+        return DisbursementsApiClient.getDepositStatus(
+            baseUrl,
+            AccessTokenInterceptor(accessToken)
+        ).getDepositStatus(referenceId, apiVersion, productSubscriptionKey, environment)
     }
 
-    fun getDepositStatus() {
-        TODO("Not yet implemented")
+    fun refund(
+        accessToken: String,
+        momoTransaction: MomoTransaction,
+        apiVersion: String,
+        productSubscriptionKey: String,
+        uuid: String
+    ): Call<Unit> {
+        return DisbursementsApiClient.refund(
+            baseUrl,
+            AccessTokenInterceptor(accessToken)
+        ).refund(momoTransaction, apiVersion, productSubscriptionKey, environment, uuid)
     }
 
-    fun refundV1() {
-        TODO("Not yet implemented")
-    }
-
-    fun refundV2() {
-        TODO("Not yet implemented")
-    }
-
-    fun getRefundStatus() {
-        TODO("Not yet implemented")
+    fun getRefundStatus(
+        referenceId: String,
+        apiVersion: String,
+        productSubscriptionKey: String,
+        accessToken: String
+    ): Call<ResponseBody> {
+        return DisbursementsApiClient.getRefundStatus(
+            baseUrl,
+            AccessTokenInterceptor(accessToken)
+        ).getRefundStatus(referenceId, apiVersion, productSubscriptionKey, environment)
     }
 }

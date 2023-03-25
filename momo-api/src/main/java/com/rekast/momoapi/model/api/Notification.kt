@@ -20,5 +20,5 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Notification(
-    @SerializedName("notificationMessage") var notificationMessage: String,
+    @SerializedName("notificationMessage") var notificationMessage: String
 )

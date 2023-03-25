@@ -27,7 +27,13 @@ allprojects {
             targetExclude("**/buildSrc/src/main/kotlin/*.kt")
             ktlint("0.48.2")
                 .setEditorConfigPath(".editorconfig")
-                .userData(mapOf("android" to "true"))
+                .userData(
+                    mapOf(
+                        "android" to "true",
+                        "ij_kotlin_allow_trailing_comma" to "true",
+                        "ij_kotlin_allow_trailing_comma_on_call_site" to "true"
+                    )
+                )
             licenseHeaderFile("$projectDir/license-header.txt")
         }
         kotlinGradle {
@@ -41,10 +47,13 @@ allprojects {
 buildscript {
     val kotlinVersion by extra("1.8.10")
     val jacocoVersion by extra("0.2")
-    val nexusPublishVersion by extra("1.1.0")
+    val daggerHilt by extra("2.45")
+    val safeNavigation by extra("2.6.0-alpha06")
 
     dependencies {
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
         classpath("com.hiya:jacoco-android:$jacocoVersion")
+        classpath("com.google.dagger:hilt-android-gradle-plugin:$daggerHilt")
+        classpath("androidx.navigation:navigation-safe-args-gradle-plugin:$safeNavigation")
     }
 }

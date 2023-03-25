@@ -17,7 +17,7 @@ package com.rekast.momoapi.callback
 
 import com.google.gson.GsonBuilder
 import com.rekast.momoapi.model.api.ErrorResponse
-import com.rekast.momoapi.model.api.Transaction
+import com.rekast.momoapi.model.api.MomoTransaction
 import com.rekast.momoapi.utils.Settings
 import com.rekast.momoapi.utils.TransactionStatus
 import okhttp3.ResponseBody
@@ -31,24 +31,24 @@ import java.io.IOException
  * Transaction Callback for the MTN MOMO API
  * The MTN MOMO API returns the a 200 OK even for transfers that failed.
  * We use [TransactionCallback] to identify the difference between 200 OK and 400
- * This returns the [Transaction] on the [ResponseBody]
+ * This returns the [MomoTransaction] on the [ResponseBody]
  */
 class TransactionCallback(
-    private val callback: (APIResult: APIResult<ResponseBody?>) -> Unit,
+    private val callback: (APIResult: APIResult<ResponseBody?>) -> Unit
 ) : Callback<ResponseBody?> {
 
     override fun onResponse(call: Call<ResponseBody?>, response: Response<ResponseBody?>) {
         if (response.isSuccessful) {
-            val transaction: Transaction? = Settings.generateTransactionFromResponse(response)
-            if (transaction?.status != null) {
-                if (transaction.status == TransactionStatus.SUCCESSFUL.name) {
+            val momoTransaction: MomoTransaction? = Settings.generateTransactionFromResponse(response)
+            if (momoTransaction?.status != null) {
+                if (momoTransaction.status == TransactionStatus.SUCCESSFUL.name) {
                     callback.invoke(
                         APIResult.Success(
-                            GsonBuilder().setPrettyPrinting().create().toJson(transaction).toResponseBody(),
-                        ),
+                            GsonBuilder().setPrettyPrinting().create().toJson(momoTransaction).toResponseBody()
+                        )
                     )
                 } else {
-                    val error = "${transaction.reason} : ${transaction.financialTransactionId}"
+                    val error = "${momoTransaction.reason} : ${momoTransaction.financialTransactionId}"
                     callback.invoke(APIResult.Failure(false, APIException(error)))
                 }
                 return

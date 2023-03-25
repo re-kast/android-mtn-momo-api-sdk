@@ -5,6 +5,7 @@ plugins {
     id(BuildPlugins.kapt)
     id(BuildPlugins.mapsSecret)
     id(BuildPlugins.kotlinSerialization) version Versions.kotlinAndroid
+    id(BuildPlugins.hiltAndroid)
 }
 
 jacoco {
@@ -43,18 +44,9 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-
-    kotlinOptions {
-        jvmTarget = "11"
-    }
-
-    buildFeatures {
-        compose = true
-    }
-
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.2"
-    }
+    kotlinOptions { jvmTarget = "11" }
+    buildFeatures { compose = true }
+    composeOptions { kotlinCompilerExtensionVersion = "1.4.2" }
 
 /*    signingConfigs {
         getByName("debug") {
@@ -82,6 +74,7 @@ android {
 
 kapt {
     generateStubs = true
+    correctErrorTypes = true
 }
 
 dependencies {
@@ -93,25 +86,36 @@ dependencies {
     val composeBom = platform(Libraries.composeBom)
     implementation(composeBom)
     androidTestImplementation(composeBom)
-    implementation(BuildPlugins.meterial3)
-    implementation(BuildPlugins.composeUi)
-    implementation(BuildPlugins.composeToolingPreview)
+    implementation(Libraries.appCompat)
+    implementation(Libraries.material)
+    implementation(Libraries.composeMaterial)
+    implementation(Libraries.composeMaterial3)
+    implementation(Libraries.composeMaterial3Window)
+    implementation(Libraries.composeUi)
+    implementation(Libraries.composeToolingPreview)
+    implementation(Libraries.composeUiTooling)
     implementation(Libraries.composeActivity)
     implementation(Libraries.lifecycleComposeViewModel)
-    implementation(BuildPlugins.materialIconsCore)
-    implementation(BuildPlugins.materialIconsExtended)
-    implementation(BuildPlugins.materialWindow)
-    implementation(BuildPlugins.runtimeLiveData)
-    implementation(BuildPlugins.runtimeRxJava)
+    implementation(Libraries.materialIconsCore)
+    implementation(Libraries.materialIconsExtended)
+    implementation(Libraries.runtimeLiveData)
+    implementation(Libraries.runtimeRxJava)
     implementation(Libraries.kotlinStdLib)
     implementation(Libraries.androidXTestMonitor)
     implementation(Libraries.androidXJunitTest)
     implementation(Libraries.kotlinxSerializationJson)
+    implementation(Libraries.foundation)
+
+    // hilt
+    implementation(Libraries.hiltAndroid)
+    kapt(Libraries.hiltComplier)
     // Material and AndroidX
     implementation(Libraries.constraintLayout)
     implementation(Libraries.material)
+    implementation(Libraries.navigationCompose)
     implementation(Libraries.navigationFragment)
     implementation(Libraries.navigationUi)
+    implementation(Libraries.dynamicNavigation)
     // Network - Retrofit, OKHTTP, chucker
     implementation(Libraries.retrofit)
     implementation(Libraries.gson)
@@ -122,9 +126,16 @@ dependencies {
     // Debug - for debug builds only
     implementation(Libraries.timber)
     implementation(Libraries.commonsLang3)
+
+    debugImplementation("androidx.customview:customview:1.2.0-alpha02")
+    debugImplementation("androidx.customview:customview-poolingcontainer:1.0.0")
+
     debugImplementation(Libraries.leakCanary)
     debugImplementation(BuildPlugins.composeUiTooling)
     debugImplementation(BuildPlugins.testManifest)
+    // hilt
+    androidTestImplementation(TestLibraries.hiltAndroidTesting)
+    kaptAndroidTest(Libraries.hiltComplier)
     // UI Tests
     androidTestImplementation(TestLibraries.espresso)
     androidTestImplementation(TestLibraries.kakao)
@@ -144,6 +155,10 @@ dependencies {
     testImplementation(TestLibraries.runner)
     testImplementation(TestLibraries.androidXJUnit)
     testImplementation(TestLibraries.archComponentTest)
+    testImplementation(TestLibraries.navigationTesting)
+    // hilt
+    testImplementation(TestLibraries.hiltAndroidTesting)
+    kaptAndroidTest(Libraries.hiltComplier)
     // testImplementation(TestLibraries.liveDataTesting)
     testImplementation(TestLibraries.kotlinxCoroutines)
 }

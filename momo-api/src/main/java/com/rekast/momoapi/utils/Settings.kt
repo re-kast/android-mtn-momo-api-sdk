@@ -15,15 +15,12 @@
  */
 package com.rekast.momoapi.utils
 
-import android.util.Base64
 import com.google.gson.Gson
 import com.rekast.momoapi.BuildConfig
-import com.rekast.momoapi.model.api.Notification
-import com.rekast.momoapi.model.api.Transaction
+import com.rekast.momoapi.model.api.MomoTransaction
 import okhttp3.ResponseBody
 import org.apache.commons.lang3.StringUtils
 import retrofit2.Response
-import java.text.SimpleDateFormat
 import java.util.*
 
 /**
@@ -71,19 +68,6 @@ object Settings {
     }
 
     /**
-     * The Timestamp of the Transaction
-     */
-    fun generateTimestamp(): String = SimpleDateFormat(Constants.TIMESTAMP_FORMAT, Locale.getDefault()).format(Date())
-
-    /**
-     * The password for Encrypting the Request
-     */
-    fun generatePassword(businessShortCode: String, passKey: String, timeStamp: String): String {
-        val password = "$businessShortCode$passKey$timeStamp"
-        return Base64.encodeToString(password.toByteArray(), Base64.NO_WRAP)
-    }
-
-    /**
      * @param [productType] this is the MTN MOMO API product of choice
      * Return the [productKey] based on the [productType]. It gets the product keys defined on the `local.properties` file.
      * It gets them through the [BuildConfig] generated file.
@@ -115,19 +99,14 @@ object Settings {
         return productKey
     }
 
-    fun generateTransactionFromResponse(response: Response<ResponseBody?>): Transaction? {
+    fun generateTransactionFromResponse(response: Response<ResponseBody?>): MomoTransaction? {
         val data: String = response.body()!!.source().readUtf8()
-        return Gson().fromJson(data, Transaction::class.java)
-    }
-
-    fun generateNotificationFromResponse(response: Response<ResponseBody?>): Notification {
-        val data: String = response.body()!!.source().readUtf8()
-        return Gson().fromJson(data, Notification::class.java)
+        return Gson().fromJson(data, MomoTransaction::class.java)
     }
 
     fun checkNotificationMessageLength(
         notificationMessage: String?,
-        notificationMessageMaxLength: Long = Constants.NOTIFICATION_MESSAGE_LENGTH,
+        notificationMessageMaxLength: Long = Constants.NOTIFICATION_MESSAGE_LENGTH
     ): Boolean {
         if (StringUtils.isNotBlank(notificationMessage)) {
             return notificationMessage!!.length <= notificationMessageMaxLength

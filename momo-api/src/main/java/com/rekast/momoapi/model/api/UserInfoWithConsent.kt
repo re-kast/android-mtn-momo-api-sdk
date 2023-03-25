@@ -37,5 +37,5 @@ data class UserInfoWithConsent(
     @SerializedName("occupation") var occupation: String,
     @SerializedName("employer_name") var employerName: String,
     @SerializedName("identification_type") var identificationType: String,
-    @SerializedName("identification_value") var identificationValue: String,
+    @SerializedName("identification_value") var identificationValue: String
 )

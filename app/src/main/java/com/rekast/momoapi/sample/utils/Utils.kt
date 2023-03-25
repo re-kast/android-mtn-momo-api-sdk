@@ -20,15 +20,10 @@ import android.content.Context.MODE_PRIVATE
 import com.rekast.momoapi.model.authentication.AccessToken
 import com.rekast.momoapi.sample.BuildConfig
 import org.apache.commons.lang3.StringUtils
-import java.util.*
+import java.text.SimpleDateFormat
+import java.util.Calendar
 
 object Utils {
-
-    fun generateUUID(): String = UUID.randomUUID().toString()
-
-    val passKey: String
-        get() = "bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919"
-
     fun saveApiKey(context: Context, apiKey: String) {
         val mSettings = context.getSharedPreferences(BuildConfig.APPLICATION_ID, MODE_PRIVATE)
         val editor = mSettings.edit()
@@ -73,5 +68,10 @@ object Utils {
         val expiryTime = mSettings.getLong("expiryDate", 0)
         val currentTime = Calendar.getInstance().timeInMillis
         return currentTime > expiryTime
+    }
+
+    fun convertToDate(milliseconds: Long): String {
+        val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd")
+        return simpleDateFormat.format(milliseconds)
     }
 }
