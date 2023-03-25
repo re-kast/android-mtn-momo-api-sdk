@@ -26,6 +26,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.rekast.momoapi.MomoAPI
+import com.rekast.momoapi.sample.ui.main.AppMainActivity
 import com.rekast.momoapi.sample.ui.main.AppMainViewModel
 import com.rekast.momoapi.sample.ui.theme.AppTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -33,12 +35,14 @@ import dagger.hilt.android.AndroidEntryPoint
 @ExperimentalMaterialApi
 @AndroidEntryPoint
 class CollectionScreenFragment : Fragment() {
-    val appMainViewModel by activityViewModels<AppMainViewModel>()
+    private lateinit var activity: AppMainActivity
+    private lateinit var fragmentMomoAPI: MomoAPI
+    private val appMainViewModel by activityViewModels<AppMainViewModel>()
     private val collectionScreenViewModel by viewModels<CollectionScreenViewModel>()
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?,
+        savedInstanceState: Bundle?
     ): View {
         return ComposeView(requireContext()).apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
@@ -51,5 +55,16 @@ class CollectionScreenFragment : Fragment() {
                 }
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        activity = requireActivity() as AppMainActivity
+        fragmentMomoAPI = activity.momoAPI
+
+        collectionScreenViewModel.provideContext(activity)
+        collectionScreenViewModel.provideMomoAPI(fragmentMomoAPI)
+        collectionScreenViewModel.provideAppMainViewModel(appMainViewModel)
     }
 }

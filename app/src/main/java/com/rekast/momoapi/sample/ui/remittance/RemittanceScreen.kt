@@ -50,7 +50,8 @@ fun RemittanceScreen(navController: NavController?) {
         drawerContent = {
             navController?.let { Drawer(scope = scope, scaffoldState = scaffoldState, navController = it) }
         },
-        backgroundColor = colorResource(id = R.color.white),
+        drawerGesturesEnabled = true,
+        backgroundColor = colorResource(id = R.color.white)
     ) { padding ->
         Box(modifier = Modifier.padding(padding)) {
             RemittanceScreenDataView {}
@@ -61,20 +62,20 @@ fun RemittanceScreen(navController: NavController?) {
 @Composable
 fun RemittanceScreenDataView(
     modifier: Modifier = Modifier,
-    onClick: () -> Unit,
+    onClick: () -> Unit
 ) {
     Column(
         modifier = modifier
             .fillMaxSize()
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
+        verticalArrangement = Arrangement.Center
     ) {
         Text(
             text = "This is the remittance screen",
             fontSize = 16.sp,
             modifier = modifier.padding(vertical = 8.dp),
-            fontWeight = FontWeight.Bold,
+            fontWeight = FontWeight.Bold
         )
     }
 }

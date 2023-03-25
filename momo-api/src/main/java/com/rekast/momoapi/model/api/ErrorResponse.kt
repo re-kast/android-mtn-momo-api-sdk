@@ -22,5 +22,5 @@ import kotlinx.serialization.Serializable
 data class ErrorResponse(
     @SerializedName("code") var code: String,
     @SerializedName("message") var message: String,
-    @SerializedName("error") var error: String,
+    @SerializedName("error") var error: String
 )

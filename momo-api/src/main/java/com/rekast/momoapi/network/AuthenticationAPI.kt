@@ -41,7 +41,7 @@ sealed interface AuthenticationAPI {
     fun getApiUser(
         @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
         @Path(Constants.EndpointPaths.API_USER) apiUser: String,
-        @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
+        @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String
     ): Call<ApiUser>
 
     /**
@@ -55,7 +55,7 @@ sealed interface AuthenticationAPI {
     fun getApiUserKey(
         @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
         @Path(Constants.EndpointPaths.API_USER) apiUser: String,
-        @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
+        @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String
     ): Call<ApiUserKey>
 
     /**
@@ -67,6 +67,6 @@ sealed interface AuthenticationAPI {
     @POST(Constants.EndPoints.GET_ACCESS_TOKEN)
     fun getAccessToken(
         @Path(Constants.EndpointPaths.PRODUCT_TYPE) productType: String,
-        @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
+        @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String
     ): Call<AccessToken>
 }

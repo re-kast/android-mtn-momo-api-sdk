@@ -20,6 +20,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
@@ -39,14 +41,18 @@ class MainScreenFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?,
+        savedInstanceState: Bundle?
     ): View {
         return ComposeView(requireContext()).apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
                 AppTheme {
+                    val showProgressBar by mainScreenFragmentViewModel.showProgressBar.observeAsState(false)
                     MainScreen(
-                        navController = findNavController(), snackStateFlow = mainScreenFragmentViewModel.snackBarStateFlow
+                        navController = findNavController(),
+                        snackStateFlow = mainScreenFragmentViewModel.snackBarStateFlow,
+                        showProgressBar = showProgressBar,
+                        basicUserInfo = mainScreenFragmentViewModel.basicUserInfo
                     )
                 }
             }
@@ -60,6 +66,6 @@ class MainScreenFragment : Fragment() {
 
         mainScreenFragmentViewModel.provideContext(activity)
         mainScreenFragmentViewModel.provideMomoAPI(fragmentMomoAPI)
-        mainScreenFragmentViewModel.checkUser()
+        mainScreenFragmentViewModel.getBasicUserInfo()
     }
 }

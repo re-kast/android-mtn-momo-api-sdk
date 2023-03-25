@@ -34,7 +34,7 @@ import java.io.IOException
  * This returns the [Transaction] on the [ResponseBody]
  */
 class TransactionCallback(
-    private val callback: (APIResult: APIResult<ResponseBody?>) -> Unit,
+    private val callback: (APIResult: APIResult<ResponseBody?>) -> Unit
 ) : Callback<ResponseBody?> {
 
     override fun onResponse(call: Call<ResponseBody?>, response: Response<ResponseBody?>) {
@@ -44,8 +44,8 @@ class TransactionCallback(
                 if (transaction.status == TransactionStatus.SUCCESSFUL.name) {
                     callback.invoke(
                         APIResult.Success(
-                            GsonBuilder().setPrettyPrinting().create().toJson(transaction).toResponseBody(),
-                        ),
+                            GsonBuilder().setPrettyPrinting().create().toJson(transaction).toResponseBody()
+                        )
                     )
                 } else {
                     val error = "${transaction.reason} : ${transaction.financialTransactionId}"

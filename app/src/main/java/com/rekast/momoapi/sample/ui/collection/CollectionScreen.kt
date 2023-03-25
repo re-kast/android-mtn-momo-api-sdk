@@ -67,6 +67,7 @@ fun CollectionScreen(
         drawerContent = {
             navController?.let { Drawer(scope = scope, scaffoldState = scaffoldState, navController = it) }
         },
+        drawerGesturesEnabled = true,
         backgroundColor = colorResource(id = R.color.white),
         snackbarHost = { snackBarHostState ->
             SnackBarComponent(
@@ -86,20 +87,20 @@ fun CollectionScreen(
 @Composable
 fun CollectionScreenDataView(
     modifier: Modifier = Modifier,
-    onClick: () -> Unit,
+    onClick: () -> Unit
 ) {
     Column(
         modifier = modifier
             .fillMaxSize()
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
+        verticalArrangement = Arrangement.Center
     ) {
         Text(
             text = "This is the collection screen",
             fontSize = 16.sp,
             modifier = modifier.padding(vertical = 8.dp),
-            fontWeight = FontWeight.Bold,
+            fontWeight = FontWeight.Bold
         )
     }
 }

@@ -21,5 +21,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class AccountBalance(
     @SerializedName("availableBalance") var availableBalance: String,
-    @SerializedName("currency") var currency: String,
+    @SerializedName("currency") var currency: String
 )

@@ -21,5 +21,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class AccountHolder(
     @SerializedName("partyIdType") var partyIdType: String,
-    @SerializedName("partyId") var partyId: String,
+    @SerializedName("partyId") var partyId: String
 )

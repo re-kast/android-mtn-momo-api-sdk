@@ -23,5 +23,5 @@ data class PaymentResult(
     var CheckoutRequestID: String,
     var ResponseCode: String,
     var ResponseDescription: String,
-    var CustomerMessage: String,
+    var CustomerMessage: String
 )

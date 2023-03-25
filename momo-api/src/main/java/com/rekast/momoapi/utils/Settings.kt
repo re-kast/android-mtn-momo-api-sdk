@@ -106,7 +106,7 @@ object Settings {
 
     fun checkNotificationMessageLength(
         notificationMessage: String?,
-        notificationMessageMaxLength: Long = Constants.NOTIFICATION_MESSAGE_LENGTH,
+        notificationMessageMaxLength: Long = Constants.NOTIFICATION_MESSAGE_LENGTH
     ): Boolean {
         if (StringUtils.isNotBlank(notificationMessage)) {
             return notificationMessage!!.length <= notificationMessageMaxLength

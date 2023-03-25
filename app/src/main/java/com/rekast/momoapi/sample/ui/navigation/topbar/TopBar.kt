@@ -50,7 +50,7 @@ fun TopBar(scope: CoroutineScope, scaffoldState: ScaffoldState, title: Int) {
             }
         },
         backgroundColor = colorResource(id = R.color.accent_secondary),
-        contentColor = Color.White,
+        contentColor = Color.White
     )
 }
 

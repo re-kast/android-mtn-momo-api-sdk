@@ -90,14 +90,13 @@ fun Context.getActivity(): AppCompatActivity? =
  * is applied after the setContent function of the activity is called.
  */
 fun Activity.applyWindowInsetListener() {
-    ViewCompat.setOnApplyWindowInsetsListener(this.findViewById(android.R.id.content)) { view, insets,
+    ViewCompat.setOnApplyWindowInsetsListener(this.findViewById(android.R.id.content)) { view, insets
         ->
         val bottom = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
         view.updatePadding(bottom = bottom)
         insets
     }
 }
-
 
 /** This function checks if the device is online */
 fun Activity.isDeviceOnline(): Boolean {
@@ -112,7 +111,7 @@ fun Activity.isDeviceOnline(): Boolean {
             NetworkCapabilities.TRANSPORT_ETHERNET,
             NetworkCapabilities.TRANSPORT_CELLULAR,
             NetworkCapabilities.TRANSPORT_WIFI,
-            NetworkCapabilities.TRANSPORT_VPN,
+            NetworkCapabilities.TRANSPORT_VPN
         )
     return transports.any { capabilities.hasTransport(it) }
 }

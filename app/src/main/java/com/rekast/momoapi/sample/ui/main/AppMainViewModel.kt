@@ -18,13 +18,22 @@ package com.rekast.momoapi.sample.ui.main
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.gson.Gson
 import com.rekast.momoapi.BuildConfig
 import com.rekast.momoapi.MomoAPI
+import com.rekast.momoapi.callback.APIResult
+import com.rekast.momoapi.model.api.Transaction
 import com.rekast.momoapi.sample.utils.SnackBarComponentConfiguration
+import com.rekast.momoapi.sample.utils.Utils
+import com.rekast.momoapi.utils.Constants
+import com.rekast.momoapi.utils.ProductType
+import com.rekast.momoapi.utils.Settings
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
+import org.apache.commons.lang3.StringUtils
+import timber.log.Timber
 
 class AppMainViewModel : ViewModel() {
     fun momoAPI(): MomoAPI {
@@ -35,6 +44,199 @@ class AppMainViewModel : ViewModel() {
     private val _snackBarStateFlow = MutableSharedFlow<SnackBarComponentConfiguration>()
     val snackBarStateFlow: SharedFlow<SnackBarComponentConfiguration> = _snackBarStateFlow.asSharedFlow()
     var context: Context? = null
+    private var momoAPi: MomoAPI? = null
+
+    fun checkUser() {
+        viewModelScope.launch {
+            momoAPi?.checkApiUser(
+                Settings.getProductSubscriptionKeys(ProductType.REMITTANCE),
+                BuildConfig.MOMO_API_VERSION_V1
+            ) { momoAPIResult ->
+                when (momoAPIResult) {
+                    is APIResult.Success -> {
+                        emitSnackBarState(
+                            SnackBarComponentConfiguration(
+                                message = "The API User provided was found! Happy testing"
+                            )
+                        )
+                        getApiKey()
+                    }
+                    is APIResult.Failure -> {
+                        val momoAPIException = momoAPIResult.APIException!!
+                        emitSnackBarState(
+                            SnackBarComponentConfiguration(
+                                message = "${momoAPIException.message} Error " +
+                                    "fetching the API User. Please confirm" +
+                                    " if the API User ID or API product supplied is valid"
+                            )
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    private fun getApiKey() {
+        viewModelScope.launch {
+            val apiUserKey = context?.let { Utils.getApiKey(it) }
+            if (StringUtils.isNotBlank(apiUserKey)) {
+                emitSnackBarState(SnackBarComponentConfiguration(message = "An API Key exists."))
+                getAccessToken()
+            } else {
+                momoAPi?.getUserApiKey(
+                    Settings.getProductSubscriptionKeys(ProductType.REMITTANCE),
+                    BuildConfig.MOMO_API_VERSION_V1
+                ) { momoAPIResult ->
+                    when (momoAPIResult) {
+                        is APIResult.Success -> {
+                            val generatedApiUserKey = momoAPIResult.value
+                            context?.let { Utils.saveApiKey(it, generatedApiUserKey.apiKey) }
+                            emitSnackBarState(
+                                SnackBarComponentConfiguration(
+                                    message = "Generated and saved a valid API Key"
+                                )
+                            )
+                            getAccessToken()
+                        }
+                        is APIResult.Failure -> {
+                            val momoAPIException = momoAPIResult.APIException!!
+                            emitSnackBarState(
+                                SnackBarComponentConfiguration(
+                                    message = "${momoAPIException.message} Error fetching " +
+                                        "the API Key. Please confirm if the API User" +
+                                        " ID or API product supplied is valid"
+                                )
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun getAccessToken() {
+        viewModelScope.launch {
+            val apiUserKey = context?.let { Utils.getApiKey(it) }
+            val accessToken = context?.let { Utils.getAccessToken(it) }
+            if (StringUtils.isNotBlank(apiUserKey) && StringUtils.isBlank(accessToken)) {
+                apiUserKey?.let { apiKey ->
+                    momoAPi?.getAccessToken(
+                        Settings.getProductSubscriptionKeys(ProductType.REMITTANCE),
+                        apiKey,
+                        Constants.ProductTypes.REMITTANCE
+                    ) { momoAPIResult ->
+                        when (momoAPIResult) {
+                            is APIResult.Success -> {
+                                val generatedAccessToken = momoAPIResult.value
+                                context?.let { activityContext ->
+                                    Utils.saveAccessToken(
+                                        activityContext,
+                                        generatedAccessToken
+                                    )
+                                }
+                                emitSnackBarState(
+                                    SnackBarComponentConfiguration(
+                                        message = "Generated and saved a valid Access Token"
+                                    )
+                                )
+                            }
+                            is APIResult.Failure -> {
+                                val momoAPIException = momoAPIResult.APIException!!
+                                emitSnackBarState(
+                                    SnackBarComponentConfiguration(
+                                        message = "${momoAPIException.message} Error fetching" +
+                                            " the API Access Token. Please confirm if the API " +
+                                            "User ID, API Key or API product supplied is valid"
+                                    )
+                                )
+                            }
+                        }
+                    }
+                }
+            } else {
+                emitSnackBarState(
+                    SnackBarComponentConfiguration(
+                        message = "A valid Access Token exists. Please renew it after expiry"
+                    )
+                )
+            }
+        }
+    }
+
+    fun refund(requestToPayUuid: String) {
+        val accessToken = context?.let { Utils.getAccessToken(it) }
+        val transactionUuid = Settings.generateUUID()
+        if (StringUtils.isNotBlank(accessToken) && StringUtils.isNotBlank(requestToPayUuid)) {
+            val creditTransaction = createRefundTransaction(requestToPayUuid)
+            accessToken?.let {
+                momoAPi?.refund(
+                    it,
+                    creditTransaction,
+                    BuildConfig.MOMO_API_VERSION_V2,
+                    Settings.getProductSubscriptionKeys(ProductType.DISBURSEMENTS),
+                    transactionUuid
+                ) { momoAPIResult ->
+                    when (momoAPIResult) {
+                        is APIResult.Success -> {
+                            getRefundStatus(transactionUuid)
+                        }
+                        is APIResult.Failure -> {
+                            val momoAPIException = momoAPIResult.APIException
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun getRefundStatus(referenceId: String) {
+        val accessToken = context?.let { Utils.getAccessToken(it) }
+        if (StringUtils.isNotBlank(accessToken)) {
+            accessToken?.let {
+                momoAPi?.getRefundStatus(
+                    referenceId,
+                    BuildConfig.MOMO_API_VERSION_V1,
+                    Settings.getProductSubscriptionKeys(ProductType.DISBURSEMENTS),
+                    it
+                ) { momoAPIResult ->
+                    when (momoAPIResult) {
+                        is APIResult.Success -> {
+                            val completeTransfer =
+                                Gson().fromJson(momoAPIResult.value!!.source().readUtf8(), Transaction::class.java)
+                            Timber.d(completeTransfer.toString())
+                        }
+                        is APIResult.Failure -> {
+                            val momoAPIException = momoAPIResult.APIException
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun createRefundTransaction(requestToPayUuid: String): Transaction {
+        return Transaction(
+            "30",
+            "EUR",
+            null,
+            Settings.generateUUID(),
+            null,
+            null,
+            "Testing",
+            "The Good Company",
+            null,
+            null,
+            requestToPayUuid
+        )
+    }
+
+    fun provideContext(activityContext: Context) {
+        context = activityContext
+    }
+
+    fun provideMomoAPI(fragmentMomoAPI: MomoAPI) {
+        momoAPi = fragmentMomoAPI
+    }
 
     private fun emitSnackBarState(snackBarComponentConfiguration: SnackBarComponentConfiguration) {
         viewModelScope.launch { _snackBarStateFlow.emit(snackBarComponentConfiguration) }
@@ -178,37 +380,6 @@ class AppMainViewModel : ViewModel() {
         }
     }
 
-    private fun requestToPayDeliveryNotification(referenceId: String, productType: String) {
-        val accessToken = Utils.getAccessToken(this)
-        val notification = Notification(
-            notificationMessage =
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur pellentesque mi" +
-                " erat, vel placerat erat sollicitudin et. Sed id ex nisi. Quisque luctus metus",
-        )
-        if (StringUtils.isNotBlank(accessToken) &&
-            Settings.checkNotificationMessageLength(notification.notificationMessage)
-        ) {
-            momoAPI.requestToPayDeliveryNotification(
-                notification,
-                referenceId,
-                BuildConfig.MOMO_API_VERSION_V1,
-                productType,
-                Settings.getProductSubscriptionKeys(ProductType.COLLECTION),
-                accessToken,
-            ) { momoAPIResult ->
-                when (momoAPIResult) {
-                    is APIResult.Success -> {
-                        toast("Delivery note sent")
-                    }
-                    is APIResult.Failure -> {
-                        val momoAPIException = momoAPIResult.APIException
-                        toast(momoAPIException?.message ?: "An error occurred!")
-                    }
-                }
-            }
-        }
-    }
-
     private fun validateAccountHolderStatus() {
         val accessToken = Utils.getAccessToken(this)
         val accountHolder =
@@ -242,122 +413,7 @@ class AppMainViewModel : ViewModel() {
         }
     }
 
-    private fun requestToPay() {
-        val accessToken = Utils.getAccessToken(this)
-        val creditTransaction = createRequestTpPayTransaction()
-        val transactionUuid = Settings.generateUUID()
-        if (StringUtils.isNotBlank(accessToken)) {
-            momoAPI.requestToPay(
-                accessToken,
-                creditTransaction,
-                BuildConfig.MOMO_API_VERSION_V1,
-                Settings.getProductSubscriptionKeys(ProductType.COLLECTION),
-                transactionUuid,
-            ) { momoAPIResult ->
-                when (momoAPIResult) {
-                    is APIResult.Success -> {
-                        requestToPayDeliveryNotification(transactionUuid, Constants.ProductTypes.COLLECTION)
-                        requestToPayTransactionStatus(transactionUuid)
-                        refund(transactionUuid)
-                    }
-                    is APIResult.Failure -> {
-                        val momoAPIException = momoAPIResult.APIException
-                        toast(momoAPIException?.message ?: "An error occurred!")
-                    }
-                }
-            }
-        }
-    }
 
-    private fun createRequestTpPayTransaction(): Transaction {
-        return Transaction(
-            "10000",
-            "EUR",
-            null,
-            Settings.generateUUID(),
-            null,
-            AccountHolder(AccountHolderType.MSISDN.name, "346736732646"),
-            "Testing",
-            "The Good Company",
-            null,
-            null,
-        )
-    }
-
-    private fun requestToPayTransactionStatus(referenceId: String) {
-        val accessToken = Utils.getAccessToken(this)
-        if (StringUtils.isNotBlank(accessToken)) {
-            momoAPI.requestToPayTransactionStatus(
-                referenceId,
-                BuildConfig.MOMO_API_VERSION_V1,
-                Settings.getProductSubscriptionKeys(ProductType.COLLECTION),
-                accessToken,
-            ) { momoAPIResult ->
-                when (momoAPIResult) {
-                    is APIResult.Success -> {
-                        val completeTransfer =
-                            Gson().fromJson(momoAPIResult.value!!.source().readUtf8(), Transaction::class.java)
-                        toast("Request to pay is " + completeTransfer.status!!.lowercase())
-                        Timber.d(completeTransfer.toString())
-                    }
-                    is APIResult.Failure -> {
-                        val momoAPIException = momoAPIResult.APIException
-                        toast(momoAPIException?.message ?: "An error occurred!")
-                    }
-                }
-            }
-        }
-    }
-
-    private fun requestToWithdraw() {
-        val accessToken = Utils.getAccessToken(this)
-        val creditTransaction = createRequestTpPayTransaction()
-        val transactionUuid = Settings.generateUUID()
-        if (StringUtils.isNotBlank(accessToken)) {
-            momoAPI.requestToWithdraw(
-                accessToken,
-                creditTransaction,
-                BuildConfig.MOMO_API_VERSION_V2,
-                Settings.getProductSubscriptionKeys(ProductType.COLLECTION),
-                transactionUuid,
-            ) { momoAPIResult ->
-                when (momoAPIResult) {
-                    is APIResult.Success -> {
-                        requestToWithdrawTransactionStatus(transactionUuid)
-                    }
-                    is APIResult.Failure -> {
-                        val momoAPIException = momoAPIResult.APIException
-                        toast(momoAPIException?.message ?: "An error occurred!")
-                    }
-                }
-            }
-        }
-    }
-
-    private fun requestToWithdrawTransactionStatus(referenceId: String) {
-        val accessToken = Utils.getAccessToken(this)
-        if (StringUtils.isNotBlank(accessToken)) {
-            momoAPI.requestToWithdrawTransactionStatus(
-                referenceId,
-                BuildConfig.MOMO_API_VERSION_V1,
-                Settings.getProductSubscriptionKeys(ProductType.COLLECTION),
-                accessToken,
-            ) { momoAPIResult ->
-                when (momoAPIResult) {
-                    is APIResult.Success -> {
-                        val completeTransfer =
-                            Gson().fromJson(momoAPIResult.value!!.source().readUtf8(), Transaction::class.java)
-                        toast("Request to withdraw is " + completeTransfer.status!!.lowercase())
-                        Timber.d(completeTransfer.toString())
-                    }
-                    is APIResult.Failure -> {
-                        val momoAPIException = momoAPIResult.APIException
-                        toast(momoAPIException?.message ?: "An error occurred!")
-                    }
-                }
-            }
-        }
-    }
 
     private fun deposit() {
         val accessToken = Utils.getAccessToken(this)
@@ -409,69 +465,5 @@ class AppMainViewModel : ViewModel() {
         }
     }
 
-    private fun refund(requestToPayUuid: String) {
-        val accessToken = Utils.getAccessToken(this)
-        val transactionUuid = Settings.generateUUID()
-        if (StringUtils.isNotBlank(accessToken) && StringUtils.isNotBlank(requestToPayUuid)) {
-            val creditTransaction = createRefundTransaction(requestToPayUuid)
-            momoAPI.refund(
-                accessToken,
-                creditTransaction,
-                BuildConfig.MOMO_API_VERSION_V2,
-                Settings.getProductSubscriptionKeys(ProductType.DISBURSEMENTS),
-                transactionUuid,
-            ) { momoAPIResult ->
-                when (momoAPIResult) {
-                    is APIResult.Success -> {
-                        getRefundStatus(transactionUuid)
-                    }
-                    is APIResult.Failure -> {
-                        val momoAPIException = momoAPIResult.APIException
-                        toast(momoAPIException?.message ?: "An error occurred!")
-                    }
-                }
-            }
-        }
-    }
-
-    private fun getRefundStatus(referenceId: String) {
-        val accessToken = Utils.getAccessToken(this)
-        if (StringUtils.isNotBlank(accessToken)) {
-            momoAPI.getRefundStatus(
-                referenceId,
-                BuildConfig.MOMO_API_VERSION_V1,
-                Settings.getProductSubscriptionKeys(ProductType.DISBURSEMENTS),
-                accessToken,
-            ) { momoAPIResult ->
-                when (momoAPIResult) {
-                    is APIResult.Success -> {
-                        val completeTransfer =
-                            Gson().fromJson(momoAPIResult.value!!.source().readUtf8(), Transaction::class.java)
-                        toast("Request to refund is " + completeTransfer.status!!.lowercase())
-                        Timber.d(completeTransfer.toString())
-                    }
-                    is APIResult.Failure -> {
-                        val momoAPIException = momoAPIResult.APIException
-                        toast(momoAPIException?.message ?: "An error occurred!")
-                    }
-                }
-            }
-        }
-    }
-
-    private fun createRefundTransaction(requestToPayUuid: String): Transaction {
-        return Transaction(
-            "30",
-            "EUR",
-            null,
-            Settings.generateUUID(),
-            null,
-            null,
-            "Testing",
-            "The Good Company",
-            null,
-            null,
-            requestToPayUuid,
-        )
-    }*/
+*/
 }

@@ -22,6 +22,6 @@ sealed class APIResult<out T> {
     data class Success<out T>(val value: T) : APIResult<T>()
     data class Failure(
         val isNetworkError: Boolean,
-        val APIException: APIException?,
+        val APIException: APIException?
     ) : APIResult<Nothing>()
 }

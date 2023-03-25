@@ -38,11 +38,11 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun SplashScreen(
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) = Box(
     Modifier
         .fillMaxWidth()
-        .fillMaxHeight(),
+        .fillMaxHeight()
 ) {
     LaunchedEffect(Unit) {
         delay(300)
@@ -51,7 +51,7 @@ fun SplashScreen(
     Column(
         modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
+        verticalArrangement = Arrangement.Center
     ) {
         Text(
             text = stringResource(R.string.app_name),
@@ -60,7 +60,7 @@ fun SplashScreen(
             fontSize = 34.sp,
             modifier = modifier
                 .padding(vertical = 20.dp, horizontal = 20.dp)
-                .align(Alignment.CenterHorizontally),
+                .align(Alignment.CenterHorizontally)
         )
     }
 }

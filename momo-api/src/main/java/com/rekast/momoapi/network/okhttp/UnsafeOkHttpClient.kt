@@ -36,7 +36,7 @@ class UnsafeOkHttpClient {
                     override fun checkClientTrusted(chain: Array<X509Certificate>, authType: String) {}
                     override fun checkServerTrusted(chain: Array<X509Certificate>, authType: String) {}
                     override fun getAcceptedIssuers(): Array<X509Certificate> = arrayOf()
-                },
+                }
             )
 
             // Install the all-trusting trust manager

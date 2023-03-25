@@ -47,7 +47,7 @@ sealed interface ProductSharedAPI {
         @Path(Constants.EndpointPaths.PRODUCT_TYPE) productType: String,
         @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
         @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
-        @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String,
+        @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String
     ): Call<AccountBalance>
 
     /**
@@ -64,7 +64,7 @@ sealed interface ProductSharedAPI {
         @Path(Constants.EndpointPaths.PRODUCT_TYPE) productType: String,
         @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
         @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
-        @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String,
+        @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String
     ): Call<BasicUserInfo>
 
     /**
@@ -80,7 +80,7 @@ sealed interface ProductSharedAPI {
         @Path(Constants.EndpointPaths.PRODUCT_TYPE) productType: String,
         @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
         @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
-        @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String,
+        @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String
     ): Call<UserInfoWithConsent>
 
     /**
@@ -99,7 +99,7 @@ sealed interface ProductSharedAPI {
         @Path(Constants.EndpointPaths.PRODUCT_TYPE) productType: String,
         @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
         @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String,
-        @Header(Constants.Headers.X_REFERENCE_ID) uuid: String,
+        @Header(Constants.Headers.X_REFERENCE_ID) uuid: String
     ): Call<Unit>
 
     /**
@@ -118,7 +118,7 @@ sealed interface ProductSharedAPI {
         @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
         @Path(Constants.EndpointPaths.PRODUCT_TYPE) productType: String,
         @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
-        @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String,
+        @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String
     ): Call<ResponseBody>
 
     /**
@@ -142,7 +142,7 @@ sealed interface ProductSharedAPI {
         @Path(Constants.EndpointPaths.PRODUCT_TYPE) productType: String,
         @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
         @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String,
-        @Header(Constants.Headers.NOTIFICATION_MESSAGE) notificationMessage: String,
+        @Header(Constants.Headers.NOTIFICATION_MESSAGE) notificationMessage: String
     ): Call<ResponseBody>
 
     /**
@@ -162,7 +162,7 @@ sealed interface ProductSharedAPI {
         @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
         @Path(Constants.EndpointPaths.PRODUCT_TYPE) productType: String,
         @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
-        @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String,
+        @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String
     ): Call<ResponseBody>
 
     /**
@@ -180,6 +180,6 @@ sealed interface ProductSharedAPI {
         @Path(Constants.EndpointPaths.PRODUCT_TYPE) productType: String,
         @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
         @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
-        @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String,
+        @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String
     ): Call<AccountBalance>
 }

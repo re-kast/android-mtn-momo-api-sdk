@@ -51,11 +51,14 @@ open class AppMainActivity : AppCompatActivity() {
             .replace(R.id.nav_host, navHostFragment)
             .setPrimaryNavigationFragment(navHostFragment)
             .commit()
-
     }
 
     override fun onResume() {
         super.onResume()
         appMainViewModel.viewModelScope.launch(dispatcherProvider.io()) {}
+
+        appMainViewModel.provideContext(this)
+        appMainViewModel.provideMomoAPI(momoAPI)
+        appMainViewModel.checkUser()
     }
 }

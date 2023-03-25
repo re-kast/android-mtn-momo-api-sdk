@@ -27,6 +27,7 @@ import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Text
 import androidx.compose.material.rememberDrawerState
 import androidx.compose.material.rememberScaffoldState
+import androidx.compose.material3.Divider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
@@ -53,7 +54,7 @@ fun Drawer(scope: CoroutineScope, scaffoldState: ScaffoldState, navController: N
         NavigationDrawerItem.Home,
         NavigationDrawerItem.Collection,
         NavigationDrawerItem.Disbursement,
-        NavigationDrawerItem.Remittance,
+        NavigationDrawerItem.Remittance
     )
     Column {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -62,8 +63,8 @@ fun Drawer(scope: CoroutineScope, scaffoldState: ScaffoldState, navController: N
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(80.dp)
-                .padding(start = 10.dp, end = 10.dp),
+                .height(70.dp)
+                .padding(start = 10.dp, end = 10.dp)
         ) {
             Spacer(modifier = Modifier.width(7.dp))
             Column() {
@@ -71,8 +72,9 @@ fun Drawer(scope: CoroutineScope, scaffoldState: ScaffoldState, navController: N
                     text = stringResource(id = R.string.app_name),
                     fontSize = 18.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = Color.White,
+                    color = Color.White
                 )
+                Divider(modifier = Modifier.padding(top = 20.dp))
             }
             Spacer(modifier = Modifier.width(7.dp))
         }
@@ -92,7 +94,7 @@ fun Drawer(scope: CoroutineScope, scaffoldState: ScaffoldState, navController: N
             fontWeight = FontWeight.Normal,
             modifier = Modifier
                 .padding(12.dp)
-                .align(Alignment.CenterHorizontally),
+                .align(Alignment.CenterHorizontally)
         )
     }
 }

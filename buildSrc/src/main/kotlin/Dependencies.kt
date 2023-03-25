@@ -52,7 +52,7 @@ object Versions {
     // Gradle Plugins
     const val ktlint = "10.1.0"
     const val detekt = "1.22.0"
-    const val spotless = "6.15.0"
+    const val spotless = "6.17.0"
     const val jacoco = "0.8.5"
     const val dokka = "1.5.0"
     const val gradleVersionsPlugin = "0.29.0"
