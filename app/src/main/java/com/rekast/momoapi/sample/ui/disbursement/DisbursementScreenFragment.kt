@@ -20,12 +20,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.rekast.momoapi.MomoAPI
+import com.rekast.momoapi.sample.ui.main.AppMainActivity
 import com.rekast.momoapi.sample.ui.main.AppMainViewModel
 import com.rekast.momoapi.sample.ui.theme.AppTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -33,20 +37,39 @@ import dagger.hilt.android.AndroidEntryPoint
 @ExperimentalMaterialApi
 @AndroidEntryPoint
 class DisbursementScreenFragment : Fragment() {
-    val appMainViewModel by activityViewModels<AppMainViewModel>()
-    val disbursementScreenViewModel by viewModels<DisbursementScreenViewModel>()
+    private lateinit var activity: AppMainActivity
+    private lateinit var fragmentMomoAPI: MomoAPI
+    private val appMainViewModel by activityViewModels<AppMainViewModel>()
+    private val disbursementScreenViewModel by viewModels<DisbursementScreenViewModel>()
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         return ComposeView(requireContext()).apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
                 AppTheme {
-                    DisbursementScreen(navController = findNavController())
+                    val showProgressBar by disbursementScreenViewModel.showProgressBar.observeAsState(false)
+                    DisbursementScreen(
+                        navController = findNavController(),
+                        snackStateFlow = disbursementScreenViewModel.snackBarStateFlow,
+                        showProgressBar = showProgressBar,
+                        disbursementScreenViewModel = disbursementScreenViewModel,
+                    )
                 }
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        activity = requireActivity() as AppMainActivity
+        fragmentMomoAPI = activity.momoAPI
+
+        disbursementScreenViewModel.provideContext(activity)
+        disbursementScreenViewModel.provideMomoAPI(fragmentMomoAPI)
+        disbursementScreenViewModel.provideAppMainViewModel(appMainViewModel)
     }
 }

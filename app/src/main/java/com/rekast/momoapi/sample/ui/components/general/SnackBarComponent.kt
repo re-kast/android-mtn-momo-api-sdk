@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.rekast.momoapi.sample.ui.components
+package com.rekast.momoapi.sample.ui.components.general
 
 import androidx.compose.material.Snackbar
 import androidx.compose.material.SnackbarHost

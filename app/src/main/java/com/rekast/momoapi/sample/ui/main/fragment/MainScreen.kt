@@ -15,34 +15,26 @@
  */
 package com.rekast.momoapi.sample.ui.main.fragment
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Divider
 import androidx.compose.material.DrawerValue
 import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
 import androidx.compose.material.rememberDrawerState
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.MutableLiveData
 import androidx.navigation.NavController
 import com.rekast.momoapi.model.api.BasicUserInfo
 import com.rekast.momoapi.sample.R
-import com.rekast.momoapi.sample.ui.components.SnackBarComponent
+import com.rekast.momoapi.sample.ui.components.general.CircularProgressBarComponent
+import com.rekast.momoapi.sample.ui.components.general.SnackBarComponent
+import com.rekast.momoapi.sample.ui.components.mainscreen.BasicUserInfoComponent
 import com.rekast.momoapi.sample.ui.navigation.drawer.Drawer
 import com.rekast.momoapi.sample.ui.navigation.topbar.TopBar
 import com.rekast.momoapi.sample.utils.SnackBarComponentConfiguration
@@ -88,112 +80,9 @@ fun MainScreen(
     ) { padding ->
         Box(modifier = modifier.padding(20.dp)) {
             if (!showProgressBar) {
-                Column(
-                    modifier = modifier.fillMaxSize()
-                ) {
-                    Column(modifier = modifier.padding(end = 20.dp)) {
-                        Text(
-                            text = "Basic User Information",
-                            color = colorResource(id = R.color.black),
-                            fontWeight = FontWeight.Bold
-                        )
-                        Divider(modifier = modifier.padding(top = 10.dp, bottom = 10.dp))
-                    }
-                    Row {
-                        Column(modifier = modifier.padding(end = 20.dp)) {
-                            Text(
-                                text = "Name",
-                                color = colorResource(id = R.color.black),
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
-                        Column(modifier = modifier.padding(end = 10.dp)) {
-                            basicUserInfo.value?.name?.let { Text(text = it, color = colorResource(id = R.color.black)) }
-                        }
-                    }
-                    Row {
-                        Column(modifier = modifier.padding(end = 20.dp)) {
-                            Text(
-                                text = "BirthDate",
-                                color = colorResource(id = R.color.black),
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
-                        Column(modifier = modifier.padding(end = 10.dp)) {
-                            basicUserInfo.value?.birthDate?.let {
-                                Text(
-                                    text = it,
-                                    color = colorResource(id = R.color.black)
-                                )
-                            }
-                        }
-                    }
-                    Row {
-                        Column(modifier = modifier.padding(end = 20.dp)) {
-                            Text(
-                                text = "Gender",
-                                color = colorResource(id = R.color.black),
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
-                        Column(modifier = modifier.padding(end = 10.dp)) {
-                            basicUserInfo.value?.gender?.let { Text(text = it, color = colorResource(id = R.color.black)) }
-                        }
-                    }
-                    Row {
-                        Column(modifier = modifier.padding(end = 20.dp)) {
-                            Text(
-                                text = "Updated At",
-                                color = colorResource(id = R.color.black),
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
-                        Column(modifier = modifier.padding(end = 10.dp)) {
-                            basicUserInfo.value?.updatedAt?.let {
-                                Text(
-                                    text = it,
-                                    color = colorResource(id = R.color.black)
-                                )
-                            }
-                        }
-                    }
-                    Row {
-                        Column(modifier = modifier.padding(end = 20.dp)) {
-                            Text(
-                                text = "Locale",
-                                color = colorResource(id = R.color.black),
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
-                        Column(modifier = modifier.padding(end = 10.dp)) {
-                            basicUserInfo.value?.locale?.let { Text(text = it, color = colorResource(id = R.color.black)) }
-                        }
-                    }
-                    Row {
-                        Column(modifier = modifier.padding(end = 20.dp)) {
-                            Text(
-                                text = "Sub",
-                                color = colorResource(id = R.color.black),
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
-                        Column(modifier = modifier.padding(end = 10.dp)) {
-                            basicUserInfo.value?.sub?.let { Text(text = it, color = colorResource(id = R.color.black)) }
-                        }
-                    }
-                }
+                BasicUserInfoComponent(basicUserInfo = basicUserInfo)
             } else {
-                Column(
-                    modifier = modifier.fillMaxSize(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    CircularProgressIndicator(
-                        modifier = modifier.size(36.dp),
-                        strokeWidth = 2.6.dp,
-                        color = colorResource(id = R.color.accent_primary)
-                    )
-                }
+                CircularProgressBarComponent()
             }
         }
     }

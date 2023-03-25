@@ -15,7 +15,7 @@
  */
 package com.rekast.momoapi.network.products
 
-import com.rekast.momoapi.model.api.Transaction
+import com.rekast.momoapi.model.api.MomoTransaction
 import com.rekast.momoapi.utils.Constants
 import okhttp3.ResponseBody
 import retrofit2.Call
@@ -32,7 +32,7 @@ import retrofit2.http.Path
 sealed interface CollectionAPI : ProductSharedAPI {
     /**
      * Makes a request to pay a specific user
-     * @param[transaction] -- This is the Transfer Payload [Transaction]
+     * @param[momoTransaction] -- This is the Transfer Payload [MomoTransaction]
      * @param[apiVersion] -- The app Version (v1_0 or v2_0)
      * @param[productSubscriptionKey] -- The Product subscription Key (Ocp-Apim-Subscription-Key)
      * @param[environment] -- The API environment (X-Target-Environment)
@@ -40,7 +40,7 @@ sealed interface CollectionAPI : ProductSharedAPI {
      */
     @POST(Constants.EndPoints.REQUEST_TO_PAY)
     fun requestToPay(
-        @Body transaction: Transaction,
+        @Body momoTransaction: MomoTransaction,
         @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
         @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
         @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String,
@@ -66,7 +66,7 @@ sealed interface CollectionAPI : ProductSharedAPI {
 
     /**
      * Makes a request to withdraw from a specific user
-     * @param[transaction] -- This is the Transfer Payload [Transaction]
+     * @param[momoTransaction] -- This is the Transfer Payload [MomoTransaction]
      * @param[apiVersion] -- The app Version (v1_0 or v2_0)
      * @param[productSubscriptionKey] -- The Product subscription Key (Ocp-Apim-Subscription-Key)
      * @param[environment] -- The API environment (X-Target-Environment)
@@ -74,7 +74,7 @@ sealed interface CollectionAPI : ProductSharedAPI {
      */
     @POST(Constants.EndPoints.REQUEST_TO_WITHDRAW)
     fun requestToWithdraw(
-        @Body transaction: Transaction,
+        @Body momoTransaction: MomoTransaction,
         @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
         @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
         @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String,

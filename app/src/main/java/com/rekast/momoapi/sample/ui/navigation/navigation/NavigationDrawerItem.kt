@@ -18,9 +18,34 @@ package com.rekast.momoapi.sample.ui.navigation.navigation
 import com.rekast.momoapi.sample.R
 import com.rekast.momoapi.sample.utils.Constants
 
-sealed class NavigationDrawerItem(var route: Int, var icon: Int, var title: String) {
-    object Home : NavigationDrawerItem(R.id.mainScreenFragment, 0, Constants.NavigationTitle.HOME)
-    object Remittance : NavigationDrawerItem(R.id.remittanceScreenFragment, 0, Constants.NavigationTitle.REMITTANCE)
-    object Collection : NavigationDrawerItem(R.id.collectionScreenFragment, 0, Constants.NavigationTitle.COLLECTION)
-    object Disbursement : NavigationDrawerItem(R.id.disbursementScreenFragment, 0, Constants.NavigationTitle.DISBURSEMENT)
+sealed class NavigationDrawerItem(
+    var route: Int,
+    var icon: Int,
+    var title: String,
+) {
+    object Home : NavigationDrawerItem(
+        R.id.mainScreenFragment,
+        R.drawable.home,
+        Constants.NavigationTitle.HOME,
+    )
+
+    object Remittance : NavigationDrawerItem(
+        R.id.remittanceScreenFragment,
+        R.drawable.currency_exchange,
+        Constants.NavigationTitle.REMITTANCE,
+    )
+
+    object Collection :
+        NavigationDrawerItem(
+            R.id.collectionScreenFragment,
+            R.drawable.payments,
+            Constants.NavigationTitle.COLLECTION,
+        )
+
+    object Disbursement :
+        NavigationDrawerItem(
+            R.id.disbursementScreenFragment,
+            R.drawable.paid,
+            Constants.NavigationTitle.DISBURSEMENT,
+        )
 }

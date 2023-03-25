@@ -19,7 +19,7 @@ import com.rekast.momoapi.model.api.AccountBalance
 import com.rekast.momoapi.model.api.AccountHolder
 import com.rekast.momoapi.model.api.BasicUserInfo
 import com.rekast.momoapi.model.api.Notification
-import com.rekast.momoapi.model.api.Transaction
+import com.rekast.momoapi.model.api.MomoTransaction
 import com.rekast.momoapi.model.api.UserInfoWithConsent
 import com.rekast.momoapi.model.authentication.AccessToken
 import com.rekast.momoapi.model.authentication.ApiUser
@@ -143,7 +143,7 @@ class MomoAPIRepository(
      */
     fun transfer(
         accessToken: String,
-        transaction: Transaction,
+        momoTransaction: MomoTransaction,
         apiVersion: String,
         productType: String,
         productSubscriptionKey: String,
@@ -152,7 +152,7 @@ class MomoAPIRepository(
         return MomoApiClient().transfer(
             baseUrl,
             AccessTokenInterceptor(accessToken)
-        ).transfer(transaction, apiVersion, productType, productSubscriptionKey, environment, uuid)
+        ).transfer(momoTransaction, apiVersion, productType, productSubscriptionKey, environment, uuid)
     }
 
     /**
@@ -221,7 +221,7 @@ class MomoAPIRepository(
 
     fun requestToPay(
         accessToken: String,
-        transaction: Transaction,
+        momoTransaction: MomoTransaction,
         apiVersion: String,
         productSubscriptionKey: String,
         uuid: String
@@ -229,7 +229,7 @@ class MomoAPIRepository(
         return CollectionApiClient.requestToPay(
             baseUrl,
             AccessTokenInterceptor(accessToken)
-        ).requestToPay(transaction, apiVersion, productSubscriptionKey, environment, uuid)
+        ).requestToPay(momoTransaction, apiVersion, productSubscriptionKey, environment, uuid)
     }
 
     fun requestToPayTransactionStatus(
@@ -246,7 +246,7 @@ class MomoAPIRepository(
 
     fun requestToWithdraw(
         accessToken: String,
-        transaction: Transaction,
+        momoTransaction: MomoTransaction,
         apiVersion: String,
         productSubscriptionKey: String,
         uuid: String
@@ -254,7 +254,7 @@ class MomoAPIRepository(
         return CollectionApiClient.requestToWithdraw(
             baseUrl,
             AccessTokenInterceptor(accessToken)
-        ).requestToWithdraw(transaction, apiVersion, productSubscriptionKey, environment, uuid)
+        ).requestToWithdraw(momoTransaction, apiVersion, productSubscriptionKey, environment, uuid)
     }
 
     fun requestToWithdrawTransactionStatus(
@@ -271,7 +271,7 @@ class MomoAPIRepository(
 
     fun deposit(
         accessToken: String,
-        transaction: Transaction,
+        momoTransaction: MomoTransaction,
         apiVersion: String,
         productSubscriptionKey: String,
         uuid: String
@@ -279,7 +279,7 @@ class MomoAPIRepository(
         return DisbursementsApiClient.deposit(
             baseUrl,
             AccessTokenInterceptor(accessToken)
-        ).deposit(transaction, apiVersion, productSubscriptionKey, environment, uuid)
+        ).deposit(momoTransaction, apiVersion, productSubscriptionKey, environment, uuid)
     }
 
     fun getDepositStatus(
@@ -296,7 +296,7 @@ class MomoAPIRepository(
 
     fun refund(
         accessToken: String,
-        transaction: Transaction,
+        momoTransaction: MomoTransaction,
         apiVersion: String,
         productSubscriptionKey: String,
         uuid: String
@@ -304,7 +304,7 @@ class MomoAPIRepository(
         return DisbursementsApiClient.refund(
             baseUrl,
             AccessTokenInterceptor(accessToken)
-        ).refund(transaction, apiVersion, productSubscriptionKey, environment, uuid)
+        ).refund(momoTransaction, apiVersion, productSubscriptionKey, environment, uuid)
     }
 
     fun getRefundStatus(

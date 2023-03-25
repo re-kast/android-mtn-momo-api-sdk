@@ -15,34 +15,50 @@
  */
 package com.rekast.momoapi.sample.ui.remittance
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.DrawerValue
 import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
 import androidx.compose.material.rememberDrawerState
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.rekast.momoapi.sample.R
+import com.rekast.momoapi.sample.ui.components.general.CircularProgressBarComponent
+import com.rekast.momoapi.sample.ui.components.general.PaymentDataScreenComponent
+import com.rekast.momoapi.sample.ui.components.general.SnackBarComponent
 import com.rekast.momoapi.sample.ui.navigation.drawer.Drawer
 import com.rekast.momoapi.sample.ui.navigation.topbar.TopBar
+import com.rekast.momoapi.sample.utils.SnackBarComponentConfiguration
+import com.rekast.momoapi.sample.utils.SnackBarThemeOptions
+import com.rekast.momoapi.sample.utils.hookSnackBar
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 
 @Composable
-fun RemittanceScreen(navController: NavController?) {
+fun RemittanceScreen(
+    navController: NavController?,
+    snackStateFlow: SharedFlow<SnackBarComponentConfiguration>,
+    showProgressBar: Boolean = false,
+    remittanceScreenViewModel: RemittanceScreenViewModel?,
+) {
     val scaffoldState = rememberScaffoldState(rememberDrawerState(DrawerValue.Closed))
     val scope = rememberCoroutineScope()
+    val snackBarTheme = SnackBarThemeOptions()
+
+    LaunchedEffect(Unit) {
+        snackStateFlow.hookSnackBar(scaffoldState)
+    }
+
     Scaffold(
         scaffoldState = scaffoldState,
         topBar = { TopBar(scope = scope, scaffoldState = scaffoldState, title = R.string.remittance_screen) },
@@ -51,37 +67,56 @@ fun RemittanceScreen(navController: NavController?) {
             navController?.let { Drawer(scope = scope, scaffoldState = scaffoldState, navController = it) }
         },
         drawerGesturesEnabled = true,
-        backgroundColor = colorResource(id = R.color.white)
+        backgroundColor = colorResource(id = R.color.white),
+        snackbarHost = { snackBarHostState ->
+            SnackBarComponent(
+                snackBarHostState = snackBarHostState,
+                backgroundColorHex = snackBarTheme.backgroundColor,
+                actionColorHex = snackBarTheme.actionTextColor,
+                contentColorHex = snackBarTheme.messageTextColor,
+            )
+        },
     ) { padding ->
         Box(modifier = Modifier.padding(padding)) {
-            RemittanceScreenDataView {}
+            if (!showProgressBar) {
+                remittanceScreenViewModel?.let {
+                    val phoneNumber by remittanceScreenViewModel.phoneNumber.observeAsState("")
+                    val financialId by remittanceScreenViewModel.financialId.observeAsState("")
+                    val amount by remittanceScreenViewModel.amount.observeAsState("")
+                    val paymentMessage by remittanceScreenViewModel.paymentMessage.observeAsState("")
+                    val paymentNote by remittanceScreenViewModel.paymentNote.observeAsState("")
+
+                    PaymentDataScreenComponent(
+                        title = stringResource(id = R.string.request_to_transfer_title),
+                        submitButtonText = stringResource(id = R.string.transfer_submit_button),
+                        phoneNumber = phoneNumber,
+                        financialId = financialId,
+                        amount = amount,
+                        paymentMessage = paymentMessage,
+                        paymentNote = paymentNote,
+                        onRequestPayButtonClicked = { remittanceScreenViewModel.transferRemittance() },
+                        onPhoneNumberUpdated = { remittanceScreenViewModel.onPhoneNumberUpdated(it) },
+                        onFinancialIdUpdated = { remittanceScreenViewModel.onFinancialIdUpdated(it) },
+                        onAmountUpdated = { remittanceScreenViewModel.onAmountUpdated(it) },
+                        onPayerMessageUpdated = { remittanceScreenViewModel.onPayerMessageUpdated(it) },
+                        onPayerNoteUpdated = { remittanceScreenViewModel.onPayerNoteUpdated(it) },
+                    )
+                }
+            } else {
+                CircularProgressBarComponent()
+            }
         }
     }
-}
 
-@Composable
-fun RemittanceScreenDataView(
-    modifier: Modifier = Modifier,
-    onClick: () -> Unit
-) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text(
-            text = "This is the remittance screen",
-            fontSize = 16.sp,
-            modifier = modifier.padding(vertical = 8.dp),
-            fontWeight = FontWeight.Bold
-        )
-    }
 }
 
 @Preview(showBackground = true)
 @Composable
 fun RemittanceScreenPreview() {
-    RemittanceScreen(navController = null)
+    RemittanceScreen(
+        navController = null,
+        snackStateFlow = MutableSharedFlow<SnackBarComponentConfiguration>().asSharedFlow(),
+        showProgressBar = false,
+        remittanceScreenViewModel = null,
+    )
 }

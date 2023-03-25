@@ -19,9 +19,12 @@ import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.gson.Gson
 import com.rekast.momoapi.BuildConfig
 import com.rekast.momoapi.MomoAPI
 import com.rekast.momoapi.callback.APIResult
+import com.rekast.momoapi.model.api.AccountHolder
+import com.rekast.momoapi.model.api.AccountHolderStatus
 import com.rekast.momoapi.model.api.BasicUserInfo
 import com.rekast.momoapi.sample.utils.SnackBarComponentConfiguration
 import com.rekast.momoapi.sample.utils.Utils
@@ -33,6 +36,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import org.apache.commons.lang3.StringUtils
+import timber.log.Timber
 
 class MainScreenFragmentViewModel : ViewModel() {
     private val _snackBarStateFlow = MutableSharedFlow<SnackBarComponentConfiguration>()
@@ -70,8 +74,70 @@ class MainScreenFragmentViewModel : ViewModel() {
                             showProgressBar.postValue(false)
 
                             emitSnackBarState(
-                                SnackBarComponentConfiguration(message = "Basic User info not fetched! Please try again")
+                                SnackBarComponentConfiguration(
+                                    message = "${momoAPIException!!.message} " +
+                                        "Basic User info not fetched! Please try again",
+                                ),
                             )
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun validateAccountHolderStatus() {
+        val accessToken = context?.let { Utils.getAccessToken(it) }
+        val accountHolder =
+            AccountHolder(
+                partyId = "346736732646",
+                partyIdType = Constants.EndpointPaths.AccountHolderTypes.MSISDN,
+            )
+        if (StringUtils.isNotBlank(accessToken)) {
+            if (accessToken != null) {
+                momoAPi?.validateAccountHolderStatus(
+                    accountHolder,
+                    com.rekast.momoapi.sample.BuildConfig.MOMO_API_VERSION_V1,
+                    Constants.ProductTypes.REMITTANCE,
+                    Settings.getProductSubscriptionKeys(ProductType.REMITTANCE),
+                    accessToken,
+                ) { momoAPIResult ->
+                    when (momoAPIResult) {
+                        is APIResult.Success -> {
+                            val accountHolderStatus =
+                                Gson().fromJson(
+                                    momoAPIResult.value!!.source().readUtf8(),
+                                    AccountHolderStatus::class.java,
+                                )
+                            Timber.d(accountHolderStatus.result.toString())
+                        }
+                        is APIResult.Failure -> {
+                            val momoAPIException = momoAPIResult.APIException
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun getAccountBalance() {
+        val accessToken = context?.let { Utils.getAccessToken(it) }
+        if (StringUtils.isNotBlank(accessToken)) {
+            accessToken?.let {
+                momoAPi?.getBalance(
+                    "EUR",
+                    Settings.getProductSubscriptionKeys(ProductType.REMITTANCE),
+                    it,
+                    BuildConfig.MOMO_API_VERSION_V1,
+                    Constants.ProductTypes.REMITTANCE,
+                ) { momoAPIResult ->
+                    when (momoAPIResult) {
+                        is APIResult.Success -> {
+                            val balance = momoAPIResult.value
+                            Timber.d(balance.toString())
+                        }
+                        is APIResult.Failure -> {
+                            val momoAPIException = momoAPIResult.APIException
                         }
                     }
                 }

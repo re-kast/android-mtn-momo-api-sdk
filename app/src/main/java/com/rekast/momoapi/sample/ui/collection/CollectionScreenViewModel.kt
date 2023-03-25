@@ -16,14 +16,16 @@
 package com.rekast.momoapi.sample.ui.collection
 
 import android.content.Context
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
 import com.rekast.momoapi.MomoAPI
 import com.rekast.momoapi.callback.APIResult
 import com.rekast.momoapi.model.api.AccountHolder
+import com.rekast.momoapi.model.api.MomoTransaction
 import com.rekast.momoapi.model.api.Notification
-import com.rekast.momoapi.model.api.Transaction
 import com.rekast.momoapi.sample.BuildConfig
 import com.rekast.momoapi.sample.ui.main.AppMainViewModel
 import com.rekast.momoapi.sample.utils.SnackBarComponentConfiguration
@@ -44,29 +46,79 @@ class CollectionScreenViewModel : ViewModel() {
     val snackBarStateFlow: SharedFlow<SnackBarComponentConfiguration> = _snackBarStateFlow.asSharedFlow()
     var context: Context? = null
     private var momoAPi: MomoAPI? = null
-    lateinit var _appMainViewModel: AppMainViewModel
+    private lateinit var _appMainViewModel: AppMainViewModel
+    val showProgressBar = MutableLiveData(false)
 
-    private fun requestToPay() {
-        val accessToken = context?.let { Utils.getAccessToken(it) }
-        val creditTransaction = createRequestTpPayTransaction()
-        val transactionUuid = Settings.generateUUID()
-        if (StringUtils.isNotBlank(accessToken)) {
-            accessToken?.let {
-                momoAPi?.requestToPay(
-                    it,
-                    creditTransaction,
-                    BuildConfig.MOMO_API_VERSION_V1,
-                    Settings.getProductSubscriptionKeys(ProductType.COLLECTION),
-                    transactionUuid
-                ) { momoAPIResult ->
-                    when (momoAPIResult) {
-                        is APIResult.Success -> {
-                            requestToPayDeliveryNotification(transactionUuid, Constants.ProductTypes.COLLECTION)
-                            requestToPayTransactionStatus(transactionUuid)
-                            _appMainViewModel.refund(transactionUuid)
-                        }
-                        is APIResult.Failure -> {
-                            val momoAPIException = momoAPIResult.APIException
+    private val _phoneNumber = MutableLiveData("")
+    val phoneNumber: LiveData<String>
+        get() = _phoneNumber
+
+    private val _financialId = MutableLiveData("")
+    val financialId: LiveData<String>
+        get() = _financialId
+
+    private val _amount = MutableLiveData("")
+    val amount: LiveData<String>
+        get() = _amount
+
+    private val _payerMessage = MutableLiveData("")
+    val paymentMessage: LiveData<String>
+        get() = _payerMessage
+
+    private val _payerNote = MutableLiveData("")
+    val paymentNote: LiveData<String>
+        get() = _payerNote
+
+
+    fun onPhoneNumberUpdated(phoneNumber: String) {
+        _phoneNumber.value = phoneNumber
+    }
+
+    fun onFinancialIdUpdated(financialId: String) {
+        _financialId.value = financialId
+    }
+
+    fun onAmountUpdated(amount: String) {
+        _amount.value = amount
+    }
+
+    fun onPayerMessageUpdated(payerMessage: String) {
+        _payerMessage.value = payerMessage
+    }
+
+    fun onPayerNoteUpdated(payerNote: String) {
+        _payerNote.value = payerNote
+    }
+
+    fun requestToPay() {
+        showProgressBar.postValue(true)
+        if (phoneNumber.value!!.isNotEmpty() && financialId.value!!.isNotEmpty()
+            && amount.value!!.isNotEmpty() && paymentMessage.value!!.isNotEmpty()
+            && paymentNote.value!!.isNotEmpty()
+        ) {
+            val accessToken = context?.let { Utils.getAccessToken(it) }
+            val creditTransaction = createRequestTpPayTransaction()
+            val transactionUuid = Settings.generateUUID()
+            if (StringUtils.isNotBlank(accessToken)) {
+                accessToken?.let {
+                    momoAPi?.requestToPay(
+                        it,
+                        creditTransaction,
+                        BuildConfig.MOMO_API_VERSION_V1,
+                        Settings.getProductSubscriptionKeys(ProductType.COLLECTION),
+                        transactionUuid,
+                    ) { momoAPIResult ->
+                        when (momoAPIResult) {
+                            is APIResult.Success -> {
+                                showProgressBar.postValue(false)
+                                requestToPayDeliveryNotification(transactionUuid, Constants.ProductTypes.COLLECTION)
+                                requestToPayTransactionStatus(transactionUuid)
+                                _appMainViewModel.refund(transactionUuid)
+                            }
+                            is APIResult.Failure -> {
+                                showProgressBar.postValue(false)
+                                val momoAPIException = momoAPIResult.APIException
+                            }
                         }
                     }
                 }
@@ -74,18 +126,18 @@ class CollectionScreenViewModel : ViewModel() {
         }
     }
 
-    private fun createRequestTpPayTransaction(): Transaction {
-        return Transaction(
-            "10000",
+    private fun createRequestTpPayTransaction(): MomoTransaction {
+        return MomoTransaction(
+            amount.value!!.toString(),
             "EUR",
-            null,
+            financialId.value!!.toString(),
             Settings.generateUUID(),
             null,
-            AccountHolder(AccountHolderType.MSISDN.name, "346736732646"),
-            "Testing",
-            "The Good Company",
+            AccountHolder(AccountHolderType.MSISDN.name, phoneNumber.value!!.toString()),
+            paymentMessage.value!!.toString(),
+            paymentNote.value!!.toString(),
             null,
-            null
+            null,
         )
     }
 
@@ -102,7 +154,7 @@ class CollectionScreenViewModel : ViewModel() {
                     when (momoAPIResult) {
                         is APIResult.Success -> {
                             val completeTransfer =
-                                Gson().fromJson(momoAPIResult.value!!.source().readUtf8(), Transaction::class.java)
+                                Gson().fromJson(momoAPIResult.value!!.source().readUtf8(), MomoTransaction::class.java)
                             Timber.d(completeTransfer.toString())
                         }
                         is APIResult.Failure -> {
@@ -153,7 +205,7 @@ class CollectionScreenViewModel : ViewModel() {
                     when (momoAPIResult) {
                         is APIResult.Success -> {
                             val completeTransfer =
-                                Gson().fromJson(momoAPIResult.value!!.source().readUtf8(), Transaction::class.java)
+                                Gson().fromJson(momoAPIResult.value!!.source().readUtf8(), MomoTransaction::class.java)
                             Timber.d(completeTransfer.toString())
                         }
                         is APIResult.Failure -> {

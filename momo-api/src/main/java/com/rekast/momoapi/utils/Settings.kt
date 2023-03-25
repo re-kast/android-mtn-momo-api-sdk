@@ -17,7 +17,7 @@ package com.rekast.momoapi.utils
 
 import com.google.gson.Gson
 import com.rekast.momoapi.BuildConfig
-import com.rekast.momoapi.model.api.Transaction
+import com.rekast.momoapi.model.api.MomoTransaction
 import okhttp3.ResponseBody
 import org.apache.commons.lang3.StringUtils
 import retrofit2.Response
@@ -99,9 +99,9 @@ object Settings {
         return productKey
     }
 
-    fun generateTransactionFromResponse(response: Response<ResponseBody?>): Transaction? {
+    fun generateTransactionFromResponse(response: Response<ResponseBody?>): MomoTransaction? {
         val data: String = response.body()!!.source().readUtf8()
-        return Gson().fromJson(data, Transaction::class.java)
+        return Gson().fromJson(data, MomoTransaction::class.java)
     }
 
     fun checkNotificationMessageLength(

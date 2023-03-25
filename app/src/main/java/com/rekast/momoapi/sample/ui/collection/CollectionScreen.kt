@@ -15,33 +15,30 @@
  */
 package com.rekast.momoapi.sample.ui.collection
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.DrawerValue
 import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
 import androidx.compose.material.rememberDrawerState
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
 import com.rekast.momoapi.sample.R
-import com.rekast.momoapi.sample.ui.components.SnackBarComponent
+import com.rekast.momoapi.sample.ui.components.general.CircularProgressBarComponent
+import com.rekast.momoapi.sample.ui.components.general.PaymentDataScreenComponent
+import com.rekast.momoapi.sample.ui.components.general.SnackBarComponent
 import com.rekast.momoapi.sample.ui.navigation.drawer.Drawer
 import com.rekast.momoapi.sample.ui.navigation.topbar.TopBar
 import com.rekast.momoapi.sample.utils.SnackBarComponentConfiguration
 import com.rekast.momoapi.sample.utils.SnackBarThemeOptions
+import com.rekast.momoapi.sample.utils.annotation.PreviewWithBackgroundExcludeGenerated
 import com.rekast.momoapi.sample.utils.hookSnackBar
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -50,7 +47,9 @@ import kotlinx.coroutines.flow.asSharedFlow
 @Composable
 fun CollectionScreen(
     navController: NavController?,
-    snackStateFlow: SharedFlow<SnackBarComponentConfiguration>
+    snackStateFlow: SharedFlow<SnackBarComponentConfiguration>,
+    showProgressBar: Boolean = false,
+    collectionScreenViewModel: CollectionScreenViewModel?,
 ) {
     val scaffoldState = rememberScaffoldState(rememberDrawerState(DrawerValue.Closed))
     val scope = rememberCoroutineScope()
@@ -79,37 +78,44 @@ fun CollectionScreen(
         }
     ) { padding ->
         Box(modifier = Modifier.padding(padding)) {
-            CollectionScreenDataView {}
+            if (!showProgressBar) {
+                collectionScreenViewModel?.let {
+                    val phoneNumber by collectionScreenViewModel.phoneNumber.observeAsState("")
+                    val financialId by collectionScreenViewModel.financialId.observeAsState("")
+                    val amount by collectionScreenViewModel.amount.observeAsState("")
+                    val paymentMessage by collectionScreenViewModel.paymentMessage.observeAsState("")
+                    val paymentNote by collectionScreenViewModel.paymentNote.observeAsState("")
+
+                    PaymentDataScreenComponent(
+                        title = stringResource(id = R.string.request_to_pay_title),
+                        submitButtonText = stringResource(id = R.string.request_payment_submit_button),
+                        phoneNumber = phoneNumber,
+                        financialId = financialId,
+                        amount = amount,
+                        paymentMessage = paymentMessage,
+                        paymentNote = paymentNote,
+                        onRequestPayButtonClicked = { collectionScreenViewModel.requestToPay() },
+                        onPhoneNumberUpdated = { collectionScreenViewModel.onPhoneNumberUpdated(it) },
+                        onFinancialIdUpdated = { collectionScreenViewModel.onFinancialIdUpdated(it) },
+                        onAmountUpdated = { collectionScreenViewModel.onAmountUpdated(it) },
+                        onPayerMessageUpdated = { collectionScreenViewModel.onPayerMessageUpdated(it) },
+                        onPayerNoteUpdated = { collectionScreenViewModel.onPayerNoteUpdated(it) },
+                    )
+                }
+            } else {
+                CircularProgressBarComponent()
+            }
         }
     }
 }
 
-@Composable
-fun CollectionScreenDataView(
-    modifier: Modifier = Modifier,
-    onClick: () -> Unit
-) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text(
-            text = "This is the collection screen",
-            fontSize = 16.sp,
-            modifier = modifier.padding(vertical = 8.dp),
-            fontWeight = FontWeight.Bold
-        )
-    }
-}
-
-@Preview(showBackground = true)
+@PreviewWithBackgroundExcludeGenerated
 @Composable
 fun CollectionScreenPreview() {
     CollectionScreen(
         navController = null,
-        snackStateFlow = MutableSharedFlow<SnackBarComponentConfiguration>().asSharedFlow()
+        snackStateFlow = MutableSharedFlow<SnackBarComponentConfiguration>().asSharedFlow(),
+        showProgressBar = false,
+        collectionScreenViewModel = null,
     )
 }

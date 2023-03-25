@@ -22,7 +22,7 @@ import com.rekast.momoapi.model.api.AccountBalance
 import com.rekast.momoapi.model.api.AccountHolder
 import com.rekast.momoapi.model.api.BasicUserInfo
 import com.rekast.momoapi.model.api.Notification
-import com.rekast.momoapi.model.api.Transaction
+import com.rekast.momoapi.model.api.MomoTransaction
 import com.rekast.momoapi.model.api.UserInfoWithConsent
 import com.rekast.momoapi.model.authentication.AccessToken
 import com.rekast.momoapi.model.authentication.ApiUser
@@ -160,7 +160,7 @@ object MomoAPI {
 
     /**
      * Prepares to transfer to a payee
-     * @param[transaction] -- The transfer payload from the [Transaction] class
+     * @param[momoTransaction] -- The transfer payload from the [MomoTransaction] class
      * @param[productType] -- The API Products ([Constants.ProductTypes])
      * @param[productSubscriptionKey]  -- The Product subscription Key (Ocp-Apim-Subscription-Key)
      * @param[accessToken] -- The Access Token fetched here [MomoAPI.getAccessToken]
@@ -170,7 +170,7 @@ object MomoAPI {
      */
     fun transfer(
         accessToken: String,
-        transaction: Transaction,
+        momoTransaction: MomoTransaction,
         apiVersion: String,
         productType: String,
         productSubscriptionKey: String,
@@ -179,7 +179,7 @@ object MomoAPI {
     ) {
         momoAPIRepository.transfer(
             accessToken,
-            transaction,
+            momoTransaction,
             apiVersion,
             productType,
             productSubscriptionKey,
@@ -271,7 +271,7 @@ object MomoAPI {
 
     /**
      * Prepares to send a payment request
-     * @param[transaction] -- The transfer payload from the [Transaction] class
+     * @param[momoTransaction] -- The transfer payload from the [MomoTransaction] class
      * @param[productSubscriptionKey]  -- The Product subscription Key (Ocp-Apim-Subscription-Key)
      * @param[accessToken] -- The Access Token fetched here [MomoAPI.getAccessToken]
      * @param[apiVersion] -- The app Version (v1_0 or v2_0)
@@ -280,7 +280,7 @@ object MomoAPI {
      */
     fun requestToPay(
         accessToken: String,
-        transaction: Transaction,
+        momoTransaction: MomoTransaction,
         apiVersion: String,
         productSubscriptionKey: String,
         uuid: String,
@@ -288,7 +288,7 @@ object MomoAPI {
     ) {
         momoAPIRepository.requestToPay(
             accessToken,
-            transaction,
+            momoTransaction,
             apiVersion,
             productSubscriptionKey,
             uuid
@@ -320,7 +320,7 @@ object MomoAPI {
 
     /**
      * Prepares to withdraw from an account
-     * @param[transaction] -- The transfer payload from the [Transaction] class
+     * @param[momoTransaction] -- The transfer payload from the [MomoTransaction] class
      * @param[productSubscriptionKey]  -- The Product subscription Key (Ocp-Apim-Subscription-Key)
      * @param[accessToken] -- The Access Token fetched here [MomoAPI.getAccessToken]
      * @param[apiVersion] -- The app Version (v1_0 or v2_0)
@@ -329,7 +329,7 @@ object MomoAPI {
      */
     fun requestToWithdraw(
         accessToken: String,
-        transaction: Transaction,
+        momoTransaction: MomoTransaction,
         apiVersion: String,
         productSubscriptionKey: String,
         uuid: String,
@@ -337,7 +337,7 @@ object MomoAPI {
     ) {
         momoAPIRepository.requestToWithdraw(
             accessToken,
-            transaction,
+            momoTransaction,
             apiVersion,
             productSubscriptionKey,
             uuid
@@ -370,7 +370,7 @@ object MomoAPI {
     /**
      * Makes a request to deposit to a specific user
      * @param[accessToken] -- The Access Token fetched here [MomoAPI.getAccessToken]
-     * @param[transaction] -- The transfer payload from the [Transaction] class
+     * @param[momoTransaction] -- The transfer payload from the [MomoTransaction] class
      * @param[productSubscriptionKey]  -- The Product subscription Key (Ocp-Apim-Subscription-Key)
      * @param[apiVersion] -- The app Version (v1_0 or v2_0)
      * @param[uuid] -- The new resource UUID. It's a UUID V4.
@@ -378,7 +378,7 @@ object MomoAPI {
      */
     fun deposit(
         accessToken: String,
-        transaction: Transaction,
+        momoTransaction: MomoTransaction,
         apiVersion: String,
         productSubscriptionKey: String,
         uuid: String,
@@ -386,7 +386,7 @@ object MomoAPI {
     ) {
         momoAPIRepository.deposit(
             accessToken,
-            transaction,
+            momoTransaction,
             apiVersion,
             productSubscriptionKey,
             uuid
@@ -419,7 +419,7 @@ object MomoAPI {
     /**
      * Makes a request to refund a specific user
      * @param[accessToken] -- The Access Token fetched here [MomoAPI.getAccessToken]
-     * @param[transaction] -- The transfer payload from the [Transaction] class
+     * @param[momoTransaction] -- The transfer payload from the [MomoTransaction] class
      * @param[productSubscriptionKey]  -- The Product subscription Key (Ocp-Apim-Subscription-Key)
      * @param[apiVersion] -- The app Version (v1_0 or v2_0)
      * @param[uuid] -- The new resource UUID. It's a UUID V4.
@@ -427,7 +427,7 @@ object MomoAPI {
      */
     fun refund(
         accessToken: String,
-        transaction: Transaction,
+        momoTransaction: MomoTransaction,
         apiVersion: String,
         productSubscriptionKey: String,
         uuid: String,
@@ -435,7 +435,7 @@ object MomoAPI {
     ) {
         momoAPIRepository.refund(
             accessToken,
-            transaction,
+            momoTransaction,
             apiVersion,
             productSubscriptionKey,
             uuid

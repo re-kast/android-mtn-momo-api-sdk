@@ -19,7 +19,7 @@ import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Transaction(
+data class MomoTransaction(
     @SerializedName("amount") var amount: String,
     @SerializedName("currency") var currency: String,
     @SerializedName("financialTransactionId") var financialTransactionId: String? = "",

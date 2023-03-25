@@ -12,6 +12,7 @@ object Versions {
     const val composeMaterial3 ="1.0.1"
     const val composeUi ="1.3.3"
     const val foundation ="1.3.1"
+    const val flowLayout ="0.30.0"
 
     // Material and androidX
     const val material = "1.3.0-alpha02"
@@ -131,6 +132,7 @@ object Libraries {
     const val foundation = "androidx.compose.foundation:foundation:${Versions.foundation}"
     const val runtimeLiveData = "androidx.compose.runtime:runtime-livedata:${Versions.rxJava}"
     const val runtimeRxJava = "androidx.compose.runtime:runtime-rxjava2:${Versions.rxJava}"
+    const val flowLayout = "com.google.accompanist:accompanist-flowlayout:${Versions.flowLayout}"
 
     // Firebase
     const val bom = "com.google.firebase:firebase-bom:${Versions.firebase}"

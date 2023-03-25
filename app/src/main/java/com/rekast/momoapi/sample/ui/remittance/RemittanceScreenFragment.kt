@@ -20,12 +20,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.rekast.momoapi.MomoAPI
+import com.rekast.momoapi.sample.ui.main.AppMainActivity
 import com.rekast.momoapi.sample.ui.main.AppMainViewModel
 import com.rekast.momoapi.sample.ui.theme.AppTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -33,20 +37,38 @@ import dagger.hilt.android.AndroidEntryPoint
 @ExperimentalMaterialApi
 @AndroidEntryPoint
 class RemittanceScreenFragment : Fragment() {
-    val appMainViewModel by activityViewModels<AppMainViewModel>()
-    val remittanceScreenViewModel by viewModels<RemittanceScreenViewModel>()
+    private lateinit var activity: AppMainActivity
+    private lateinit var fragmentMomoAPI: MomoAPI
+    private val appMainViewModel by activityViewModels<AppMainViewModel>()
+    private val remittanceScreenViewModel by viewModels<RemittanceScreenViewModel>()
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         return ComposeView(requireContext()).apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
                 AppTheme {
-                    RemittanceScreen(navController = findNavController())
+                    val showProgressBar by remittanceScreenViewModel.showProgressBar.observeAsState(false)
+                    RemittanceScreen(
+                        navController = findNavController(),
+                        snackStateFlow = remittanceScreenViewModel.snackBarStateFlow,
+                        showProgressBar = showProgressBar,
+                        remittanceScreenViewModel = remittanceScreenViewModel,
+                    )
                 }
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        activity = requireActivity() as AppMainActivity
+        fragmentMomoAPI = activity.momoAPI
+
+        remittanceScreenViewModel.provideContext(activity)
+        remittanceScreenViewModel.provideMomoAPI(fragmentMomoAPI)
+        remittanceScreenViewModel.provideAppMainViewModel(appMainViewModel)
     }
 }
