@@ -27,7 +27,7 @@ import java.io.IOException
  */
 
 class AccessTokenInterceptor(
-    private var accessToken: String,
+    private var accessToken: String
 ) : Interceptor {
 
     @Throws(IOException::class)

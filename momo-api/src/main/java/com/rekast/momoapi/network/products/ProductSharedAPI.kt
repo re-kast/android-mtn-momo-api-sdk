@@ -18,7 +18,7 @@ package com.rekast.momoapi.network.products
 import com.rekast.momoapi.model.api.AccountBalance
 import com.rekast.momoapi.model.api.BasicUserInfo
 import com.rekast.momoapi.model.api.Notification
-import com.rekast.momoapi.model.api.Transaction
+import com.rekast.momoapi.model.api.MomoTransaction
 import com.rekast.momoapi.model.api.UserInfoWithConsent
 import com.rekast.momoapi.utils.Constants
 import okhttp3.ResponseBody
@@ -47,7 +47,7 @@ sealed interface ProductSharedAPI {
         @Path(Constants.EndpointPaths.PRODUCT_TYPE) productType: String,
         @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
         @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
-        @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String,
+        @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String
     ): Call<AccountBalance>
 
     /**
@@ -64,7 +64,7 @@ sealed interface ProductSharedAPI {
         @Path(Constants.EndpointPaths.PRODUCT_TYPE) productType: String,
         @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
         @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
-        @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String,
+        @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String
     ): Call<BasicUserInfo>
 
     /**
@@ -80,12 +80,12 @@ sealed interface ProductSharedAPI {
         @Path(Constants.EndpointPaths.PRODUCT_TYPE) productType: String,
         @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
         @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
-        @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String,
+        @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String
     ): Call<UserInfoWithConsent>
 
     /**
      * Makes a request to get the User Info with Consent
-     * @param[transaction] -- This is the Transfer Payload [Transaction]
+     * @param[momoTransaction] -- This is the Transfer Payload [MomoTransaction]
      * @param[apiVersion] -- The app Version (v1_0 or v2_0)
      * @param[productType] -- The API Products ([Constants.ProductTypes])
      * @param[productSubscriptionKey] -- The Product subscription Key (Ocp-Apim-Subscription-Key)
@@ -94,12 +94,12 @@ sealed interface ProductSharedAPI {
      */
     @POST(Constants.EndPoints.TRANSFER)
     fun transfer(
-        @Body transaction: Transaction,
+        @Body momoTransaction: MomoTransaction,
         @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
         @Path(Constants.EndpointPaths.PRODUCT_TYPE) productType: String,
         @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
         @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String,
-        @Header(Constants.Headers.X_REFERENCE_ID) uuid: String,
+        @Header(Constants.Headers.X_REFERENCE_ID) uuid: String
     ): Call<Unit>
 
     /**
@@ -118,7 +118,7 @@ sealed interface ProductSharedAPI {
         @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
         @Path(Constants.EndpointPaths.PRODUCT_TYPE) productType: String,
         @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
-        @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String,
+        @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String
     ): Call<ResponseBody>
 
     /**
@@ -142,7 +142,7 @@ sealed interface ProductSharedAPI {
         @Path(Constants.EndpointPaths.PRODUCT_TYPE) productType: String,
         @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
         @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String,
-        @Header(Constants.Headers.NOTIFICATION_MESSAGE) notificationMessage: String,
+        @Header(Constants.Headers.NOTIFICATION_MESSAGE) notificationMessage: String
     ): Call<ResponseBody>
 
     /**
@@ -162,7 +162,7 @@ sealed interface ProductSharedAPI {
         @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
         @Path(Constants.EndpointPaths.PRODUCT_TYPE) productType: String,
         @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
-        @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String,
+        @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String
     ): Call<ResponseBody>
 
     /**
@@ -180,6 +180,6 @@ sealed interface ProductSharedAPI {
         @Path(Constants.EndpointPaths.PRODUCT_TYPE) productType: String,
         @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
         @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
-        @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String,
+        @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String
     ): Call<AccountBalance>
 }

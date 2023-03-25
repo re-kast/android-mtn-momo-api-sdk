@@ -25,7 +25,7 @@ import retrofit2.Response
  * [onFailure] for errors.
  */
 class APICallback<T>(
-    private val callback: (APIResult: APIResult<T>) -> Unit,
+    private val callback: (APIResult: APIResult<T>) -> Unit
 ) : Callback<T> {
 
     override fun onResponse(call: Call<T>, response: Response<T>) {
@@ -43,7 +43,7 @@ class APICallback<T>(
     override fun onFailure(call: Call<T>, t: Throwable) = callback.invoke(
         APIResult.Failure(
             true,
-            APIException(t.localizedMessage),
-        ),
+            APIException(t.localizedMessage)
+        )
     )
 }

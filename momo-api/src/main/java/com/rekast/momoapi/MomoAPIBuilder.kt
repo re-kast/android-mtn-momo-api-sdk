@@ -40,7 +40,7 @@ class MomoAPIBuilder(private var apiUserId: String) {
         momoApi.momoAPIRepository = MomoAPIRepository(
             apiUserId,
             baseURL,
-            environment,
+            environment
         )
         return momoApi
     }

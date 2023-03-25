@@ -24,5 +24,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class ApiUser(
     @SerializedName("providerCallbackHost") val providerCallbackHost: String,
-    @SerializedName("targetEnvironment") val targetEnvironment: String,
+    @SerializedName("targetEnvironment") val targetEnvironment: String
 )

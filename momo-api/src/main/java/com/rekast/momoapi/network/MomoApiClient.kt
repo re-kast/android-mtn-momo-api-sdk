@@ -80,7 +80,7 @@ open class MomoApiClient {
 
     private fun returnOkHttpClient(
         builder: OkHttpClient.Builder,
-        authentication: Interceptor?,
+        authentication: Interceptor?
     ): OkHttpClient {
         return if (authentication == null) {
             builder.connectTimeout(Settings.CONNECT_TIMEOUT, TimeUnit.SECONDS)

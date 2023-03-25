@@ -20,7 +20,8 @@ import android.content.Context.MODE_PRIVATE
 import com.rekast.momoapi.model.authentication.AccessToken
 import com.rekast.momoapi.sample.BuildConfig
 import org.apache.commons.lang3.StringUtils
-import java.util.*
+import java.text.SimpleDateFormat
+import java.util.Calendar
 
 object Utils {
     fun saveApiKey(context: Context, apiKey: String) {
@@ -67,5 +68,10 @@ object Utils {
         val expiryTime = mSettings.getLong("expiryDate", 0)
         val currentTime = Calendar.getInstance().timeInMillis
         return currentTime > expiryTime
+    }
+
+    fun convertToDate(milliseconds: Long): String {
+        val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd")
+        return simpleDateFormat.format(milliseconds)
     }
 }

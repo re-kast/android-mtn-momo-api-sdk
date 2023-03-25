@@ -30,7 +30,7 @@ import java.io.IOException
  */
 class BasicAuthInterceptor(
     private val apiUserId: String,
-    private val apiKey: String,
+    private val apiKey: String
 ) : Interceptor {
 
     @Throws(IOException::class)
@@ -40,7 +40,7 @@ class BasicAuthInterceptor(
         val request = chain.request().newBuilder()
             .addHeader(
                 Constants.Headers.AUTHORIZATION,
-                "${Constants.TokenTypes.BASIC} " + Base64.encodeToString(keys.toByteArray(), Base64.NO_WRAP),
+                "${Constants.TokenTypes.BASIC} " + Base64.encodeToString(keys.toByteArray(), Base64.NO_WRAP)
             )
             .build()
 

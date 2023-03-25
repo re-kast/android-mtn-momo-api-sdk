@@ -20,5 +20,5 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class AccountHolderStatus(
-    @SerializedName("result") var result: Boolean,
+    @SerializedName("result") var result: Boolean
 )

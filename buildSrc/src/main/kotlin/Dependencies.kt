@@ -1,17 +1,25 @@
 object Versions {
     //Android
-    const val application = "7.4.1"
-    const val library = "7.4.1"
+    const val application = "7.4.2"
+    const val library = "7.4.2"
+    const val appCompat ="1.6.1"
 
     //Compose Bom
     const val composeBom = "2023.01.00"
     const val composeActivity = "1.6.1"
     const val lifecycleComposeViewModel = "2.5.1"
+    const val composeMaterial ="1.3.1"
+    const val composeMaterial3 ="1.0.1"
+    const val composeUi ="1.3.3"
+    const val foundation ="1.3.1"
+    const val flowLayout ="0.30.0"
 
     // Material and androidX
     const val material = "1.3.0-alpha02"
+    const val materialIcon = "1.3.1"
     const val constraintLayout = "2.0.1"
-    const val navigation = "2.3.0"
+    const val navigation = "2.6.0-alpha06"
+    const val rxJava = "1.3.3"
 
     // Firebase
     const val firebase = "26.2.0"
@@ -27,7 +35,7 @@ object Versions {
 
     // Logging - debug builds
     const val timber = "4.7.1"
-    const val leakCanary = "2.4"
+    const val leakCanary = "2.10"
     const val chucker = "3.4.0"
 
     // Kotlin
@@ -39,10 +47,13 @@ object Versions {
     //Apache Commons
     const val commonsLang3 = "3.12.0"
 
+    //Hilt
+    const val hilt = "2.45"
+
     // Gradle Plugins
     const val ktlint = "10.1.0"
     const val detekt = "1.22.0"
-    const val spotless = "6.15.0"
+    const val spotless = "6.17.0"
     const val jacoco = "0.8.5"
     const val dokka = "1.5.0"
     const val gradleVersionsPlugin = "0.29.0"
@@ -81,19 +92,13 @@ object BuildPlugins {
     const val gradleVersionsPlugin = "com.github.ben-manes.versions"
     const val jacocoAndroid = "com.hiya.jacoco-android"
     const val mvnPublishPlugin = "com.vanniktech.maven.publish"
-    const val meterial3 = "androidx.compose.material3:material3"
     const val composeUi = "androidx.compose.ui:ui"
     const val composeToolingPreview = "androidx.compose.ui:ui-tooling-preview"
     const val composeUiTooling = "androidx.compose.ui:ui-tooling"
-    const val materialIconsCore = "androidx.compose.material:material-icons-core"
-    const val materialIconsExtended = "androidx.compose.material:material-icons-extended"
-    const val materialWindow = "androidx.compose.material3:material3-window-size-class"
-    const val runtimeLiveData = "androidx.compose.runtime:runtime-livedata"
-    const val runtimeRxJava = "androidx.compose.runtime:runtime-rxjava2"
     const val testJunit4 = "androidx.compose.ui:ui-test-junit4"
     const val testManifest = "androidx.compose.ui:ui-test-manifest"
     const val mapsSecret = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin"
-
+    const val hiltAndroid = "com.google.dagger.hilt.android"
 
     //Publishing
     const val mavenPublish = "maven-publish"
@@ -105,14 +110,29 @@ object Libraries {
     const val material = "com.google.android.material:material:${Versions.material}"
     const val constraintLayout =
         "androidx.constraintlayout:constraintlayout:${Versions.constraintLayout}"
+    const val navigationCompose = "androidx.navigation:navigation-compose:${Versions.navigation}"
     const val navigationFragment = "androidx.navigation:navigation-fragment-ktx:${Versions.navigation}"
     const val navigationUi = "androidx.navigation:navigation-ui-ktx:${Versions.navigation}"
+    const val dynamicNavigation = "androidx.navigation:navigation-dynamic-features-fragment:${Versions.navigation}"
     const val composeActivity = "androidx.activity:activity-compose:${Versions.composeActivity}"
     const val lifecycleComposeViewModel =
         "androidx.lifecycle:lifecycle-viewmodel-compose:${Versions.lifecycleComposeViewModel}"
+    const val appCompat = "androidx.appcompat:appcompat:${Versions.appCompat}"
 
     //Compose
+    const val composeUi = "androidx.compose.ui:ui:${Versions.composeUi}"
+    const val composeToolingPreview = "androidx.compose.ui:ui-tooling-preview:${Versions.composeUi}"
+    const val composeUiTooling = "androidx.compose.ui:ui-tooling:${Versions.composeUi}"
     const val composeBom = "androidx.compose:compose-bom:${Versions.composeBom}"
+    const val composeMaterial = "androidx.compose.material:material:${Versions.composeMaterial}"
+    const val materialIconsCore = "androidx.compose.material:material-icons-core:${Versions.materialIcon}"
+    const val materialIconsExtended = "androidx.compose.material:material-icons-extended:${Versions.materialIcon}"
+    const val composeMaterial3 = "androidx.compose.material3:material3:${Versions.composeMaterial3}"
+    const val composeMaterial3Window = "androidx.compose.material3:material3-window-size-class:${Versions.composeMaterial3}"
+    const val foundation = "androidx.compose.foundation:foundation:${Versions.foundation}"
+    const val runtimeLiveData = "androidx.compose.runtime:runtime-livedata:${Versions.rxJava}"
+    const val runtimeRxJava = "androidx.compose.runtime:runtime-rxjava2:${Versions.rxJava}"
+    const val flowLayout = "com.google.accompanist:accompanist-flowlayout:${Versions.flowLayout}"
 
     // Firebase
     const val bom = "com.google.firebase:firebase-bom:${Versions.firebase}"
@@ -142,6 +162,8 @@ object Libraries {
     const val androidXTestMonitor = "androidx.test:monitor:${Versions.androidXTestMonitor}"
     const val androidXJunitTest = "androidx.test.ext:junit-ktx:${Versions.androidXJunitTest}"
     const val commonsLang3 = "org.apache.commons:commons-lang3:${Versions.commonsLang3}"
+    const val hiltAndroid = "com.google.dagger:hilt-android:${Versions.hilt}"
+    const val hiltComplier = "com.google.dagger:hilt-compiler:${Versions.hilt}"
 }
 
 object TestLibraries {
@@ -160,6 +182,8 @@ object TestLibraries {
     const val androidMockK = "io.mockk:mockk-android:${Versions.mockK}"
     const val liveDataTesting = "com.jraska.livedata:testing-ktx:${Versions.liveDataTesting}"
     const val kotlinxCoroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-test:${Versions.kotlinxCoroutines}"
+    const val hiltAndroidTesting = "com.google.dagger:hilt-android-testing:${Versions.hilt}"
+    const val navigationTesting = "androidx.navigation:navigation-testing:${Versions.navigation}"
 }
 
 object BuildModules {
