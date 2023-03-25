@@ -16,7 +16,7 @@
 package com.rekast.momoapi.network.okhttp
 
 import android.util.Base64
-import com.rekast.momoapi.utils.Constants
+import com.rekast.momoapi.utils.MomoConstants
 import okhttp3.Interceptor
 import okhttp3.Response
 import java.io.IOException
@@ -39,8 +39,8 @@ class BasicAuthInterceptor(
 
         val request = chain.request().newBuilder()
             .addHeader(
-                Constants.Headers.AUTHORIZATION,
-                "${Constants.TokenTypes.BASIC} " + Base64.encodeToString(keys.toByteArray(), Base64.NO_WRAP)
+                MomoConstants.Headers.AUTHORIZATION,
+                "${MomoConstants.TokenTypes.BASIC} " + Base64.encodeToString(keys.toByteArray(), Base64.NO_WRAP)
             )
             .build()
 

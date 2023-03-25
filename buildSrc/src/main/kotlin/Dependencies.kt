@@ -43,6 +43,8 @@ object Versions {
     const val coreKtx = "1.10.0-alpha02"
     const val kotlinAndroid = "1.8.10"
     const val kotlinxSerializationJson = "1.4.1"
+    const val customView = "1.2.0-alpha02"
+    const val poolingContainer = "1.0.0"
 
     //Apache Commons
     const val commonsLang3 = "3.12.0"
@@ -132,7 +134,9 @@ object Libraries {
     const val foundation = "androidx.compose.foundation:foundation:${Versions.foundation}"
     const val runtimeLiveData = "androidx.compose.runtime:runtime-livedata:${Versions.rxJava}"
     const val runtimeRxJava = "androidx.compose.runtime:runtime-rxjava2:${Versions.rxJava}"
-    const val flowLayout = "com.google.accompanist:accompanist-flowlayout:${Versions.flowLayout}"
+    //const val flowLayout = "com.google.accompanist:accompanist-flowlayout:${Versions.flowLayout}"
+    const val customView = "androidx.customview:customview:${Versions.customView}"
+    const val poolingContainer = "androidx.customview:customview-poolingcontainer:${Versions.poolingContainer}"
 
     // Firebase
     const val bom = "com.google.firebase:firebase-bom:${Versions.firebase}"
