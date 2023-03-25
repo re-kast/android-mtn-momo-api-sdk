@@ -21,8 +21,8 @@ import com.rekast.momoapi.callback.TransactionCallback
 import com.rekast.momoapi.model.api.AccountBalance
 import com.rekast.momoapi.model.api.AccountHolder
 import com.rekast.momoapi.model.api.BasicUserInfo
-import com.rekast.momoapi.model.api.Notification
 import com.rekast.momoapi.model.api.MomoTransaction
+import com.rekast.momoapi.model.api.Notification
 import com.rekast.momoapi.model.api.UserInfoWithConsent
 import com.rekast.momoapi.model.authentication.AccessToken
 import com.rekast.momoapi.model.authentication.ApiUser
@@ -455,13 +455,111 @@ object MomoAPI {
         apiVersion: String,
         productSubscriptionKey: String,
         accessToken: String,
-        callback: ((APIResult: APIResult<ResponseBody?>) -> Unit)
+        callback: ((APIResult: APIResult<ResponseBody?>) -> Unit),
     ) {
         momoAPIRepository.getRefundStatus(
             referenceId,
             apiVersion,
             productSubscriptionKey,
-            accessToken
+            accessToken,
+        ).enqueue(TransactionCallback(callback))
+    }
+
+    /**
+     * Makes a request to deposit to a specific user
+     * @param[accessToken] -- The Access Token fetched here [MomoAPI.getAccessToken]
+     * @param[transaction] -- The transfer payload from the [Transaction] class
+     * @param[productSubscriptionKey]  -- The Product subscription Key (Ocp-Apim-Subscription-Key)
+     * @param[apiVersion] -- The app Version (v1_0 or v2_0)
+     * @param[uuid] -- The new resource UUID. It's a UUID V4.
+     * @param[callback] -- The request callback. Returns @see [AccessToken]
+     */
+    fun deposit(
+        accessToken: String,
+        transaction: Transaction,
+        apiVersion: String,
+        productSubscriptionKey: String,
+        uuid: String,
+        callback: ((APIResult: APIResult<Unit>) -> Unit),
+    ) {
+        momoAPIRepository.deposit(
+            accessToken,
+            transaction,
+            apiVersion,
+            productSubscriptionKey,
+            uuid,
+        ).enqueue(APICallback(callback))
+    }
+
+    /**
+     * Makes a request to check the status of the deposit request
+     * @param[referenceId] -- This is new resource Id used here [MomoAPI.requestToPay]. It is a UUID V4
+     * @param[apiVersion] -- The app Version (v1_0 or v2_0)
+     * @param[productSubscriptionKey]  -- The Product subscription Key (Ocp-Apim-Subscription-Key)
+     * @param[accessToken] -- The Access Token fetched here [MomoAPI.getAccessToken]
+     * @param[callback] -- The request callback. Returns @see [AccessToken]
+     */
+    fun getDepositStatus(
+        referenceId: String,
+        apiVersion: String,
+        productSubscriptionKey: String,
+        accessToken: String,
+        callback: ((APIResult: APIResult<ResponseBody?>) -> Unit),
+    ) {
+        momoAPIRepository.getDepositStatus(
+            referenceId,
+            apiVersion,
+            productSubscriptionKey,
+            accessToken,
+        ).enqueue(TransactionCallback(callback))
+    }
+
+    /**
+     * Makes a request to refund a specific user
+     * @param[accessToken] -- The Access Token fetched here [MomoAPI.getAccessToken]
+     * @param[transaction] -- The transfer payload from the [Transaction] class
+     * @param[productSubscriptionKey]  -- The Product subscription Key (Ocp-Apim-Subscription-Key)
+     * @param[apiVersion] -- The app Version (v1_0 or v2_0)
+     * @param[uuid] -- The new resource UUID. It's a UUID V4.
+     * @param[callback] -- The request callback. Returns @see [AccessToken]
+     */
+    fun refund(
+        accessToken: String,
+        transaction: Transaction,
+        apiVersion: String,
+        productSubscriptionKey: String,
+        uuid: String,
+        callback: ((APIResult: APIResult<Unit>) -> Unit),
+    ) {
+        momoAPIRepository.refund(
+            accessToken,
+            transaction,
+            apiVersion,
+            productSubscriptionKey,
+            uuid,
+        ).enqueue(APICallback(callback))
+    }
+
+    /**
+     * Makes a request to check the status of the refund
+     * @param[referenceId] -- This is new resource Id used here [MomoAPI.requestToPay]. It is a UUID V4
+     * @param[apiVersion] -- The app Version (v1_0 or v2_0)
+     * @param[productSubscriptionKey]  -- The Product subscription Key (Ocp-Apim-Subscription-Key)
+     * @param[accessToken] -- The Access Token fetched here [MomoAPI.getAccessToken]
+     * @param[callback] -- The request callback. Returns @see [AccessToken]
+     */
+    fun getRefundStatus(
+        referenceId: String,
+        apiVersion: String,
+        productSubscriptionKey: String,
+        accessToken: String,
+        callback: ((APIResult: APIResult<ResponseBody?>) -> Unit),
+    ) {
+        momoAPIRepository.getRefundStatus(
+            referenceId,
+            apiVersion,
+            productSubscriptionKey,
+            accessToken,
         ).enqueue(TransactionCallback(callback))
     }
 }

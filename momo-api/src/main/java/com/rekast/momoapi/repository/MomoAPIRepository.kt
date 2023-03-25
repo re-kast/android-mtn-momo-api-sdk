@@ -18,8 +18,8 @@ package com.rekast.momoapi.repository
 import com.rekast.momoapi.model.api.AccountBalance
 import com.rekast.momoapi.model.api.AccountHolder
 import com.rekast.momoapi.model.api.BasicUserInfo
-import com.rekast.momoapi.model.api.Notification
 import com.rekast.momoapi.model.api.MomoTransaction
+import com.rekast.momoapi.model.api.Notification
 import com.rekast.momoapi.model.api.UserInfoWithConsent
 import com.rekast.momoapi.model.authentication.AccessToken
 import com.rekast.momoapi.model.authentication.ApiUser
