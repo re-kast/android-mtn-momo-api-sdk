@@ -22,7 +22,7 @@ pluginManagement {
     }
 }
 
-include("app")
+include("sample")
 include(":momo-api")
 
 rootProject.name = "MTN Momo API"

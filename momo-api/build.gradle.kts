@@ -52,7 +52,7 @@ android {
         getByName("debug") {
         }
         getByName("release") {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
         }
     }
     namespace = "com.rekast.momoapi"
@@ -122,7 +122,6 @@ tasks {
     }
 }
 
-/*
 afterEvaluate {
     fun Project.get(name: String, def: String = "$name not found") =
         properties[name]?.toString() ?: System.getenv(name) ?: def
@@ -206,4 +205,3 @@ afterEvaluate {
         }
     }
 }
-*/

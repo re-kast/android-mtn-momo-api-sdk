@@ -18,8 +18,8 @@ package com.rekast.momoapi.repository
 import com.rekast.momoapi.model.api.AccountBalance
 import com.rekast.momoapi.model.api.AccountHolder
 import com.rekast.momoapi.model.api.BasicUserInfo
+import com.rekast.momoapi.model.api.MomoNotification
 import com.rekast.momoapi.model.api.MomoTransaction
-import com.rekast.momoapi.model.api.Notification
 import com.rekast.momoapi.model.api.UserInfoWithConsent
 import com.rekast.momoapi.model.authentication.AccessToken
 import com.rekast.momoapi.model.authentication.ApiUser
@@ -175,7 +175,7 @@ class MomoAPIRepository(
      * Sends a request to pay a user. The user is identified by the [referenceId]
      */
     fun requestToPayDeliveryNotification(
-        notification: Notification,
+        momoNotification: MomoNotification,
         referenceId: String,
         apiVersion: String,
         productType: String,
@@ -186,13 +186,13 @@ class MomoAPIRepository(
             baseUrl,
             AccessTokenInterceptor(accessToken)
         ).requestToPayDeliveryNotification(
-            notification,
+            momoNotification,
             referenceId,
             apiVersion,
             productType,
             productSubscriptionKey,
             environment,
-            notification.notificationMessage
+            momoNotification.notificationMessage
         )
     }
 
