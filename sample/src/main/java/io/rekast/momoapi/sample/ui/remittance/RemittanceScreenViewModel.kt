@@ -33,7 +33,6 @@ import io.rekast.momoapi.sample.utils.Constants
 import io.rekast.momoapi.sample.utils.SnackBarComponentConfiguration
 import io.rekast.momoapi.sample.utils.Utils
 import io.rekast.momoapi.utils.AccountHolderType
-import io.rekast.momoapi.utils.MomoConstants
 import io.rekast.momoapi.utils.ProductType
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -122,7 +121,7 @@ class RemittanceScreenViewModel : ViewModel() {
                         accessToken,
                         creditTransaction,
                         BuildConfig.MOMO_API_VERSION_V1,
-                        MomoConstants.ProductTypes.REMITTANCE,
+                        ProductType.REMITTANCE.productType,
                         Settings.getProductSubscriptionKeys(ProductType.REMITTANCE),
                         transactionUuid
                     ) { momoAPIResult ->
@@ -187,7 +186,7 @@ class RemittanceScreenViewModel : ViewModel() {
                 momoAPi?.getTransferStatus(
                     referenceId,
                     BuildConfig.MOMO_API_VERSION_V1,
-                    MomoConstants.ProductTypes.REMITTANCE,
+                    ProductType.REMITTANCE.productType,
                     Settings.getProductSubscriptionKeys(ProductType.REMITTANCE),
                     accessToken
                 ) { momoAPIResult ->
@@ -238,7 +237,7 @@ class RemittanceScreenViewModel : ViewModel() {
                     momoNotification,
                     referenceId,
                     BuildConfig.MOMO_API_VERSION_V1,
-                    MomoConstants.ProductTypes.REMITTANCE,
+                    ProductType.REMITTANCE.productType,
                     Settings.getProductSubscriptionKeys(ProductType.REMITTANCE),
                     it
                 ) { momoAPIResult ->

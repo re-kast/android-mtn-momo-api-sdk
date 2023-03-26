@@ -15,6 +15,8 @@
  */
 package io.rekast.momoapi.utils
 
-enum class AccountHolderType {
-    MSISDN, EMAIL, PARTY_CODE
+enum class AccountHolderType(val accountHolderType: String) {
+    MSISDN("msisdn"),
+    EMAIL("email"),
+    PARTY_CODE("party_code")
 }

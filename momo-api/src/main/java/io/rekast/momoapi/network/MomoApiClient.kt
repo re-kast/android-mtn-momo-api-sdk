@@ -16,6 +16,7 @@
 package io.rekast.momoapi.network
 
 import io.io.rekast.momoapi.utils.Settings
+import io.rekast.momoapi.BuildConfig
 import io.rekast.momoapi.network.okhttp.UnsafeOkHttpClient
 import io.rekast.momoapi.network.products.ProductSharedAPI
 import okhttp3.Interceptor
@@ -65,7 +66,7 @@ open class MomoApiClient {
 
     fun getRetrofit(baseUrl: String, authentication: Interceptor?): Retrofit {
         val httpLoggingInterceptor = HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
-        val builder = if (/*baseUrl == Environment.SANDBOX.url*/ true) {
+        val builder = if (baseUrl == BuildConfig.MOMO_BASE_URL) {
             UnsafeOkHttpClient().unsafeOkHttpClient.addInterceptor(httpLoggingInterceptor)
         } else {
             OkHttpClient.Builder()

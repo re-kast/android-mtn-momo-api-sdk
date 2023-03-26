@@ -31,7 +31,7 @@ import io.rekast.momoapi.sample.BuildConfig
 import io.rekast.momoapi.sample.utils.Constants
 import io.rekast.momoapi.sample.utils.SnackBarComponentConfiguration
 import io.rekast.momoapi.sample.utils.Utils
-import io.rekast.momoapi.utils.MomoConstants
+import io.rekast.momoapi.utils.AccountHolderType
 import io.rekast.momoapi.utils.ProductType
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -60,7 +60,7 @@ class MainScreenFragmentViewModel : ViewModel() {
                     Settings.getProductSubscriptionKeys(ProductType.REMITTANCE),
                     it,
                     BuildConfig.MOMO_API_VERSION_V1,
-                    MomoConstants.ProductTypes.REMITTANCE
+                    ProductType.REMITTANCE.productType
                 ) { momoAPIResult ->
                     when (momoAPIResult) {
                         is APIResult.Success -> {
@@ -102,14 +102,14 @@ class MainScreenFragmentViewModel : ViewModel() {
         val accessToken = context?.let { Utils.getAccessToken(it) }
         val accountHolder = AccountHolder(
             partyId = "346736732646",
-            partyIdType = MomoConstants.EndpointPaths.AccountHolderTypes.MSISDN
+            partyIdType = AccountHolderType.MSISDN.accountHolderType
         )
         if (StringUtils.isNotBlank(accessToken)) {
             if (accessToken != null) {
                 momoAPi?.validateAccountHolderStatus(
                     accountHolder,
                     BuildConfig.MOMO_API_VERSION_V1,
-                    MomoConstants.ProductTypes.REMITTANCE,
+                    ProductType.REMITTANCE.productType,
                     Settings.getProductSubscriptionKeys(ProductType.REMITTANCE),
                     accessToken
                 ) { momoAPIResult ->
@@ -162,7 +162,7 @@ class MainScreenFragmentViewModel : ViewModel() {
                     Settings.getProductSubscriptionKeys(ProductType.REMITTANCE),
                     it,
                     BuildConfig.MOMO_API_VERSION_V1,
-                    MomoConstants.ProductTypes.REMITTANCE
+                    ProductType.REMITTANCE.productType
                 ) { momoAPIResult ->
                     when (momoAPIResult) {
                         is APIResult.Success -> {

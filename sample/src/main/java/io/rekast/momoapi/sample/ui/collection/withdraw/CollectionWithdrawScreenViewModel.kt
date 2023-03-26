@@ -33,7 +33,6 @@ import io.rekast.momoapi.sample.utils.Constants
 import io.rekast.momoapi.sample.utils.SnackBarComponentConfiguration
 import io.rekast.momoapi.sample.utils.Utils
 import io.rekast.momoapi.utils.AccountHolderType
-import io.rekast.momoapi.utils.MomoConstants
 import io.rekast.momoapi.utils.ProductType
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -233,7 +232,7 @@ class CollectionWithdrawScreenViewModel : ViewModel() {
                     momoNotification,
                     referenceId,
                     BuildConfig.MOMO_API_VERSION_V1,
-                    MomoConstants.ProductTypes.COLLECTION,
+                    ProductType.COLLECTION.productType,
                     Settings.getProductSubscriptionKeys(ProductType.COLLECTION),
                     it
                 ) { momoAPIResult ->

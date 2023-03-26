@@ -40,10 +40,10 @@ class APICallback<T>(
         }
     }
 
-    override fun onFailure(call: Call<T>, t: Throwable) = callback.invoke(
+    override fun onFailure(call: Call<T>, throwable: Throwable) = callback.invoke(
         APIResult.Failure(
             true,
-            APIException(t.localizedMessage)
+            APIException(throwable.localizedMessage)
         )
     )
 }
