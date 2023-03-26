@@ -39,8 +39,8 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
+import org.apache.commons.lang3.RandomStringUtils
 import org.apache.commons.lang3.StringUtils
-import timber.log.Timber
 
 class CollectionWithdrawScreenViewModel : ViewModel() {
     var context: Context? = null
@@ -58,6 +58,10 @@ class CollectionWithdrawScreenViewModel : ViewModel() {
     private val _financialId = MutableLiveData("")
     val financialId: LiveData<String>
         get() = _financialId
+
+    private val _referenceIdToRefund = MutableLiveData("")
+    val referenceIdToRefund: LiveData<String>
+        get() = _referenceIdToRefund
 
     private val _amount = MutableLiveData("")
     val amount: LiveData<String>
@@ -99,132 +103,18 @@ class CollectionWithdrawScreenViewModel : ViewModel() {
         _deliveryNote.value = deliveryNote
     }
 
-    fun requestToPay() {
+    fun onReferenceIdToRefundUpdated(deliveryNote: String) {
+        _referenceIdToRefund.value = deliveryNote
+    }
+
+    fun requestToWithdraw() {
         showProgressBar.postValue(true)
         if (phoneNumber.value!!.isNotEmpty() && financialId.value!!.isNotEmpty() &&
             amount.value!!.isNotEmpty() && paymentMessage.value!!.isNotEmpty() &&
             paymentNote.value!!.isNotEmpty()
         ) {
             val accessToken = context?.let { Utils.getAccessToken(it) }
-            val creditTransaction = createRequestTpPayTransaction()
-            val transactionUuid = Settings.generateUUID()
-            if (StringUtils.isNotBlank(accessToken)) {
-                accessToken?.let {
-                    momoAPi?.requestToPay(
-                        it,
-                        creditTransaction,
-                        BuildConfig.MOMO_API_VERSION_V1,
-                        Settings.getProductSubscriptionKeys(ProductType.COLLECTION),
-                        transactionUuid
-                    ) { momoAPIResult ->
-                        when (momoAPIResult) {
-                            is APIResult.Success -> {
-                                if (deliveryNote.value!!.isNotEmpty()) {
-                                    requestToPayDeliveryNotification(
-                                        transactionUuid
-                                    )
-                                }
-                                requestToPayTransactionStatus(transactionUuid)
-                                // _appMainViewModel.refund(transactionUuid)
-
-                                showProgressBar.postValue(false)
-                                emitSnackBarState(
-                                    SnackBarComponentConfiguration(
-                                        message = "Request to pay set successfully"
-                                    )
-                                )
-                            }
-                            is APIResult.Failure -> {
-                                showProgressBar.postValue(false)
-                                val momoAPIException = momoAPIResult.APIException
-                                emitSnackBarState(
-                                    SnackBarComponentConfiguration(
-                                        message = "${momoAPIException!!.message} Request to pay wasn't sent!"
-                                    )
-                                )
-                            }
-                        }
-                    }
-                }
-            } else {
-                showProgressBar.postValue(false)
-                emitSnackBarState(
-                    SnackBarComponentConfiguration(
-                        message = "Expired access token! Please refresh the token"
-                    )
-                )
-            }
-        }
-    }
-
-    private fun requestToPayTransactionStatus(referenceId: String) {
-        showProgressBar.postValue(true)
-        val accessToken = context?.let { Utils.getAccessToken(it) }
-        if (StringUtils.isNotBlank(accessToken)) {
-            accessToken?.let {
-                momoAPi?.requestToPayTransactionStatus(
-                    referenceId,
-                    BuildConfig.MOMO_API_VERSION_V1,
-                    Settings.getProductSubscriptionKeys(ProductType.COLLECTION),
-                    it
-                ) { momoAPIResult ->
-                    when (momoAPIResult) {
-                        is APIResult.Success -> {
-                            val requestToPayStatusFetch =
-                                Gson().fromJson(momoAPIResult.value!!.source().readUtf8(), MomoTransaction::class.java)
-                            momoTransaction = MutableLiveData(requestToPayStatusFetch)
-                            showProgressBar.postValue(false)
-                            emitSnackBarState(
-                                SnackBarComponentConfiguration(
-                                    message = "Request to pay status fetched successfully"
-                                )
-                            )
-                        }
-                        is APIResult.Failure -> {
-                            showProgressBar.postValue(false)
-                            val momoAPIException = momoAPIResult.APIException
-                            emitSnackBarState(
-                                SnackBarComponentConfiguration(
-                                    message = "${momoAPIException!!.message} Request to pay status not found!"
-                                )
-                            )
-                        }
-                    }
-                }
-            }
-        } else {
-            showProgressBar.postValue(false)
-            emitSnackBarState(
-                SnackBarComponentConfiguration(
-                    message = "Expired access token! Please refresh the token"
-                )
-            )
-        }
-    }
-
-    private fun createRequestTpPayTransaction(): MomoTransaction {
-        return MomoTransaction(
-            amount.value!!.toString(),
-            Constants.SANDBOX_CURRENCY,
-            financialId.value!!.toString(),
-            Settings.generateUUID(),
-            null,
-            AccountHolder(AccountHolderType.MSISDN.name, phoneNumber.value!!.toString()),
-            paymentMessage.value!!.toString(),
-            paymentNote.value!!.toString(),
-            null,
-            null
-        )
-    }
-
-    private fun requestToWithdraw() {
-        showProgressBar.postValue(true)
-        if (phoneNumber.value!!.isNotEmpty() && financialId.value!!.isNotEmpty() &&
-            amount.value!!.isNotEmpty() && paymentMessage.value!!.isNotEmpty() &&
-            paymentNote.value!!.isNotEmpty()
-        ) {
-            val accessToken = context?.let { Utils.getAccessToken(it) }
-            val creditTransaction = createRequestTpPayTransaction()
+            val creditTransaction = createRequestToWithdrawTransaction()
             val transactionUuid = Settings.generateUUID()
             if (StringUtils.isNotBlank(accessToken)) {
                 accessToken?.let {
@@ -242,10 +132,20 @@ class CollectionWithdrawScreenViewModel : ViewModel() {
                                 )
                                 requestToWithdrawTransactionStatus(transactionUuid)
                                 showProgressBar.postValue(false)
+                                emitSnackBarState(
+                                    SnackBarComponentConfiguration(
+                                        message = "Request to withdraw sent successfully"
+                                    )
+                                )
                             }
                             is APIResult.Failure -> {
                                 val momoAPIException = momoAPIResult.APIException
                                 showProgressBar.postValue(false)
+                                emitSnackBarState(
+                                    SnackBarComponentConfiguration(
+                                        message = "${momoAPIException!!.message} Request to withdraw wasn't sent!"
+                                    )
+                                )
                             }
                         }
                     }
@@ -273,12 +173,24 @@ class CollectionWithdrawScreenViewModel : ViewModel() {
                 ) { momoAPIResult ->
                     when (momoAPIResult) {
                         is APIResult.Success -> {
-                            val completeTransfer =
+                            val requestToWithdrawStatusFetch =
                                 Gson().fromJson(momoAPIResult.value!!.source().readUtf8(), MomoTransaction::class.java)
-                            Timber.d(completeTransfer.toString())
+                            momoTransaction = MutableLiveData(requestToWithdrawStatusFetch)
+                            showProgressBar.postValue(false)
+                            emitSnackBarState(
+                                SnackBarComponentConfiguration(
+                                    message = "Request to withdraw status fetched successfully"
+                                )
+                            )
                         }
                         is APIResult.Failure -> {
+                            showProgressBar.postValue(false)
                             val momoAPIException = momoAPIResult.APIException
+                            emitSnackBarState(
+                                SnackBarComponentConfiguration(
+                                    message = "${momoAPIException!!.message} Request to withdraw status not fetch!"
+                                )
+                            )
                         }
                     }
                 }
@@ -291,6 +203,21 @@ class CollectionWithdrawScreenViewModel : ViewModel() {
                 )
             )
         }
+    }
+
+    private fun createRequestToWithdrawTransaction(): MomoTransaction {
+        return MomoTransaction(
+            amount.value!!.toString(),
+            Constants.SANDBOX_CURRENCY,
+            financialId.value!!.toString(),
+            RandomStringUtils.randomAlphanumeric(Constants.STRING_LENGTH),
+            null,
+            AccountHolder(AccountHolderType.MSISDN.name, phoneNumber.value!!.toString()),
+            paymentMessage.value!!.toString(),
+            paymentNote.value!!.toString(),
+            null,
+            null
+        )
     }
 
     private fun requestToPayDeliveryNotification(referenceId: String) {

@@ -29,5 +29,8 @@ object Constants {
         const val COLLECTION = "Collection"
         const val DISBURSEMENT = "Disbursement"
     }
+
     const val SANDBOX_CURRENCY = "EUR"
+    const val STRING_LENGTH = 12
+    const val EMPTY_STRING = ""
 }

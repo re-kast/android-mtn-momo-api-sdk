@@ -39,6 +39,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
+import org.apache.commons.lang3.RandomStringUtils
 import org.apache.commons.lang3.StringUtils
 
 class DisbursementRefundScreenViewModel : ViewModel() {
@@ -57,6 +58,10 @@ class DisbursementRefundScreenViewModel : ViewModel() {
     private val _financialId = MutableLiveData("")
     val financialId: LiveData<String>
         get() = _financialId
+
+    private val _referenceIdToRefund = MutableLiveData("")
+    val referenceIdToRefund: LiveData<String>
+        get() = _referenceIdToRefund
 
     private val _amount = MutableLiveData("")
     val amount: LiveData<String>
@@ -96,21 +101,26 @@ class DisbursementRefundScreenViewModel : ViewModel() {
     fun onDeliveryNoteUpdated(deliveryNote: String) {
         _deliveryNote.value = deliveryNote
     }
-    fun deposit() {
+
+    fun onReferenceIdToRefundUpdated(deliveryNote: String) {
+        _referenceIdToRefund.value = deliveryNote
+    }
+
+    fun refund() {
         showProgressBar.postValue(true)
-        if (phoneNumber.value!!.isNotEmpty() && financialId.value!!.isNotEmpty() &&
+        if (phoneNumber.value!!.isNotEmpty() && referenceIdToRefund.value!!.isNotEmpty() &&
             amount.value!!.isNotEmpty() && paymentMessage.value!!.isNotEmpty() &&
             paymentNote.value!!.isNotEmpty()
         ) {
             val accessToken = context?.let { Utils.getAccessToken(it) }
-            val creditTransaction = createDebitTransaction()
             val transactionUuid = Settings.generateUUID()
+            val creditTransaction = createRefundTransaction()
             if (StringUtils.isNotBlank(accessToken)) {
-                if (accessToken != null) {
-                    momoAPi?.deposit(
-                        accessToken,
+                accessToken?.let { accessTokenString ->
+                    momoAPi?.refund(
+                        accessTokenString,
                         creditTransaction,
-                        BuildConfig.MOMO_API_VERSION_V2,
+                        com.rekast.momoapi.BuildConfig.MOMO_API_VERSION_V2,
                         Settings.getProductSubscriptionKeys(ProductType.DISBURSEMENTS),
                         transactionUuid
                     ) { momoAPIResult ->
@@ -122,11 +132,11 @@ class DisbursementRefundScreenViewModel : ViewModel() {
                                     )
                                 }
 
-                                getDepositStatus(transactionUuid)
+                                getRefundStatus(transactionUuid)
                                 showProgressBar.postValue(false)
                                 emitSnackBarState(
                                     SnackBarComponentConfiguration(
-                                        message = "Deposit sent successfully"
+                                        message = "Refund sent successfully"
                                     )
                                 )
                             }
@@ -135,7 +145,7 @@ class DisbursementRefundScreenViewModel : ViewModel() {
                                 showProgressBar.postValue(false)
                                 emitSnackBarState(
                                     SnackBarComponentConfiguration(
-                                        message = "${momoAPIException!!.message} Deposit not sent!"
+                                        message = "${momoAPIException!!.message} Refund not sent!"
                                     )
                                 )
                             }
@@ -153,16 +163,16 @@ class DisbursementRefundScreenViewModel : ViewModel() {
         }
     }
 
-    private fun getDepositStatus(referenceId: String) {
+    private fun getRefundStatus(referenceId: String) {
         showProgressBar.postValue(true)
         val accessToken = context?.let { Utils.getAccessToken(it) }
         if (StringUtils.isNotBlank(accessToken)) {
-            accessToken?.let {
-                momoAPi?.getDepositStatus(
+            accessToken?.let { accessTokenString ->
+                momoAPi?.getRefundStatus(
                     referenceId,
-                    BuildConfig.MOMO_API_VERSION_V1,
+                    com.rekast.momoapi.BuildConfig.MOMO_API_VERSION_V1,
                     Settings.getProductSubscriptionKeys(ProductType.DISBURSEMENTS),
-                    it
+                    accessTokenString
                 ) { momoAPIResult ->
                     when (momoAPIResult) {
                         is APIResult.Success -> {
@@ -172,7 +182,7 @@ class DisbursementRefundScreenViewModel : ViewModel() {
                             showProgressBar.postValue(false)
                             emitSnackBarState(
                                 SnackBarComponentConfiguration(
-                                    message = "Deposit status fetched successfully"
+                                    message = "Refund status fetched successfully"
                                 )
                             )
                         }
@@ -198,18 +208,19 @@ class DisbursementRefundScreenViewModel : ViewModel() {
         }
     }
 
-    private fun createDebitTransaction(): MomoTransaction {
+    private fun createRefundTransaction(): MomoTransaction {
         return MomoTransaction(
             amount.value!!.toString(),
             Constants.SANDBOX_CURRENCY,
-            financialId.value!!.toString(),
-            Settings.generateUUID(),
+            null,
+            RandomStringUtils.randomAlphanumeric(Constants.STRING_LENGTH),
             AccountHolder(AccountHolderType.MSISDN.name, phoneNumber.value!!.toString()),
             null,
             paymentMessage.value!!.toString(),
             paymentNote.value!!.toString(),
             null,
-            null
+            null,
+            referenceIdToRefund.value!!.toString()
         )
     }
 

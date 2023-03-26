@@ -90,6 +90,7 @@ fun DisbursementScreen(
                     val paymentMessage by disbursementDepositScreenViewModel.paymentMessage.observeAsState("")
                     val paymentNote by disbursementDepositScreenViewModel.paymentNote.observeAsState("")
                     val deliveryNote by disbursementDepositScreenViewModel.deliveryNote.observeAsState("")
+                    val referenceIdToRefund by disbursementDepositScreenViewModel.referenceIdToRefund.observeAsState("")
 
                     if (momoTransaction.value == null) {
                         PaymentDataScreenComponent(
@@ -97,6 +98,8 @@ fun DisbursementScreen(
                             submitButtonText = stringResource(id = R.string.send_deposit_submit_button),
                             phoneNumber = phoneNumber,
                             financialId = financialId,
+                            referenceIdToRefund = referenceIdToRefund,
+                            showReferenceIdToRefund = false,
                             amount = amount,
                             paymentMessage = paymentMessage,
                             paymentNote = paymentNote,
@@ -104,6 +107,7 @@ fun DisbursementScreen(
                             onRequestPayButtonClicked = { disbursementDepositScreenViewModel.deposit() },
                             onPhoneNumberUpdated = { disbursementDepositScreenViewModel.onPhoneNumberUpdated(it) },
                             onFinancialIdUpdated = { disbursementDepositScreenViewModel.onFinancialIdUpdated(it) },
+                            onReferenceIdToRefundUpdated = { disbursementDepositScreenViewModel.onReferenceIdToRefundUpdated(it) },
                             onAmountUpdated = { disbursementDepositScreenViewModel.onAmountUpdated(it) },
                             onPayerMessageUpdated = { disbursementDepositScreenViewModel.onPayerMessageUpdated(it) },
                             onPayerNoteUpdated = { disbursementDepositScreenViewModel.onPayerNoteUpdated(it) },

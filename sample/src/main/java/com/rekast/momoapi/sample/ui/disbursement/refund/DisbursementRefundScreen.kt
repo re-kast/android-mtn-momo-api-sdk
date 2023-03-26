@@ -90,6 +90,7 @@ fun DisbursementScreen(
                     val paymentMessage by disbursementRefundScreenViewModel.paymentMessage.observeAsState("")
                     val paymentNote by disbursementRefundScreenViewModel.paymentNote.observeAsState("")
                     val deliveryNote by disbursementRefundScreenViewModel.deliveryNote.observeAsState("")
+                    val referenceIdToRefund by disbursementRefundScreenViewModel.referenceIdToRefund.observeAsState("")
 
                     if (momoTransaction.value == null) {
                         PaymentDataScreenComponent(
@@ -97,13 +98,17 @@ fun DisbursementScreen(
                             submitButtonText = stringResource(id = R.string.send_refund_submit_button),
                             phoneNumber = phoneNumber,
                             financialId = financialId,
+                            showFinancialId = false,
+                            referenceIdToRefund = referenceIdToRefund,
                             amount = amount,
                             paymentMessage = paymentMessage,
                             paymentNote = paymentNote,
                             deliveryNote = deliveryNote,
-                            onRequestPayButtonClicked = { disbursementRefundScreenViewModel.deposit() },
+                            showDeliveryTextField = false,
+                            onRequestPayButtonClicked = { disbursementRefundScreenViewModel.refund() },
                             onPhoneNumberUpdated = { disbursementRefundScreenViewModel.onPhoneNumberUpdated(it) },
                             onFinancialIdUpdated = { disbursementRefundScreenViewModel.onFinancialIdUpdated(it) },
+                            onReferenceIdToRefundUpdated = { disbursementRefundScreenViewModel.onReferenceIdToRefundUpdated(it) },
                             onAmountUpdated = { disbursementRefundScreenViewModel.onAmountUpdated(it) },
                             onPayerMessageUpdated = { disbursementRefundScreenViewModel.onPayerMessageUpdated(it) },
                             onPayerNoteUpdated = { disbursementRefundScreenViewModel.onPayerNoteUpdated(it) },

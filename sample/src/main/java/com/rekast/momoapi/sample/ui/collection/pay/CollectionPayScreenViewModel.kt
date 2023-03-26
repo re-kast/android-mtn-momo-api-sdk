@@ -39,8 +39,8 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
+import org.apache.commons.lang3.RandomStringUtils
 import org.apache.commons.lang3.StringUtils
-import timber.log.Timber
 
 class CollectionPayScreenViewModel : ViewModel() {
     var context: Context? = null
@@ -58,6 +58,10 @@ class CollectionPayScreenViewModel : ViewModel() {
     private val _financialId = MutableLiveData("")
     val financialId: LiveData<String>
         get() = _financialId
+
+    private val _referenceIdToRefund = MutableLiveData("")
+    val referenceIdToRefund: LiveData<String>
+        get() = _referenceIdToRefund
 
     private val _amount = MutableLiveData("")
     val amount: LiveData<String>
@@ -99,6 +103,10 @@ class CollectionPayScreenViewModel : ViewModel() {
         _deliveryNote.value = deliveryNote
     }
 
+    fun onReferenceIdToRefundUpdated(deliveryNote: String) {
+        _referenceIdToRefund.value = deliveryNote
+    }
+
     fun requestToPay() {
         showProgressBar.postValue(true)
         if (phoneNumber.value!!.isNotEmpty() && financialId.value!!.isNotEmpty() &&
@@ -106,7 +114,7 @@ class CollectionPayScreenViewModel : ViewModel() {
             paymentNote.value!!.isNotEmpty()
         ) {
             val accessToken = context?.let { Utils.getAccessToken(it) }
-            val creditTransaction = createRequestTpPayTransaction()
+            val creditTransaction = createRequestToPayTransaction()
             val transactionUuid = Settings.generateUUID()
             if (StringUtils.isNotBlank(accessToken)) {
                 accessToken?.let {
@@ -185,7 +193,7 @@ class CollectionPayScreenViewModel : ViewModel() {
                             val momoAPIException = momoAPIResult.APIException
                             emitSnackBarState(
                                 SnackBarComponentConfiguration(
-                                    message = "${momoAPIException!!.message} Request to pay status not found!"
+                                    message = "${momoAPIException!!.message} Request to pay status not fetched!"
                                 )
                             )
                         }
@@ -202,12 +210,12 @@ class CollectionPayScreenViewModel : ViewModel() {
         }
     }
 
-    private fun createRequestTpPayTransaction(): MomoTransaction {
+    private fun createRequestToPayTransaction(): MomoTransaction {
         return MomoTransaction(
             amount.value!!.toString(),
             Constants.SANDBOX_CURRENCY,
             financialId.value!!.toString(),
-            Settings.generateUUID(),
+            RandomStringUtils.randomAlphanumeric(Constants.STRING_LENGTH),
             null,
             AccountHolder(AccountHolderType.MSISDN.name, phoneNumber.value!!.toString()),
             paymentMessage.value!!.toString(),
@@ -215,82 +223,6 @@ class CollectionPayScreenViewModel : ViewModel() {
             null,
             null
         )
-    }
-
-    private fun requestToWithdraw() {
-        showProgressBar.postValue(true)
-        if (phoneNumber.value!!.isNotEmpty() && financialId.value!!.isNotEmpty() &&
-            amount.value!!.isNotEmpty() && paymentMessage.value!!.isNotEmpty() &&
-            paymentNote.value!!.isNotEmpty()
-        ) {
-            val accessToken = context?.let { Utils.getAccessToken(it) }
-            val creditTransaction = createRequestTpPayTransaction()
-            val transactionUuid = Settings.generateUUID()
-            if (StringUtils.isNotBlank(accessToken)) {
-                accessToken?.let {
-                    momoAPi?.requestToWithdraw(
-                        it,
-                        creditTransaction,
-                        BuildConfig.MOMO_API_VERSION_V2,
-                        Settings.getProductSubscriptionKeys(ProductType.COLLECTION),
-                        transactionUuid
-                    ) { momoAPIResult ->
-                        when (momoAPIResult) {
-                            is APIResult.Success -> {
-                                requestToPayDeliveryNotification(
-                                    transactionUuid
-                                )
-                                requestToWithdrawTransactionStatus(transactionUuid)
-                                showProgressBar.postValue(false)
-                            }
-                            is APIResult.Failure -> {
-                                val momoAPIException = momoAPIResult.APIException
-                                showProgressBar.postValue(false)
-                            }
-                        }
-                    }
-                }
-            } else {
-                showProgressBar.postValue(false)
-                emitSnackBarState(
-                    SnackBarComponentConfiguration(
-                        message = "Expired access token! Please refresh the token"
-                    )
-                )
-            }
-        }
-    }
-
-    private fun requestToWithdrawTransactionStatus(referenceId: String) {
-        val accessToken = context?.let { Utils.getAccessToken(it) }
-        if (StringUtils.isNotBlank(accessToken)) {
-            accessToken?.let {
-                momoAPi?.requestToWithdrawTransactionStatus(
-                    referenceId,
-                    BuildConfig.MOMO_API_VERSION_V1,
-                    Settings.getProductSubscriptionKeys(ProductType.COLLECTION),
-                    it
-                ) { momoAPIResult ->
-                    when (momoAPIResult) {
-                        is APIResult.Success -> {
-                            val completeTransfer =
-                                Gson().fromJson(momoAPIResult.value!!.source().readUtf8(), MomoTransaction::class.java)
-                            Timber.d(completeTransfer.toString())
-                        }
-                        is APIResult.Failure -> {
-                            val momoAPIException = momoAPIResult.APIException
-                        }
-                    }
-                }
-            }
-        } else {
-            showProgressBar.postValue(false)
-            emitSnackBarState(
-                SnackBarComponentConfiguration(
-                    message = "Expired access token! Please refresh the token"
-                )
-            )
-        }
     }
 
     private fun requestToPayDeliveryNotification(referenceId: String) {
