@@ -90,6 +90,7 @@ fun CollectionScreen(
                     val paymentMessage by collectionPayScreenViewModel.paymentMessage.observeAsState("")
                     val paymentNote by collectionPayScreenViewModel.paymentNote.observeAsState("")
                     val deliveryNote by collectionPayScreenViewModel.deliveryNote.observeAsState("")
+                    val referenceIdToRefund by collectionPayScreenViewModel.referenceIdToRefund.observeAsState("")
 
                     if (momoTransaction.value == null) {
                         PaymentDataScreenComponent(
@@ -97,6 +98,8 @@ fun CollectionScreen(
                             submitButtonText = stringResource(id = R.string.request_payment_submit_button),
                             phoneNumber = phoneNumber,
                             financialId = financialId,
+                            referenceIdToRefund = referenceIdToRefund,
+                            showReferenceIdToRefund = false,
                             amount = amount,
                             paymentMessage = paymentMessage,
                             paymentNote = paymentNote,
@@ -104,6 +107,7 @@ fun CollectionScreen(
                             onRequestPayButtonClicked = { collectionPayScreenViewModel.requestToPay() },
                             onPhoneNumberUpdated = { collectionPayScreenViewModel.onPhoneNumberUpdated(it) },
                             onFinancialIdUpdated = { collectionPayScreenViewModel.onFinancialIdUpdated(it) },
+                            onReferenceIdToRefundUpdated = { collectionPayScreenViewModel.onReferenceIdToRefundUpdated(it) },
                             onAmountUpdated = { collectionPayScreenViewModel.onAmountUpdated(it) },
                             onPayerMessageUpdated = { collectionPayScreenViewModel.onPayerMessageUpdated(it) },
                             onPayerNoteUpdated = { collectionPayScreenViewModel.onPayerNoteUpdated(it) },

@@ -134,7 +134,7 @@ object Libraries {
     const val foundation = "androidx.compose.foundation:foundation:${Versions.foundation}"
     const val runtimeLiveData = "androidx.compose.runtime:runtime-livedata:${Versions.rxJava}"
     const val runtimeRxJava = "androidx.compose.runtime:runtime-rxjava2:${Versions.rxJava}"
-    //const val flowLayout = "com.google.accompanist:accompanist-flowlayout:${Versions.flowLayout}"
+    const val flowLayout = "com.google.accompanist:accompanist-flowlayout:${Versions.flowLayout}"
     const val customView = "androidx.customview:customview:${Versions.customView}"
     const val poolingContainer = "androidx.customview:customview-poolingcontainer:${Versions.poolingContainer}"
 

@@ -15,6 +15,7 @@
  */
 package com.rekast.momoapi.sample.ui.navigation.drawer
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -34,6 +35,9 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -68,17 +72,29 @@ fun Drawer(scope: CoroutineScope, scaffoldState: ScaffoldState, navController: N
                 .height(70.dp)
                 .padding(start = 10.dp, end = 10.dp)
         ) {
-            Spacer(modifier = Modifier.width(7.dp))
             Column() {
-                Text(
-                    text = stringResource(id = R.string.app_name),
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = Color.White
-                )
-                Divider(modifier = Modifier.padding(top = 20.dp))
+                Spacer(modifier = Modifier.width(7.dp))
+                Row {
+                    Image(
+                        painter = painterResource(id = R.drawable.account_balance),
+                        contentDescription = stringResource(id = R.string.app_title),
+                        colorFilter = ColorFilter.tint(Color.White),
+                        contentScale = ContentScale.Fit,
+                        modifier = Modifier
+                            .height(28.dp)
+                            .width(28.dp)
+                            .padding(end = 7.dp)
+                    )
+                    Text(
+                        text = stringResource(id = R.string.app_title),
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color.White
+                    )
+                }
+                Divider(modifier = Modifier.padding(top = 10.dp))
+                Spacer(modifier = Modifier.width(7.dp))
             }
-            Spacer(modifier = Modifier.width(7.dp))
         }
         items.forEach { item ->
             DrawerItem(item = item, selected = currentRoute == item.route.toString(), onItemClick = {

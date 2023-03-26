@@ -90,6 +90,7 @@ fun RemittanceScreen(
                     val paymentMessage by remittanceScreenViewModel.paymentMessage.observeAsState("")
                     val paymentNote by remittanceScreenViewModel.paymentNote.observeAsState("")
                     val deliveryNote by remittanceScreenViewModel.deliveryNote.observeAsState("")
+                    val referenceIdToRefund by remittanceScreenViewModel.referenceIdToRefund.observeAsState("")
 
                     if (momoTransaction.value == null) {
                         PaymentDataScreenComponent(
@@ -97,6 +98,8 @@ fun RemittanceScreen(
                             submitButtonText = stringResource(id = R.string.transfer_submit_button),
                             phoneNumber = phoneNumber,
                             financialId = financialId,
+                            referenceIdToRefund = referenceIdToRefund,
+                            showReferenceIdToRefund = false,
                             amount = amount,
                             paymentMessage = paymentMessage,
                             paymentNote = paymentNote,
@@ -104,6 +107,7 @@ fun RemittanceScreen(
                             onRequestPayButtonClicked = { remittanceScreenViewModel.transferRemittance() },
                             onPhoneNumberUpdated = { remittanceScreenViewModel.onPhoneNumberUpdated(it) },
                             onFinancialIdUpdated = { remittanceScreenViewModel.onFinancialIdUpdated(it) },
+                            onReferenceIdToRefundUpdated = { remittanceScreenViewModel.onReferenceIdToRefundUpdated(it) },
                             onAmountUpdated = { remittanceScreenViewModel.onAmountUpdated(it) },
                             onPayerMessageUpdated = { remittanceScreenViewModel.onPayerMessageUpdated(it) },
                             onPayerNoteUpdated = { remittanceScreenViewModel.onPayerNoteUpdated(it) },

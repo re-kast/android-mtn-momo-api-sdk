@@ -39,6 +39,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
+import org.apache.commons.lang3.RandomStringUtils
 import org.apache.commons.lang3.StringUtils
 
 class RemittanceScreenViewModel : ViewModel() {
@@ -57,6 +58,10 @@ class RemittanceScreenViewModel : ViewModel() {
     private val _financialId = MutableLiveData("")
     val financialId: LiveData<String>
         get() = _financialId
+
+    private val _referenceIdToRefund = MutableLiveData("")
+    val referenceIdToRefund: LiveData<String>
+        get() = _referenceIdToRefund
 
     private val _amount = MutableLiveData("")
     val amount: LiveData<String>
@@ -96,6 +101,10 @@ class RemittanceScreenViewModel : ViewModel() {
 
     fun onDeliveryNoteUpdated(deliveryNote: String) {
         _deliveryNote.value = deliveryNote
+    }
+
+    fun onReferenceIdToRefundUpdated(deliveryNote: String) {
+        _referenceIdToRefund.value = deliveryNote
     }
 
     fun transferRemittance() {
@@ -161,7 +170,7 @@ class RemittanceScreenViewModel : ViewModel() {
             amount.value!!.toString(),
             Constants.SANDBOX_CURRENCY,
             financialId.value!!.toString(),
-            Settings.generateUUID(),
+            RandomStringUtils.randomAlphanumeric(Constants.STRING_LENGTH),
             AccountHolder(AccountHolderType.MSISDN.name, phoneNumber.value!!.toString()),
             null,
             paymentMessage.value!!.toString(),

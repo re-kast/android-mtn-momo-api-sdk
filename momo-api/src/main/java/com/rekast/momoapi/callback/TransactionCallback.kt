@@ -48,7 +48,7 @@ class TransactionCallback(
                         )
                     )
                 } else {
-                    val error = "${momoTransaction.reason} : ${momoTransaction.financialTransactionId}"
+                    val error = "${momoTransaction.reason} : ${momoTransaction.externalId}"
                     callback.invoke(APIResult.Failure(false, APIException(error)))
                 }
                 return

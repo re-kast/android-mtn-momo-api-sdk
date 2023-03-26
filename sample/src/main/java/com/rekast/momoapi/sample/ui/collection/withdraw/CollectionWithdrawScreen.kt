@@ -90,6 +90,7 @@ fun CollectionScreen(
                     val paymentMessage by collectionWithdrawScreenViewModel.paymentMessage.observeAsState("")
                     val paymentNote by collectionWithdrawScreenViewModel.paymentNote.observeAsState("")
                     val deliveryNote by collectionWithdrawScreenViewModel.deliveryNote.observeAsState("")
+                    val referenceIdToRefund by collectionWithdrawScreenViewModel.referenceIdToRefund.observeAsState("")
 
                     if (momoTransaction.value == null) {
                         PaymentDataScreenComponent(
@@ -97,13 +98,16 @@ fun CollectionScreen(
                             submitButtonText = stringResource(id = R.string.request_withdraw_submit_button),
                             phoneNumber = phoneNumber,
                             financialId = financialId,
+                            referenceIdToRefund = referenceIdToRefund,
+                            showReferenceIdToRefund = false,
                             amount = amount,
                             paymentMessage = paymentMessage,
                             paymentNote = paymentNote,
                             deliveryNote = deliveryNote,
-                            onRequestPayButtonClicked = { collectionWithdrawScreenViewModel.requestToPay() },
+                            onRequestPayButtonClicked = { collectionWithdrawScreenViewModel.requestToWithdraw() },
                             onPhoneNumberUpdated = { collectionWithdrawScreenViewModel.onPhoneNumberUpdated(it) },
                             onFinancialIdUpdated = { collectionWithdrawScreenViewModel.onFinancialIdUpdated(it) },
+                            onReferenceIdToRefundUpdated = { collectionWithdrawScreenViewModel.onReferenceIdToRefundUpdated(it) },
                             onAmountUpdated = { collectionWithdrawScreenViewModel.onAmountUpdated(it) },
                             onPayerMessageUpdated = { collectionWithdrawScreenViewModel.onPayerMessageUpdated(it) },
                             onPayerNoteUpdated = { collectionWithdrawScreenViewModel.onPayerNoteUpdated(it) },

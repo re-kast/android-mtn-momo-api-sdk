@@ -45,7 +45,7 @@ sealed class NavigationDrawerItem(
     object CollectionRequestToWithdraw :
         NavigationDrawerItem(
             R.id.collectionWithDrawScreenFragment,
-            R.drawable.payments,
+            R.drawable.local_mall,
             Constants.NavigationTitle.COLLECTION + " | Request To Withdraw"
         )
 
@@ -59,7 +59,7 @@ sealed class NavigationDrawerItem(
     object DisbursementRefund :
         NavigationDrawerItem(
             R.id.disbursementRefundScreenFragment,
-            R.drawable.paid,
+            R.drawable.savings,
             Constants.NavigationTitle.DISBURSEMENT + " | Refund"
         )
 }

@@ -20,13 +20,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
-import com.rekast.momoapi.BuildConfig
 import com.rekast.momoapi.MomoAPI
 import com.rekast.momoapi.callback.APIResult
 import com.rekast.momoapi.model.api.AccountBalance
 import com.rekast.momoapi.model.api.AccountHolder
 import com.rekast.momoapi.model.api.AccountHolderStatus
 import com.rekast.momoapi.model.api.BasicUserInfo
+import com.rekast.momoapi.sample.BuildConfig
 import com.rekast.momoapi.sample.utils.Constants
 import com.rekast.momoapi.sample.utils.SnackBarComponentConfiguration
 import com.rekast.momoapi.sample.utils.Utils
@@ -108,7 +108,7 @@ class MainScreenFragmentViewModel : ViewModel() {
             if (accessToken != null) {
                 momoAPi?.validateAccountHolderStatus(
                     accountHolder,
-                    com.rekast.momoapi.sample.BuildConfig.MOMO_API_VERSION_V1,
+                    BuildConfig.MOMO_API_VERSION_V1,
                     MomoConstants.ProductTypes.REMITTANCE,
                     Settings.getProductSubscriptionKeys(ProductType.REMITTANCE),
                     accessToken
