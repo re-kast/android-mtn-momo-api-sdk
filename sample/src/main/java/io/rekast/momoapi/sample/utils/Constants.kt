@@ -16,18 +16,13 @@
 package io.rekast.momoapi.sample.utils
 
 object Constants {
-    object NavigationRoutes {
-        const val HOME = "home"
-        const val REMITTANCE = "remittance"
-        const val COLLECTION = "collection"
-        const val DISBURSEMENT = "disbursement"
-    }
-
     object NavigationTitle {
         const val HOME = "Home"
         const val REMITTANCE = "Remittance"
-        const val COLLECTION = "Collection"
-        const val DISBURSEMENT = "Disbursement"
+        const val COLLECTION_REQUEST_TO_PAY = "Collection | Request To Pay"
+        const val COLLECTION_REQUEST_TO_WITHDRAW = "Collection | Request To Withdraw"
+        const val DISBURSEMENT_DEPOSIT = "Disbursement | Deposit"
+        const val DISBURSEMENT_REFUND = "Disbursement | Refund"
     }
 
     const val SANDBOX_CURRENCY = "EUR"

@@ -1,4 +1,7 @@
 object Versions {
+    //publishing
+    const val vanniktechMavenPublish = "0.25.1"
+
     //Android
     const val application = "7.4.2"
     const val library = "7.4.2"
@@ -26,7 +29,7 @@ object Versions {
 
     //Networking
     const val retrofit = "2.9.0"
-    const val okhttp = "4.8.1"
+    const val okhttp = "5.0.0-alpha.11"
     const val loggingInterceptor = "4.8.1"
 
     // Lifecycle
@@ -53,10 +56,10 @@ object Versions {
     const val hilt = "2.45"
 
     // Gradle Plugins
-    const val ktlint = "10.1.0"
-    const val detekt = "1.22.0"
+    const val klint = "0.48.2"
     const val spotless = "6.17.0"
     const val jacoco = "0.8.5"
+    const val hiyaJacoco = "0.2"
     const val dokka = "1.5.0"
     const val gradleVersionsPlugin = "0.29.0"
     const val secrets = "2.0.1"
@@ -91,6 +94,7 @@ object BuildPlugins {
     const val kotlinAndroid = "org.jetbrains.kotlin.android"
     const val kotlinAndroidExtensions = "org.jetbrains.kotlin.android.extensions"
     const val kotlinSerialization = "org.jetbrains.kotlin.plugin.serialization"
+    const val kotlinGradlePlugin = "org.jetbrains.kotlin:kotlin-gradle-plugin"
     const val gradleVersionsPlugin = "com.github.ben-manes.versions"
     const val jacocoAndroid = "com.hiya.jacoco-android"
     const val mvnPublishPlugin = "com.vanniktech.maven.publish"
@@ -101,6 +105,12 @@ object BuildPlugins {
     const val testManifest = "androidx.compose.ui:ui-test-manifest"
     const val mapsSecret = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin"
     const val hiltAndroid = "com.google.dagger.hilt.android"
+    const val hiltGradlePlugin = "com.google.dagger:hilt-android-gradle-plugin"
+    const val nexusPublishPlugin = "io.github.gradle-nexus.publish-plugin"
+    const val vanniktechMavenPublish = "com.vanniktech.maven.publish"
+    const val vanniktechMavenPublishBase = "com.vanniktech.maven.publish.base"
+    const val hiyaJacocoPlugin = "com.hiya:jacoco-android"
+    const val navigationGradlePlugin = "androidx.navigation:navigation-safe-args-gradle-plugin"
 
     //Publishing
     const val mavenPublish = "maven-publish"
@@ -199,5 +209,5 @@ object AndroidSdk {
     const val compileSdkVersion = 33
     const val targetSdkVersion = compileSdkVersion
     const val versionCode = 1
-    const val versionName = "1.0"
+    const val versionName = "0.0.1"
 }

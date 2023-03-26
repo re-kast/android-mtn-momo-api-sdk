@@ -34,12 +34,6 @@ object MomoConstants {
         const val BEARER = "Bearer"
     }
 
-    object ProductTypes {
-        const val COLLECTION = "collection"
-        const val DISBURSEMENTS = "disbursements"
-        const val REMITTANCE = "remittance"
-    }
-
     object EndpointPaths {
         const val API_VERSION = "apiVersion"
         const val API_USER = "apiUser"
@@ -48,11 +42,6 @@ object MomoConstants {
         const val ACCOUNT_HOLDER_ID = "accountHolderId"
         const val ACCOUNT_HOLDER_TYPE = "accountHolderIdType"
         const val CURRENCY = "currency"
-        object AccountHolderTypes {
-            const val MSISDN = "msisdn"
-            const val EMAIL = "email"
-            const val PARTY_CODE = "party_code"
-        }
     }
 
     object EndPoints {

@@ -26,7 +26,6 @@ import io.rekast.momoapi.callback.APIResult
 import io.rekast.momoapi.model.api.MomoTransaction
 import io.rekast.momoapi.sample.utils.SnackBarComponentConfiguration
 import io.rekast.momoapi.sample.utils.Utils
-import io.rekast.momoapi.utils.MomoConstants
 import io.rekast.momoapi.utils.ProductType
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -98,7 +97,7 @@ class AppMainViewModel : ViewModel() {
                     momoAPi?.getAccessToken(
                         Settings.getProductSubscriptionKeys(ProductType.REMITTANCE),
                         apiKey,
-                        MomoConstants.ProductTypes.REMITTANCE
+                        ProductType.REMITTANCE.productType
                     ) { momoAPIResult ->
                         when (momoAPIResult) {
                             is APIResult.Success -> {

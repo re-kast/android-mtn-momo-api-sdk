@@ -33,7 +33,6 @@ import io.rekast.momoapi.sample.utils.Constants
 import io.rekast.momoapi.sample.utils.SnackBarComponentConfiguration
 import io.rekast.momoapi.sample.utils.Utils
 import io.rekast.momoapi.utils.AccountHolderType
-import io.rekast.momoapi.utils.MomoConstants
 import io.rekast.momoapi.utils.ProductType
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -51,31 +50,31 @@ class RemittanceScreenViewModel : ViewModel() {
     private val _snackBarStateFlow = MutableSharedFlow<SnackBarComponentConfiguration>()
     val snackBarStateFlow: SharedFlow<SnackBarComponentConfiguration> = _snackBarStateFlow.asSharedFlow()
 
-    private val _phoneNumber = MutableLiveData("")
+    private val _phoneNumber = MutableLiveData(Constants.EMPTY_STRING)
     val phoneNumber: LiveData<String>
         get() = _phoneNumber
 
-    private val _financialId = MutableLiveData("")
+    private val _financialId = MutableLiveData(Constants.EMPTY_STRING)
     val financialId: LiveData<String>
         get() = _financialId
 
-    private val _referenceIdToRefund = MutableLiveData("")
+    private val _referenceIdToRefund = MutableLiveData(Constants.EMPTY_STRING)
     val referenceIdToRefund: LiveData<String>
         get() = _referenceIdToRefund
 
-    private val _amount = MutableLiveData("")
+    private val _amount = MutableLiveData(Constants.EMPTY_STRING)
     val amount: LiveData<String>
         get() = _amount
 
-    private val _payerMessage = MutableLiveData("")
+    private val _payerMessage = MutableLiveData(Constants.EMPTY_STRING)
     val paymentMessage: LiveData<String>
         get() = _payerMessage
 
-    private val _payerNote = MutableLiveData("")
+    private val _payerNote = MutableLiveData(Constants.EMPTY_STRING)
     val paymentNote: LiveData<String>
         get() = _payerNote
 
-    private val _deliveryNote = MutableLiveData("")
+    private val _deliveryNote = MutableLiveData(Constants.EMPTY_STRING)
     val deliveryNote: LiveData<String>
         get() = _deliveryNote
 
@@ -122,7 +121,7 @@ class RemittanceScreenViewModel : ViewModel() {
                         accessToken,
                         creditTransaction,
                         BuildConfig.MOMO_API_VERSION_V1,
-                        MomoConstants.ProductTypes.REMITTANCE,
+                        ProductType.REMITTANCE.productType,
                         Settings.getProductSubscriptionKeys(ProductType.REMITTANCE),
                         transactionUuid
                     ) { momoAPIResult ->
@@ -187,7 +186,7 @@ class RemittanceScreenViewModel : ViewModel() {
                 momoAPi?.getTransferStatus(
                     referenceId,
                     BuildConfig.MOMO_API_VERSION_V1,
-                    MomoConstants.ProductTypes.REMITTANCE,
+                    ProductType.REMITTANCE.productType,
                     Settings.getProductSubscriptionKeys(ProductType.REMITTANCE),
                     accessToken
                 ) { momoAPIResult ->
@@ -238,7 +237,7 @@ class RemittanceScreenViewModel : ViewModel() {
                     momoNotification,
                     referenceId,
                     BuildConfig.MOMO_API_VERSION_V1,
-                    MomoConstants.ProductTypes.REMITTANCE,
+                    ProductType.REMITTANCE.productType,
                     Settings.getProductSubscriptionKeys(ProductType.REMITTANCE),
                     it
                 ) { momoAPIResult ->

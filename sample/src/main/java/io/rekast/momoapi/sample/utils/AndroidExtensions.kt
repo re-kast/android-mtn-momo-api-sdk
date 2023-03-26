@@ -17,41 +17,17 @@ package io.rekast.momoapi.sample.utils
 
 import android.app.Activity
 import android.content.Context
-import android.content.ContextWrapper
-import android.content.Intent
 import android.graphics.Color
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
-import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.SnackbarResult
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
-import io.rekast.momoapi.sample.ui.theme.DangerColor
-import io.rekast.momoapi.sample.ui.theme.DefaultColor
-import io.rekast.momoapi.sample.ui.theme.InfoColor
-import io.rekast.momoapi.sample.ui.theme.LightColors
-import io.rekast.momoapi.sample.ui.theme.SuccessColor
-import io.rekast.momoapi.sample.ui.theme.WarningColor
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import androidx.compose.ui.graphics.Color as ComposeColor
-
-const val ERROR_COLOR = "errorColor"
-const val PRIMARY_COLOR = "primaryColor"
-const val PRIMARY_VARIANT_COLOR = "primaryVariantColor"
-const val DEFAULT_COLOR = "defaultColor"
-const val SUCCESS_COLOR = "successColor"
-const val WARNING_COLOR = "warningColor"
-const val DANGER_COLOR = "dangerColor"
-const val INFO_COLOR = "infoColor"
-
-fun Activity.refresh() {
-    finish()
-    startActivity(Intent(this, this.javaClass))
-    finishAffinity()
-}
 
 /**
  * Parse this [String] to a color code to be used in compose. Color code must either a). begin with
@@ -63,27 +39,9 @@ fun String?.parseColor(): androidx.compose.ui.graphics.Color {
         return ComposeColor.Unspecified
     } else if (this.startsWith("#")) {
         return ComposeColor(Color.parseColor(this))
-    } else {
-        when {
-            this.equals(PRIMARY_COLOR, ignoreCase = true) -> return LightColors.primary
-            this.equals(PRIMARY_VARIANT_COLOR, ignoreCase = true) -> return LightColors.primaryVariant
-            this.equals(ERROR_COLOR, ignoreCase = true) -> return LightColors.error
-            this.equals(DANGER_COLOR, ignoreCase = true) -> return DangerColor
-            this.equals(WARNING_COLOR, ignoreCase = true) -> return WarningColor
-            this.equals(INFO_COLOR, ignoreCase = true) -> return InfoColor
-            this.equals(SUCCESS_COLOR, ignoreCase = true) -> return SuccessColor
-            this.equals(DEFAULT_COLOR, ignoreCase = true) -> return DefaultColor
-        }
     }
     return ComposeColor.Unspecified
 }
-
-fun Context.getActivity(): AppCompatActivity? =
-    when (this) {
-        is AppCompatActivity -> this
-        is ContextWrapper -> baseContext.getActivity()
-        else -> null
-    }
 
 /**
  * This is required to fix keyboard overlapping content in a Composable screen. This functionality
@@ -99,9 +57,9 @@ fun Activity.applyWindowInsetListener() {
 }
 
 /** This function checks if the device is online */
-fun Activity.isDeviceOnline(): Boolean {
+fun isDeviceOnline(context: Context): Boolean {
     val connectivityManager =
-        this.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
     val network = connectivityManager.activeNetwork ?: return false
     val capabilities = connectivityManager.getNetworkCapabilities(network) ?: return false
 

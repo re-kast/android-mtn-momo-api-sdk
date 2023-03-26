@@ -1,5 +1,4 @@
 plugins {
-    id(BuildPlugins.detektPlugin) version Versions.detekt
     id(BuildPlugins.spotlessPlugin) version Versions.spotless
     id(BuildPlugins.androidLibrary) version Versions.library apply false
     id(BuildPlugins.androidApplication) version Versions.application apply false
@@ -8,6 +7,7 @@ plugins {
     id(BuildPlugins.dokkaPlugin) version Versions.dokka
     id(BuildPlugins.gradleVersionsPlugin) version Versions.gradleVersionsPlugin
     id(BuildPlugins.kotlinSerialization) version Versions.kotlinAndroid
+    id(BuildPlugins.vanniktechMavenPublish) version Versions.vanniktechMavenPublish apply false
 }
 
 allprojects {
@@ -15,7 +15,7 @@ allprojects {
         google()
         mavenCentral()
         maven(url = "https://jitpack.io")
-        maven("https://oss.sonatype.org/content/repositories/snapshots")
+        maven(url = "https://oss.sonatype.org/content/repositories/snapshots")
     }
 
     apply(plugin = BuildPlugins.dokkaPlugin)
@@ -25,7 +25,7 @@ allprojects {
         kotlin {
             target("**/src/**/*.kt", "**/src/**/*.kts")
             targetExclude("**/buildSrc/src/main/kotlin/*.kt")
-            ktlint("0.48.2")
+            ktlint(Versions.klint)
                 .setEditorConfigPath(".editorconfig")
                 .userData(
                     mapOf(
@@ -43,15 +43,15 @@ allprojects {
 }
 
 buildscript {
-    val kotlinVersion by extra("1.8.10")
-    val jacocoVersion by extra("0.2")
-    val daggerHilt by extra("2.45")
-    val safeNavigation by extra("2.6.0-alpha06")
+    val kotlinVersion by extra(Versions.kotlinAndroid)
+    val jacocoVersion by extra(Versions.hiyaJacoco)
+    val daggerHilt by extra(Versions.hilt)
+    val safeNavigation by extra(Versions.navigation)
 
     dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
-        classpath("com.hiya:jacoco-android:$jacocoVersion")
-        classpath("com.google.dagger:hilt-android-gradle-plugin:$daggerHilt")
-        classpath("androidx.navigation:navigation-safe-args-gradle-plugin:$safeNavigation")
+        classpath("${BuildPlugins.kotlinGradlePlugin}:$kotlinVersion")
+        classpath("${BuildPlugins.hiyaJacocoPlugin}:$jacocoVersion")
+        classpath("${BuildPlugins.hiltGradlePlugin}:$daggerHilt")
+        classpath("${BuildPlugins.navigationGradlePlugin}:$safeNavigation")
     }
 }

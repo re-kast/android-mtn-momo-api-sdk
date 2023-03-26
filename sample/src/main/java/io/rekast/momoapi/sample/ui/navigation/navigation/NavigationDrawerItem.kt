@@ -39,27 +39,27 @@ sealed class NavigationDrawerItem(
         NavigationDrawerItem(
             R.id.collectionPayScreenFragment,
             R.drawable.payments,
-            Constants.NavigationTitle.COLLECTION + " | Request To Pay"
+            Constants.NavigationTitle.COLLECTION_REQUEST_TO_PAY
         )
 
     object CollectionRequestToWithdraw :
         NavigationDrawerItem(
             R.id.collectionWithDrawScreenFragment,
             R.drawable.local_mall,
-            Constants.NavigationTitle.COLLECTION + " | Request To Withdraw"
+            Constants.NavigationTitle.COLLECTION_REQUEST_TO_WITHDRAW
         )
 
     object DisbursementDeposit :
         NavigationDrawerItem(
             R.id.disbursementDepositScreenFragment,
             R.drawable.paid,
-            Constants.NavigationTitle.DISBURSEMENT + " | Deposit"
+            Constants.NavigationTitle.DISBURSEMENT_DEPOSIT
         )
 
     object DisbursementRefund :
         NavigationDrawerItem(
             R.id.disbursementRefundScreenFragment,
             R.drawable.savings,
-            Constants.NavigationTitle.DISBURSEMENT + " | Refund"
+            Constants.NavigationTitle.DISBURSEMENT_REFUND
         )
 }

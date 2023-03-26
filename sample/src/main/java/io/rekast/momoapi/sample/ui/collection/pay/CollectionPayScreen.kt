@@ -39,6 +39,7 @@ import io.rekast.momoapi.sample.ui.components.screens.PaymentDataDisplayComponen
 import io.rekast.momoapi.sample.ui.components.screens.PaymentDataScreenComponent
 import io.rekast.momoapi.sample.ui.navigation.drawer.Drawer
 import io.rekast.momoapi.sample.ui.navigation.topbar.TopBar
+import io.rekast.momoapi.sample.utils.Constants
 import io.rekast.momoapi.sample.utils.SnackBarComponentConfiguration
 import io.rekast.momoapi.sample.utils.SnackBarThemeOptions
 import io.rekast.momoapi.sample.utils.annotation.PreviewWithBackgroundExcludeGenerated
@@ -84,13 +85,13 @@ fun CollectionScreen(
         Box(modifier = Modifier.padding(padding)) {
             if (!showProgressBar) {
                 collectionPayScreenViewModel?.let {
-                    val phoneNumber by collectionPayScreenViewModel.phoneNumber.observeAsState("")
-                    val financialId by collectionPayScreenViewModel.financialId.observeAsState("")
-                    val amount by collectionPayScreenViewModel.amount.observeAsState("")
-                    val paymentMessage by collectionPayScreenViewModel.paymentMessage.observeAsState("")
-                    val paymentNote by collectionPayScreenViewModel.paymentNote.observeAsState("")
-                    val deliveryNote by collectionPayScreenViewModel.deliveryNote.observeAsState("")
-                    val referenceIdToRefund by collectionPayScreenViewModel.referenceIdToRefund.observeAsState("")
+                    val phoneNumber by collectionPayScreenViewModel.phoneNumber.observeAsState(Constants.EMPTY_STRING)
+                    val financialId by collectionPayScreenViewModel.financialId.observeAsState(Constants.EMPTY_STRING)
+                    val amount by collectionPayScreenViewModel.amount.observeAsState(Constants.EMPTY_STRING)
+                    val paymentMessage by collectionPayScreenViewModel.paymentMessage.observeAsState(Constants.EMPTY_STRING)
+                    val paymentNote by collectionPayScreenViewModel.paymentNote.observeAsState(Constants.EMPTY_STRING)
+                    val deliveryNote by collectionPayScreenViewModel.deliveryNote.observeAsState(Constants.EMPTY_STRING)
+                    val referenceIdToRefund by collectionPayScreenViewModel.referenceIdToRefund.observeAsState(Constants.EMPTY_STRING)
 
                     if (momoTransaction.value == null) {
                         PaymentDataScreenComponent(

@@ -64,7 +64,7 @@ class TransactionCallback(
         }
     }
 
-    override fun onFailure(call: Call<ResponseBody?>, t: Throwable) {
-        callback.invoke(APIResult.Failure(true, APIException(t.localizedMessage)))
+    override fun onFailure(call: Call<ResponseBody?>, throwable: Throwable) {
+        callback.invoke(APIResult.Failure(true, APIException(throwable.localizedMessage)))
     }
 }

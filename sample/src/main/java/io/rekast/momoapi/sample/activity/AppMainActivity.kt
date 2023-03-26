@@ -40,7 +40,7 @@ open class AppMainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(FragmentContainerView(this).apply { id = R.id.nav_host })
+        setContentView(FragmentContainerView(this).apply { id = R.id.navigation_host })
         navHostFragment =
             NavHostFragment.create(R.navigation.navigation_graph)
         // initialize the API
@@ -48,7 +48,7 @@ open class AppMainActivity : AppCompatActivity() {
 
         supportFragmentManager
             .beginTransaction()
-            .replace(R.id.nav_host, navHostFragment)
+            .replace(R.id.navigation_host, navHostFragment)
             .setPrimaryNavigationFragment(navHostFragment)
             .commit()
     }
