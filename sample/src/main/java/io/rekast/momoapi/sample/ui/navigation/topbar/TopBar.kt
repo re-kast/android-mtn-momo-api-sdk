@@ -33,6 +33,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import io.rekast.momoapi.sample.R
+import io.rekast.momoapi.sample.utils.Constants
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -46,7 +47,7 @@ fun TopBar(scope: CoroutineScope, scaffoldState: ScaffoldState, title: Int) {
                     scaffoldState.drawerState.open()
                 }
             }) {
-                Icon(Icons.Filled.Menu, "")
+                Icon(Icons.Filled.Menu, Constants.EMPTY_STRING)
             }
         },
         backgroundColor = colorResource(id = R.color.accent_secondary),

@@ -16,8 +16,9 @@
 package io.rekast.momoapi.sample.utils
 
 import androidx.compose.material.SnackbarDuration
+import kotlinx.serialization.Serializable
 
-@kotlinx.serialization.Serializable
+@Serializable
 data class SnackBarComponentConfiguration(
     val message: String = "",
     val actionLabel: String? = null,

@@ -39,6 +39,7 @@ import io.rekast.momoapi.sample.ui.components.screens.PaymentDataDisplayComponen
 import io.rekast.momoapi.sample.ui.components.screens.PaymentDataScreenComponent
 import io.rekast.momoapi.sample.ui.navigation.drawer.Drawer
 import io.rekast.momoapi.sample.ui.navigation.topbar.TopBar
+import io.rekast.momoapi.sample.utils.Constants
 import io.rekast.momoapi.sample.utils.SnackBarComponentConfiguration
 import io.rekast.momoapi.sample.utils.SnackBarThemeOptions
 import io.rekast.momoapi.sample.utils.annotation.PreviewWithBackgroundExcludeGenerated
@@ -84,13 +85,13 @@ fun CollectionScreen(
         Box(modifier = Modifier.padding(padding)) {
             if (!showProgressBar) {
                 collectionWithdrawScreenViewModel?.let {
-                    val phoneNumber by collectionWithdrawScreenViewModel.phoneNumber.observeAsState("")
-                    val financialId by collectionWithdrawScreenViewModel.financialId.observeAsState("")
-                    val amount by collectionWithdrawScreenViewModel.amount.observeAsState("")
-                    val paymentMessage by collectionWithdrawScreenViewModel.paymentMessage.observeAsState("")
-                    val paymentNote by collectionWithdrawScreenViewModel.paymentNote.observeAsState("")
-                    val deliveryNote by collectionWithdrawScreenViewModel.deliveryNote.observeAsState("")
-                    val referenceIdToRefund by collectionWithdrawScreenViewModel.referenceIdToRefund.observeAsState("")
+                    val phoneNumber by collectionWithdrawScreenViewModel.phoneNumber.observeAsState(Constants.EMPTY_STRING)
+                    val financialId by collectionWithdrawScreenViewModel.financialId.observeAsState(Constants.EMPTY_STRING)
+                    val amount by collectionWithdrawScreenViewModel.amount.observeAsState(Constants.EMPTY_STRING)
+                    val paymentMessage by collectionWithdrawScreenViewModel.paymentMessage.observeAsState(Constants.EMPTY_STRING)
+                    val paymentNote by collectionWithdrawScreenViewModel.paymentNote.observeAsState(Constants.EMPTY_STRING)
+                    val deliveryNote by collectionWithdrawScreenViewModel.deliveryNote.observeAsState(Constants.EMPTY_STRING)
+                    val referenceIdToRefund by collectionWithdrawScreenViewModel.referenceIdToRefund.observeAsState(Constants.EMPTY_STRING)
 
                     if (momoTransaction.value == null) {
                         PaymentDataScreenComponent(

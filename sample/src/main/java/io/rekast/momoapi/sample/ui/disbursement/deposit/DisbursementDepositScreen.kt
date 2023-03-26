@@ -40,6 +40,7 @@ import io.rekast.momoapi.sample.ui.components.screens.PaymentDataDisplayComponen
 import io.rekast.momoapi.sample.ui.components.screens.PaymentDataScreenComponent
 import io.rekast.momoapi.sample.ui.navigation.drawer.Drawer
 import io.rekast.momoapi.sample.ui.navigation.topbar.TopBar
+import io.rekast.momoapi.sample.utils.Constants
 import io.rekast.momoapi.sample.utils.SnackBarComponentConfiguration
 import io.rekast.momoapi.sample.utils.SnackBarThemeOptions
 import io.rekast.momoapi.sample.utils.hookSnackBar
@@ -84,13 +85,13 @@ fun DisbursementScreen(
         Box(modifier = Modifier.padding(padding)) {
             if (!showProgressBar) {
                 disbursementDepositScreenViewModel?.let {
-                    val phoneNumber by disbursementDepositScreenViewModel.phoneNumber.observeAsState("")
-                    val financialId by disbursementDepositScreenViewModel.financialId.observeAsState("")
-                    val amount by disbursementDepositScreenViewModel.amount.observeAsState("")
-                    val paymentMessage by disbursementDepositScreenViewModel.paymentMessage.observeAsState("")
-                    val paymentNote by disbursementDepositScreenViewModel.paymentNote.observeAsState("")
-                    val deliveryNote by disbursementDepositScreenViewModel.deliveryNote.observeAsState("")
-                    val referenceIdToRefund by disbursementDepositScreenViewModel.referenceIdToRefund.observeAsState("")
+                    val phoneNumber by disbursementDepositScreenViewModel.phoneNumber.observeAsState(Constants.EMPTY_STRING)
+                    val financialId by disbursementDepositScreenViewModel.financialId.observeAsState(Constants.EMPTY_STRING)
+                    val amount by disbursementDepositScreenViewModel.amount.observeAsState(Constants.EMPTY_STRING)
+                    val paymentMessage by disbursementDepositScreenViewModel.paymentMessage.observeAsState(Constants.EMPTY_STRING)
+                    val paymentNote by disbursementDepositScreenViewModel.paymentNote.observeAsState(Constants.EMPTY_STRING)
+                    val deliveryNote by disbursementDepositScreenViewModel.deliveryNote.observeAsState(Constants.EMPTY_STRING)
+                    val referenceIdToRefund by disbursementDepositScreenViewModel.referenceIdToRefund.observeAsState(Constants.EMPTY_STRING)
 
                     if (momoTransaction.value == null) {
                         PaymentDataScreenComponent(

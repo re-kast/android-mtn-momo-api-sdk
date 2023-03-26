@@ -109,6 +109,7 @@ dependencies {
     // hilt
     implementation(Libraries.hiltAndroid)
     kapt(Libraries.hiltComplier)
+
     // Material and AndroidX
     implementation(Libraries.constraintLayout)
     implementation(Libraries.material)
@@ -116,11 +117,13 @@ dependencies {
     implementation(Libraries.navigationFragment)
     implementation(Libraries.navigationUi)
     implementation(Libraries.dynamicNavigation)
+
     // Network - Retrofit, OKHTTP, chucker
     implementation(Libraries.retrofit)
     implementation(Libraries.gson)
     implementation(Libraries.ohttp)
     implementation(Libraries.loggingInterceptor)
+
     // Lifecycle
     implementation(Libraries.lifecycle)
     // Debug - for debug builds only
