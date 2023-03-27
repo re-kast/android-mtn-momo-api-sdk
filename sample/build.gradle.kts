@@ -13,7 +13,7 @@ jacoco {
 }
 
 android {
-    namespace = "io.rekast.momoapi.sample"
+    namespace = "io.rekast.sdk.sample"
     compileSdk = AndroidSdk.compileSdkVersion
     android.buildFeatures.dataBinding = true
     android.buildFeatures.viewBinding = true
@@ -23,13 +23,13 @@ android {
     }
 
     defaultConfig {
-        applicationId = "io.rekast.momoapi.sample"
+        applicationId = "io.rekast.sdk.sample"
         minSdk = AndroidSdk.minSdkVersion
         targetSdk = AndroidSdk.targetSdkVersion
         versionCode = AndroidSdk.versionCode
         versionName = AndroidSdk.versionName
         vectorDrawables.useSupportLibrary = true
-        testInstrumentationRunner = "io.rekast.momoapi.sample.runner.MockTestRunner"
+        testInstrumentationRunner = "io.rekast.sdk.sample.runner.MockTestRunner"
     }
 
     testOptions {
