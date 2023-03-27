@@ -9,7 +9,7 @@
 
     <fragment
         android:id="@+id/mainScreenFragment"
-        android:name="io.rekast.momoapi.sample.ui.mainscreen.MainScreenFragment"
+        android:name="io.rekast.sdk.sample.ui.mainscreen.MainScreenFragment"
         android:label="@string/home_screen">
         <action
             android:id="@+id/navigateToCollectionPay"
@@ -29,7 +29,7 @@
     </fragment>
     <fragment
         android:id="@+id/collectionPayScreenFragment"
-        android:name="io.rekast.momoapi.sample.ui.collection.pay.CollectionPayScreenFragment"
+        android:name="io.rekast.sdk.sample.ui.collection.pay.CollectionPayScreenFragment"
         android:label="@string/collections_pay_screen">
         <action
             android:id="@+id/navigateToHome"
@@ -50,7 +50,7 @@
 
     <fragment
         android:id="@+id/collectionWithDrawScreenFragment"
-        android:name="io.rekast.momoapi.sample.ui.collection.withdraw.CollectionWithdrawScreenFragment"
+        android:name="io.rekast.sdk.sample.ui.collection.withdraw.CollectionWithdrawScreenFragment"
         android:label="@string/collections_withdraw_screen">
         <action
             android:id="@+id/navigateToHome"
@@ -71,7 +71,7 @@
 
     <fragment
         android:id="@+id/disbursementDepositScreenFragment"
-        android:name="io.rekast.momoapi.sample.ui.disbursement.deposit.DisbursementDepositScreenFragment"
+        android:name="io.rekast.sdk.sample.ui.disbursement.deposit.DisbursementDepositScreenFragment"
         android:label="@string/disbursement_deposit_screen">
         <action
             android:id="@+id/navigateToHome"
@@ -92,7 +92,7 @@
 
     <fragment
         android:id="@+id/disbursementRefundScreenFragment"
-        android:name="io.rekast.momoapi.sample.ui.disbursement.refund.DisbursementRefundScreenFragment"
+        android:name="io.rekast.sdk.sample.ui.disbursement.refund.DisbursementRefundScreenFragment"
         android:label="@string/disbursement_Refund_screen">
         <action
             android:id="@+id/navigateToHome"
@@ -113,7 +113,7 @@
 
     <fragment
         android:id="@+id/remittanceScreenFragment"
-        android:name="io.rekast.momoapi.sample.ui.remittance.RemittanceScreenFragment"
+        android:name="io.rekast.sdk.sample.ui.remittance.RemittanceScreenFragment"
         android:label="@string/remittance_screen">
 
         <action

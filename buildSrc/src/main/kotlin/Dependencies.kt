@@ -30,22 +30,22 @@ object Versions {
     //Networking
     const val retrofit = "2.9.0"
     const val okhttp = "5.0.0-alpha.11"
-    const val loggingInterceptor = "4.8.1"
+    const val loggingInterceptor = "5.0.0-alpha.11"
 
     // Lifecycle
     const val lifecycle = "2.2.0-rc02"
     const val lifecycleViewModel = "2.2.0-rc02"
 
     // Logging - debug builds
-    const val timber = "4.7.1"
+    const val timber = "5.0.1"
     const val leakCanary = "2.10"
-    const val chucker = "3.4.0"
+    const val chucker = "3.5.2"
 
     // Kotlin
     const val kotlinVersion = "1.5.21"
     const val coreKtx = "1.10.0-alpha02"
     const val kotlinAndroid = "1.8.10"
-    const val kotlinxSerializationJson = "1.4.1"
+    const val kotlinxSerializationJson = "1.5.0"
     const val customView = "1.2.0-alpha02"
     const val poolingContainer = "1.0.0"
 
@@ -201,7 +201,7 @@ object TestLibraries {
 }
 
 object BuildModules {
-    const val momoModule = ":momo-api"
+    const val momoModule = ":momo-api-sdk"
 }
 
 object AndroidSdk {
