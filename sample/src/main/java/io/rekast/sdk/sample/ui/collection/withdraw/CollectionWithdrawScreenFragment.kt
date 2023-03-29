@@ -29,7 +29,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
-import io.rekast.sdk.MomoAPI
+import io.rekast.sdk.network.api.route.MomoAPI
 import io.rekast.sdk.sample.activity.AppMainActivity
 import io.rekast.sdk.sample.activity.AppMainViewModel
 import io.rekast.sdk.sample.ui.theme.AppTheme

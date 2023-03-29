@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.rekast.sdk.network
+package io.rekast.sdk.network.api.client
 
 import io.io.rekast.momoapi.utils.Settings
 import io.rekast.sdk.BuildConfig
+import io.rekast.sdk.network.AuthenticationAPI
 import io.rekast.sdk.network.okhttp.UnsafeOkHttpClient
 import io.rekast.sdk.network.products.ProductSharedAPI
 import okhttp3.Interceptor
@@ -30,7 +31,7 @@ import java.util.concurrent.TimeUnit
  * Provides an instance of retrofit to all classes that need it.
  */
 
-open class MomoApiClient {
+open class CommonAPI {
     /**
      * Common APIs across all the Products
      */

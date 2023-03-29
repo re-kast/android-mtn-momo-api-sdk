@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.rekast.sdk
+package io.rekast.sdk.network.api.route
 
+import io.rekast.sdk.APIBuilder
 import io.rekast.sdk.callback.APICallback
 import io.rekast.sdk.callback.APIResult
 import io.rekast.sdk.callback.TransactionCallback
@@ -27,7 +28,7 @@ import io.rekast.sdk.model.api.UserInfoWithConsent
 import io.rekast.sdk.model.authentication.AccessToken
 import io.rekast.sdk.model.authentication.ApiUser
 import io.rekast.sdk.model.authentication.ApiUserKey
-import io.rekast.sdk.repository.MomoAPIRepository
+import io.rekast.sdk.repository.APIRepository
 import io.rekast.sdk.utils.MomoConstants
 import okhttp3.ResponseBody
 
@@ -35,8 +36,8 @@ import okhttp3.ResponseBody
  * Prepares the different MOMO API requests
  */
 object MomoAPI {
-    lateinit var momoAPIRepository: MomoAPIRepository
-    fun builder(apiUserId: String): MomoAPIBuilder = MomoAPIBuilder(apiUserId)
+    lateinit var APIRepository: APIRepository
+    fun builder(apiUserId: String): APIBuilder = APIBuilder(apiUserId)
 
     /**
      * Prepares to fetch the API User
@@ -49,7 +50,7 @@ object MomoAPI {
         apiVersion: String,
         callback: ((APIResult: APIResult<ApiUser>) -> Unit)
     ) {
-        momoAPIRepository.checkApiUser(productSubscriptionKey, apiVersion)
+        APIRepository.checkApiUser(productSubscriptionKey, apiVersion)
             .enqueue(APICallback(callback))
     }
 
@@ -64,7 +65,7 @@ object MomoAPI {
         apiVersion: String,
         callback: ((APIResult: APIResult<ApiUserKey>) -> Unit)
     ) {
-        momoAPIRepository.getUserApiKey(productSubscriptionKey, apiVersion)
+        APIRepository.getUserApiKey(productSubscriptionKey, apiVersion)
             .enqueue(APICallback(callback))
     }
 
@@ -81,7 +82,7 @@ object MomoAPI {
         productType: String,
         callback: ((APIResult: APIResult<AccessToken>) -> Unit)
     ) {
-        momoAPIRepository.getAccessToken(productSubscriptionKey, apiKey, productType)
+        APIRepository.getAccessToken(productSubscriptionKey, apiKey, productType)
             .enqueue(APICallback(callback))
     }
 
@@ -104,7 +105,7 @@ object MomoAPI {
         productType: String,
         callback: ((APIResult: APIResult<AccountBalance>) -> Unit)
     ) {
-        momoAPIRepository.getAccountBalance(currency, productSubscriptionKey, accessToken, apiVersion, productType)
+        APIRepository.getAccountBalance(currency, productSubscriptionKey, accessToken, apiVersion, productType)
             .enqueue(APICallback(callback))
     }
 
@@ -125,7 +126,7 @@ object MomoAPI {
         productType: String,
         callback: ((APIResult: APIResult<BasicUserInfo>) -> Unit)
     ) {
-        momoAPIRepository.getBasicUserInfo(
+        APIRepository.getBasicUserInfo(
             accountHolder,
             productSubscriptionKey,
             accessToken,
@@ -150,7 +151,7 @@ object MomoAPI {
         productType: String,
         callback: ((APIResult: APIResult<UserInfoWithConsent>) -> Unit)
     ) {
-        momoAPIRepository.getUserInfoWithConsent(
+        APIRepository.getUserInfoWithConsent(
             productSubscriptionKey,
             accessToken,
             apiVersion,
@@ -177,7 +178,7 @@ object MomoAPI {
         uuid: String,
         callback: ((APIResult: APIResult<Unit>) -> Unit)
     ) {
-        momoAPIRepository.transfer(
+        APIRepository.transfer(
             accessToken,
             momoTransaction,
             apiVersion,
@@ -204,7 +205,7 @@ object MomoAPI {
         accessToken: String,
         callback: ((APIResult: APIResult<ResponseBody?>) -> Unit)
     ) {
-        momoAPIRepository.getTransferStatus(
+        APIRepository.getTransferStatus(
             referenceId,
             apiVersion,
             productType,
@@ -232,7 +233,7 @@ object MomoAPI {
         accessToken: String,
         callback: ((APIResult: APIResult<ResponseBody?>) -> Unit)
     ) {
-        momoAPIRepository.requestToPayDeliveryNotification(
+        APIRepository.requestToPayDeliveryNotification(
             momoNotification,
             referenceId,
             apiVersion,
@@ -260,7 +261,7 @@ object MomoAPI {
         accessToken: String,
         callback: ((APIResult: APIResult<ResponseBody?>) -> Unit)
     ) {
-        momoAPIRepository.validateAccountHolderStatus(
+        APIRepository.validateAccountHolderStatus(
             accountHolder,
             apiVersion,
             productType,
@@ -286,7 +287,7 @@ object MomoAPI {
         uuid: String,
         callback: ((APIResult: APIResult<Unit>) -> Unit)
     ) {
-        momoAPIRepository.requestToPay(
+        APIRepository.requestToPay(
             accessToken,
             momoTransaction,
             apiVersion,
@@ -310,7 +311,7 @@ object MomoAPI {
         accessToken: String,
         callback: ((APIResult: APIResult<ResponseBody?>) -> Unit)
     ) {
-        momoAPIRepository.requestToPayTransactionStatus(
+        APIRepository.requestToPayTransactionStatus(
             referenceId,
             apiVersion,
             productSubscriptionKey,
@@ -335,7 +336,7 @@ object MomoAPI {
         uuid: String,
         callback: ((APIResult: APIResult<Unit>) -> Unit)
     ) {
-        momoAPIRepository.requestToWithdraw(
+        APIRepository.requestToWithdraw(
             accessToken,
             momoTransaction,
             apiVersion,
@@ -359,7 +360,7 @@ object MomoAPI {
         accessToken: String,
         callback: ((APIResult: APIResult<ResponseBody?>) -> Unit)
     ) {
-        momoAPIRepository.requestToWithdrawTransactionStatus(
+        APIRepository.requestToWithdrawTransactionStatus(
             referenceId,
             apiVersion,
             productSubscriptionKey,
@@ -384,7 +385,7 @@ object MomoAPI {
         uuid: String,
         callback: ((APIResult: APIResult<Unit>) -> Unit)
     ) {
-        momoAPIRepository.deposit(
+        APIRepository.deposit(
             accessToken,
             transaction,
             apiVersion,
@@ -408,7 +409,7 @@ object MomoAPI {
         accessToken: String,
         callback: ((APIResult: APIResult<ResponseBody?>) -> Unit)
     ) {
-        momoAPIRepository.getDepositStatus(
+        APIRepository.getDepositStatus(
             referenceId,
             apiVersion,
             productSubscriptionKey,
@@ -433,7 +434,7 @@ object MomoAPI {
         uuid: String,
         callback: ((APIResult: APIResult<Unit>) -> Unit)
     ) {
-        momoAPIRepository.refund(
+        APIRepository.refund(
             accessToken,
             transaction,
             apiVersion,
@@ -457,7 +458,7 @@ object MomoAPI {
         accessToken: String,
         callback: ((APIResult: APIResult<ResponseBody?>) -> Unit)
     ) {
-        momoAPIRepository.getRefundStatus(
+        APIRepository.getRefundStatus(
             referenceId,
             apiVersion,
             productSubscriptionKey,

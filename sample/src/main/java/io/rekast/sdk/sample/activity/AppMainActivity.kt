@@ -23,7 +23,7 @@ import androidx.fragment.app.FragmentContainerView
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.NavHostFragment
 import dagger.hilt.android.AndroidEntryPoint
-import io.rekast.sdk.MomoAPI
+import io.rekast.sdk.network.api.route.MomoAPI
 import io.rekast.sdk.sample.R
 import io.rekast.sdk.sample.utils.DefaultDispatcherProvider
 import kotlinx.coroutines.launch

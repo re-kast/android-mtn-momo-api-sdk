@@ -35,7 +35,7 @@ class BasicAuthInterceptor(
 
     @Throws(IOException::class)
     override fun intercept(chain: Interceptor.Chain): Response {
-        val keys = "${apiUserId}:${apiKey}"
+        val keys = "$apiUserId:$apiKey"
 
         val request = chain.request().newBuilder()
             .addHeader(
