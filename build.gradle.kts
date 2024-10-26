@@ -51,10 +51,4 @@ buildscript {
         classpath(libs.hilt.android.gradle.plugin)
         classpath(libs.navigation.safe.args.gradle.plugin)
     }
-    repositories {
-        google()
-    }
-}
-repositories {
-    google()
 }
