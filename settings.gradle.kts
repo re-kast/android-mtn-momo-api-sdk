@@ -6,11 +6,11 @@ pluginManagement {
     }
 
     plugins {
-        id("com.android.application") version "7.2.1"
-        id("org.jetbrains.kotlin.android") version "1.7.0"
+        id("com.android.application") version "8.7.1"
+        id("org.jetbrains.kotlin.android") version "1.8.10"
         id("org.jetbrains.kotlin.android.extensions") version "1.7.0"
-        id("com.android.library") version "7.2.1"
-        id("com.google.firebase.crashlytics") version "2.1.0"
+        id("com.android.library") version "8.7.1"
+        id("com.google.firebase.crashlytics") version "3.0.2"
     }
 
     resolutionStrategy {
@@ -22,7 +22,7 @@ pluginManagement {
     }
 }
 
-include("app")
-include(":momo-api")
+include("sample")
+include(":momo-api-sdk")
 
-rootProject.name = "MTN Momo API"
+rootProject.name = "MTN Momo API SDK"

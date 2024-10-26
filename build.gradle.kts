@@ -1,11 +1,18 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+@Suppress("DSL_SCOPE_VIOLATION")
 plugins {
-    id(BuildPlugins.detektPlugin) version Versions.detekt
-    id(BuildPlugins.spotlessPlugin) version Versions.spotless
-    id(BuildPlugins.androidLibrary) version Versions.library apply false
-    id(BuildPlugins.androidApplication) version Versions.application apply false
-    id(BuildPlugins.kotlinAndroid) version Versions.kotlinAndroid apply false
-    id(BuildPlugins.dokkaPlugin) version Versions.dokka
-    id(BuildPlugins.gradleVersionsPlugin) version Versions.gradleVersionsPlugin
+    // alias(libs.plugins.kotlin.kapt) version libs.versions.kotlinKapt
+    alias(libs.plugins.android.application) apply false
+    alias(libs.plugins.android.library) apply false
+    alias(libs.plugins.kotlin.android) apply false
+    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.hilt.android) apply false
+    alias(libs.plugins.navigation.safeargs) apply false
+    alias(libs.plugins.vanniktech.maven.publish) apply false
+    alias(libs.plugins.compose.compiler) apply false
+    id("com.diffplug.spotless") version libs.versions.spotless
+    id("org.jetbrains.dokka") version libs.versions.dokka
+    id("com.github.ben-manes.versions") version libs.versions.gradleVersionsPlugin
 }
 
 allprojects {
@@ -13,18 +20,21 @@ allprojects {
         google()
         mavenCentral()
         maven(url = "https://jitpack.io")
-        maven("https://oss.sonatype.org/content/repositories/snapshots")
+        maven(url = "https://oss.sonatype.org/content/repositories/snapshots")
     }
 
-    apply(plugin = BuildPlugins.dokkaPlugin)
-    apply(plugin = BuildPlugins.spotlessPlugin)
+    apply(plugin = "org.jetbrains.dokka")
+    apply(plugin = "com.diffplug.spotless")
 
     spotless {
         kotlin {
             target("**/src/**/*.kt", "**/src/**/*.kts")
             targetExclude("**/buildSrc/src/main/kotlin/*.kt")
-            ktlint("0.48.2")
-                .userData(mapOf("android" to "true"))
+            trimTrailingWhitespace()
+            ktlint(libs.versions.klint.get())
+                .setEditorConfigPath(".editorconfig")
+            indentWithSpaces()
+            endWithNewline()
             licenseHeaderFile("$projectDir/license-header.txt")
         }
         kotlinGradle {
@@ -36,12 +46,15 @@ allprojects {
 }
 
 buildscript {
-    val kotlinVersion by extra("1.8.10")
-    val jacocoVersion by extra("0.2")
-    val nexusPublishVersion by extra("1.1.0")
-
     dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
-        classpath("com.hiya:jacoco-android:$jacocoVersion")
+        classpath(libs.kotlin.gradle.plugin)
+        classpath(libs.hilt.android.gradle.plugin)
+        classpath(libs.navigation.safe.args.gradle.plugin)
     }
+    repositories {
+        google()
+    }
+}
+repositories {
+    google()
 }
