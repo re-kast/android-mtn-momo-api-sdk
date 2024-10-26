@@ -50,7 +50,7 @@ buildscript {
 
     dependencies {
         classpath("${BuildPlugins.kotlinGradlePlugin}:$kotlinVersion")
-        classpath("${BuildPlugins.hiyaJacocoPlugin}:$jacocoVersion")
+        //classpath("${BuildPlugins.hiyaJacocoPlugin}:$jacocoVersion")
         classpath("${BuildPlugins.hiltGradlePlugin}:$daggerHilt")
         classpath("${BuildPlugins.navigationGradlePlugin}:$safeNavigation")
     }

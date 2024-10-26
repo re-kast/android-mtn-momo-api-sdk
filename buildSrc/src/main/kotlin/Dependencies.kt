@@ -3,8 +3,8 @@ object Versions {
     const val vanniktechMavenPublish = "0.25.1"
 
     //Android
-    const val application = "7.4.2"
-    const val library = "7.4.2"
+    const val application = "8.7.1"
+    const val library = "8.7.1"
     const val appCompat ="1.6.1"
 
     //Compose Bom

@@ -1,16 +1,16 @@
 plugins {
     id(BuildPlugins.androidApplication)
     id(BuildPlugins.kotlinAndroid)
-    id(BuildPlugins.jacocoAndroid)
+    //id(BuildPlugins.jacocoAndroid)
     id(BuildPlugins.kapt)
     id(BuildPlugins.mapsSecret)
     id(BuildPlugins.kotlinSerialization) version Versions.kotlinAndroid
     id(BuildPlugins.hiltAndroid)
 }
 
-jacoco {
+/*jacoco {
     toolVersion = Versions.jacoco
-}
+}*/
 
 android {
     namespace = "io.rekast.sdk.sample"
@@ -41,10 +41,10 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
-    kotlinOptions { jvmTarget = "11" }
+    kotlinOptions { jvmTarget = "17" }
     buildFeatures { compose = true }
     composeOptions { kotlinCompilerExtensionVersion = "1.4.2" }
 
