@@ -13,13 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.rekast.sdk.network.api
+package io.rekast.sdk.network.api.client
 
-import io.rekast.sdk.network.MomoApiClient
 import io.rekast.sdk.network.products.DisbursementsAPI
 import okhttp3.Interceptor
 
-object DisbursementsApiClient : MomoApiClient() {
+object DisbursementsAPI : CommonAPI() {
     fun deposit(baseUrl: String, authentication: Interceptor): DisbursementsAPI =
         getRetrofit(baseUrl, authentication).create(DisbursementsAPI::class.java)
 

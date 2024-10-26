@@ -27,7 +27,7 @@ import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Text
 import androidx.compose.material.rememberDrawerState
 import androidx.compose.material.rememberScaffoldState
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
@@ -78,7 +78,7 @@ fun Drawer(scope: CoroutineScope, scaffoldState: ScaffoldState, navController: N
                         color = Color.White
                     )
                 }
-                Divider(modifier = Modifier.padding(top = 10.dp))
+                HorizontalDivider(modifier = Modifier.padding(top = 10.dp))
                 Spacer(modifier = Modifier.width(7.dp))
             }
         }

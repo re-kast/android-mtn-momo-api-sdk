@@ -21,7 +21,6 @@ import kotlinx.serialization.Serializable
 /**
  * AccessToken Data Class.
  */
-
 @Serializable
 data class AccessToken(
     @SerializedName("access_token") var accessToken: String,

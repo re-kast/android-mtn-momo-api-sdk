@@ -15,29 +15,30 @@
  */
 package io.rekast.sdk
 
-import io.rekast.sdk.repository.MomoAPIRepository
+import io.rekast.sdk.network.api.route.MomoAPI
+import io.rekast.sdk.repository.APIRepository
 
 /**
  * Keys Builder. Creates a [MomoAPI] payment load.
  * @param [apiUserId] for your application
  */
 
-class MomoAPIBuilder(private var apiUserId: String) {
+class APIBuilder(private var apiUserId: String) {
     private lateinit var environment: String
     private lateinit var baseURL: String
 
-    fun getBaseURL(baseURL: String): MomoAPIBuilder {
+    fun getBaseURL(baseURL: String): APIBuilder {
         this.baseURL = baseURL
         return this
     }
-    fun setEnvironment(environment: String): MomoAPIBuilder {
+    fun setEnvironment(environment: String): APIBuilder {
         this.environment = environment
         return this
     }
 
     fun build(): MomoAPI {
         val momoApi = MomoAPI
-        momoApi.momoAPIRepository = MomoAPIRepository(
+        momoApi.APIRepository = APIRepository(
             apiUserId,
             baseURL,
             environment

@@ -15,19 +15,17 @@
  */
 package io.rekast.sdk.sample.ui.components.general
 
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.colorResource
 import io.rekast.sdk.sample.R
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun textFieldDefaultsComponent(): TextFieldColors {
-    return TextFieldDefaults.outlinedTextFieldColors(
-        focusedBorderColor = colorResource(id = R.color.accent_primary),
-        unfocusedBorderColor = colorResource(id = R.color.black),
+    return TextFieldDefaults.colors(
+        focusedContainerColor = colorResource(id = R.color.accent_primary),
+        unfocusedContainerColor = colorResource(id = R.color.black),
         cursorColor = colorResource(id = R.color.accent_primary)
     )
 }

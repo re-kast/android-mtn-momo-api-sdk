@@ -13,13 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.rekast.sdk.network.api
+package io.rekast.sdk.network.api.client
 
-import io.rekast.sdk.network.MomoApiClient
 import io.rekast.sdk.network.products.CollectionAPI
 import okhttp3.Interceptor
 
-object CollectionApiClient : MomoApiClient() {
+object CollectionAPI : CommonAPI() {
 
     fun requestToPay(baseUrl: String, authentication: Interceptor): CollectionAPI =
         getRetrofit(baseUrl, authentication).create(CollectionAPI::class.java)

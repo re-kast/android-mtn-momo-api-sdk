@@ -25,7 +25,6 @@ import java.io.IOException
  * It adds access token  to all endpoints that need Access Token Authentication.
  * @param [accessToken]
  */
-
 class AccessTokenInterceptor(
     private var accessToken: String
 ) : Interceptor {

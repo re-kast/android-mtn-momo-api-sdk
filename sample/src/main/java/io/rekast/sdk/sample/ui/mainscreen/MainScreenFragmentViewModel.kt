@@ -21,12 +21,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
 import io.io.rekast.momoapi.utils.Settings
-import io.rekast.sdk.MomoAPI
 import io.rekast.sdk.callback.APIResult
 import io.rekast.sdk.model.api.AccountBalance
 import io.rekast.sdk.model.api.AccountHolder
 import io.rekast.sdk.model.api.AccountHolderStatus
 import io.rekast.sdk.model.api.BasicUserInfo
+import io.rekast.sdk.network.api.route.MomoAPI
 import io.rekast.sdk.sample.BuildConfig
 import io.rekast.sdk.sample.utils.Constants
 import io.rekast.sdk.sample.utils.SnackBarComponentConfiguration

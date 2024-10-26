@@ -21,9 +21,9 @@ import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
 import io.io.rekast.momoapi.utils.Settings
 import io.rekast.sdk.BuildConfig
-import io.rekast.sdk.MomoAPI
 import io.rekast.sdk.callback.APIResult
 import io.rekast.sdk.model.api.MomoTransaction
+import io.rekast.sdk.network.api.route.MomoAPI
 import io.rekast.sdk.sample.utils.SnackBarComponentConfiguration
 import io.rekast.sdk.sample.utils.Utils
 import io.rekast.sdk.utils.ProductType
