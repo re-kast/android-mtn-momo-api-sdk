@@ -1,35 +1,33 @@
 import com.vanniktech.maven.publish.SonatypeHost
 
 plugins {
-    id(BuildPlugins.androidLibrary)
-    id(BuildPlugins.kotlinAndroid)
-    id(BuildPlugins.dagger)
-    id(BuildPlugins.kapt)
-    //id(BuildPlugins.jacocoAndroid)
-    id(BuildPlugins.mapsSecret)
-    id(BuildPlugins.vanniktechMavenPublish)
-    id(BuildPlugins.vanniktechMavenPublishBase)
-    id(BuildPlugins.signing)
-    id(BuildPlugins.kotlinSerialization) version Versions.kotlinAndroid
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.hilt.android)
+    alias(libs.plugins.kotlin.kapt)
+    alias(libs.plugins.secrets)
+    alias(libs.plugins.vanniktech.maven.publish)
+    id("maven-publish")
+    id("signing")
+    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.compose.compiler)
 }
 
-/*jacoco {
-    toolVersion = Versions.jacoco
-}*/
-
 android {
-    compileSdk = AndroidSdk.compileSdkVersion
+    compileSdk = 34 // Update this to match your project's compileSdkVersion
 
-    android.buildFeatures.dataBinding = true
-    android.buildFeatures.viewBinding = true
+    buildFeatures {
+        dataBinding = true
+        viewBinding = true
+        buildConfig = true
+    }
 
     secrets {
         ignoreList.add("sdk.*")
     }
 
     defaultConfig {
-        minSdk = AndroidSdk.minSdkVersion
-        targetSdk = AndroidSdk.targetSdkVersion
+        minSdk = 24 // Update this to match your project's minSdkVersion
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -52,10 +50,12 @@ android {
     }
 
     buildTypes {
-        getByName("debug") {
+        debug {
+            // Debug-specific configurations
         }
-        getByName("release") {
+        release {
             isMinifyEnabled = true
+            // Release-specific configurations
         }
     }
     namespace = "io.rekast.sdk"
@@ -63,33 +63,31 @@ android {
 
 dependencies {
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
-    implementation(Libraries.coreKtx)
-    implementation(Libraries.kotlinxSerializationJson)
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.kotlinx.serialization.json)
 
     // Network - Retrofit, OKHTTP, chucker
-    implementation(Libraries.retrofit)
-    implementation(Libraries.gson)
-    implementation(Libraries.ohttp)
+    implementation(libs.squareup.retrofit)
+    implementation(libs.squareup.retrofit.gson)
+    implementation(libs.squareup.okhttp)
+    implementation(libs.squareup.okhttp.logging)
 
-    implementation(Libraries.loggingInterceptor)
-    implementation(Libraries.androidXTestMonitor)
-    implementation(Libraries.androidXJunitTest)
-    implementation(Libraries.commonsLang3)
-    implementation(Libraries.navigationFragment)
-    implementation(Libraries.navigationUi)
-    implementation(Libraries.navigationCompose)
+    implementation(libs.apache.commons.lang3)
+    implementation(libs.androidx.navigation.fragment)
+    implementation(libs.androidx.navigation.ui)
+    implementation(libs.androidx.navigation.compose)
 
-    debugImplementation(Libraries.chunkerDebug)
-    releaseImplementation(Libraries.chunkerRelease)
+    implementation(libs.google.dagger.hilt)
+    kapt(libs.hilt.android.compiler)
+    debugImplementation(libs.chuckerteam.chucker)
+    releaseImplementation(libs.chuckerteam.chucker.noop)
 
     // debug
-    implementation(Libraries.timber)
-    testImplementation(TestLibraries.jUnit)
+    implementation(libs.jakewharton.timber)
+    testImplementation(libs.junit)
 }
 
 mavenPublishing {
-    // publish to https://s01.oss.sonatype.org
     publishToMavenCentral(SonatypeHost.S01, true)
-
     signAllPublications()
 }

@@ -1,22 +1,26 @@
 plugins {
-    id(BuildPlugins.androidApplication)
-    id(BuildPlugins.kotlinAndroid)
-    //id(BuildPlugins.jacocoAndroid)
-    id(BuildPlugins.kapt)
-    id(BuildPlugins.mapsSecret)
-    id(BuildPlugins.kotlinSerialization) version Versions.kotlinAndroid
-    id(BuildPlugins.hiltAndroid)
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.kapt)
+    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.hilt.android)
+    alias(libs.plugins.compose.compiler)
+    id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin") version libs.versions.secrets.get()
+    id("com.diffplug.spotless") version libs.versions.spotless.get()
+    id("org.jetbrains.dokka") version libs.versions.dokka.get()
+    id("com.github.ben-manes.versions") version libs.versions.gradleVersionsPlugin.get()
 }
-
-/*jacoco {
-    toolVersion = Versions.jacoco
-}*/
 
 android {
     namespace = "io.rekast.sdk.sample"
-    compileSdk = AndroidSdk.compileSdkVersion
-    android.buildFeatures.dataBinding = true
-    android.buildFeatures.viewBinding = true
+    compileSdk = 34
+
+    buildFeatures {
+        dataBinding = true
+        viewBinding = true
+        compose = true
+        buildConfig = true
+    }
 
     secrets {
         ignoreList.add("sdk.*")
@@ -24,10 +28,10 @@ android {
 
     defaultConfig {
         applicationId = "io.rekast.sdk.sample"
-        minSdk = AndroidSdk.minSdkVersion
-        targetSdk = AndroidSdk.targetSdkVersion
-        versionCode = AndroidSdk.versionCode
-        versionName = AndroidSdk.versionName
+        minSdk = 24
+        targetSdk = 34
+        versionCode = 1
+        versionName = "0.0.1"
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner = "io.rekast.sdk.sample.runner.MockTestRunner"
     }
@@ -44,32 +48,29 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-    kotlinOptions { jvmTarget = "17" }
-    buildFeatures { compose = true }
-    composeOptions { kotlinCompilerExtensionVersion = "1.4.2" }
-
-/*    signingConfigs {
-        getByName("debug") {
-            storeFile = file("../keystore/debug.keystore")
-            keyAlias = "androiddebugkey"
-            keyPassword = "android"
-            storePassword = "android"
-        }
-    }*/
+    kotlinOptions {
+        jvmTarget = "17"
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion = libs.versions.kotlinAndroid.get()
+    }
 
     buildTypes {
-        getByName("debug") {
+        debug {
             isDebuggable = true
             versionNameSuffix = " - debug"
             applicationIdSuffix = ".debug"
-            // signingConfig = signingConfigs.getByName("debug")
         }
-
-        getByName("release") {
+        release {
             isShrinkResources = true
             isMinifyEnabled = true
         }
     }
+}
+
+composeCompiler {
+    reportsDestination = layout.buildDirectory.dir("compose_compiler")
+    stabilityConfigurationFile = rootProject.layout.projectDirectory.file("stability_config.conf")
 }
 
 kapt {
@@ -79,89 +80,66 @@ kapt {
 
 dependencies {
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
-    implementation(project(BuildModules.momoModule))
-    implementation(Libraries.coreKtx)
-    implementation(Libraries.lifecycleComposeViewModel)
-    // Compose
-    val composeBom = platform(Libraries.composeBom)
-    implementation(composeBom)
-    androidTestImplementation(composeBom)
-    implementation(Libraries.appCompat)
-    implementation(Libraries.material)
-    implementation(Libraries.composeMaterial)
-    implementation(Libraries.composeMaterial3)
-    implementation(Libraries.composeMaterial3Window)
-    implementation(Libraries.composeUi)
-    implementation(Libraries.composeToolingPreview)
-    implementation(Libraries.composeUiTooling)
-    implementation(Libraries.composeActivity)
-    implementation(Libraries.lifecycleComposeViewModel)
-    implementation(Libraries.materialIconsCore)
-    implementation(Libraries.materialIconsExtended)
-    implementation(Libraries.runtimeLiveData)
-    implementation(Libraries.runtimeRxJava)
-    implementation(Libraries.kotlinStdLib)
-    implementation(Libraries.androidXTestMonitor)
-    implementation(Libraries.androidXJunitTest)
-    implementation(Libraries.kotlinxSerializationJson)
-    implementation(Libraries.foundation)
+    implementation(project(":momo-api-sdk"))
 
-    // hilt
-    implementation(Libraries.hiltAndroid)
-    kapt(Libraries.hiltComplier)
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(platform(libs.androidx.compose.bom))
 
-    // Material and AndroidX
-    implementation(Libraries.constraintLayout)
-    implementation(Libraries.material)
-    implementation(Libraries.navigationCompose)
-    implementation(Libraries.navigationFragment)
-    implementation(Libraries.navigationUi)
-    implementation(Libraries.dynamicNavigation)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.google.android.material)
+    implementation(libs.androidx.compose.material)
+    implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.compose.material3.window)
+    implementation(libs.androidx.compose.ui)
+    implementation(libs.androidx.compose.ui.tooling.preview)
+    implementation(libs.androidx.compose.ui.tooling)
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.compose.runtime.livedata)
+    implementation(libs.androidx.compose.runtime.rxjava)
+    implementation(libs.kotlin.stdlib)
+    implementation(libs.androidx.customview)
+    implementation(libs.androidx.customview.poolingcontainer)
+    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.androidx.compose.foundation)
 
-    // Network - Retrofit, OKHTTP, chucker
-    implementation(Libraries.retrofit)
-    implementation(Libraries.gson)
-    implementation(Libraries.ohttp)
-    implementation(Libraries.loggingInterceptor)
+    implementation(libs.google.dagger.hilt)
+    kapt(libs.google.dagger.hilt.compiler)
 
-    // Lifecycle
-    implementation(Libraries.lifecycle)
-    // Debug - for debug builds only
-    implementation(Libraries.timber)
-    implementation(Libraries.commonsLang3)
+    implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.navigation.fragment)
+    implementation(libs.androidx.navigation.ui)
+    implementation(libs.androidx.navigation.dynamic)
 
-    debugImplementation(Libraries.customView)
-    debugImplementation(Libraries.poolingContainer)
+    implementation(libs.squareup.retrofit)
+    implementation(libs.squareup.retrofit.gson)
+    implementation(libs.squareup.okhttp)
+    implementation(libs.squareup.okhttp.logging)
 
-    debugImplementation(Libraries.leakCanary)
-    debugImplementation(BuildPlugins.composeUiTooling)
-    debugImplementation(BuildPlugins.testManifest)
-    // hilt
-    androidTestImplementation(TestLibraries.hiltAndroidTesting)
-    kaptAndroidTest(Libraries.hiltComplier)
-    // UI Tests
-    androidTestImplementation(TestLibraries.espresso)
-    androidTestImplementation(TestLibraries.kakao)
-    androidTestImplementation(BuildPlugins.testJunit4)
-    // Instrumentation Tests
-    androidTestImplementation(TestLibraries.runner)
-    androidTestImplementation(TestLibraries.rules)
-    androidTestImplementation(TestLibraries.androidXJUnit)
-    androidTestImplementation(TestLibraries.androidXTestCore)
-    androidTestImplementation(TestLibraries.androidMockK)
-    // Unit Tests
-    testImplementation(TestLibraries.jUnit)
-    testImplementation(TestLibraries.mockWebServer)
-    testImplementation(TestLibraries.mockK)
-    testImplementation(TestLibraries.roboelectric)
-    testImplementation(TestLibraries.truth)
-    testImplementation(TestLibraries.runner)
-    testImplementation(TestLibraries.androidXJUnit)
-    testImplementation(TestLibraries.archComponentTest)
-    testImplementation(TestLibraries.navigationTesting)
-    // hilt
-    testImplementation(TestLibraries.hiltAndroidTesting)
-    kaptAndroidTest(Libraries.hiltComplier)
-    // testImplementation(TestLibraries.liveDataTesting)
-    testImplementation(TestLibraries.kotlinxCoroutines)
+    implementation(libs.jakewharton.timber)
+    implementation(libs.apache.commons.lang3)
+
+    debugImplementation(libs.squareup.leakcanary)
+
+    // Testing dependencies
+    androidTestImplementation(libs.androidx.test.espresso.core)
+    androidTestImplementation(libs.androidx.compose.ui.test)
+    androidTestImplementation(libs.androidx.test.runner)
+    androidTestImplementation(libs.androidx.test.rules)
+    androidTestImplementation(libs.androidx.test.ext.junit)
+    androidTestImplementation(libs.androidx.test.core)
+
+    testImplementation(libs.junit)
+    testImplementation(libs.mockk)
+    testImplementation(libs.robolectric)
+    testImplementation(libs.androidx.test.core)
+    testImplementation(libs.androidx.test.runner)
+    testImplementation(libs.androidx.test.ext.junit)
+    testImplementation(libs.androidx.arch.core.testing)
+    testImplementation(libs.androidx.navigation.testing)
+    testImplementation(libs.kotlinx.coroutines.test)
+
+    debugImplementation(libs.androidx.compose.ui.test.manifest)
 }
