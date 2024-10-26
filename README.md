@@ -39,6 +39,7 @@ Add the following to your project's `build.gradle.kts` file:
 dependencies {
     implementation("io.rekast:momo-api-sdk:0.0.2-SNAPSHOT")
 }
+```
 
 ## Contributing
 
