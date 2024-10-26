@@ -5,7 +5,7 @@ plugins {
     id(BuildPlugins.kotlinAndroid)
     id(BuildPlugins.dagger)
     id(BuildPlugins.kapt)
-    id(BuildPlugins.jacocoAndroid)
+    //id(BuildPlugins.jacocoAndroid)
     id(BuildPlugins.mapsSecret)
     id(BuildPlugins.vanniktechMavenPublish)
     id(BuildPlugins.vanniktechMavenPublishBase)
@@ -13,9 +13,9 @@ plugins {
     id(BuildPlugins.kotlinSerialization) version Versions.kotlinAndroid
 }
 
-jacoco {
+/*jacoco {
     toolVersion = Versions.jacoco
-}
+}*/
 
 android {
     compileSdk = AndroidSdk.compileSdkVersion
@@ -43,12 +43,12 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = "17"
     }
 
     buildTypes {
