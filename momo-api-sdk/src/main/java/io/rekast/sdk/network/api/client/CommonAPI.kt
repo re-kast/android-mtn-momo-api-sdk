@@ -19,7 +19,9 @@ import io.io.rekast.momoapi.utils.Settings
 import io.rekast.sdk.BuildConfig
 import io.rekast.sdk.network.AuthenticationAPI
 import io.rekast.sdk.network.okhttp.UnsafeOkHttpClient
-import io.rekast.sdk.network.products.ProductSharedAPI
+import io.rekast.sdk.network.products.CollectionAPI
+import io.rekast.sdk.network.products.CommonAPI
+import io.rekast.sdk.network.products.DisbursementsAPI
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -35,35 +37,17 @@ open class CommonAPI {
     /**
      * Common APIs across all the Products
      */
-    fun checkApiUser(baseUrl: String): AuthenticationAPI =
-        getRetrofit(baseUrl, null).create(AuthenticationAPI::class.java)
-
-    fun getApiUserKey(baseUrl: String): AuthenticationAPI =
-        getRetrofit(baseUrl, null).create(AuthenticationAPI::class.java)
-
-    fun getAccessToken(baseUrl: String, authentication: Interceptor): AuthenticationAPI =
+    fun getAuthentication(baseUrl: String, authentication: Interceptor?): AuthenticationAPI =
         getRetrofit(baseUrl, authentication).create(AuthenticationAPI::class.java)
 
-    fun getAccountBalance(baseUrl: String, authentication: Interceptor): ProductSharedAPI =
-        getRetrofit(baseUrl, authentication).create(ProductSharedAPI::class.java)
+    fun getCollection(baseUrl: String, authentication: Interceptor): CollectionAPI =
+        getRetrofit(baseUrl, authentication).create(CollectionAPI::class.java)
 
-    fun getBasicUserInfo(baseUrl: String, authentication: Interceptor): ProductSharedAPI =
-        getRetrofit(baseUrl, authentication).create(ProductSharedAPI::class.java)
+    fun getCommon(baseUrl: String, authentication: Interceptor): CommonAPI =
+        getRetrofit(baseUrl, authentication).create(CommonAPI::class.java)
 
-    fun getUserInfoWithConsent(baseUrl: String, authentication: Interceptor): ProductSharedAPI =
-        getRetrofit(baseUrl, authentication).create(ProductSharedAPI::class.java)
-
-    fun transfer(baseUrl: String, authentication: Interceptor): ProductSharedAPI =
-        getRetrofit(baseUrl, authentication).create(ProductSharedAPI::class.java)
-
-    fun getTransferStatus(baseUrl: String, authentication: Interceptor): ProductSharedAPI =
-        getRetrofit(baseUrl, authentication).create(ProductSharedAPI::class.java)
-
-    fun requestToPayDeliveryNotification(baseUrl: String, authentication: Interceptor): ProductSharedAPI =
-        getRetrofit(baseUrl, authentication).create(ProductSharedAPI::class.java)
-
-    fun validateAccountHolderStatus(baseUrl: String, authentication: Interceptor): ProductSharedAPI =
-        getRetrofit(baseUrl, authentication).create(ProductSharedAPI::class.java)
+    fun getDisbursement(baseUrl: String, authentication: Interceptor): DisbursementsAPI =
+        getRetrofit(baseUrl, authentication).create(DisbursementsAPI::class.java)
 
     fun getRetrofit(baseUrl: String, authentication: Interceptor?): Retrofit {
         val httpLoggingInterceptor = HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }

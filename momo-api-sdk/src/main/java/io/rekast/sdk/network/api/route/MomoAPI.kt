@@ -29,7 +29,6 @@ import io.rekast.sdk.model.authentication.AccessToken
 import io.rekast.sdk.model.authentication.ApiUser
 import io.rekast.sdk.model.authentication.ApiUserKey
 import io.rekast.sdk.repository.APIRepository
-import io.rekast.sdk.utils.MomoConstants
 import okhttp3.ResponseBody
 
 /**

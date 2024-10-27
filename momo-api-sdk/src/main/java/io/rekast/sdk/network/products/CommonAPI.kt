@@ -33,7 +33,7 @@ import retrofit2.http.Path
  * This is the retrofit interface to handle the various calls to the Shared Product APIs. This interface defines the
  * method, the request and response from the API.
  */
-sealed interface ProductSharedAPI {
+sealed interface CommonAPI {
     /**
      * Makes a request to get the Account Balance
      * @param[productType] -- The API Products ([MomoConstants.ProductTypes])
