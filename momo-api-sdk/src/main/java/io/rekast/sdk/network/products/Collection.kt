@@ -29,7 +29,7 @@ import retrofit2.http.Path
  * This is the retrofit interface to handle the various calls to the Collection API. This interface defines the
  * method, the request and response from the API.
  */
-sealed interface CollectionAPI : CommonAPI {
+sealed interface Collection : Common {
     /**
      * Makes a request to pay a specific user
      * @param[momoTransaction] -- This is the Transfer Payload [MomoTransaction]

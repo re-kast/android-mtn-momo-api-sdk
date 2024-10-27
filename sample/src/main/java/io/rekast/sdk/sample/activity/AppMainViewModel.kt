@@ -21,9 +21,9 @@ import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
 import io.io.rekast.momoapi.utils.Settings
 import io.rekast.sdk.BuildConfig
-import io.rekast.sdk.callback.APIResult
+import io.rekast.sdk.callback.MomoResponse
 import io.rekast.sdk.model.api.MomoTransaction
-import io.rekast.sdk.network.api.route.MomoAPI
+import io.rekast.sdk.network.api.route.Routes
 import io.rekast.sdk.sample.utils.SnackBarComponentConfiguration
 import io.rekast.sdk.sample.utils.Utils
 import io.rekast.sdk.utils.ProductType
@@ -35,28 +35,28 @@ import org.apache.commons.lang3.StringUtils
 import timber.log.Timber
 
 class AppMainViewModel : ViewModel() {
-    fun momoAPI(): MomoAPI {
-        return MomoAPI.builder(BuildConfig.MOMO_API_USER_ID).setEnvironment(BuildConfig.MOMO_ENVIRONMENT)
+    fun apiRoutes(): Routes {
+        return Routes.builder(BuildConfig.MOMO_API_USER_ID).setEnvironment(BuildConfig.MOMO_ENVIRONMENT)
             .getBaseURL(BuildConfig.MOMO_BASE_URL).build()
     }
 
     private val _snackBarStateFlow = MutableSharedFlow<SnackBarComponentConfiguration>()
     val snackBarStateFlow: SharedFlow<SnackBarComponentConfiguration> = _snackBarStateFlow.asSharedFlow()
     var context: Context? = null
-    private var momoAPi: MomoAPI? = null
+    private var routes: Routes? = null
 
     fun checkUser() {
         viewModelScope.launch {
-            momoAPi?.checkApiUser(
+            routes?.checkApiUser(
                 Settings.getProductSubscriptionKeys(ProductType.REMITTANCE),
                 BuildConfig.MOMO_API_VERSION_V1
             ) { momoAPIResult ->
                 when (momoAPIResult) {
-                    is APIResult.Success -> {
+                    is MomoResponse.Success -> {
                         getApiKey()
                     }
-                    is APIResult.Failure -> {
-                        val momoAPIException = momoAPIResult.APIException!!
+                    is MomoResponse.Failure -> {
+                        val momoAPIException = momoAPIResult.momoException!!
                     }
                 }
             }
@@ -69,18 +69,18 @@ class AppMainViewModel : ViewModel() {
             if (StringUtils.isNotBlank(apiUserKey)) {
                 getAccessToken()
             } else {
-                momoAPi?.getUserApiKey(
+                routes?.getUserApiKey(
                     Settings.getProductSubscriptionKeys(ProductType.REMITTANCE),
                     BuildConfig.MOMO_API_VERSION_V1
                 ) { momoAPIResult ->
                     when (momoAPIResult) {
-                        is APIResult.Success -> {
+                        is MomoResponse.Success -> {
                             val generatedApiUserKey = momoAPIResult.value
                             context?.let { Utils.saveApiKey(it, generatedApiUserKey.apiKey) }
                             getAccessToken()
                         }
-                        is APIResult.Failure -> {
-                            val momoAPIException = momoAPIResult.APIException!!
+                        is MomoResponse.Failure -> {
+                            val momoAPIException = momoAPIResult.momoException!!
                         }
                     }
                 }
@@ -94,13 +94,13 @@ class AppMainViewModel : ViewModel() {
             val accessToken = context?.let { Utils.getAccessToken(it) }
             if (StringUtils.isNotBlank(apiUserKey) && StringUtils.isBlank(accessToken)) {
                 apiUserKey?.let { apiKey ->
-                    momoAPi?.getAccessToken(
+                    routes?.getAccessToken(
                         Settings.getProductSubscriptionKeys(ProductType.REMITTANCE),
                         apiKey,
                         ProductType.REMITTANCE.productType
                     ) { momoAPIResult ->
                         when (momoAPIResult) {
-                            is APIResult.Success -> {
+                            is MomoResponse.Success -> {
                                 val generatedAccessToken = momoAPIResult.value
                                 context?.let { activityContext ->
                                     Utils.saveAccessToken(
@@ -109,8 +109,8 @@ class AppMainViewModel : ViewModel() {
                                     )
                                 }
                             }
-                            is APIResult.Failure -> {
-                                val momoAPIException = momoAPIResult.APIException!!
+                            is MomoResponse.Failure -> {
+                                val momoAPIException = momoAPIResult.momoException!!
                             }
                         }
                     }
@@ -126,7 +126,7 @@ class AppMainViewModel : ViewModel() {
         if (StringUtils.isNotBlank(accessToken) && StringUtils.isNotBlank(requestToPayUuid)) {
             val creditTransaction = createRefundTransaction(requestToPayUuid)
             accessToken?.let {
-                momoAPi?.refund(
+                routes?.refund(
                     it,
                     creditTransaction,
                     BuildConfig.MOMO_API_VERSION_V2,
@@ -134,11 +134,11 @@ class AppMainViewModel : ViewModel() {
                     transactionUuid
                 ) { momoAPIResult ->
                     when (momoAPIResult) {
-                        is APIResult.Success -> {
+                        is MomoResponse.Success -> {
                             getRefundStatus(transactionUuid)
                         }
-                        is APIResult.Failure -> {
-                            val momoAPIException = momoAPIResult.APIException
+                        is MomoResponse.Failure -> {
+                            val momoAPIException = momoAPIResult.momoException
                         }
                     }
                 }
@@ -150,20 +150,20 @@ class AppMainViewModel : ViewModel() {
         val accessToken = context?.let { Utils.getAccessToken(it) }
         if (StringUtils.isNotBlank(accessToken)) {
             accessToken?.let {
-                momoAPi?.getRefundStatus(
+                routes?.getRefundStatus(
                     referenceId,
                     BuildConfig.MOMO_API_VERSION_V1,
                     Settings.getProductSubscriptionKeys(ProductType.DISBURSEMENTS),
                     it
                 ) { momoAPIResult ->
                     when (momoAPIResult) {
-                        is APIResult.Success -> {
+                        is MomoResponse.Success -> {
                             val completeTransfer =
                                 Gson().fromJson(momoAPIResult.value!!.source().readUtf8(), MomoTransaction::class.java)
                             Timber.d(completeTransfer.toString())
                         }
-                        is APIResult.Failure -> {
-                            val momoAPIException = momoAPIResult.APIException
+                        is MomoResponse.Failure -> {
+                            val momoAPIException = momoAPIResult.momoException
                         }
                     }
                 }
@@ -191,8 +191,8 @@ class AppMainViewModel : ViewModel() {
         context = activityContext
     }
 
-    fun provideMomoAPI(fragmentMomoAPI: MomoAPI) {
-        momoAPi = fragmentMomoAPI
+    fun provideMomoAPI(fragmentMomoAPI: Routes) {
+        routes = fragmentMomoAPI
     }
 
     private fun emitSnackBarState(snackBarComponentConfiguration: SnackBarComponentConfiguration) {
@@ -212,11 +212,11 @@ class AppMainViewModel : ViewModel() {
                 Constants.ProductTypes.REMITTANCE,
             ) { momoAPIResult ->
                 when (momoAPIResult) {
-                    is APIResult.Success -> {
+                    is MomoResponse.Success -> {
                         val basicInfo = momoAPIResult.value
                         Timber.d(basicInfo.toString())
                     }
-                    is APIResult.Failure -> {
+                    is MomoResponse.Failure -> {
                         val momoAPIException = momoAPIResult.APIException
                         toast(momoAPIException?.message ?: "An error occurred!")
                     }
@@ -235,11 +235,11 @@ class AppMainViewModel : ViewModel() {
                 Constants.ProductTypes.REMITTANCE,
             ) { momoAPIResult ->
                 when (momoAPIResult) {
-                    is APIResult.Success -> {
+                    is MomoResponse.Success -> {
                         val getUserInfoWithoutConsent = momoAPIResult.value
                         Timber.d(getUserInfoWithoutConsent.toString())
                     }
-                    is APIResult.Failure -> {
+                    is MomoResponse.Failure -> {
                         val momoAPIException = momoAPIResult.APIException
                         toast(momoAPIException?.message ?: "An error occurred!")
                     }

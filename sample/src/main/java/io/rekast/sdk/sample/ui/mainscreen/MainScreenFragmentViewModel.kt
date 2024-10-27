@@ -21,12 +21,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
 import io.io.rekast.momoapi.utils.Settings
-import io.rekast.sdk.callback.APIResult
+import io.rekast.sdk.callback.MomoResponse
 import io.rekast.sdk.model.api.AccountBalance
 import io.rekast.sdk.model.api.AccountHolder
 import io.rekast.sdk.model.api.AccountHolderStatus
 import io.rekast.sdk.model.api.BasicUserInfo
-import io.rekast.sdk.network.api.route.MomoAPI
+import io.rekast.sdk.network.api.route.Routes
 import io.rekast.sdk.sample.BuildConfig
 import io.rekast.sdk.sample.utils.Constants
 import io.rekast.sdk.sample.utils.SnackBarComponentConfiguration
@@ -42,7 +42,7 @@ import timber.log.Timber
 
 class MainScreenFragmentViewModel : ViewModel() {
     var context: Context? = null
-    private var momoAPi: MomoAPI? = null
+    private var momoAPi: Routes? = null
     val showProgressBar = MutableLiveData(false)
     private val _snackBarStateFlow = MutableSharedFlow<SnackBarComponentConfiguration>()
     val snackBarStateFlow: SharedFlow<SnackBarComponentConfiguration> = _snackBarStateFlow.asSharedFlow()
@@ -63,7 +63,7 @@ class MainScreenFragmentViewModel : ViewModel() {
                     ProductType.REMITTANCE.productType
                 ) { momoAPIResult ->
                     when (momoAPIResult) {
-                        is APIResult.Success -> {
+                        is MomoResponse.Success -> {
                             val date = Utils.convertToDate(momoAPIResult.value.updatedAt.toLong())
                             momoAPIResult.value.updatedAt = date
                             basicUserInfo.postValue(momoAPIResult.value)
@@ -73,8 +73,8 @@ class MainScreenFragmentViewModel : ViewModel() {
                                 SnackBarComponentConfiguration(message = "Basic User info fetched successfully")
                             )
                         }
-                        is APIResult.Failure -> {
-                            val momoAPIException = momoAPIResult.APIException
+                        is MomoResponse.Failure -> {
+                            val momoAPIException = momoAPIResult.momoException
                             showProgressBar.postValue(false)
 
                             emitSnackBarState(
@@ -114,7 +114,7 @@ class MainScreenFragmentViewModel : ViewModel() {
                     accessToken
                 ) { momoAPIResult ->
                     when (momoAPIResult) {
-                        is APIResult.Success -> {
+                        is MomoResponse.Success -> {
                             val accountHolderStatus = Gson().fromJson(
                                 momoAPIResult.value!!.source().readUtf8(),
                                 AccountHolderStatus::class.java
@@ -128,8 +128,8 @@ class MainScreenFragmentViewModel : ViewModel() {
                                 )
                             )
                         }
-                        is APIResult.Failure -> {
-                            val momoAPIException = momoAPIResult.APIException
+                        is MomoResponse.Failure -> {
+                            val momoAPIException = momoAPIResult.momoException
                             showProgressBar.postValue(false)
 
                             emitSnackBarState(
@@ -165,7 +165,7 @@ class MainScreenFragmentViewModel : ViewModel() {
                     ProductType.REMITTANCE.productType
                 ) { momoAPIResult ->
                     when (momoAPIResult) {
-                        is APIResult.Success -> {
+                        is MomoResponse.Success -> {
                             val balance = momoAPIResult.value
                             _accountBalance.postValue(balance)
                             showProgressBar.postValue(false)
@@ -176,8 +176,8 @@ class MainScreenFragmentViewModel : ViewModel() {
                                 )
                             )
                         }
-                        is APIResult.Failure -> {
-                            val momoAPIException = momoAPIResult.APIException
+                        is MomoResponse.Failure -> {
+                            val momoAPIException = momoAPIResult.momoException
                             showProgressBar.postValue(false)
 
                             emitSnackBarState(
@@ -205,7 +205,7 @@ class MainScreenFragmentViewModel : ViewModel() {
         context = fragmentContext
     }
 
-    fun provideMomoAPI(fragmentMomoAPI: MomoAPI) {
+    fun provideMomoAPI(fragmentMomoAPI: Routes) {
         momoAPi = fragmentMomoAPI
     }
 

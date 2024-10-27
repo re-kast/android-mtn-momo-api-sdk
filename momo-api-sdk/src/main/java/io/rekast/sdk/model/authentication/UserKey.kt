@@ -23,6 +23,6 @@ import kotlinx.serialization.Serializable
  * Subscription Key and the API User ID
  */
 @Serializable
-data class ApiUserKey(
+data class UserKey(
     @SerializedName("apiKey") val apiKey: String
 )

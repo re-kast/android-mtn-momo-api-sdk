@@ -16,8 +16,8 @@
 package io.rekast.sdk.network
 
 import io.rekast.sdk.model.authentication.AccessToken
-import io.rekast.sdk.model.authentication.ApiUser
-import io.rekast.sdk.model.authentication.ApiUserKey
+import io.rekast.sdk.model.authentication.User
+import io.rekast.sdk.model.authentication.UserKey
 import io.rekast.sdk.utils.MomoConstants
 import retrofit2.Call
 import retrofit2.http.GET
@@ -29,34 +29,34 @@ import retrofit2.http.Path
  * This is the retrofit interface to handle the various calls to the Auth api.
  * This interface defines the method, the request and response from the API.
  */
-sealed interface AuthenticationAPI {
+sealed interface Authentication {
     /**
      * Makes a request to get the API User. Used to confirm whether the API User provided exists
      * @param[apiVersion] -- The app Version (v1_0 or v2_0)
      * @param[apiUser] -- The API User ID (X-Reference-Id)
      * @param[productSubscriptionKey] -- The Product subscription Key (Ocp-Apim-Subscription-Key)
-     * @return[ApiUser] -- Returns the API User if available
+     * @return[User] -- Returns the API User if available
      */
     @GET(MomoConstants.EndPoints.GET_API_USER)
     fun getApiUser(
         @Path(MomoConstants.EndpointPaths.API_VERSION) apiVersion: String,
         @Path(MomoConstants.EndpointPaths.API_USER) apiUser: String,
         @Header(MomoConstants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String
-    ): Call<ApiUser>
+    ): Call<User>
 
     /**
      * Makes a request to get the API Key.
      * @param[apiVersion] -- The app Version (v1_0 or v2_0)
      * @param[apiUser] -- The API User ID (X-Reference-Id)
      * @param[productSubscriptionKey] -- The Product subscription Key (Ocp-Apim-Subscription-Key)
-     * @return[ApiUserKey] -- Returns the API Key
+     * @return[UserKey] -- Returns the API Key
      */
     @POST(MomoConstants.EndPoints.GET_API_USER_KEY)
     fun getApiUserKey(
         @Path(MomoConstants.EndpointPaths.API_VERSION) apiVersion: String,
         @Path(MomoConstants.EndpointPaths.API_USER) apiUser: String,
         @Header(MomoConstants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String
-    ): Call<ApiUserKey>
+    ): Call<UserKey>
 
     /**
      * Makes a request to get the Access Token

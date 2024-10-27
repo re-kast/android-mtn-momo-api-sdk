@@ -13,16 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.rekast.sdk.model.authentication
-
-import com.google.gson.annotations.SerializedName
-import kotlinx.serialization.Serializable
+package io.rekast.sdk.callback
 
 /**
- * This class represents the MTN MOMO API User
+ * Holds the state for Payment status.
  */
-@Serializable
-data class ApiUser(
-    @SerializedName("providerCallbackHost") val providerCallbackHost: String,
-    @SerializedName("targetEnvironment") val targetEnvironment: String
-)
+sealed class MomoResponse<out T> {
+    data class Success<out T>(val value: T) : MomoResponse<T>()
+    data class Failure(
+        val isNetworkError: Boolean,
+        val momoException: MomoException?
+    ) : MomoResponse<Nothing>()
+}
