@@ -22,11 +22,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
 import io.io.rekast.momoapi.utils.Settings
-import io.rekast.sdk.callback.APIResult
+import io.rekast.sdk.callback.MomoResponse
 import io.rekast.sdk.model.api.AccountHolder
 import io.rekast.sdk.model.api.MomoNotification
 import io.rekast.sdk.model.api.MomoTransaction
-import io.rekast.sdk.network.api.route.MomoAPI
+import io.rekast.sdk.network.api.route.Routes
 import io.rekast.sdk.sample.BuildConfig
 import io.rekast.sdk.sample.activity.AppMainViewModel
 import io.rekast.sdk.sample.utils.Constants
@@ -43,7 +43,7 @@ import org.apache.commons.lang3.StringUtils
 
 class RemittanceScreenViewModel : ViewModel() {
     var context: Context? = null
-    private var momoAPi: MomoAPI? = null
+    private var momoAPi: Routes? = null
     val showProgressBar = MutableLiveData(false)
     private lateinit var _appMainViewModel: AppMainViewModel
     var momoTransaction: MutableLiveData<MomoTransaction?> = MutableLiveData(null)
@@ -126,7 +126,7 @@ class RemittanceScreenViewModel : ViewModel() {
                         transactionUuid
                     ) { momoAPIResult ->
                         when (momoAPIResult) {
-                            is APIResult.Success -> {
+                            is MomoResponse.Success -> {
                                 if (deliveryNote.value!!.isNotEmpty()) {
                                     requestToPayDeliveryNotification(
                                         transactionUuid
@@ -141,8 +141,8 @@ class RemittanceScreenViewModel : ViewModel() {
                                     )
                                 )
                             }
-                            is APIResult.Failure -> {
-                                val momoAPIException = momoAPIResult.APIException
+                            is MomoResponse.Failure -> {
+                                val momoAPIException = momoAPIResult.momoException
                                 showProgressBar.postValue(false)
                                 emitSnackBarState(
                                     SnackBarComponentConfiguration(
@@ -191,7 +191,7 @@ class RemittanceScreenViewModel : ViewModel() {
                     accessToken
                 ) { momoAPIResult ->
                     when (momoAPIResult) {
-                        is APIResult.Success -> {
+                        is MomoResponse.Success -> {
                             val completeTransferStatusFetch =
                                 Gson().fromJson(momoAPIResult.value!!.source().readUtf8(), MomoTransaction::class.java)
                             momoTransaction = MutableLiveData(completeTransferStatusFetch)
@@ -202,8 +202,8 @@ class RemittanceScreenViewModel : ViewModel() {
                                 )
                             )
                         }
-                        is APIResult.Failure -> {
-                            val momoAPIException = momoAPIResult.APIException
+                        is MomoResponse.Failure -> {
+                            val momoAPIException = momoAPIResult.momoException
                             showProgressBar.postValue(false)
                             emitSnackBarState(
                                 SnackBarComponentConfiguration(
@@ -242,15 +242,15 @@ class RemittanceScreenViewModel : ViewModel() {
                     it
                 ) { momoAPIResult ->
                     when (momoAPIResult) {
-                        is APIResult.Success -> {
+                        is MomoResponse.Success -> {
                             emitSnackBarState(
                                 SnackBarComponentConfiguration(
                                     message = "Remittance delivery note sent successfully"
                                 )
                             )
                         }
-                        is APIResult.Failure -> {
-                            val momoAPIException = momoAPIResult.APIException
+                        is MomoResponse.Failure -> {
+                            val momoAPIException = momoAPIResult.momoException
                             emitSnackBarState(
                                 SnackBarComponentConfiguration(
                                     message = "${momoAPIException!!.message} Delivery note was not sent!"
@@ -274,7 +274,7 @@ class RemittanceScreenViewModel : ViewModel() {
         context = fragmentContext
     }
 
-    fun provideMomoAPI(fragmentMomoAPI: MomoAPI) {
+    fun provideMomoAPI(fragmentMomoAPI: Routes) {
         momoAPi = fragmentMomoAPI
     }
 

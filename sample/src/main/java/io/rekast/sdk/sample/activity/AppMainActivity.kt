@@ -23,7 +23,7 @@ import androidx.fragment.app.FragmentContainerView
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.NavHostFragment
 import dagger.hilt.android.AndroidEntryPoint
-import io.rekast.sdk.network.api.route.MomoAPI
+import io.rekast.sdk.network.api.route.Routes
 import io.rekast.sdk.sample.R
 import io.rekast.sdk.sample.utils.DefaultDispatcherProvider
 import kotlinx.coroutines.launch
@@ -34,7 +34,7 @@ import javax.inject.Inject
 open class AppMainActivity : AppCompatActivity() {
     @Inject
     lateinit var dispatcherProvider: DefaultDispatcherProvider
-    lateinit var momoAPI: MomoAPI
+    lateinit var routes: Routes
     private val appMainViewModel by viewModels<AppMainViewModel>()
     lateinit var navHostFragment: NavHostFragment
 
@@ -44,7 +44,7 @@ open class AppMainActivity : AppCompatActivity() {
         navHostFragment =
             NavHostFragment.create(R.navigation.navigation_graph)
         // initialize the API
-        momoAPI = appMainViewModel.momoAPI()
+        routes = appMainViewModel.apiRoutes()
 
         supportFragmentManager
             .beginTransaction()
@@ -58,7 +58,7 @@ open class AppMainActivity : AppCompatActivity() {
         appMainViewModel.viewModelScope.launch(dispatcherProvider.io()) {}
 
         appMainViewModel.provideContext(this)
-        appMainViewModel.provideMomoAPI(momoAPI)
+        appMainViewModel.provideMomoAPI(routes)
         appMainViewModel.checkUser()
     }
 }

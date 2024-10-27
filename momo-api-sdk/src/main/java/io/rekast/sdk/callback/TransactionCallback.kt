@@ -28,13 +28,13 @@ import retrofit2.Response
 import java.io.IOException
 
 /**
- * Transaction Callback for the MTN MOMO API
+ * Transaction MomoCallback for the MTN MOMO API
  * The MTN MOMO API returns the a 200 OK even for transfers that failed.
  * We use [TransactionCallback] to identify the difference between 200 OK and 400
  * This returns the [MomoTransaction] on the [ResponseBody]
  */
 class TransactionCallback(
-    private val callback: (APIResult: APIResult<ResponseBody?>) -> Unit
+    private val callback: (momoResponse: MomoResponse<ResponseBody?>) -> Unit
 ) : Callback<ResponseBody?> {
 
     override fun onResponse(call: Call<ResponseBody?>, response: Response<ResponseBody?>) {
@@ -43,28 +43,28 @@ class TransactionCallback(
             if (momoTransaction?.status != null) {
                 if (momoTransaction.status == TransactionStatus.SUCCESSFUL.name) {
                     callback.invoke(
-                        APIResult.Success(
+                        MomoResponse.Success(
                             GsonBuilder().setPrettyPrinting().create().toJson(momoTransaction).toResponseBody()
                         )
                     )
                 } else {
                     val error = "${momoTransaction.reason} : ${momoTransaction.externalId}"
-                    callback.invoke(APIResult.Failure(false, APIException(error)))
+                    callback.invoke(MomoResponse.Failure(false, MomoException(error)))
                 }
                 return
             }
         } else {
             try {
                 val error = GsonBuilder().create().fromJson(response.errorBody()?.string(), ErrorResponse::class.java)
-                callback.invoke(APIResult.Failure(false, APIException(error)))
+                callback.invoke(MomoResponse.Failure(false, MomoException(error)))
             } catch (e: IOException) {
                 e.printStackTrace()
-                callback.invoke(APIResult.Failure(false, APIException("${response.code()}")))
+                callback.invoke(MomoResponse.Failure(false, MomoException("${response.code()}")))
             }
         }
     }
 
     override fun onFailure(call: Call<ResponseBody?>, throwable: Throwable) {
-        callback.invoke(APIResult.Failure(true, APIException(throwable.localizedMessage)))
+        callback.invoke(MomoResponse.Failure(true, MomoException(throwable.localizedMessage)))
     }
 }

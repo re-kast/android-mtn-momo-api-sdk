@@ -28,7 +28,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import dagger.hilt.android.AndroidEntryPoint
-import io.rekast.sdk.network.api.route.MomoAPI
+import io.rekast.sdk.network.api.route.Routes
 import io.rekast.sdk.sample.activity.AppMainActivity
 import io.rekast.sdk.sample.ui.theme.AppTheme
 
@@ -36,7 +36,7 @@ import io.rekast.sdk.sample.ui.theme.AppTheme
 @AndroidEntryPoint
 class MainScreenFragment : Fragment() {
     private lateinit var activity: AppMainActivity
-    private lateinit var fragmentMomoAPI: MomoAPI
+    private lateinit var fragmentMomoAPI: Routes
     private val mainScreenFragmentViewModel by viewModels<MainScreenFragmentViewModel>()
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -64,7 +64,7 @@ class MainScreenFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         activity = requireActivity() as AppMainActivity
-        fragmentMomoAPI = activity.momoAPI
+        fragmentMomoAPI = activity.routes
 
         mainScreenFragmentViewModel.provideContext(activity)
         mainScreenFragmentViewModel.provideMomoAPI(fragmentMomoAPI)

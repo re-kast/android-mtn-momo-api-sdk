@@ -20,7 +20,7 @@ object MomoConstants {
     const val NOTIFICATION_MESSAGE_LENGTH = 160L
     object Headers {
         const val OCP_APIM_SUBSCRIPTION_KEY = "Ocp-Apim-Subscription-Key"
-        const val X_CALLBACK_URL = "X-Callback-Url"
+        const val X_Momo_CALLBACK_URL = "X-MomoCallback-Url"
         const val X_REFERENCE_ID = "X-Reference-Id"
         const val X_TARGET_ENVIRONMENT = "X-Target-Environment"
         const val LANGUAGE = "Language"

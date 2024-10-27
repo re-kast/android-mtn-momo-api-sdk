@@ -26,20 +26,20 @@ import retrofit2.http.POST
 import retrofit2.http.Path
 
 /**
- * This is the retrofit interface to handle the various calls to the Collection API. This interface defines the
+ * This is the retrofit interface to handle the various calls to the Disbursements API. This interface defines the
  * method, the request and response from the API.
  */
-sealed interface CollectionAPI : ProductSharedAPI {
+sealed interface Disbursements : Common {
     /**
-     * Makes a request to pay a specific user
+     * Makes a request to deposit to a specific user
      * @param[momoTransaction] -- This is the Transfer Payload [MomoTransaction]
      * @param[apiVersion] -- The app Version (v1_0 or v2_0)
      * @param[productSubscriptionKey] -- The Product subscription Key (Ocp-Apim-Subscription-Key)
      * @param[environment] -- The API environment (X-Target-Environment)
      * @return[Unit] -- Returns the Transfer Status
      */
-    @POST(MomoConstants.EndPoints.REQUEST_TO_PAY)
-    fun requestToPay(
+    @POST(MomoConstants.EndPoints.DEPOSIT)
+    fun deposit(
         @Body momoTransaction: MomoTransaction,
         @Path(MomoConstants.EndpointPaths.API_VERSION) apiVersion: String,
         @Header(MomoConstants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
@@ -48,16 +48,16 @@ sealed interface CollectionAPI : ProductSharedAPI {
     ): Call<Unit>
 
     /**
-     * Makes a request to check the status of the payment request
+     * Makes a request to check the status of the deposit request
      * @param[referenceId] -- The Transfer Reference ID. This is a UUID V4.
-     * This is the ID used here [requestToPay]
+     * This is the ID used here [deposit]
      * @param[apiVersion] -- The app Version (v1_0 or v2_0)
      * @param[productSubscriptionKey] -- The Product subscription Key (Ocp-Apim-Subscription-Key)
      * @param[environment] -- The API environment (X-Target-Environment)
      * @return[ResponseBody] -- Returns the Transfer Status
      */
-    @GET(MomoConstants.EndPoints.REQUEST_TO_PAY_STATUS)
-    fun requestToPayTransactionStatus(
+    @GET(MomoConstants.EndPoints.DEPOSIT_STATUS)
+    fun getDepositStatus(
         @Path(MomoConstants.EndpointPaths.REFERENCE_ID) referenceId: String,
         @Path(MomoConstants.EndpointPaths.API_VERSION) apiVersion: String,
         @Header(MomoConstants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
@@ -65,15 +65,15 @@ sealed interface CollectionAPI : ProductSharedAPI {
     ): Call<ResponseBody>
 
     /**
-     * Makes a request to withdraw from a specific user
+     * Makes a request to refund a specific user
      * @param[momoTransaction] -- This is the Transfer Payload [MomoTransaction]
      * @param[apiVersion] -- The app Version (v1_0 or v2_0)
      * @param[productSubscriptionKey] -- The Product subscription Key (Ocp-Apim-Subscription-Key)
      * @param[environment] -- The API environment (X-Target-Environment)
      * @return[Unit] -- Returns the Transfer Status
      */
-    @POST(MomoConstants.EndPoints.REQUEST_TO_WITHDRAW)
-    fun requestToWithdraw(
+    @POST(MomoConstants.EndPoints.REFUND)
+    fun refund(
         @Body momoTransaction: MomoTransaction,
         @Path(MomoConstants.EndpointPaths.API_VERSION) apiVersion: String,
         @Header(MomoConstants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
@@ -82,16 +82,16 @@ sealed interface CollectionAPI : ProductSharedAPI {
     ): Call<Unit>
 
     /**
-     * Makes a request to check the status fo the withdrawal
+     * Makes a request to check the status of the refund
      * @param[referenceId] -- The Transfer Reference ID. This is a UUID V4.
-     * This is the ID used here [requestToWithdraw]
+     * This is the ID used here [refund]
      * @param[apiVersion] -- The app Version (v1_0 or v2_0)
      * @param[productSubscriptionKey] -- The Product subscription Key (Ocp-Apim-Subscription-Key)
      * @param[environment] -- The API environment (X-Target-Environment)
      * @return[ResponseBody] -- Returns the Transfer Status
      */
-    @GET(MomoConstants.EndPoints.REQUEST_TO_WITHDRAW_STATUS)
-    fun requestToWithdrawTransactionStatus(
+    @GET(MomoConstants.EndPoints.REFUND_STATUS)
+    fun getRefundStatus(
         @Path(MomoConstants.EndpointPaths.REFERENCE_ID) referenceId: String,
         @Path(MomoConstants.EndpointPaths.API_VERSION) apiVersion: String,
         @Header(MomoConstants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,

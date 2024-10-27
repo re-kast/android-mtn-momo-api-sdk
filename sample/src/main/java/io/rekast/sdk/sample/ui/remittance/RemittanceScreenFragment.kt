@@ -29,7 +29,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
-import io.rekast.sdk.network.api.route.MomoAPI
+import io.rekast.sdk.network.api.route.Routes
 import io.rekast.sdk.sample.activity.AppMainActivity
 import io.rekast.sdk.sample.activity.AppMainViewModel
 import io.rekast.sdk.sample.ui.theme.AppTheme
@@ -38,7 +38,7 @@ import io.rekast.sdk.sample.ui.theme.AppTheme
 @AndroidEntryPoint
 class RemittanceScreenFragment : Fragment() {
     private lateinit var activity: AppMainActivity
-    private lateinit var fragmentMomoAPI: MomoAPI
+    private lateinit var fragmentMomoAPI: Routes
     private val appMainViewModel by activityViewModels<AppMainViewModel>()
     private val remittanceScreenViewModel by viewModels<RemittanceScreenViewModel>()
     override fun onCreateView(
@@ -66,7 +66,7 @@ class RemittanceScreenFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         activity = requireActivity() as AppMainActivity
-        fragmentMomoAPI = activity.momoAPI
+        fragmentMomoAPI = activity.routes
 
         remittanceScreenViewModel.provideContext(activity)
         remittanceScreenViewModel.provideMomoAPI(fragmentMomoAPI)

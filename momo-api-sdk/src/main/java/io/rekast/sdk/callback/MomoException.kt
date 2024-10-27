@@ -20,7 +20,7 @@ import io.rekast.sdk.model.api.ErrorResponse
 /**
  * Handles exceptions and messages for the exceptions.
  */
-class APIException : Exception {
+class MomoException : Exception {
     lateinit var errorResponse: ErrorResponse
     constructor(message: String?) : super(message)
     constructor(errorResponse: ErrorResponse) : super("${errorResponse.code} : ${errorResponse.message}") {
