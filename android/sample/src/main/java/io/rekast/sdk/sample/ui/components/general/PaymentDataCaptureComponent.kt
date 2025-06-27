@@ -30,7 +30,6 @@ import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Divider
 import androidx.compose.material.Text
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -39,16 +38,16 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.rekast.sdk.sample.R
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun PaymentDataScreenComponent(
     modifier: Modifier = Modifier,
@@ -77,20 +76,20 @@ fun PaymentDataScreenComponent(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(10.dp)
+            .padding(dimensionResource(id = R.dimen.spacing_medium))
     ) {
-        Column(modifier = modifier.padding(end = 20.dp)) {
+        Column(modifier = modifier.padding(end = dimensionResource(id = R.dimen.spacing_large))) {
             Text(
                 text = title,
                 style = TextStyle(
-                    fontSize = 18.sp
+                    fontSize = dimensionResource(id = R.dimen.font_size_medium)
                 ),
                 color = colorResource(id = R.color.black),
                 fontWeight = FontWeight.Bold
             )
             Divider(
                 modifier = modifier.padding(
-                    top = 10.dp
+                    top = dimensionResource(id = R.dimen.spacing_medium)
                 )
             )
         }
@@ -113,7 +112,7 @@ fun PaymentDataScreenComponent(
             colors = textFieldDefaultsComponent(),
             modifier = modifier
                 .fillMaxWidth()
-                .padding(vertical = 10.dp)
+                .padding(vertical = dimensionResource(id = R.dimen.spacing_medium))
                 .background(color = Color.Unspecified)
                 .focusRequester(phoneNumberFocusRequester),
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
@@ -138,7 +137,7 @@ fun PaymentDataScreenComponent(
             colors = textFieldDefaultsComponent(),
             modifier = modifier
                 .fillMaxWidth()
-                .padding(vertical = 10.dp)
+                .padding(vertical = dimensionResource(id = R.dimen.spacing_medium))
                 .background(color = Color.Unspecified)
                 .focusRequester(financialIdFocusRequester),
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
@@ -163,7 +162,7 @@ fun PaymentDataScreenComponent(
             colors = textFieldDefaultsComponent(),
             modifier = modifier
                 .fillMaxWidth()
-                .padding(vertical = 10.dp)
+                .padding(vertical = dimensionResource(id = R.dimen.spacing_medium))
                 .background(color = Color.Unspecified)
                 .focusRequester(financialIdFocusRequester),
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next, keyboardType = KeyboardType.Number),
@@ -188,7 +187,7 @@ fun PaymentDataScreenComponent(
             colors = textFieldDefaultsComponent(),
             modifier = modifier
                 .fillMaxWidth()
-                .padding(vertical = 10.dp)
+                .padding(vertical = dimensionResource(id = R.dimen.spacing_medium))
                 .background(color = Color.Unspecified)
                 .focusRequester(financialIdFocusRequester),
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
@@ -213,16 +212,16 @@ fun PaymentDataScreenComponent(
             colors = textFieldDefaultsComponent(),
             modifier = modifier
                 .fillMaxWidth()
-                .height(150.dp)
-                .padding(vertical = 10.dp)
+                .height(dimensionResource(id = R.dimen.textfield_height_multiline))
+                .padding(vertical = dimensionResource(id = R.dimen.spacing_medium))
                 .background(color = Color.Unspecified)
                 .focusRequester(financialIdFocusRequester),
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done)
         )
         Divider(
             modifier = modifier.padding(
-                top = 10.dp,
-                bottom = 10.dp
+                top = dimensionResource(id = R.dimen.spacing_medium),
+                bottom = dimensionResource(id = R.dimen.spacing_medium)
             )
         )
         Button(
@@ -239,7 +238,7 @@ fun PaymentDataScreenComponent(
         ) {
             Text(
                 text = submitButtonText,
-                modifier = modifier.padding(8.dp)
+                modifier = modifier.padding(dimensionResource(id = R.dimen.spacing_small))
             )
         }
     }

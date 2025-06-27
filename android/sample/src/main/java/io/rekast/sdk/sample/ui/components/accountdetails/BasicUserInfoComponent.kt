@@ -25,11 +25,11 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.MutableLiveData
 import io.rekast.sdk.model.BasicUserInfo
@@ -43,38 +43,38 @@ fun BasicUserInfoComponent(
     Column(
         modifier = modifier.fillMaxWidth()
     ) {
-        Column(modifier = modifier.padding(end = 20.dp)) {
+        Column(modifier = modifier.padding(end = dimensionResource(id = R.dimen.spacing_large))) {
             Text(
                 text = stringResource(id = R.string.basic_user_info_title),
                 style = TextStyle(
-                    fontSize = 18.sp
+                    fontSize = dimensionResource(id = R.dimen.font_size_medium)
                 ),
                 color = colorResource(id = R.color.black),
                 fontWeight = FontWeight.Bold
             )
-            Divider(modifier = modifier.padding(top = 10.dp, bottom = 10.dp))
+            Divider(modifier = modifier.padding(top = dimensionResource(id = R.dimen.spacing_medium), bottom = dimensionResource(id = R.dimen.spacing_medium)))
         }
         Row(horizontalArrangement = Arrangement.SpaceEvenly) {
-            Column(modifier = modifier.padding(end = 20.dp)) {
+            Column(modifier = modifier.padding(end = dimensionResource(id = R.dimen.spacing_large))) {
                 Text(
                     text = stringResource(id = R.string.name),
                     color = colorResource(id = R.color.black),
                     fontWeight = FontWeight.Bold
                 )
             }
-            Column(modifier = modifier.padding(end = 10.dp)) {
+            Column(modifier = modifier.padding(end = dimensionResource(id = R.dimen.spacing_medium))) {
                 basicUserInfo.value?.name?.let { Text(text = it, color = colorResource(id = R.color.black)) }
             }
         }
         Row(horizontalArrangement = Arrangement.SpaceEvenly) {
-            Column(modifier = modifier.padding(end = 20.dp)) {
+            Column(modifier = modifier.padding(end = dimensionResource(id = R.dimen.spacing_large))) {
                 Text(
                     text = stringResource(id = R.string.birth_date),
                     color = colorResource(id = R.color.black),
                     fontWeight = FontWeight.Bold
                 )
             }
-            Column(modifier = modifier.padding(end = 10.dp)) {
+            Column(modifier = modifier.padding(end = dimensionResource(id = R.dimen.spacing_medium))) {
                 basicUserInfo.value?.birthDate?.let {
                     Text(
                         text = it,
@@ -84,26 +84,26 @@ fun BasicUserInfoComponent(
             }
         }
         Row(horizontalArrangement = Arrangement.SpaceEvenly) {
-            Column(modifier = modifier.padding(end = 20.dp)) {
+            Column(modifier = modifier.padding(end = dimensionResource(id = R.dimen.spacing_large))) {
                 Text(
                     text = stringResource(id = R.string.gender),
                     color = colorResource(id = R.color.black),
                     fontWeight = FontWeight.Bold
                 )
             }
-            Column(modifier = modifier.padding(end = 10.dp)) {
+            Column(modifier = modifier.padding(end = dimensionResource(id = R.dimen.spacing_medium))) {
                 basicUserInfo.value?.gender?.let { Text(text = it, color = colorResource(id = R.color.black)) }
             }
         }
         Row(horizontalArrangement = Arrangement.SpaceEvenly) {
-            Column(modifier = modifier.padding(end = 20.dp)) {
+            Column(modifier = modifier.padding(end = dimensionResource(id = R.dimen.spacing_large))) {
                 Text(
                     text = stringResource(id = R.string.updated_at),
                     color = colorResource(id = R.color.black),
                     fontWeight = FontWeight.Bold
                 )
             }
-            Column(modifier = modifier.padding(end = 10.dp)) {
+            Column(modifier = modifier.padding(end = dimensionResource(id = R.dimen.spacing_medium))) {
                 basicUserInfo.value?.updatedAt?.let {
                     Text(
                         text = it,
@@ -113,26 +113,26 @@ fun BasicUserInfoComponent(
             }
         }
         Row(horizontalArrangement = Arrangement.SpaceEvenly) {
-            Column(modifier = modifier.padding(end = 20.dp)) {
+            Column(modifier = modifier.padding(end = dimensionResource(id = R.dimen.spacing_large))) {
                 Text(
                     text = stringResource(id = R.string.locale),
                     color = colorResource(id = R.color.black),
                     fontWeight = FontWeight.Bold
                 )
             }
-            Column(modifier = modifier.padding(end = 10.dp)) {
+            Column(modifier = modifier.padding(end = dimensionResource(id = R.dimen.spacing_medium))) {
                 basicUserInfo.value?.locale?.let { Text(text = it, color = colorResource(id = R.color.black)) }
             }
         }
         Row(horizontalArrangement = Arrangement.SpaceEvenly) {
-            Column(modifier = modifier.padding(end = 20.dp)) {
+            Column(modifier = modifier.padding(end = dimensionResource(id = R.dimen.spacing_large))) {
                 Text(
                     text = stringResource(id = R.string.sub),
                     color = colorResource(id = R.color.black),
                     fontWeight = FontWeight.Bold
                 )
             }
-            Column(modifier = modifier.padding(end = 10.dp)) {
+            Column(modifier = modifier.padding(end = dimensionResource(id = R.dimen.spacing_medium))) {
                 basicUserInfo.value?.sub?.let { Text(text = it, color = colorResource(id = R.color.black)) }
             }
         }

@@ -28,10 +28,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.rekast.sdk.sample.R
 import io.rekast.sdk.sample.utils.annotation.PreviewWithBackgroundExcludeGenerated
@@ -50,7 +50,7 @@ fun SplashScreen(
     }
 
     Column(
-        modifier = modifier.fillMaxSize().size(20.dp),
+        modifier = modifier.fillMaxSize().size(dimensionResource(id = R.dimen.spacing_large)),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -58,9 +58,9 @@ fun SplashScreen(
             text = stringResource(R.string.app_name),
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
-            fontSize = 40.sp,
+            fontSize = dimensionResource(id = R.dimen.font_size_xlarge),
             modifier = modifier
-                .padding(vertical = 20.dp, horizontal = 20.dp)
+                .padding(all = dimensionResource(id = R.dimen.spacing_large))
                 .align(Alignment.CenterHorizontally)
         )
     }

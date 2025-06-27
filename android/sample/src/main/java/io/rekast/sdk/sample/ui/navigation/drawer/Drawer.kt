@@ -34,11 +34,11 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -65,21 +65,21 @@ fun Drawer(scope: CoroutineScope, scaffoldState: ScaffoldState, navController: N
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(70.dp)
-                .padding(start = 10.dp, end = 10.dp)
+                .height(dimensionResource(id = R.dimen.drawer_header_height))
+                .padding(start = dimensionResource(id = R.dimen.spacing_medium), end = dimensionResource(id = R.dimen.spacing_medium))
         ) {
             Column() {
-                Spacer(modifier = Modifier.width(7.dp))
+                Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.spacing_extra_small)))
                 Row {
                     Text(
                         text = stringResource(id = R.string.app_title),
-                        fontSize = 18.sp,
+                        fontSize = dimensionResource(id = R.dimen.font_size_medium),
                         fontWeight = FontWeight.SemiBold,
                         color = Color.White
                     )
                 }
-                HorizontalDivider(modifier = Modifier.padding(top = 10.dp))
-                Spacer(modifier = Modifier.width(7.dp))
+                HorizontalDivider(modifier = Modifier.padding(top = dimensionResource(id = R.dimen.spacing_medium)))
+                Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.spacing_extra_small)))
             }
         }
         items.forEach { item ->
@@ -97,7 +97,7 @@ fun Drawer(scope: CoroutineScope, scaffoldState: ScaffoldState, navController: N
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Normal,
             modifier = Modifier
-                .padding(12.dp)
+                .padding(dimensionResource(id = R.dimen.padding_large))
                 .align(Alignment.CenterHorizontally)
         )
     }
