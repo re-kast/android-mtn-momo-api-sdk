@@ -27,13 +27,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.MutableLiveData
 import io.rekast.sdk.model.BasicUserInfo
 import io.rekast.sdk.sample.R
+import io.rekast.sdk.sample.ui.components.general.SectionHeader
 
 @Composable
 fun BasicUserInfoComponent(
@@ -43,17 +42,7 @@ fun BasicUserInfoComponent(
     Column(
         modifier = modifier.fillMaxWidth()
     ) {
-        Column(modifier = modifier.padding(end = dimensionResource(id = R.dimen.spacing_large))) {
-            Text(
-                text = stringResource(id = R.string.basic_user_info_title),
-                style = TextStyle(
-                    fontSize = dimensionResource(id = R.dimen.font_size_medium)
-                ),
-                color = colorResource(id = R.color.black),
-                fontWeight = FontWeight.Bold
-            )
-            Divider(modifier = modifier.padding(top = dimensionResource(id = R.dimen.spacing_medium), bottom = dimensionResource(id = R.dimen.spacing_medium)))
-        }
+        SectionHeader(titleResId = R.string.basic_user_info_title)
         Row(horizontalArrangement = Arrangement.SpaceEvenly) {
             Column(modifier = modifier.padding(end = dimensionResource(id = R.dimen.spacing_large))) {
                 Text(

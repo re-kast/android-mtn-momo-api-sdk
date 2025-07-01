@@ -101,6 +101,12 @@ class DefaultRepository @Inject constructor(
         return accessTokenCredentialsT
     }
 
+    private fun <T> executeApiCall(apiCall: suspend () -> Response<T>): Flow<NetworkResult<T>> {
+        return flow<NetworkResult<T>> {
+            emit(safeApiCall { apiCall() })
+        }.flowOn(Dispatchers.IO)
+    }
+
     /**
      * Creates a new API user.
      *
@@ -116,9 +122,7 @@ class DefaultRepository @Inject constructor(
         uuid: String,
         productSubscriptionKey: String
     ): Flow<NetworkResult<ApiUser>> {
-        return flow<NetworkResult<ApiUser>> {
-            emit(safeApiCall { defaultSource.createApiUser(providerCallBackHost = providerCallBackHost, apiVersion = apiVersion, uuid = uuid, productSubscriptionKey = productSubscriptionKey) })
-        }.flowOn(Dispatchers.IO)
+        return executeApiCall { defaultSource.createApiUser(providerCallBackHost = providerCallBackHost, apiVersion = apiVersion, uuid = uuid, productSubscriptionKey = productSubscriptionKey) }
     }
 
     /**
@@ -132,9 +136,7 @@ class DefaultRepository @Inject constructor(
         apiVersion: String,
         productSubscriptionKey: String
     ): Flow<NetworkResult<ApiUser>> {
-        return flow<NetworkResult<ApiUser>> {
-            emit(safeApiCall { defaultSource.getApiUser(apiVersion, userId = BuildConfig.MOMO_API_USER_ID, productSubscriptionKey = productSubscriptionKey) })
-        }.flowOn(Dispatchers.IO)
+        return executeApiCall { defaultSource.getApiUser(apiVersion, userId = BuildConfig.MOMO_API_USER_ID, productSubscriptionKey = productSubscriptionKey) }
     }
 
     /**
@@ -148,9 +150,7 @@ class DefaultRepository @Inject constructor(
         apiVersion: String,
         productSubscriptionKey: String
     ): Flow<NetworkResult<ApiKey>> {
-        return flow<NetworkResult<ApiKey>> {
-            emit(safeApiCall { defaultSource.createApiKey(apiVersion = apiVersion, userId = BuildConfig.MOMO_API_USER_ID, productSubscriptionKey = productSubscriptionKey) })
-        }.flowOn(Dispatchers.IO)
+        return executeApiCall { defaultSource.createApiKey(apiVersion = apiVersion, userId = BuildConfig.MOMO_API_USER_ID, productSubscriptionKey = productSubscriptionKey) }
     }
 
     /**
@@ -164,9 +164,7 @@ class DefaultRepository @Inject constructor(
         productSubscriptionKey: String,
         productType: String
     ): Flow<NetworkResult<AccessToken>> {
-        return flow<NetworkResult<AccessToken>> {
-            emit(safeApiCall { defaultSource.getAccessToken(productType = productType, productSubscriptionKey = productSubscriptionKey) })
-        }.flowOn(Dispatchers.IO)
+        return executeApiCall { defaultSource.getAccessToken(productType = productType, productSubscriptionKey = productSubscriptionKey) }
     }
 
     /**
@@ -181,9 +179,7 @@ class DefaultRepository @Inject constructor(
         productSubscriptionKey: String,
         environment: String
     ): Flow<NetworkResult<Oauth2AccessToken>> {
-        return flow<NetworkResult<Oauth2AccessToken>> {
-            emit(safeApiCall { defaultSource.getOauth2AccessToken(productType = productType, productSubscriptionKey = productSubscriptionKey, environment = environment) })
-        }.flowOn(Dispatchers.IO)
+        return executeApiCall { defaultSource.getOauth2AccessToken(productType = productType, productSubscriptionKey = productSubscriptionKey, environment = environment) }
     }
 
     /**
@@ -203,9 +199,7 @@ class DefaultRepository @Inject constructor(
         productSubscriptionKey: String,
         environment: String
     ): Flow<NetworkResult<BasicUserInfo>> {
-        return flow<NetworkResult<BasicUserInfo>> {
-            emit(safeApiCall { defaultSource.getBasicUserInfo(productType = productType, apiVersion = apiVersion, accountHolder = accountHolder, productSubscriptionKey = productSubscriptionKey, environment = environment) })
-        }.flowOn(Dispatchers.IO)
+        return executeApiCall { defaultSource.getBasicUserInfo(productType = productType, apiVersion = apiVersion, accountHolder = accountHolder, productSubscriptionKey = productSubscriptionKey, environment = environment) }
     }
 
     /**
@@ -223,9 +217,7 @@ class DefaultRepository @Inject constructor(
         productSubscriptionKey: String,
         environment: String
     ): Flow<NetworkResult<UserInfoWithConsent>> {
-        return flow<NetworkResult<UserInfoWithConsent>> {
-            emit(safeApiCall { defaultSource.getUserInfoWithConsent(productType = productType, apiVersion = apiVersion, productSubscriptionKey = productSubscriptionKey, environment = environment) })
-        }.flowOn(Dispatchers.IO)
+        return executeApiCall { defaultSource.getUserInfoWithConsent(productType = productType, apiVersion = apiVersion, productSubscriptionKey = productSubscriptionKey, environment = environment) }
     }
 
     /**
@@ -245,9 +237,7 @@ class DefaultRepository @Inject constructor(
         productSubscriptionKey: String,
         environment: String
     ): Flow<NetworkResult<ResponseBody>> {
-        return flow<NetworkResult<ResponseBody>> {
-            emit(safeApiCall { defaultSource.validateAccountHolderStatus(productType, apiVersion = apiVersion, accountHolder = accountHolder, productSubscriptionKey = productSubscriptionKey, environment = environment) })
-        }.flowOn(Dispatchers.IO)
+        return executeApiCall { defaultSource.validateAccountHolderStatus(productType, apiVersion = apiVersion, accountHolder = accountHolder, productSubscriptionKey = productSubscriptionKey, environment = environment) }
     }
 
     /**
@@ -268,23 +258,19 @@ class DefaultRepository @Inject constructor(
         productSubscriptionKey: String,
         environment: String
     ): Flow<NetworkResult<AccountBalance>> {
-        return flow<NetworkResult<AccountBalance>> {
-            emit(
-                safeApiCall {
-                    if (StringUtils.isNotBlank(currency)) {
-                        defaultSource.getAccountBalanceInSpecificCurrency(
-                            productType = productType,
-                            apiVersion = apiVersion,
-                            currency = currency.toString(),
-                            productSubscriptionKey = productSubscriptionKey,
-                            environment = environment
-                        )
-                    } else {
-                        defaultSource.getAccountBalance(productType = productType, apiVersion = apiVersion, productSubscriptionKey = productSubscriptionKey, environment = environment)
-                    }
-                }
-            )
-        }.flowOn(Dispatchers.IO)
+        return executeApiCall {
+            if (StringUtils.isNotBlank(currency)) {
+                defaultSource.getAccountBalanceInSpecificCurrency(
+                    productType = productType,
+                    apiVersion = apiVersion,
+                    currency = currency.toString(),
+                    productSubscriptionKey = productSubscriptionKey,
+                    environment = environment
+                )
+            } else {
+                defaultSource.getAccountBalance(productType = productType, apiVersion = apiVersion, productSubscriptionKey = productSubscriptionKey, environment = environment)
+            }
+        }
     }
 
     /**
@@ -306,13 +292,9 @@ class DefaultRepository @Inject constructor(
         productSubscriptionKey: String,
         environment: String
     ): Flow<NetworkResult<Unit>> {
-        return flow<NetworkResult<Unit>> {
-            emit(
-                safeApiCall {
-                    defaultSource.transfer(productType = productType, apiVersion = apiVersion, momoTransaction = momoTransaction, uuid = uuid, productSubscriptionKey = productSubscriptionKey, environment = environment)
-                }
-            )
-        }.flowOn(Dispatchers.IO)
+        return executeApiCall {
+            defaultSource.transfer(productType = productType, apiVersion = apiVersion, momoTransaction = momoTransaction, uuid = uuid, productSubscriptionKey = productSubscriptionKey, environment = environment)
+        }
     }
 
     /**
@@ -332,13 +314,9 @@ class DefaultRepository @Inject constructor(
         productSubscriptionKey: String,
         environment: String
     ): Flow<NetworkResult<ResponseBody>> {
-        return flow<NetworkResult<ResponseBody>> {
-            emit(
-                safeApiCall {
-                    defaultSource.getTransferStatus(productType = productType, apiVersion = apiVersion, referenceId = referenceId, productSubscriptionKey = productSubscriptionKey, environment = environment)
-                }
-            )
-        }.flowOn(Dispatchers.IO)
+        return executeApiCall {
+            defaultSource.getTransferStatus(productType = productType, apiVersion = apiVersion, referenceId = referenceId, productSubscriptionKey = productSubscriptionKey, environment = environment)
+        }
     }
 
     /**
@@ -360,20 +338,16 @@ class DefaultRepository @Inject constructor(
         productSubscriptionKey: String,
         environment: String
     ): Flow<NetworkResult<ResponseBody>> {
-        return flow<NetworkResult<ResponseBody>> {
-            emit(
-                safeApiCall {
-                    defaultSource.requestToPayDeliveryNotification(
-                        productType = productType,
-                        apiVersion = apiVersion,
-                        referenceId = referenceId,
-                        momoNotification = momoNotification,
-                        productSubscriptionKey = productSubscriptionKey,
-                        environment = environment
-                    )
-                }
+        return executeApiCall {
+            defaultSource.requestToPayDeliveryNotification(
+                productType = productType,
+                apiVersion = apiVersion,
+                referenceId = referenceId,
+                momoNotification = momoNotification,
+                productSubscriptionKey = productSubscriptionKey,
+                environment = environment
             )
-        }.flowOn(Dispatchers.IO)
+        }
     }
 
     /**

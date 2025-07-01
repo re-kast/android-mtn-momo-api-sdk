@@ -65,7 +65,7 @@ fun PaymentDataScreenComponent(
     onPayerMessageUpdated: (String) -> Unit,
     onPayerNoteUpdated: (String) -> Unit
 ) {
-    val bringIntoViewRequester = BringIntoViewRequester()
+    val bringIntoViewRequester = remember { BringIntoViewRequester() }
 
     val phoneNumberFocusRequester = remember { FocusRequester() }
     val financialIdFocusRequester = remember { FocusRequester() }
