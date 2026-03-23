@@ -37,9 +37,9 @@ fun SectionHeader(
     modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = modifier // Apply the passed modifier here
-            .fillMaxWidth() // Ensure it still fills width by default if not overridden
-            .padding(end = dimensionResource(id = R.dimen.spacing_large)) // Original end padding
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(end = dimensionResource(id = R.dimen.spacing_large))
     ) {
         Text(
             text = stringResource(id = titleResId),
@@ -51,7 +51,7 @@ fun SectionHeader(
         )
         Divider(
             modifier = Modifier
-                .fillMaxWidth() // Ensure divider spans the width of its column
+                .fillMaxWidth()
                 .padding(
                     top = dimensionResource(id = R.dimen.spacing_medium),
                     bottom = dimensionResource(id = R.dimen.spacing_medium)

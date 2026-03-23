@@ -15,40 +15,117 @@
  */
 package io.rekast.sdk.utils
 
-import io.rekast.sdk.BuildConfig
-import org.junit.Assert
-import org.junit.Ignore
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotEquals
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
+import org.junit.Before
 import org.junit.Test
 
-/**
- * Example local unit test, which will execute on the development machine (host).
- *
- * See [testing documentation](http://d.android.com/tools/testing).
- */
 class SettingsTest {
+
+    private lateinit var settings: Settings
+
+    @Before
+    fun setUp() {
+        settings = Settings()
+    }
+
     @Test
     fun addition_isCorrect() {
-        Assert.assertEquals(4, 2 + 2)
+        assertEquals(4, 2 + 2)
     }
 
-    @Ignore
     @Test
-    fun getProductSubscriptionKeysForRemittance() {
-        val productType = Settings().getProductSubscriptionKeys(ProductType.REMITTANCE)
-        Assert.assertEquals(productType, BuildConfig.MOMO_REMITTANCE_PRIMARY_KEY)
+    fun `generateUUID returns a non-empty string`() {
+        assertTrue(settings.generateUUID().isNotEmpty())
     }
 
-    @Ignore
     @Test
-    fun getProductSubscriptionKeysForDisbursements() {
-        val productType = Settings().getProductSubscriptionKeys(ProductType.DISBURSEMENTS)
-        Assert.assertEquals(productType, BuildConfig.MOMO_DISBURSEMENTS_PRIMARY_KEY)
+    fun `generateUUID returns unique values on each call`() {
+        assertNotEquals(settings.generateUUID(), settings.generateUUID())
     }
 
-    @Ignore
     @Test
-    fun getProductSubscriptionKeysForCollection() {
-        val productType = Settings().getProductSubscriptionKeys(ProductType.COLLECTION)
-        Assert.assertEquals(productType, BuildConfig.MOMO_COLLECTION_PRIMARY_KEY)
+    fun `generateUUID returns a string in UUID format`() {
+        val uuid = settings.generateUUID()
+        val uuidRegex = Regex("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
+        assertTrue(uuidRegex.matches(uuid))
+    }
+
+    @Test
+    fun `CONNECT_TIMEOUT is 60 seconds in milliseconds`() {
+        assertEquals(60_000L, settings.CONNECT_TIMEOUT)
+    }
+
+    @Test
+    fun `READ_TIMEOUT is 60 seconds in milliseconds`() {
+        assertEquals(60_000L, settings.READ_TIMEOUT)
+    }
+
+    @Test
+    fun `WRITE_TIMEOUT is 60 seconds in milliseconds`() {
+        assertEquals(60_000L, settings.WRITE_TIMEOUT)
+    }
+
+    @Test
+    fun `formatPhoneNumber returns null for blank input`() {
+        assertNull(settings.formatPhoneNumber("", "256"))
+        assertNull(settings.formatPhoneNumber("   ", "256"))
+    }
+
+    @Test
+    fun `formatPhoneNumber replaces leading zero with country code for short numbers`() {
+        val result = settings.formatPhoneNumber("0733123456", "256")
+        assertEquals("256733123456", result)
+    }
+
+    @Test
+    fun `formatPhoneNumber returns number unchanged when already 13 digits without plus`() {
+        val result = settings.formatPhoneNumber("256733123456789", "256")
+        assertEquals("256733123456789", result)
+    }
+
+    @Test
+    fun `formatPhoneNumber strips leading plus from 13-digit number`() {
+        val result = settings.formatPhoneNumber("+256733123456", "256")
+        assertEquals("256733123456", result)
+    }
+
+    @Test
+    fun `formatPhoneNumber returns number unchanged when no leading zero and not 13 digits`() {
+        val result = settings.formatPhoneNumber("256733123456", "256")
+        assertEquals("256733123456", result)
+    }
+
+    @Test
+    fun `checkNotificationMessageLength returns false for blank message`() {
+        assertFalse(settings.checkNotificationMessageLength(null))
+        assertFalse(settings.checkNotificationMessageLength(""))
+        assertFalse(settings.checkNotificationMessageLength("   "))
+    }
+
+    @Test
+    fun `checkNotificationMessageLength returns true for message within limit`() {
+        assertTrue(settings.checkNotificationMessageLength("Hello world"))
+    }
+
+    @Test
+    fun `checkNotificationMessageLength returns true for message exactly at limit`() {
+        val maxMessage = "a".repeat(MomoConstants.NOTIFICATION_MESSAGE_LENGTH.toInt())
+        assertTrue(settings.checkNotificationMessageLength(maxMessage))
+    }
+
+    @Test
+    fun `checkNotificationMessageLength returns false for message exceeding limit`() {
+        val longMessage = "a".repeat(MomoConstants.NOTIFICATION_MESSAGE_LENGTH.toInt() + 1)
+        assertFalse(settings.checkNotificationMessageLength(longMessage))
+    }
+
+    @Test
+    fun `checkNotificationMessageLength respects custom max length`() {
+        assertTrue(settings.checkNotificationMessageLength("Hello", 10L))
+        assertFalse(settings.checkNotificationMessageLength("Hello World", 5L))
     }
 }

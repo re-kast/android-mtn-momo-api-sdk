@@ -164,7 +164,7 @@ fun PaymentDataScreenComponent(
                 .fillMaxWidth()
                 .padding(vertical = dimensionResource(id = R.dimen.spacing_medium))
                 .background(color = Color.Unspecified)
-                .focusRequester(financialIdFocusRequester),
+                .focusRequester(amountFocusRequester),
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next, keyboardType = KeyboardType.Number),
             keyboardActions = KeyboardActions(onDone = { payerMessageFocusRequester.requestFocus() })
         )
@@ -189,7 +189,7 @@ fun PaymentDataScreenComponent(
                 .fillMaxWidth()
                 .padding(vertical = dimensionResource(id = R.dimen.spacing_medium))
                 .background(color = Color.Unspecified)
-                .focusRequester(financialIdFocusRequester),
+                .focusRequester(payerMessageFocusRequester),
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
             keyboardActions = KeyboardActions(onDone = { payerNoteFocusRequester.requestFocus() })
         )
@@ -215,7 +215,7 @@ fun PaymentDataScreenComponent(
                 .height(dimensionResource(id = R.dimen.textfield_height_multiline))
                 .padding(vertical = dimensionResource(id = R.dimen.spacing_medium))
                 .background(color = Color.Unspecified)
-                .focusRequester(financialIdFocusRequester),
+                .focusRequester(payerNoteFocusRequester),
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done)
         )
         Divider(

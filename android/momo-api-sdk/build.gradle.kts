@@ -1,7 +1,6 @@
 import org.jetbrains.dokka.base.DokkaBase
 import org.jetbrains.dokka.base.DokkaBaseConfiguration
 
-
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.dagger.hilt.android)
@@ -13,17 +12,18 @@ plugins {
     id("signing")
 }
 
+secrets {
+    ignoreList.add("sdk.*")
+}
+
 android {
+    namespace = "io.rekast.sdk"
     compileSdk = 36
 
     buildFeatures {
         dataBinding = true
         viewBinding = true
         buildConfig = true
-    }
-
-    secrets {
-        ignoreList.add("sdk.*")
     }
 
     defaultConfig {
@@ -44,16 +44,6 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-
-    buildTypes {
-        debug {
-            // Debug-specific configurations
-        }
-        release {
-            // Release-specific configurations
-        }
-    }
-    namespace = "io.rekast.sdk"
 }
 
 kotlin {
@@ -76,8 +66,6 @@ dependencies {
     implementation(libs.androidx.navigation.ui)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.jakewharton.timber)
-    implementation(libs.dokka.base)
-
     implementation(libs.kotlinx.coroutines)
     implementation(libs.retrofit.coroutines)
 
@@ -90,7 +78,6 @@ dependencies {
     debugImplementation(libs.chuckerteam.chucker)
     releaseImplementation(libs.chuckerteam.chucker.noop)
 
-    // debug
     testImplementation(libs.mockk.core)
     testImplementation(libs.mockk.inline)
     testImplementation(libs.mockk.kotlin)

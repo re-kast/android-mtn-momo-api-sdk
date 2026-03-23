@@ -20,14 +20,9 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.fragment.app.FragmentContainerView
-import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.NavHostFragment
 import dagger.hilt.android.AndroidEntryPoint
 import io.rekast.sdk.sample.R
-import io.rekast.sdk.sample.utils.DefaultDispatcherProvider
-import javax.inject.Inject
-import kotlin.getValue
-import kotlinx.coroutines.launch
 
 /**
  * Main activity for the MTN MOMO SDK sample application.
@@ -37,8 +32,6 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 @ExperimentalMaterialApi
 open class AppMainActivity : AppCompatActivity() {
-    @Inject
-    lateinit var dispatcherProvider: DefaultDispatcherProvider
     lateinit var navHostFragment: NavHostFragment
     private val appMainViewModel by viewModels<AppMainViewModel>()
 
@@ -69,6 +62,6 @@ open class AppMainActivity : AppCompatActivity() {
      */
     override fun onResume() {
         super.onResume()
-        appMainViewModel.viewModelScope.launch(dispatcherProvider.io()) { appMainViewModel.checkUser() }
+        appMainViewModel.checkUser()
     }
 }

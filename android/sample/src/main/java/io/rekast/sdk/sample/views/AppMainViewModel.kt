@@ -25,15 +25,11 @@ import io.rekast.sdk.model.ProviderCallBackHost
 import io.rekast.sdk.model.authentication.credentials.BasicAuthCredentials
 import io.rekast.sdk.repository.DefaultRepository
 import io.rekast.sdk.repository.data.NetworkResult
-import io.rekast.sdk.sample.utils.SnackBarComponentConfiguration
 import io.rekast.sdk.sample.utils.Utils
 import io.rekast.sdk.utils.ProductType
 import io.rekast.sdk.utils.Settings
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import org.apache.commons.lang3.StringUtils
 import timber.log.Timber
@@ -53,9 +49,6 @@ open class AppMainViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val settings: Settings
 ) : ViewModel() {
-
-    private val _snackBarStateFlow = MutableSharedFlow<SnackBarComponentConfiguration>()
-    open val snackBarStateFlow: SharedFlow<SnackBarComponentConfiguration> = _snackBarStateFlow.asSharedFlow()
 
     /**
      * Sets the Basic Authentication credentials.
@@ -106,17 +99,17 @@ open class AppMainViewModel @Inject constructor(
     private fun createApiKey() {
         val productType = Utils.getProductSubscriptionKeys(ProductType.REMITTANCE)
         viewModelScope.launch(Dispatchers.IO) {
-            val apiUserKey = this@AppMainViewModel.context.let { Utils.getApiKey(it) }
+            val apiUserKey = Utils.getApiKey(context)
             if (StringUtils.isNotBlank(apiUserKey)) {
-                this@AppMainViewModel.setBasicAuth(apiUserId = BuildConfig.MOMO_API_USER_ID, apiKey = apiUserKey.toString())
+                setBasicAuth(apiUserId = BuildConfig.MOMO_API_USER_ID, apiKey = apiUserKey)
                 getAccessToken()
             } else {
                 defaultRepository.createApiKey(apiVersion = BuildConfig.MOMO_API_VERSION_V1, productSubscriptionKey = productType).collect { apiKey ->
                     when (apiKey) {
                         is NetworkResult.Success -> {
                             try {
-                                context.let { Utils.saveApiKey(context = it, apiKey = apiKey.response?.apiKey.toString()) }
-                                this@AppMainViewModel.setBasicAuth(apiUserId = BuildConfig.MOMO_API_USER_ID, apiKey = apiUserKey.toString())
+                                Utils.saveApiKey(context = context, apiKey = apiKey.response?.apiKey.orEmpty())
+                                setBasicAuth(apiUserId = BuildConfig.MOMO_API_USER_ID, apiKey = apiUserKey)
                                 Timber.d("Api Key fetched and saved successfully")
                                 getAccessToken()
                             } catch (exception: Exception) {
@@ -145,27 +138,23 @@ open class AppMainViewModel @Inject constructor(
             val accessToken = context.let { Utils.getAccessToken(it) }
 
             if (StringUtils.isNotBlank(apiUserKey) && StringUtils.isBlank(accessToken)) {
-                apiUserKey.let { apiKey ->
-                    defaultRepository.getAccessToken(productSubscriptionKey = productType, productType = ProductType.REMITTANCE.productType).collect { accessToken ->
-                        when (accessToken) {
-                            is NetworkResult.Success -> {
-                                try {
-                                    context.let { activityContext ->
-                                        Utils.saveAccessToken(activityContext, accessToken.response)
-                                    }
-                                    this@AppMainViewModel.setBasicAuth("", "")
-                                    Timber.d("Access token created and saved successfully")
-                                    getOauthAccessToken()
-                                } catch (exception: Exception) {
-                                    Timber.e("An Error occurred %s", exception.message)
-                                }
+                defaultRepository.getAccessToken(productSubscriptionKey = productType, productType = ProductType.REMITTANCE.productType).collect { accessToken ->
+                    when (accessToken) {
+                        is NetworkResult.Success -> {
+                            try {
+                                Utils.saveAccessToken(context, accessToken.response)
+                                this@AppMainViewModel.setBasicAuth("", "")
+                                Timber.d("Access token created and saved successfully")
+                                getOauthAccessToken()
+                            } catch (exception: Exception) {
+                                Timber.e("An Error occurred %s", exception.message)
                             }
-                            is NetworkResult.Error -> {
-                                Timber.e("Access token creation failed %s", accessToken.message)
-                            }
-                            else -> {
-                                Timber.e("Access token creation failed")
-                            }
+                        }
+                        is NetworkResult.Error -> {
+                            Timber.e("Access token creation failed %s", accessToken.message)
+                        }
+                        else -> {
+                            Timber.e("Access token creation failed")
                         }
                     }
                 }
@@ -185,36 +174,32 @@ open class AppMainViewModel @Inject constructor(
     private fun getOauthAccessToken() {
         val productType = Utils.getProductSubscriptionKeys(productType = ProductType.COLLECTION)
         viewModelScope.launch(Dispatchers.IO) {
-            val userAccessToken = context.let { Utils.getAccessToken(it) }
-            val userOauthAccessToken = context.let { Utils.getOauthAccessToken(it) }
+            val userAccessToken = Utils.getAccessToken(context)
+            val userOauthAccessToken = Utils.getOauthAccessToken(context)
 
             if (StringUtils.isNotBlank(userAccessToken) && StringUtils.isBlank(userOauthAccessToken)) {
-                userAccessToken.let { accessToken ->
-                    defaultRepository.getOauthAccessToken(productType = ProductType.COLLECTION.productType, productSubscriptionKey = productType, environment = BuildConfig.MOMO_ENVIRONMENT).collect { oauthAccessToken ->
-                        when (oauthAccessToken) {
-                            is NetworkResult.Success -> {
-                                try {
-                                    context.let { activityContext ->
-                                        Utils.saveOauth2AccessToken(activityContext, oauthAccessToken.response)
-                                    }
-                                    Timber.d(" Oauth2 Access token created and saved successfully")
-                                } catch (exception: Exception) {
-                                    Timber.e("An Error occurred %s", exception.message)
-                                }
+                defaultRepository.getOauthAccessToken(productType = ProductType.COLLECTION.productType, productSubscriptionKey = productType, environment = BuildConfig.MOMO_ENVIRONMENT).collect { oauthAccessToken ->
+                    when (oauthAccessToken) {
+                        is NetworkResult.Success -> {
+                            try {
+                                Utils.saveOauth2AccessToken(context, oauthAccessToken.response)
+                                Timber.d("Oauth2 Access token created and saved successfully")
+                            } catch (exception: Exception) {
+                                Timber.e("An Error occurred %s", exception.message)
                             }
+                        }
 
-                            is NetworkResult.Error -> {
-                                Timber.e("Oauth2 Access token creation failed %s", oauthAccessToken.message)
-                            }
+                        is NetworkResult.Error -> {
+                            Timber.e("Oauth2 Access token creation failed %s", oauthAccessToken.message)
+                        }
 
-                            else -> {
-                                Timber.e("Oauth2 Access token creation failed")
-                            }
+                        else -> {
+                            Timber.e("Oauth2 Access token creation failed")
                         }
                     }
                 }
             } else {
-                Timber.d("A valid  Oauth2 access token was found")
+                Timber.d("A valid Oauth2 access token was found")
             }
         }
     }
@@ -326,12 +311,4 @@ open class AppMainViewModel @Inject constructor(
         )
     }*/
 
-    /**
-     * Emits the state of the SnackBar component.
-     *
-     * @param snackBarComponentConfiguration The configuration for the SnackBar component.
-     */
-    private fun emitSnackBarState(snackBarComponentConfiguration: SnackBarComponentConfiguration) {
-        viewModelScope.launch { _snackBarStateFlow.emit(snackBarComponentConfiguration) }
-    }
 }

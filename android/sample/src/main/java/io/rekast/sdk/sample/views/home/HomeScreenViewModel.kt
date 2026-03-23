@@ -136,7 +136,7 @@ class HomeScreenViewModel @Inject constructor(
                             )
                         }
 
-                        is NetworkResult.Loading -> TODO()
+                        else -> { Timber.e("An error occurred!!") }
                     }
                 }
             }

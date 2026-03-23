@@ -68,7 +68,7 @@ fun Drawer(scope: CoroutineScope, scaffoldState: ScaffoldState, navController: N
                 .height(dimensionResource(id = R.dimen.drawer_header_height))
                 .padding(start = dimensionResource(id = R.dimen.spacing_medium), end = dimensionResource(id = R.dimen.spacing_medium))
         ) {
-            Column() {
+            Column {
                 Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.spacing_extra_small)))
                 Row {
                     Text(

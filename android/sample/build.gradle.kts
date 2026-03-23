@@ -1,4 +1,3 @@
-import org.gradle.kotlin.dsl.android
 import org.jetbrains.dokka.base.DokkaBase
 import org.jetbrains.dokka.base.DokkaBaseConfiguration
 
@@ -8,11 +7,14 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.dagger.hilt.android)
     alias(libs.plugins.compose.compiler)
-    id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin") version libs.versions.secrets.get()
-    id("com.diffplug.spotless") version libs.versions.spotless.get()
-    id("org.jetbrains.dokka") version libs.versions.dokka.get()
-    id("com.github.ben-manes.versions") version libs.versions.gradleVersionsPlugin.get()
-    // id("org.jetbrains.kotlin.jvm") version "2.1.0-Beta2" apply false
+    alias(libs.plugins.secrets)
+    alias(libs.plugins.spotless)
+    alias(libs.plugins.dokka)
+    alias(libs.plugins.versions)
+}
+
+secrets {
+    ignoreList.add("sdk.*")
 }
 
 android {
@@ -20,14 +22,8 @@ android {
     compileSdk = 36
 
     buildFeatures {
-        dataBinding = false
-        viewBinding = false
         compose = true
         buildConfig = true
-    }
-
-    secrets {
-        ignoreList.add("sdk.*")
     }
 
     defaultConfig {
@@ -53,10 +49,6 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
-    composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.kotlinCompiler.get()
-    }
-
     buildTypes {
         debug {
             isDebuggable = true
@@ -72,7 +64,7 @@ android {
 
 composeCompiler {
     reportsDestination = layout.buildDirectory.dir("compose_compiler")
-    stabilityConfigurationFile = rootProject.layout.projectDirectory.file("stability_config.conf")
+    stabilityConfigurationFiles.add(rootProject.layout.projectDirectory.file("stability_config.conf"))
 }
 
 kotlin {
@@ -112,15 +104,12 @@ dependencies {
     implementation(libs.androidx.compose.runtime.rxjava)
     implementation(libs.androidx.customview)
     implementation(libs.androidx.customview.poolingcontainer)
-    implementation(libs.kotlin.stdlib)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.compose.foundation)
 
     implementation(libs.google.dagger.hilt)
     implementation(libs.androidx.hilt.work)
     ksp(libs.hilt.android.compiler)
-
-    implementation(libs.dokka.base)
 
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.navigation.compose)

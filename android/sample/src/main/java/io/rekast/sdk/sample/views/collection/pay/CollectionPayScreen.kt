@@ -15,12 +15,19 @@
  */
 package io.rekast.sdk.sample.views.collection.pay
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.DrawerValue
+import androidx.compose.material.Scaffold
+import androidx.compose.material.rememberDrawerState
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.MutableLiveData
 import androidx.navigation.NavController
@@ -37,7 +44,6 @@ import io.rekast.sdk.sample.utils.SnackBarComponentConfiguration
 import io.rekast.sdk.sample.utils.SnackBarThemeOptions
 import io.rekast.sdk.sample.utils.annotation.PreviewWithBackgroundExcludeGenerated
 import io.rekast.sdk.sample.utils.hookSnackBar
-import kotlin.let
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -48,25 +54,25 @@ fun CollectionScreen(
     snackStateFlow: SharedFlow<SnackBarComponentConfiguration>,
     showProgressBar: Boolean = false,
     collectionPayScreenViewModel: CollectionPayScreenViewModel?,
-    momoTransaction: androidx.lifecycle.MutableLiveData<MomoTransaction?>
+    momoTransaction: MutableLiveData<MomoTransaction?>
 ) {
-    val scaffoldState = androidx.compose.material.rememberScaffoldState(androidx.compose.material.rememberDrawerState(DrawerValue.Closed))
-    val scope = androidx.compose.runtime.rememberCoroutineScope()
+    val scaffoldState = rememberScaffoldState(rememberDrawerState(DrawerValue.Closed))
+    val scope = rememberCoroutineScope()
     val snackBarTheme = SnackBarThemeOptions()
 
-    androidx.compose.runtime.LaunchedEffect(Unit) {
+    LaunchedEffect(Unit) {
         snackStateFlow.hookSnackBar(scaffoldState)
     }
 
-    androidx.compose.material.Scaffold(
+    Scaffold(
         scaffoldState = scaffoldState,
-        topBar = { TopBar(scope = scope, scaffoldState = scaffoldState, title = io.rekast.sdk.sample.R.string.collections_pay_screen) },
-        drawerBackgroundColor = androidx.compose.ui.res.colorResource(id = io.rekast.sdk.sample.R.color.accent_secondary),
+        topBar = { TopBar(scope = scope, scaffoldState = scaffoldState, title = R.string.collections_pay_screen) },
+        drawerBackgroundColor = colorResource(id = R.color.accent_secondary),
         drawerContent = {
             navController?.let { Drawer(scope = scope, scaffoldState = scaffoldState, navController = it) }
         },
         drawerGesturesEnabled = true,
-        backgroundColor = androidx.compose.ui.res.colorResource(id = io.rekast.sdk.sample.R.color.white),
+        backgroundColor = colorResource(id = R.color.white),
         snackbarHost = { snackBarHostState ->
             SnackBarComponent(
                 snackBarHostState = snackBarHostState,
@@ -76,7 +82,7 @@ fun CollectionScreen(
             )
         }
     ) { padding ->
-        androidx.compose.foundation.layout.Box(modifier = Modifier.padding(padding)) {
+        Box(modifier = Modifier.padding(padding)) {
             if (!showProgressBar) {
                 collectionPayScreenViewModel?.let {
                     val phoneNumber by collectionPayScreenViewModel.phoneNumber.observeAsState(Constants.EMPTY_STRING)

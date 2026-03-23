@@ -66,7 +66,7 @@ class Settings @Inject constructor() {
             return phoneNumber.replaceFirst("^0".toRegex(), countryCode)
         }
         return if (phoneNumber.length == 13 && phoneNumber.startsWith("+")) {
-            phoneNumber.replaceFirst("^+".toRegex(), "")
+            phoneNumber.replaceFirst("^\\+".toRegex(), "")
         } else {
             phoneNumber
         }
