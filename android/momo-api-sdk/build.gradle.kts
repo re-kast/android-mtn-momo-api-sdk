@@ -4,9 +4,8 @@ import org.jetbrains.dokka.base.DokkaBaseConfiguration
 
 plugins {
     alias(libs.plugins.android.library)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.dagger.hilt.android)
-    alias(libs.plugins.kotlin.kapt)
+    alias(libs.plugins.ksp)
     alias(libs.plugins.secrets)
     alias(libs.plugins.vanniktech.maven.publish)
     alias(libs.plugins.kotlin.serialization)
@@ -15,7 +14,7 @@ plugins {
 }
 
 android {
-    compileSdk = 35
+    compileSdk = 36
 
     buildFeatures {
         dataBinding = true
@@ -25,10 +24,6 @@ android {
 
     secrets {
         ignoreList.add("sdk.*")
-    }
-
-    kapt {
-        correctErrorTypes = true
     }
 
     defaultConfig {
@@ -50,10 +45,6 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
-    kotlinOptions {
-        jvmTarget = "17"
-    }
-
     buildTypes {
         debug {
             // Debug-specific configurations
@@ -63,6 +54,10 @@ android {
         }
     }
     namespace = "io.rekast.sdk"
+}
+
+kotlin {
+    jvmToolchain(17)
 }
 
 dependencies {
@@ -90,7 +85,7 @@ dependencies {
     implementation(libs.androidx.hilt.work)
     androidTestImplementation(libs.androidx.monitor)
     androidTestImplementation(libs.androidx.test.runner)
-    kapt(libs.hilt.android.compiler)
+    ksp(libs.hilt.android.compiler)
 
     debugImplementation(libs.chuckerteam.chucker)
     releaseImplementation(libs.chuckerteam.chucker.noop)
@@ -104,7 +99,7 @@ dependencies {
 }
 
 tasks.named<org.jetbrains.dokka.gradle.DokkaTaskPartial>("dokkaHtmlPartial") {
-    dependsOn("kaptDebugKotlin", "kaptReleaseKotlin")
+    dependsOn("kspDebugKotlin", "kspReleaseKotlin")
     pluginConfiguration<DokkaBase, DokkaBaseConfiguration> {
         customAssets = listOf(layout.projectDirectory.file("assets/logo-icon.svg").asFile)
         customStyleSheets = listOf((layout.projectDirectory.file("assets/rekast.css").asFile))

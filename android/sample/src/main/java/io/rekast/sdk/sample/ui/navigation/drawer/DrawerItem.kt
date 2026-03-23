@@ -32,10 +32,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.sp
 import io.rekast.sdk.sample.R
 import io.rekast.sdk.sample.ui.navigation.navigation.NavigationDrawerItem
 
@@ -65,7 +65,7 @@ fun DrawerItem(item: NavigationDrawerItem, selected: Boolean, onItemClick: (Navi
             Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.spacing_extra_small)))
             Text(
                 text = item.title,
-                fontSize = dimensionResource(id = R.dimen.font_size_medium),
+                fontSize = with(LocalDensity.current) { dimensionResource(id = R.dimen.font_size_medium).toSp() },
                 color = Color.White
             )
         }

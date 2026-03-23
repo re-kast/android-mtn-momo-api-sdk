@@ -40,11 +40,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.unit.sp
 import io.rekast.sdk.sample.R
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -82,7 +82,7 @@ fun PaymentDataScreenComponent(
             Text(
                 text = title,
                 style = TextStyle(
-                    fontSize = dimensionResource(id = R.dimen.font_size_medium)
+                    fontSize = with(LocalDensity.current) { dimensionResource(id = R.dimen.font_size_medium).toSp() }
                 ),
                 color = colorResource(id = R.color.black),
                 fontWeight = FontWeight.Bold

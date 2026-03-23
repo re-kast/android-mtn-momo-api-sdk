@@ -49,7 +49,7 @@ import androidx.compose.ui.unit.sp
 import io.rekast.sdk.sample.R
 import io.rekast.sdk.sample.ui.components.general.textFieldDefaultsComponent
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun PaymentDataScreenComponent(
     modifier: Modifier = Modifier,

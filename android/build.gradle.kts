@@ -1,3 +1,4 @@
+import org.gradle.process.ExecOperations
 import org.jetbrains.dokka.base.DokkaBase
 import org.jetbrains.dokka.base.DokkaBaseConfiguration
 
@@ -6,7 +7,7 @@ plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.android.library) apply false
     alias(libs.plugins.kotlin.android) apply false
-    alias(libs.plugins.kotlin.kapt) apply false
+    alias(libs.plugins.ksp) apply false
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.dagger.hilt.android) apply false
     alias(libs.plugins.navigation.safeargs) apply false
@@ -25,6 +26,14 @@ allprojects {
         maven(url = "https://oss.sonatype.org/content/repositories/snapshots")
     }
 
+    configurations.all {
+        resolutionStrategy.eachDependency {
+            if (requested.group == "org.jetbrains.kotlin" && requested.name == "kotlin-metadata-jvm") {
+                useVersion(libs.versions.kotlinVersion.get())
+            }
+        }
+    }
+
     apply(plugin = "org.jetbrains.dokka")
     apply(plugin = "com.diffplug.spotless")
 
@@ -35,7 +44,7 @@ allprojects {
             trimTrailingWhitespace()
             ktlint(libs.versions.klint.get())
                 .setEditorConfigPath(".editorconfig")
-            indentWithSpaces()
+
             endWithNewline()
             licenseHeaderFile("$projectDir/license-header.txt")
         }
@@ -81,17 +90,15 @@ tasks.register<Copy>("copyDocsToGhPages") {
     into(file("docs"))
 }
 
-tasks.register("deployDocs") {
-    dependsOn("copyDocsToGhPages")
-    doLast {
-        exec {
-            commandLine("git", "add", ".")
-        }
-        exec {
-            commandLine("git", "commit", "-m", "Update documentation")
-        }
-        exec {
-            commandLine("git", "push")
-        }
+abstract class DeployDocsTask @Inject constructor(private val execOps: ExecOperations) : DefaultTask() {
+    @TaskAction
+    fun deploy() {
+        execOps.exec { commandLine("git", "add", ".") }
+        execOps.exec { commandLine("git", "commit", "-m", "Update documentation") }
+        execOps.exec { commandLine("git", "push") }
     }
+}
+
+tasks.register<DeployDocsTask>("deployDocs") {
+    dependsOn("copyDocsToGhPages")
 }

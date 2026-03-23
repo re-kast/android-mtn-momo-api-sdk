@@ -34,12 +34,12 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -73,7 +73,7 @@ fun Drawer(scope: CoroutineScope, scaffoldState: ScaffoldState, navController: N
                 Row {
                     Text(
                         text = stringResource(id = R.string.app_title),
-                        fontSize = dimensionResource(id = R.dimen.font_size_medium),
+                        fontSize = with(LocalDensity.current) { dimensionResource(id = R.dimen.font_size_medium).toSp() },
                         fontWeight = FontWeight.SemiBold,
                         color = Color.White
                     )
@@ -97,7 +97,7 @@ fun Drawer(scope: CoroutineScope, scaffoldState: ScaffoldState, navController: N
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Normal,
             modifier = Modifier
-                .padding(dimensionResource(id = R.dimen.padding_large))
+                .padding(dimensionResource(id = R.dimen.spacing_large))
                 .align(Alignment.CenterHorizontally)
         )
     }

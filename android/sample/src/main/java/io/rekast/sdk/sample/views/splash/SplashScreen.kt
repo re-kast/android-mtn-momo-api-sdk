@@ -28,11 +28,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.sp
 import io.rekast.sdk.sample.R
 import io.rekast.sdk.sample.utils.annotation.PreviewWithBackgroundExcludeGenerated
 import kotlinx.coroutines.delay
@@ -58,7 +58,7 @@ fun SplashScreen(
             text = stringResource(R.string.app_name),
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
-            fontSize = dimensionResource(id = R.dimen.font_size_xlarge),
+            fontSize = with(LocalDensity.current) { dimensionResource(id = R.dimen.font_size_xlarge).toSp() },
             modifier = modifier
                 .padding(all = dimensionResource(id = R.dimen.spacing_large))
                 .align(Alignment.CenterHorizontally)

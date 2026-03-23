@@ -3,10 +3,8 @@ import org.jetbrains.dokka.base.DokkaBase
 import org.jetbrains.dokka.base.DokkaBaseConfiguration
 
 plugins {
-    id("kotlin-kapt")
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.kapt)
+    alias(libs.plugins.ksp)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.dagger.hilt.android)
     alias(libs.plugins.compose.compiler)
@@ -19,7 +17,7 @@ plugins {
 
 android {
     namespace = "io.rekast.sdk.sample"
-    compileSdk = 35
+    compileSdk = 36
 
     buildFeatures {
         dataBinding = false
@@ -32,13 +30,10 @@ android {
         ignoreList.add("sdk.*")
     }
 
-    kapt {
-        correctErrorTypes = true
-    }
     defaultConfig {
         applicationId = "io.rekast.sdk.sample"
         minSdk = 24
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 1
         versionName = "0.0.1"
         vectorDrawables.useSupportLibrary = true
@@ -56,9 +51,6 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
-    }
-    kotlinOptions {
-        jvmTarget = "17"
     }
 
     composeOptions {
@@ -83,9 +75,8 @@ composeCompiler {
     stabilityConfigurationFile = rootProject.layout.projectDirectory.file("stability_config.conf")
 }
 
-kapt {
-    generateStubs = true
-    correctErrorTypes = true
+kotlin {
+    jvmToolchain(17)
 }
 
 dependencies {
@@ -103,13 +94,14 @@ dependencies {
     implementation(libs.androidx.lifecycle.service)
     implementation(libs.androidx.lifecycle.process)
     implementation(libs.androidx.lifecycle.viewmodel.android)
-    kapt(libs.androidx.lifecycle.lifecycle.compiler)
+    ksp(libs.androidx.lifecycle.lifecycle.compiler)
     implementation(libs.androidx.lifecycle.reactivestreams.ktx)
     implementation(libs.work.runtime.ktx)
 
     implementation(libs.androidx.appcompat)
     implementation(libs.google.android.material)
     implementation(libs.androidx.compose.material)
+    implementation(libs.compose.material.icons.core)
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.material3.window)
     implementation(libs.androidx.compose.ui)
@@ -126,7 +118,7 @@ dependencies {
 
     implementation(libs.google.dagger.hilt)
     implementation(libs.androidx.hilt.work)
-    kapt(libs.hilt.android.compiler)
+    ksp(libs.hilt.android.compiler)
 
     implementation(libs.dokka.base)
 
@@ -176,15 +168,15 @@ dependencies {
 
     // For Hilt testing
     // androidTestImplementation(libs.google.dagger.hilt.android.testing)
-    kaptAndroidTest(libs.hilt.android.compiler)
+    kspAndroidTest(libs.hilt.android.compiler)
     // testImplementation(libs.google.dagger.hilt.android.testing)
-    kaptTest(libs.hilt.android.compiler)
+    kspTest(libs.hilt.android.compiler)
 
     releaseImplementation(libs.chuckerteam.chucker.noop)
 }
 
 tasks.named<org.jetbrains.dokka.gradle.DokkaTaskPartial>("dokkaHtmlPartial") {
-    dependsOn("kaptDebugKotlin", "kaptReleaseKotlin")
+    dependsOn("kspDebugKotlin", "kspReleaseKotlin")
     pluginConfiguration<DokkaBase, DokkaBaseConfiguration> {
         customAssets = listOf(layout.projectDirectory.file("assets/logo-icon.svg").asFile)
         customStyleSheets = listOf((layout.projectDirectory.file("assets/rekast.css").asFile))
