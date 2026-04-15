@@ -6,7 +6,6 @@ import org.jetbrains.dokka.base.DokkaBaseConfiguration
 plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.android.library) apply false
-    alias(libs.plugins.kotlin.android) apply false
     alias(libs.plugins.ksp) apply false
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.dagger.hilt.android) apply false
@@ -93,8 +92,14 @@ abstract class DeployDocsTask @Inject constructor(private val execOps: ExecOpera
     @TaskAction
     fun deploy() {
         execOps.exec { commandLine("git", "add", ".") }
-        execOps.exec { commandLine("git", "commit", "-m", "Update documentation") }
-        execOps.exec { commandLine("git", "push") }
+        val hasChanges = execOps.exec {
+            commandLine("git", "diff", "--cached", "--quiet")
+            isIgnoreExitValue = true
+        }.exitValue != 0
+        if (hasChanges) {
+            execOps.exec { commandLine("git", "commit", "-m", "Update documentation") }
+            execOps.exec { commandLine("git", "push") }
+        }
     }
 }
 

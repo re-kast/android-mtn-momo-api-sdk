@@ -3,7 +3,6 @@ import org.jetbrains.dokka.base.DokkaBaseConfiguration
 
 plugins {
     alias(libs.plugins.android.library)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.dagger.hilt.android)
     alias(libs.plugins.ksp)
     alias(libs.plugins.secrets)
