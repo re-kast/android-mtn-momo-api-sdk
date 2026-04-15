@@ -160,10 +160,8 @@ dependencies {
 
     releaseImplementation(libs.chuckerteam.chucker.noop)
 }
-
 dokka {
-    dokkaSourceSets {
-        register("main") {
+    dokkaSourceSets { register("main") {
             sourceRoots.from(file("src/main/kotlin"))
             displayName.set("Android")
         }
