@@ -1,6 +1,4 @@
 import org.gradle.process.ExecOperations
-import org.jetbrains.dokka.base.DokkaBase
-import org.jetbrains.dokka.base.DokkaBaseConfiguration
 
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 plugins {
@@ -56,35 +54,25 @@ allprojects {
 
 buildscript {
     dependencies {
-        classpath(libs.dokka.base)
         classpath(libs.kotlin.gradle.plugin)
         classpath(libs.hilt.android.gradle.plugin)
         classpath(libs.navigation.safe.args.gradle.plugin)
     }
 }
 
-tasks.named<org.jetbrains.dokka.gradle.DokkaMultiModuleTask>("dokkaHtmlMultiModule") {
+dokka {
     moduleName.set("| MTN MOMO ANDROID SDK")
-    moduleVersion.set(project.version.toString())
-    outputDirectory.set(layout.buildDirectory.dir("dokka"))
-
-    pluginConfiguration<DokkaBase, DokkaBaseConfiguration> {
-        customAssets = listOf(layout.projectDirectory.file("assets/logo-icon.svg").asFile)
-        customStyleSheets = listOf((layout.projectDirectory.file("assets/rekast.css").asFile))
-        footerMessage = "&copy; Re.Kast Limited"
-        separateInheritedMembers = false
+    pluginsConfiguration.html {
+        customAssets.from(layout.projectDirectory.file("assets/logo-icon.svg"))
+        customStyleSheets.from(layout.projectDirectory.file("assets/rekast.css"))
+        footerMessage.set("&copy; Re.Kast Limited")
+        separateInheritedMembers.set(false)
     }
-
-    pluginsMapConfiguration.set(
-        mapOf(
-            "org.jetbrains.dokka.base.DokkaBase" to """{ "separateInheritedMembers": false }"""
-        )
-    )
 }
 
 tasks.register<Copy>("copyDocsToGhPages") {
-    dependsOn("dokkaHtml")
-    from(layout.buildDirectory.dir("dokka"))
+    dependsOn("dokkaGenerate")
+    from(layout.buildDirectory.dir("dokka/html"))
     into(file("docs"))
 }
 
