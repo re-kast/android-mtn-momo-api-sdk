@@ -20,7 +20,7 @@ secrets {
 
 android {
     namespace = "io.rekast.sdk.sample"
-    compileSdk = 36
+    compileSdk = 37
 
     buildFeatures {
         compose = true
@@ -30,7 +30,7 @@ android {
     defaultConfig {
         applicationId = "io.rekast.sdk.sample"
         minSdk = 24
-        targetSdk = 36
+        targetSdk = 37
         versionCode = 1
         versionName = "0.0.1"
         vectorDrawables.useSupportLibrary = true
@@ -141,9 +141,9 @@ dependencies {
     androidTestImplementation(platform(libs.androidx.compose.bom))
 
     testImplementation(libs.junit)
-    testImplementation(libs.mockk.core)
-    testImplementation(libs.mockk.inline)
-    testImplementation(libs.mockk.kotlin)
+    testImplementation(libs.mockito.core)
+    testImplementation(libs.mockito.inline)
+    testImplementation(libs.mockito.kotlin)
     testImplementation(libs.mockk)
     testImplementation(libs.robolectric)
     testImplementation(libs.androidx.test.core)

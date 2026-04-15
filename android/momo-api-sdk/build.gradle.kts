@@ -82,9 +82,9 @@ dependencies {
     debugImplementation(libs.chuckerteam.chucker)
     releaseImplementation(libs.chuckerteam.chucker.noop)
 
-    testImplementation(libs.mockk.core)
-    testImplementation(libs.mockk.inline)
-    testImplementation(libs.mockk.kotlin)
+    testImplementation(libs.mockito.core)
+    testImplementation(libs.mockito.inline)
+    testImplementation(libs.mockito.kotlin)
     testImplementation(libs.junit)
     testImplementation(libs.mockk)
 }
