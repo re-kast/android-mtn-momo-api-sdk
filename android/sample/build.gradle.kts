@@ -1,6 +1,3 @@
-import org.jetbrains.dokka.base.DokkaBase
-import org.jetbrains.dokka.base.DokkaBaseConfiguration
-
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.ksp)
@@ -164,11 +161,14 @@ dependencies {
     releaseImplementation(libs.chuckerteam.chucker.noop)
 }
 
-tasks.named<org.jetbrains.dokka.gradle.DokkaTaskPartial>("dokkaHtmlPartial") {
-    dependsOn("kspDebugKotlin", "kspReleaseKotlin")
-    pluginConfiguration<DokkaBase, DokkaBaseConfiguration> {
-        customAssets = listOf(layout.projectDirectory.file("assets/logo-icon.svg").asFile)
-        customStyleSheets = listOf((layout.projectDirectory.file("assets/rekast.css").asFile))
-        footerMessage = "&copy; Re.Kast Limited"
+dokka {
+    pluginsConfiguration.html {
+        customAssets.from(layout.projectDirectory.file("assets/logo-icon.svg"))
+        customStyleSheets.from(layout.projectDirectory.file("assets/rekast.css"))
+        footerMessage.set("&copy; Re.Kast Limited")
     }
+}
+
+tasks.matching { it.name.startsWith("dokkaGenerate") }.configureEach {
+    dependsOn("kspDebugKotlin", "kspReleaseKotlin")
 }

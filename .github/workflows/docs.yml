@@ -81,7 +81,7 @@ jobs:
         working-directory: android
 
       - name: Document modules with dokka
-        run: ./gradlew dokkaHtmlMultiModule
+        run: ./gradlew dokkaGenerate
         working-directory: android
 
       - name: Deploy 🚀
@@ -89,6 +89,6 @@ jobs:
         uses: JamesIves/github-pages-deploy-action@v4.4.1
         with:
           branch: gh-pages # The branch the action should deploy to.
-          folder: android/build/dokka # The folder the action should deploy.
+          folder: android/build/dokka/html # The folder the action should deploy.
           target-folder: dokka
           ssh-key: ${{ secrets.DEPLOY_KEY }}

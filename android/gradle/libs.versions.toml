@@ -120,7 +120,6 @@ chuckerteam-chucker = { group = "com.github.chuckerteam.chucker", name = "librar
 chuckerteam-chucker-noop = { group = "com.github.chuckerteam.chucker", name = "library-no-op", version.ref = "chucker" }
 compose-compiler = { group = "androidx.compose.compiler", name ="compiler", version.ref = "kotlinCompiler" }
 google-accompanist-flowlayout = { group = "com.google.accompanist", name = "accompanist-flowlayout", version.ref = "flowLayout" }
-dokka-base = { group = "org.jetbrains.dokka", name = "dokka-base", version.ref = "dokka" }
 google-android-material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 google-dagger-hilt = { group = "com.google.dagger", name = "hilt-android", version.ref = "daggerHilt" }
 google-dagger-hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "daggerHilt" }
