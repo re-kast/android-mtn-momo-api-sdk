@@ -41,18 +41,18 @@ jobs:
         working-directory: android
         run: |
           cat <<'EOF' > local.properties
-          MOMO_BASE_URL=""
-          MOMO_PROVIDER_CALBACK_HOST=""
-          MOMO_COLLECTION_PRIMARY_KEY=""
-          MOMO_COLLECTION_SECONDARY_KEY=""
-          MOMO_REMITTANCE_PRIMARY_KEY=""
-          MOMO_REMITTANCE_SECONDARY_KEY=""
-          MOMO_DISBURSEMENTS_PRIMARY_KEY=""
-          MOMO_DISBURSEMENTS_SECONDARY_KEY=""
-          MOMO_API_USER_ID=""
-          MOMO_ENVIRONMENT=""
-          MOMO_API_VERSION_V1=""
-          MOMO_API_VERSION_V2=""
+          MOMO_BASE_URL="https://sandbox.momodeveloper.mtn.com/"
+          MOMO_PROVIDER_CALBACK_HOST="localhost"
+          MOMO_COLLECTION_PRIMARY_KEY="placeholder"
+          MOMO_COLLECTION_SECONDARY_KEY="placeholder"
+          MOMO_REMITTANCE_PRIMARY_KEY="placeholder"
+          MOMO_REMITTANCE_SECONDARY_KEY="placeholder"
+          MOMO_DISBURSEMENTS_PRIMARY_KEY="placeholder"
+          MOMO_DISBURSEMENTS_SECONDARY_KEY="placeholder"
+          MOMO_API_USER_ID="placeholder"
+          MOMO_ENVIRONMENT="sandbox"
+          MOMO_API_VERSION_V1="v1_0"
+          MOMO_API_VERSION_V2="v2_0"
           EOF
 
       - name: Grant execute permission for gradlew
