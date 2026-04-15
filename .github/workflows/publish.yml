@@ -98,12 +98,15 @@ jobs:
         run: |
           cd android/momo-api-sdk/build/staging-deploy
           zip -r ../bundle.zip .
-          curl -sf \
-            --user "$MAVEN_CENTRAL_USERNAME:$MAVEN_CENTRAL_PASSWORD" \
-            -F "bundle=@../bundle.zip" \
+          HTTP_STATUS=$(curl -s --request POST \
+            --header "Authorization: Bearer $(printf '%s' '${{ secrets.MAVEN_CENTRAL_USERNAME }}:${{ secrets.MAVEN_CENTRAL_PASSWORD }}' | base64 -w0)" \
+            --form bundle=@../bundle.zip \
             "https://central.sonatype.com/api/v1/publisher/upload?publishingType=AUTOMATIC" \
-            -o upload-response.json
+            -o upload-response.json \
+            -w "%{http_code}")
+          echo "HTTP Status: $HTTP_STATUS"
           cat upload-response.json
+          [[ "$HTTP_STATUS" =~ ^2 ]] || exit 1
 
       # ── 2. GITHUB PACKAGES ─────────────────────────────────────────────────
 
