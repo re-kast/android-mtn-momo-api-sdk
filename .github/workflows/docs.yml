@@ -46,6 +46,7 @@ jobs:
           user_email: 41898282+github-actions[bot]@users.noreply.github.com
 
   build-and-deploy-dokka:
+    needs: [build-and-deploy-docusaurus]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout 🛎️
