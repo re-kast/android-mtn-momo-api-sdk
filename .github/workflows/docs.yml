@@ -3,6 +3,23 @@ name: Publish Project Docs
 on:
   push:
     branches: [ develop ]
+<<<<<<< HEAD
+=======
+
+env:
+  MOMO_BASE_URL: ${{ secrets.MOMO_BASE_URL }}
+  MOMO_PROVIDER_CALBACK_HOST: ${{ secrets.MOMO_PROVIDER_CALBACK_HOST }}
+  MOMO_COLLECTION_PRIMARY_KEY: ${{ secrets.MOMO_COLLECTION_PRIMARY_KEY }}
+  MOMO_COLLECTION_SECONDARY_KEY: ${{ secrets.MOMO_COLLECTION_SECONDARY_KEY }}
+  MOMO_REMITTANCE_PRIMARY_KEY: ${{ secrets.MOMO_REMITTANCE_PRIMARY_KEY }}
+  MOMO_REMITTANCE_SECONDARY_KEY: ${{ secrets.MOMO_REMITTANCE_SECONDARY_KEY }}
+  MOMO_DISBURSEMENTS_PRIMARY_KEY: ${{ secrets.MOMO_DISBURSEMENTS_PRIMARY_KEY }}
+  MOMO_DISBURSEMENTS_SECONDARY_KEY: ${{ secrets.MOMO_DISBURSEMENTS_SECONDARY_KEY }}
+  MOMO_API_USER_ID: ${{ secrets.MOMO_API_USER_ID }}
+  MOMO_ENVIRONMENT: ${{ secrets.MOMO_ENVIRONMENT }}
+  MOMO_API_VERSION_V1: ${{ secrets.MOMO_API_VERSION_V1 }}
+  MOMO_API_VERSION_V2: ${{ secrets.MOMO_API_VERSION_V2 }}
+>>>>>>> 4dcae6e (✅ Add the required env variables for deployment)
 
 jobs:
   build-and-deploy:
@@ -74,4 +91,8 @@ jobs:
           publish_branch: gh-pages
           publish_dir: ./build
           user_name: github-actions[bot]
+<<<<<<< HEAD
           user_email: 41898282+github-actions[bot]@users.noreply.github.com
+=======
+          user_email: 41898282+github-actions[bot]@users.noreply.github.com
+>>>>>>> 4dcae6e (✅ Add the required env variables for deployment)
