@@ -83,8 +83,8 @@ class SettingsTest {
 
     @Test
     fun `formatPhoneNumber returns number unchanged when already 13 digits without plus`() {
-        val result = settings.formatPhoneNumber("256733123456789", "256")
-        assertEquals("256733123456789", result)
+        val result = settings.formatPhoneNumber("2567331234567", "256")
+        assertEquals("2567331234567", result)
     }
 
     @Test

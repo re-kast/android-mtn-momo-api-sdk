@@ -37,7 +37,7 @@ fun CircularProgressBarComponent(
         verticalArrangement = Arrangement.Center
     ) {
         CircularProgressIndicator(
-            modifier = modifier.size(dimensionResource(id = R.dimen.circular_progress_size)),
+            modifier = Modifier.size(dimensionResource(id = R.dimen.circular_progress_size)),
             strokeWidth = dimensionResource(id = R.dimen.circular_progress_stroke_width),
             color = colorResource(id = R.color.accent_primary)
         )

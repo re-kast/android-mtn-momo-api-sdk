@@ -27,13 +27,16 @@ import io.rekast.sdk.model.AccountBalance
 import io.rekast.sdk.model.BasicUserInfo
 import io.rekast.sdk.repository.DefaultRepository
 import io.rekast.sdk.repository.data.NetworkResult
+import io.rekast.sdk.sample.utils.DispatcherProvider
 import io.rekast.sdk.sample.utils.Utils
 import io.rekast.sdk.utils.Settings
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Assert.assertFalse
@@ -50,6 +53,9 @@ class HomeScreenViewModelTest {
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
     private val testDispatcher = UnconfinedTestDispatcher()
+    private val testDispatcherProvider = object : DispatcherProvider {
+        override fun io(): CoroutineDispatcher = testDispatcher
+    }
     private val mockRepository = mockk<DefaultRepository>(relaxed = true)
     private val mockContext = mockk<Context>(relaxed = true)
     private val mockSettings = mockk<Settings>(relaxed = true)
@@ -63,7 +69,7 @@ class HomeScreenViewModelTest {
         every { Utils.getAccessToken(any()) } returns "test-access-token"
         every { Utils.getProductSubscriptionKeys(any()) } returns "test-subscription-key"
         every { Utils.convertToDate(any()) } returns "2001-09-09"
-        viewModel = HomeScreenViewModel(mockRepository, mockContext, mockSettings)
+        viewModel = HomeScreenViewModel(mockRepository, mockContext, mockSettings, testDispatcherProvider)
     }
 
     @After
@@ -93,7 +99,7 @@ class HomeScreenViewModelTest {
     }
 
     @Test
-    fun `getBasicUserInfo calls repository getBasicUserInfo`() {
+    fun `getBasicUserInfo calls repository getBasicUserInfo`() = runTest {
         coEvery {
             mockRepository.getBasicUserInfo(any(), any(), any(), any(), any())
         } returns flowOf(NetworkResult.Error("404"))
@@ -104,7 +110,7 @@ class HomeScreenViewModelTest {
     }
 
     @Test
-    fun `getBasicUserInfo posts userInfo on success`() {
+    fun `getBasicUserInfo posts userInfo on success`() = runTest {
         val userInfo = BasicUserInfo(
             sub = "sub-1",
             name = "John Doe",
@@ -120,26 +126,24 @@ class HomeScreenViewModelTest {
         } returns flowOf(NetworkResult.Success(userInfo))
 
         viewModel.getBasicUserInfo()
-        Thread.sleep(300)
 
         assertNotNull(viewModel.basicUserInfo.value)
         assertFalse(viewModel.showProgressBar.value!!)
     }
 
     @Test
-    fun `getBasicUserInfo sets showProgressBar false on error`() {
+    fun `getBasicUserInfo sets showProgressBar false on error`() = runTest {
         coEvery {
             mockRepository.getBasicUserInfo(any(), any(), any(), any(), any())
         } returns flowOf(NetworkResult.Error("404 Not Found"))
 
         viewModel.getBasicUserInfo()
-        Thread.sleep(300)
 
         assertFalse(viewModel.showProgressBar.value!!)
     }
 
     @Test
-    fun `getAccountBalance calls repository getAccountBalance`() {
+    fun `getAccountBalance calls repository getAccountBalance`() = runTest {
         coEvery {
             mockRepository.getAccountBalance(any(), any(), any(), any(), any())
         } returns flowOf(NetworkResult.Error("error"))
@@ -150,49 +154,45 @@ class HomeScreenViewModelTest {
     }
 
     @Test
-    fun `getAccountBalance posts balance on success`() {
+    fun `getAccountBalance posts balance on success`() = runTest {
         val balance = AccountBalance(availableBalance = "100.00", currency = "EUR")
         coEvery {
             mockRepository.getAccountBalance(any(), any(), any(), any(), any())
         } returns flowOf(NetworkResult.Success(balance))
 
         viewModel.getAccountBalance()
-        Thread.sleep(300)
 
         assertNotNull(viewModel.accountBalance.value)
         assertFalse(viewModel.showProgressBar.value!!)
     }
 
     @Test
-    fun `getAccountBalance sets showProgressBar false on error`() {
+    fun `getAccountBalance sets showProgressBar false on error`() = runTest {
         coEvery {
             mockRepository.getAccountBalance(any(), any(), any(), any(), any())
         } returns flowOf(NetworkResult.Error("500 Internal Server Error"))
 
         viewModel.getAccountBalance()
-        Thread.sleep(300)
 
         assertFalse(viewModel.showProgressBar.value!!)
     }
 
     @Test
-    fun `getAccountBalance sets showProgressBar false when access token is blank`() {
+    fun `getAccountBalance sets showProgressBar false when access token is blank`() = runTest {
         every { Utils.getAccessToken(any()) } returns ""
-        val vmWithNoToken = HomeScreenViewModel(mockRepository, mockContext, mockSettings)
+        val vmWithNoToken = HomeScreenViewModel(mockRepository, mockContext, mockSettings, testDispatcherProvider)
 
         vmWithNoToken.getAccountBalance()
-        Thread.sleep(300)
 
         assertFalse(vmWithNoToken.showProgressBar.value!!)
     }
 
     @Test
-    fun `validateAccountHolderStatus sets showProgressBar false when access token is blank`() {
+    fun `validateAccountHolderStatus sets showProgressBar false when access token is blank`() = runTest {
         every { Utils.getAccessToken(any()) } returns ""
-        val vmWithNoToken = HomeScreenViewModel(mockRepository, mockContext, mockSettings)
+        val vmWithNoToken = HomeScreenViewModel(mockRepository, mockContext, mockSettings, testDispatcherProvider)
 
         vmWithNoToken.validateAccountHolderStatus()
-        Thread.sleep(300)
 
         assertFalse(vmWithNoToken.showProgressBar.value!!)
     }

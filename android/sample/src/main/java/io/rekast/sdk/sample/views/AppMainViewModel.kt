@@ -26,10 +26,10 @@ import io.rekast.sdk.model.authentication.credentials.BasicAuthCredentials
 import io.rekast.sdk.repository.DefaultRepository
 import io.rekast.sdk.repository.data.NetworkResult
 import io.rekast.sdk.sample.utils.Utils
+import io.rekast.sdk.sample.utils.DispatcherProvider
 import io.rekast.sdk.utils.ProductType
 import io.rekast.sdk.utils.Settings
 import javax.inject.Inject
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.apache.commons.lang3.StringUtils
 import timber.log.Timber
@@ -47,7 +47,8 @@ import timber.log.Timber
 open class AppMainViewModel @Inject constructor(
     private val defaultRepository: DefaultRepository,
     @ApplicationContext private val context: Context,
-    private val settings: Settings
+    private val settings: Settings,
+    private val dispatchers: DispatcherProvider
 ) : ViewModel() {
 
     /**
@@ -70,7 +71,7 @@ open class AppMainViewModel @Inject constructor(
      */
     fun checkUser() {
         val productType = Utils.getProductSubscriptionKeys(ProductType.COLLECTION)
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(dispatchers.io()) {
             defaultRepository.checkApiUser(BuildConfig.MOMO_API_VERSION_V1, productType).collect { apiUser ->
                 when (apiUser) {
                     is NetworkResult.Success -> { createApiKey() }
@@ -98,7 +99,7 @@ open class AppMainViewModel @Inject constructor(
      */
     private fun createApiKey() {
         val productType = Utils.getProductSubscriptionKeys(ProductType.REMITTANCE)
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(dispatchers.io()) {
             val apiUserKey = Utils.getApiKey(context)
             if (StringUtils.isNotBlank(apiUserKey)) {
                 setBasicAuth(apiUserId = BuildConfig.MOMO_API_USER_ID, apiKey = apiUserKey)
@@ -108,8 +109,9 @@ open class AppMainViewModel @Inject constructor(
                     when (apiKey) {
                         is NetworkResult.Success -> {
                             try {
-                                Utils.saveApiKey(context = context, apiKey = apiKey.response?.apiKey.orEmpty())
-                                setBasicAuth(apiUserId = BuildConfig.MOMO_API_USER_ID, apiKey = apiUserKey)
+                                val newApiKey = apiKey.response?.apiKey.orEmpty()
+                                Utils.saveApiKey(context = context, apiKey = newApiKey)
+                                setBasicAuth(apiUserId = BuildConfig.MOMO_API_USER_ID, apiKey = newApiKey)
                                 Timber.d("Api Key fetched and saved successfully")
                                 getAccessToken()
                             } catch (exception: Exception) {
@@ -133,7 +135,7 @@ open class AppMainViewModel @Inject constructor(
      */
     private fun getAccessToken() {
         val productType = Utils.getProductSubscriptionKeys(productType = ProductType.REMITTANCE)
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(dispatchers.io()) {
             val apiUserKey = context.let { Utils.getApiKey(it) }
             val accessToken = context.let { Utils.getAccessToken(it) }
 
@@ -173,7 +175,7 @@ open class AppMainViewModel @Inject constructor(
      */
     private fun getOauthAccessToken() {
         val productType = Utils.getProductSubscriptionKeys(productType = ProductType.COLLECTION)
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(dispatchers.io()) {
             val userAccessToken = Utils.getAccessToken(context)
             val userOauthAccessToken = Utils.getOauthAccessToken(context)
 

@@ -42,7 +42,11 @@ jobs:
 
       - name: Run unit tests
         working-directory: android
-        run: ./gradlew :momo-api-sdk:test
+        run: ./gradlew :momo-api-sdk:test :sample:testDebugUnitTest
+
+      - name: Assemble sample app
+        working-directory: android
+        run: ./gradlew :sample:assembleDebug
 
       # ── 1. MAVEN CENTRAL ───────────────────────────────────────────────────
 

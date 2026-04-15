@@ -26,13 +26,16 @@ import io.rekast.sdk.model.authentication.ApiUser
 import io.rekast.sdk.model.authentication.credentials.BasicAuthCredentials
 import io.rekast.sdk.repository.DefaultRepository
 import io.rekast.sdk.repository.data.NetworkResult
+import io.rekast.sdk.sample.utils.DispatcherProvider
 import io.rekast.sdk.sample.utils.Utils
 import io.rekast.sdk.utils.Settings
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Before
@@ -42,6 +45,9 @@ import org.junit.Test
 class AppMainViewModelTest {
 
     private val testDispatcher = UnconfinedTestDispatcher()
+    private val testDispatcherProvider = object : DispatcherProvider {
+        override fun io(): CoroutineDispatcher = testDispatcher
+    }
     private val mockRepository = mockk<DefaultRepository>(relaxed = true)
     private val mockContext = mockk<Context>(relaxed = true)
     private val mockSettings = mockk<Settings>(relaxed = true)
@@ -56,7 +62,7 @@ class AppMainViewModelTest {
         every { Utils.getApiKey(any()) } returns ""
         every { Utils.getAccessToken(any()) } returns ""
         every { Utils.getOauthAccessToken(any()) } returns ""
-        viewModel = AppMainViewModel(mockRepository, mockContext, mockSettings)
+        viewModel = AppMainViewModel(mockRepository, mockContext, mockSettings, testDispatcherProvider)
     }
 
     @After
@@ -66,9 +72,8 @@ class AppMainViewModelTest {
     }
 
     @Test
-    fun `setBasicAuth calls repository setUpBasicAuth with correct credentials`() {
+    fun `setBasicAuth calls repository setUpBasicAuth with correct credentials`() = runTest {
         viewModel.setBasicAuth("user-id", "api-key")
-        Thread.sleep(100)
 
         coVerify {
             mockRepository.setUpBasicAuth(
@@ -78,15 +83,14 @@ class AppMainViewModelTest {
     }
 
     @Test
-    fun `setBasicAuth with empty strings calls repository`() {
+    fun `setBasicAuth with empty strings calls repository`() = runTest {
         viewModel.setBasicAuth("", "")
-        Thread.sleep(100)
 
         coVerify { mockRepository.setUpBasicAuth(BasicAuthCredentials("", "")) }
     }
 
     @Test
-    fun `checkUser calls checkApiUser on repository`() {
+    fun `checkUser calls checkApiUser on repository`() = runTest {
         coEvery { mockRepository.checkApiUser(any(), any()) } returns flowOf(
             NetworkResult.Error("User not found")
         )
@@ -95,13 +99,12 @@ class AppMainViewModelTest {
         )
 
         viewModel.checkUser()
-        Thread.sleep(200)
 
         coVerify { mockRepository.checkApiUser(any(), any()) }
     }
 
     @Test
-    fun `checkUser calls createApiUser when checkApiUser returns error`() {
+    fun `checkUser calls createApiUser when checkApiUser returns error`() = runTest {
         coEvery { mockRepository.checkApiUser(any(), any()) } returns flowOf(
             NetworkResult.Error("404 Not Found")
         )
@@ -110,13 +113,12 @@ class AppMainViewModelTest {
         )
 
         viewModel.checkUser()
-        Thread.sleep(200)
 
         coVerify { mockRepository.createApiUser(any(), any(), any(), any()) }
     }
 
     @Test
-    fun `checkUser does not call createApiUser when checkApiUser succeeds`() {
+    fun `checkUser does not call createApiUser when checkApiUser succeeds`() = runTest {
         coEvery { mockRepository.checkApiUser(any(), any()) } returns flowOf(
             NetworkResult.Success(ApiUser(targetEnvironment = "sandbox"))
         )
@@ -125,7 +127,6 @@ class AppMainViewModelTest {
         )
 
         viewModel.checkUser()
-        Thread.sleep(200)
 
         coVerify(exactly = 0) { mockRepository.createApiUser(any(), any(), any(), any()) }
     }

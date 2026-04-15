@@ -32,10 +32,10 @@ import io.rekast.sdk.repository.data.NetworkResult
 import io.rekast.sdk.sample.utils.SnackBarComponentConfiguration
 import io.rekast.sdk.sample.utils.Utils
 import io.rekast.sdk.utils.AccountHolderType
+import io.rekast.sdk.sample.utils.DispatcherProvider
 import io.rekast.sdk.utils.ProductType
 import io.rekast.sdk.utils.Settings
 import javax.inject.Inject
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -47,7 +47,8 @@ import timber.log.Timber
 class HomeScreenViewModel @Inject constructor(
     private val defaultRepository: DefaultRepository,
     @ApplicationContext private val context: Context,
-    private val settings: Settings
+    private val settings: Settings,
+    private val dispatchers: DispatcherProvider
 ) : ViewModel() {
     val showProgressBar = MutableLiveData(false)
     private val _snackBarStateFlow = MutableSharedFlow<SnackBarComponentConfiguration>()
@@ -61,7 +62,7 @@ class HomeScreenViewModel @Inject constructor(
         showProgressBar.postValue(true)
         val productType = Utils.getProductSubscriptionKeys(ProductType.REMITTANCE)
 
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(dispatchers.io()) {
             if (StringUtils.isNotBlank(accessToken)) {
                 defaultRepository.getBasicUserInfo(
                     productType = ProductType.REMITTANCE.productType,
@@ -107,7 +108,7 @@ class HomeScreenViewModel @Inject constructor(
         showProgressBar.postValue(true)
         val productType = Utils.getProductSubscriptionKeys(productType = ProductType.REMITTANCE)
 
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(dispatchers.io()) {
             if (StringUtils.isNotBlank(accessToken)) {
                 defaultRepository.getUserInfoWithConsent(
                     productType = ProductType.REMITTANCE.productType,
@@ -136,7 +137,7 @@ class HomeScreenViewModel @Inject constructor(
                             )
                         }
 
-                        else -> { Timber.e("An error occurred!!") }
+                        is NetworkResult.Loading -> { /* progress already visible; wait for terminal result */ }
                     }
                 }
             }
@@ -144,7 +145,7 @@ class HomeScreenViewModel @Inject constructor(
     }
 
     fun validateAccountHolderStatus() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(dispatchers.io()) {
             showProgressBar.postValue(true)
             val accountHolder = AccountHolder(
                 partyId = "99733123459",
@@ -197,7 +198,7 @@ class HomeScreenViewModel @Inject constructor(
      * Only works with the Collection API
      * */
     fun getAccountBalance() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(dispatchers.io()) {
             showProgressBar.postValue(true)
             if (StringUtils.isNotBlank(accessToken)) {
                 defaultRepository.getAccountBalance(
