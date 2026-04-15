@@ -161,8 +161,7 @@ dependencies {
     releaseImplementation(libs.chuckerteam.chucker.noop)
 }
 
-dokka {
-    pluginsConfiguration.html {
+dokka { pluginsConfiguration.html {
         customAssets.from(layout.projectDirectory.file("assets/logo-icon.svg"))
         customStyleSheets.from(layout.projectDirectory.file("assets/rekast.css"))
         footerMessage.set("&copy; Re.Kast Limited")

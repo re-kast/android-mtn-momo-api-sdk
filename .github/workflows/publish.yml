@@ -100,7 +100,7 @@ jobs:
           zip -r ../bundle.zip .
           curl -sf \
             --user "$MAVEN_CENTRAL_USERNAME:$MAVEN_CENTRAL_PASSWORD" \
-            -F "bundle=@android/momo-api-sdk/build/bundle.zip" \
+            -F "bundle=@../bundle.zip" \
             "https://central.sonatype.com/api/v1/publisher/upload?publishingType=AUTOMATIC" \
             -o upload-response.json
           cat upload-response.json
