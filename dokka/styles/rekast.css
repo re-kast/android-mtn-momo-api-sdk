@@ -1,0 +1,36 @@
+/* Logo styles */
+:root {
+    --dokka-logo-height: 50px !important;
+    --dokka-logo-width: 150px !important;
+    --sidebar-width: 400px !important;
+
+    --color-dark: #333333 !important;
+    --active-section-color: #EB977A !important;
+    --active-tab-border-color: #EB977A !important;
+    --sidemenu-section-active-color: #EB977A !important;
+
+    --default-gray: var(--color-dark);
+
+    --footer-go-to-top-color: #EB977A !important;
+}
+
+.library-name--link::before {
+    background-size: var(--dokka-logo-width)
+    var(--dokka-logo-height);
+    width: var(--dokka-logo-width);
+    height: var(--dokka-logo-height);
+}
+
+
+.sidebar--inner {
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    line-height: 16px;
+    padding-top: 22px;
+    padding-bottom: 16px;
+}
+
+.footer {
+    font-size: 13px !important;
+}
+
