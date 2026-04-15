@@ -28,18 +28,18 @@ jobs:
         working-directory: android
         run: |
           cat <<'EOF' > local.properties
-          MOMO_BASE_URL=
-          MOMO_PROVIDER_CALBACK_HOST=
-          MOMO_COLLECTION_PRIMARY_KEY=
-          MOMO_COLLECTION_SECONDARY_KEY=
-          MOMO_REMITTANCE_PRIMARY_KEY=
-          MOMO_REMITTANCE_SECONDARY_KEY=
-          MOMO_DISBURSEMENTS_PRIMARY_KEY=
-          MOMO_DISBURSEMENTS_SECONDARY_KEY=
-          MOMO_API_USER_ID=
-          MOMO_ENVIRONMENT=
-          MOMO_API_VERSION_V1=
-          MOMO_API_VERSION_V2=
+          MOMO_BASE_URL=""
+          MOMO_PROVIDER_CALBACK_HOST=""
+          MOMO_COLLECTION_PRIMARY_KEY=""
+          MOMO_COLLECTION_SECONDARY_KEY=""
+          MOMO_REMITTANCE_PRIMARY_KEY=""
+          MOMO_REMITTANCE_SECONDARY_KEY=""
+          MOMO_DISBURSEMENTS_PRIMARY_KEY=""
+          MOMO_DISBURSEMENTS_SECONDARY_KEY=""
+          MOMO_API_USER_ID=""
+          MOMO_ENVIRONMENT=""
+          MOMO_API_VERSION_V1=""
+          MOMO_API_VERSION_V2=""
           EOF
 
       - name: Create keystore.properties
