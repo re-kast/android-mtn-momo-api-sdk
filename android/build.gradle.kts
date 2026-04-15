@@ -70,6 +70,10 @@ dokka {
     }
 }
 
+dependencies {
+    dokka(project(":momo-api-sdk"))
+}
+
 tasks.register<Copy>("copyDocsToGhPages") {
     dependsOn("dokkaGenerate")
     from(layout.buildDirectory.dir("dokka/html"))
