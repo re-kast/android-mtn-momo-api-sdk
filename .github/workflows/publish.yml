@@ -42,6 +42,7 @@ jobs:
         run: |
           touch local.properties
           echo "MOMO_BASE_URL=${{ secrets.MOMO_BASE_URL }}" >> local.properties
+          echo "MOMO_PROVIDER_CALBACK_HOST=${{ secrets.MOMO_PROVIDER_CALBACK_HOST }}" >> local.properties
           echo "MOMO_COLLECTION_PRIMARY_KEY=${{ secrets.MOMO_COLLECTION_PRIMARY_KEY }}" >> local.properties
           echo "MOMO_COLLECTION_SECONDARY_KEY=${{ secrets.MOMO_COLLECTION_SECONDARY_KEY }}" >> local.properties
           echo "MOMO_REMITTANCE_PRIMARY_KEY=${{ secrets.MOMO_REMITTANCE_PRIMARY_KEY }}" >> local.properties
