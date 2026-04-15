@@ -72,7 +72,9 @@ dokka {
 
 dependencies {
     dokka(project(":momo-api-sdk"))
+    dokka(project(":sample"))
 }
+
 
 tasks.register<Copy>("copyDocsToGhPages") {
     dependsOn("dokkaGenerate")
