@@ -74,4 +74,8 @@ jobs:
           publish_branch: gh-pages
           publish_dir: ./build
           user_name: github-actions[bot]
+<<<<<<< HEAD
           user_email: 41898282+github-actions[bot]@users.noreply.github.com
+=======
+          user_email: 41898282+github-actions[bot]@users.noreply.github.com
+>>>>>>> develop

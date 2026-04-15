@@ -86,9 +86,14 @@ dependencies {
 }
 
 dokka {
+    dokkaSourceSets {
+        register("main") {
+            sourceRoots.from(file("src/main/kotlin"))
+        }
+    }
     pluginsConfiguration.html {
-        customAssets.from(layout.projectDirectory.file("assets/logo-icon.svg"))
-        customStyleSheets.from(layout.projectDirectory.file("assets/rekast.css"))
+        customAssets.from(rootProject.layout.projectDirectory.file("assets/logo-icon.svg"))
+        customStyleSheets.from(rootProject.layout.projectDirectory.file("assets/rekast.css"))
         footerMessage.set("&copy; Re.Kast Limited")
     }
 }
@@ -100,7 +105,7 @@ tasks.matching { it.name.startsWith("dokkaGenerate") }.configureEach {
 afterEvaluate {
     val sourcesJar by tasks.registering(Jar::class) {
         archiveClassifier.set("sources")
-        from(android.sourceSets["main"].java.srcDirs)
+        from("src/main/kotlin")
     }
 
     val javadocJar by tasks.registering(Jar::class) {
