@@ -50,7 +50,7 @@ Follow these steps to set up the project for development:
    - Provide the required properties for the SDK and Sample App to run by updating the `local.properties` file. Here’s an example configuration:
 
    :::info
-   **Important Note**: Ensure that all entries in the `local.properties` file are filled out correctly. The application will fail to compile if any required entries are missing. Double-check your configuration to avoid compilation errors. For more information on how to find the different keys, read more [here](./engineering/getting-started/developer-setup).
+   **Important Note**: Ensure that all entries in the `local.properties` file are filled out correctly. The application will fail to compile if any required entries are missing. Double-check your configuration to avoid compilation errors. You can find the subscription keys in the [MTN MOMO Developer portal](https://momodeveloper.mtn.com/).
    ```properties
    # Local properties for the MTN MOMO API SDK
    
@@ -84,8 +84,6 @@ By following these steps, you will have a fully set up development environment r
 ## Application Architecture
 
 The MTN MOMO SDK is based on the **MVVM (Model-View-ViewModel) Android application architecture**. This architecture promotes a clear separation of concerns, making the codebase more manageable and testable. It also follows the recommended [Repository Pattern](https://developer.android.com/jetpack/guide) on its data layer, which helps in abstracting data sources and providing a clean API for data access.
-
-At the core is the Android FHIR SDK, which provides various APIs, including Data Access API, Search API, Sync API, Smart Guidelines API, and Data Capture API.
 
 ## Project Structure
 

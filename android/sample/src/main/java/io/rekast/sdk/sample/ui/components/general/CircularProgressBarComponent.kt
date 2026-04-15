@@ -24,7 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.dimensionResource
 import io.rekast.sdk.sample.R
 
 @Composable
@@ -37,8 +37,8 @@ fun CircularProgressBarComponent(
         verticalArrangement = Arrangement.Center
     ) {
         CircularProgressIndicator(
-            modifier = modifier.size(50.dp),
-            strokeWidth = 2.6.dp,
+            modifier = Modifier.size(dimensionResource(id = R.dimen.circular_progress_size)),
+            strokeWidth = dimensionResource(id = R.dimen.circular_progress_stroke_width),
             color = colorResource(id = R.color.accent_primary)
         )
     }

@@ -131,7 +131,6 @@ object Utils {
         return if (expired(expiryTime)) {
             ""
         } else {
-            val mSettings = context.getSharedPreferences(BuildConfig.APPLICATION_ID, MODE_PRIVATE)
             mSettings.getString(AccessTokenConstants.ACCESS_TOKEN, "").toString()
         }
     }
@@ -143,7 +142,6 @@ object Utils {
         return if (expired(expiryTime)) {
             ""
         } else {
-            val mSettings = context.getSharedPreferences(BuildConfig.APPLICATION_ID, MODE_PRIVATE)
             mSettings.getString(Oauth2AccessTokenConstants.ACCESS_TOKEN, "").toString()
         }
     }

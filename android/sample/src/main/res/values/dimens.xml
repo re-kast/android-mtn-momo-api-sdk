@@ -1,3 +1,26 @@
 <resources>
     <dimen name="fab_margin">16dp</dimen>
+
+    <!-- Spacing -->
+    <dimen name="spacing_extra_small">7dp</dimen>
+    <dimen name="spacing_small">8dp</dimen>
+    <dimen name="spacing_medium">10dp</dimen>
+    <dimen name="spacing_large">20dp</dimen>
+    <dimen name="spacing_xlarge">30dp</dimen>
+
+    <!-- Icon Sizes -->
+    <dimen name="icon_size_default">22dp</dimen>
+
+    <!-- Component Heights/Widths -->
+    <dimen name="textfield_height_multiline">150dp</dimen>
+    <dimen name="list_item_height_default">50dp</dimen>
+    <dimen name="drawer_header_height">70dp</dimen>
+    <dimen name="circular_progress_size">50dp</dimen>
+
+    <!-- Font Sizes -->
+    <dimen name="font_size_medium">18sp</dimen>
+    <dimen name="font_size_xlarge">40sp</dimen>
+
+    <!-- Stroke Widths -->
+    <dimen name="circular_progress_stroke_width">2.6dp</dimen>
 </resources>

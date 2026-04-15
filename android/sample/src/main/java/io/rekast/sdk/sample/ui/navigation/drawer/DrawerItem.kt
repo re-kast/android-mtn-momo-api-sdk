@@ -32,10 +32,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import io.rekast.sdk.sample.R
 import io.rekast.sdk.sample.ui.navigation.navigation.NavigationDrawerItem
 
@@ -47,11 +47,11 @@ fun DrawerItem(item: NavigationDrawerItem, selected: Boolean, onItemClick: (Navi
         modifier = Modifier
             .fillMaxWidth()
             .clickable(onClick = { onItemClick(item) })
-            .height(50.dp)
+            .height(dimensionResource(id = R.dimen.list_item_height_default))
             .background(colorResource(id = background))
-            .padding(start = 10.dp, end = 10.dp)
+            .padding(start = dimensionResource(id = R.dimen.spacing_medium), end = dimensionResource(id = R.dimen.spacing_medium))
     ) {
-        Spacer(modifier = Modifier.width(7.dp))
+        Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.spacing_extra_small)))
         Row {
             Image(
                 painter = painterResource(id = item.icon),
@@ -59,17 +59,17 @@ fun DrawerItem(item: NavigationDrawerItem, selected: Boolean, onItemClick: (Navi
                 colorFilter = ColorFilter.tint(Color.White),
                 contentScale = ContentScale.Fit,
                 modifier = Modifier
-                    .height(22.dp)
-                    .width(22.dp)
+                    .height(dimensionResource(id = R.dimen.icon_size_default))
+                    .width(dimensionResource(id = R.dimen.icon_size_default))
             )
-            Spacer(modifier = Modifier.width(7.dp))
+            Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.spacing_extra_small)))
             Text(
                 text = item.title,
-                fontSize = 18.sp,
+                fontSize = with(LocalDensity.current) { dimensionResource(id = R.dimen.font_size_medium).toSp() },
                 color = Color.White
             )
         }
-        Spacer(modifier = Modifier.width(7.dp))
+        Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.spacing_extra_small)))
     }
 }
 

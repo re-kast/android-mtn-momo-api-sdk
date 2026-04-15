@@ -84,21 +84,14 @@ You can also generate documentation locally to preview what will be deployed onc
 ```kotlin
 tasks.named<org.jetbrains.dokka.gradle.DokkaMultiModuleTask>("dokkaHtmlMultiModule") {
     moduleName.set("| MTN MOMO ANDROID SDK")
-    moduleVersion.set(project.version.toString())
     outputDirectory.set(layout.buildDirectory.dir("dokka"))
 
     pluginConfiguration<DokkaBase, DokkaBaseConfiguration> {
         customAssets = listOf(layout.projectDirectory.file("assets/logo-icon.svg").asFile)
-        customStyleSheets = listOf((layout.projectDirectory.file("assets/rekast.css").asFile))
+        customStyleSheets = listOf(layout.projectDirectory.file("assets/rekast.css").asFile)
         footerMessage = "&copy; Re.Kast Limited"
         separateInheritedMembers = false
     }
-
-    pluginsMapConfiguration.set(
-        mapOf(
-            "org.jetbrains.dokka.base.DokkaBase" to """{ "separateInheritedMembers": false }"""
-        )
-    )
 }
 ```
 
@@ -112,8 +105,8 @@ tasks.named<org.jetbrains.dokka.gradle.DokkaMultiModuleTask>("dokkaHtmlMultiModu
    ```bash
    ./gradlew dokkaHtmlMultiModule
    ```
-3. Check the root `build` folder for a folder named `dokka`.
-4. Open the `index.html` file generated in the `dokka` folder to preview the documentation.
+3. Check `build/dokka/` in the root build folder.
+4. Open `index.html` to preview the documentation.
 
 ## Additional Resources
 

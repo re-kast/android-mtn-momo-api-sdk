@@ -20,20 +20,18 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.MutableLiveData
 import io.rekast.sdk.model.AccountHolderStatus
 import io.rekast.sdk.sample.R
+import io.rekast.sdk.sample.ui.components.general.SectionHeader
 
 @Composable
 fun AccountStatusComponent(
@@ -43,26 +41,16 @@ fun AccountStatusComponent(
     Column(
         modifier = modifier.fillMaxWidth()
     ) {
-        Column(modifier = modifier.padding(end = 20.dp)) {
-            Text(
-                text = stringResource(id = R.string.account_status_title),
-                style = TextStyle(
-                    fontSize = 18.sp
-                ),
-                color = colorResource(id = R.color.black),
-                fontWeight = FontWeight.Bold
-            )
-            Divider(modifier = modifier.padding(top = 10.dp, bottom = 10.dp))
-        }
+        SectionHeader(titleResId = R.string.account_status_title)
         Row(horizontalArrangement = Arrangement.SpaceEvenly) {
-            Column(modifier = modifier.padding(end = 20.dp)) {
+            Column(modifier = modifier.padding(end = dimensionResource(id = R.dimen.spacing_large))) {
                 Text(
                     text = stringResource(id = R.string.status),
                     color = colorResource(id = R.color.black),
                     fontWeight = FontWeight.Bold
                 )
             }
-            Column(modifier = modifier.padding(end = 10.dp)) {
+            Column(modifier = modifier.padding(end = dimensionResource(id = R.dimen.spacing_medium))) {
                 accountHolderStatus.value?.result.let { result ->
                     var text = stringResource(id = R.string.in_Active)
                     if (result == true) {

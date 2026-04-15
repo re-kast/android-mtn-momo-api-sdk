@@ -10,7 +10,7 @@ sidebar_label: Overview
 # MTN MOMO API SDK for Android
 ---
 
-[![Create staging repository](https://github.com/dubdabasoduba/android-mtn-momo-api/actions/workflows/main.yml/badge.svg?branch=develop)](https://github.com/dubdabasoduba/android-mtn-momo-api/actions/workflows/main.yml) [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/B0B315PHS1)
+[![Publish to Maven Central](https://github.com/re-kast/android-mtn-momo-api-sdk/actions/workflows/publish.yml/badge.svg)](https://github.com/re-kast/android-mtn-momo-api-sdk/actions/workflows/publish.yml) [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/B0B315PHS1)
 
 ## Overview
 

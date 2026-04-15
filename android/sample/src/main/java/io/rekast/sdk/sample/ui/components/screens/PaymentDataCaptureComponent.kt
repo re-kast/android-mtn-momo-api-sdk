@@ -31,7 +31,6 @@ import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Divider
 import androidx.compose.material.Text
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -50,7 +49,7 @@ import androidx.compose.ui.unit.sp
 import io.rekast.sdk.sample.R
 import io.rekast.sdk.sample.ui.components.general.textFieldDefaultsComponent
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun PaymentDataScreenComponent(
     modifier: Modifier = Modifier,
@@ -75,7 +74,7 @@ fun PaymentDataScreenComponent(
     onPayerNoteUpdated: (String) -> Unit,
     onDeliveryNoteUpdated: (String) -> Unit
 ) {
-    val bringIntoViewRequester = BringIntoViewRequester()
+    val bringIntoViewRequester = remember { BringIntoViewRequester() }
 
     val phoneNumberFocusRequester = remember { FocusRequester() }
     val financialIdFocusRequester = remember { FocusRequester() }

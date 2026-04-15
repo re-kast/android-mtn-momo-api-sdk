@@ -1,0 +1,132 @@
+name: Publish to Maven Central
+
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+      - 'v[0-9]+.[0-9]+.[0-9]+-SNAPSHOT'
+
+concurrency:
+  group: publish-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  publish:
+    name: Publish to Maven Central
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: 'gradle'
+
+      - name: Extract version from tag
+        id: version
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          echo "VERSION=$VERSION" >> "$GITHUB_OUTPUT"
+          if [[ "$VERSION" == *-SNAPSHOT ]]; then
+            echo "IS_SNAPSHOT=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "IS_SNAPSHOT=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x android/gradlew
+
+      - name: Run unit tests
+        working-directory: android
+        run: ./gradlew :momo-api-sdk:test :sample:testDebugUnitTest
+
+      - name: Assemble sample app
+        working-directory: android
+        run: ./gradlew :sample:assembleDebug
+
+      # ── 1. MAVEN CENTRAL ───────────────────────────────────────────────────
+
+      - name: Publish snapshot to Maven Central
+        if: steps.version.outputs.IS_SNAPSHOT == 'true'
+        working-directory: android
+        env:
+          MAVEN_CENTRAL_USERNAME: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+          MAVEN_CENTRAL_PASSWORD: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+          SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
+          SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
+        run: |
+          ./gradlew :momo-api-sdk:publishReleasePublicationToMavenCentralSnapshotsRepository \
+            -PVERSION_NAME="${{ steps.version.outputs.VERSION }}"
+
+      - name: Publish release to local staging
+        if: steps.version.outputs.IS_SNAPSHOT == 'false'
+        working-directory: android
+        env:
+          SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
+          SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
+        run: |
+          ./gradlew :momo-api-sdk:publishReleasePublicationToLocalStagingRepository \
+            -PVERSION_NAME="${{ steps.version.outputs.VERSION }}"
+
+      - name: Bundle and upload to Maven Central
+        if: steps.version.outputs.IS_SNAPSHOT == 'false'
+        env:
+          MAVEN_CENTRAL_USERNAME: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+          MAVEN_CENTRAL_PASSWORD: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+        run: |
+          cd android/momo-api-sdk/build/staging-deploy
+          zip -r ../bundle.zip .
+          curl -sf \
+            --user "$MAVEN_CENTRAL_USERNAME:$MAVEN_CENTRAL_PASSWORD" \
+            -F "bundle=@android/momo-api-sdk/build/bundle.zip" \
+            "https://central.sonatype.com/api/v1/publisher/upload?publishingType=AUTOMATIC" \
+            -o upload-response.json
+          cat upload-response.json
+
+      # ── 2. GITHUB PACKAGES ─────────────────────────────────────────────────
+
+      - name: Publish to GitHub Packages
+        working-directory: android
+        env:
+          GITHUB_ACTOR: ${{ github.actor }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
+          SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
+        run: |
+          ./gradlew :momo-api-sdk:publishReleasePublicationToGithubPackagesRepository \
+            -PVERSION_NAME="${{ steps.version.outputs.VERSION }}"
+
+      # ── 3. GITHUB RELEASE (releases only) ─────────────────────────────────
+
+      - name: Create GitHub release
+        if: steps.version.outputs.IS_SNAPSHOT == 'false'
+        uses: softprops/action-gh-release@v2
+        with:
+          name: ${{ github.ref_name }}
+          tag_name: ${{ github.ref_name }}
+          body: |
+            ## io.rekast:momo-api-sdk:${{ steps.version.outputs.VERSION }}
+
+            ### Gradle
+            ```kotlin
+            dependencies {
+                implementation("io.rekast:momo-api-sdk:${{ steps.version.outputs.VERSION }}")
+            }
+            ```
+
+            ### Maven
+            ```xml
+            <dependency>
+                <groupId>io.rekast</groupId>
+                <artifactId>momo-api-sdk</artifactId>
+                <version>${{ steps.version.outputs.VERSION }}</version>
+            </dependency>
+            ```
+          files: |
+            android/momo-api-sdk/build/staging-deploy/io/rekast/momo-api-sdk/${{ steps.version.outputs.VERSION }}/momo-api-sdk-${{ steps.version.outputs.VERSION }}.aar
+            android/momo-api-sdk/build/staging-deploy/io/rekast/momo-api-sdk/${{ steps.version.outputs.VERSION }}/momo-api-sdk-${{ steps.version.outputs.VERSION }}-sources.jar
+            android/momo-api-sdk/build/staging-deploy/io/rekast/momo-api-sdk/${{ steps.version.outputs.VERSION }}/momo-api-sdk-${{ steps.version.outputs.VERSION }}.pom

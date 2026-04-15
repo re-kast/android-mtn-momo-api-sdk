@@ -88,7 +88,7 @@ fun MainScreen(
             )
         }
     ) { padding ->
-        Box(modifier = modifier.padding(20.dp)) {
+        Box(modifier = modifier.padding(padding)) {
             if (!showProgressBar) {
                 Column(
                     modifier = modifier.fillMaxSize()

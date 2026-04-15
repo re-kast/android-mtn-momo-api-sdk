@@ -25,7 +25,7 @@ import kotlinx.serialization.Serializable
  * @property name The name of the user.
  * @property givenName The given name of the user.
  * @property familyName The family name of the user.
- * @property birthDate The birth date of the user.
+ * @property birthDate The birthdate of the user.
  * @property locale The locale of the user.
  * @property gender The gender of the user.
  * @property updatedAt The last updated timestamp.
