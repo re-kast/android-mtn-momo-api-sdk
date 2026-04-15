@@ -54,7 +54,7 @@ build-and-deploy-dokka:
         working-directory: android
 
       - name: Document modules with Dokka
-        run: ./gradlew dokkaHtmlMultiModule
+        run: ./gradlew dokkaGenerate
         working-directory: android
 
       - name: Deploy 🚀
@@ -82,23 +82,14 @@ build-and-deploy-dokka:
 You can also generate documentation locally to preview what will be deployed once the GitHub Actions run. This is made possible by the configuration specified in the `build.gradle.kts` file:
 
 ```kotlin
-tasks.named<org.jetbrains.dokka.gradle.DokkaMultiModuleTask>("dokkaHtmlMultiModule") {
+dokka {
     moduleName.set("| MTN MOMO ANDROID SDK")
-    moduleVersion.set(project.version.toString())
-    outputDirectory.set(layout.buildDirectory.dir("dokka"))
 
-    pluginConfiguration<DokkaBase, DokkaBaseConfiguration> {
-        customAssets = listOf(layout.projectDirectory.file("assets/logo-icon.svg").asFile)
-        customStyleSheets = listOf((layout.projectDirectory.file("assets/rekast.css").asFile))
-        footerMessage = "&copy; Re.Kast Limited"
-        separateInheritedMembers = false
+    pluginsConfiguration.html {
+        customAssets.from(layout.projectDirectory.file("assets/logo-icon.svg"))
+        customStyleSheets.from(layout.projectDirectory.file("assets/rekast.css"))
+        footerMessage.set("&copy; Re.Kast Limited")
     }
-
-    pluginsMapConfiguration.set(
-        mapOf(
-            "org.jetbrains.dokka.base.DokkaBase" to """{ "separateInheritedMembers": false }"""
-        )
-    )
 }
 ```
 
@@ -110,10 +101,10 @@ tasks.named<org.jetbrains.dokka.gradle.DokkaMultiModuleTask>("dokkaHtmlMultiModu
    ```
 2. Run the following command to generate the documentation:
    ```bash
-   ./gradlew dokkaHtmlMultiModule
+   ./gradlew dokkaGenerate
    ```
-3. Check the root `build` folder for a folder named `dokka`.
-4. Open the `index.html` file generated in the `dokka` folder to preview the documentation.
+3. Check `build/dokka/html/` in the root build folder.
+4. Open `index.html` to preview the documentation.
 
 ## Additional Resources
 

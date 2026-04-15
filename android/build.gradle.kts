@@ -10,7 +10,6 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.dagger.hilt.android) apply false
     alias(libs.plugins.navigation.safeargs) apply false
-    alias(libs.plugins.vanniktech.maven.publish) apply false
     alias(libs.plugins.compose.compiler) apply false
     id("com.diffplug.spotless") version libs.versions.spotless
     id("org.jetbrains.dokka") version libs.versions.dokka

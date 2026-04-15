@@ -5,88 +5,133 @@ sidebar_label: SDK Publishing
 
 # SDK Publishing
 
-Publishing the MTN MOMO API SDK is a crucial step in making it available for developers to integrate into their applications. We utilize the [Gradle Maven Publish Plugin](https://vanniktech.github.io/gradle-maven-publish-plugin/) to facilitate the publishing process. This plugin simplifies the configuration and management of publishing artifacts to Maven repositories, ensuring a smooth and efficient workflow.
+Publishing the MTN MOMO API SDK is handled automatically by a GitHub Actions CI pipeline using the standard Gradle [`maven-publish`](https://docs.gradle.org/current/userguide/publishing_maven.html) plugin. Pushing a git tag triggers the workflow, which runs tests, signs artifacts, and publishes to Maven Central — no manual steps required.
 
 ---
 
-## Publishing to Remote Repositories
+## Repositories
 
-We currently publish the SDK to two primary repositories:
+Every tag publishes to both Maven Central and GitHub Packages. A GitHub Release is also created for stable tags.
 
-1. **Sonatype OSS Repository**:
-   - **Snapshots Repository**: This repository is used for publishing development versions of the SDK, allowing developers to test new features before they are officially released.
-     - URL: [Snapshots](https://s01.oss.sonatype.org/content/repositories/snapshots/io/rekast/momo-api-sdk/)
-   - **Releases Repository**: This repository is used for stable, production-ready versions of the SDK, ensuring that developers have access to reliable and tested versions.
-     - URL: [Releases](https://s01.oss.sonatype.org/content/repositories/releases/io/rekast/momo-api-sdk/)
+| Version type | Repository | URL |
+|---|---|---|
+| Stable release | Maven Central | [io.rekast:momo-api-sdk](https://central.sonatype.com/artifact/io.rekast/momo-api-sdk) |
+| Stable release | GitHub Packages | [re-kast/android-mtn-momo-api-sdk](https://github.com/re-kast/android-mtn-momo-api-sdk/packages) |
+| Snapshot | Maven Central Snapshots | `https://central.sonatype.com/repository/maven-snapshots/` |
+| Snapshot | GitHub Packages | [re-kast/android-mtn-momo-api-sdk](https://github.com/re-kast/android-mtn-momo-api-sdk/packages) |
 
-2. **Maven Central**:
-   - This repository is the primary public repository for Java libraries. It is widely used and trusted by developers. Note that it does not accept `SNAPSHOT` versions, so ensure that you are publishing stable releases.
-     - URL: [Maven Central](https://repo1.maven.org/maven2/io/rekast/momo-api-sdk/)
+---
 
-### Steps for Publishing to Remote Repositories
+## How Publishing Works
 
-When publishing to remote repositories, remember to follow these steps:
+The publish pipeline is defined in [`.github/workflows/publish.yml`](https://github.com/re-kast/android-mtn-momo-api-sdk/blob/develop/.github/workflows/publish.yml) and is triggered by pushing a tag.
 
-1. **Update the SDK Version**:
-   - Update the [version](https://github.com/re-kast/android-mtn-momo-api-sdk/blob/9d70fb3cf954b8626f0facb67d5e00d0652a9305/android/momo-api-sdk/gradle.properties#L4) of the SDK in the `gradle.properties` file. This ensures that the correct version is published.
-   :::info
+### Tag format
+
+| Tag | Published version | Destination |
+|---|---|---|
+| `v1.2.3` | `1.2.3` | Maven Central (release) |
+| `v1.2.3-SNAPSHOT` | `1.2.3-SNAPSHOT` | Maven Central Snapshots |
+
+### Release path
+
+1. Gradle builds the AAR, sources JAR, and Dokka javadoc JAR.
+2. Artifacts are GPG-signed using in-memory keys from GitHub secrets.
+3. Everything is written to a local staging directory.
+4. The staging directory is zipped and uploaded to the Maven Central portal API with `publishingType=AUTOMATIC`.
+5. The same artifacts are published to GitHub Packages.
+6. A GitHub Release is created with the AAR, sources JAR, and POM attached as downloadable assets.
+
+### Snapshot path
+
+1. Artifacts are built, signed, and deployed directly to the Maven Central snapshots repository.
+2. The same artifacts are also published to GitHub Packages.
+
+---
+
+## Pushing a Release
+
+1. **Update the version** in `android/momo-api-sdk/gradle.properties`:
    ```properties
-   VERSION_NAME=0.0.2-SNAPSHOT
+   VERSION_NAME=1.2.3
    ```
-   :::
 
-2. **Select the Publishing Server**:
-   - Choose the server to publish to by uncommenting either of the following [lines](https://github.com/re-kast/android-mtn-momo-api-sdk/blob/de966147f9a240b2bdf0611663a6fd5b05cf21ae/android/momo-api-sdk/gradle.properties#L24-L25):
-   :::info
-   ```properties
-   #SONATYPE_HOST=S01
-   #SONATYPE_HOST=CENTRAL_PORTAL
+2. **Commit and push**, then **create and push a tag**:
+   ```bash
+   git tag v1.2.3
+   git push origin v1.2.3
    ```
-   :::
-3. Update your global `gradle.properties` found on `~/.gradle/gradle.properties` with the correct authentication credentials.
-    :::warning
-    **Important Reminder**: Both Sonatype OSS and Maven Central require tokens for authentication, so log in to the portals and generate the necessary tokens. 
-    :::
 
-### Publishing Command
+The CI workflow starts automatically. You can monitor it under **Actions → Publish to Maven Central** in the GitHub repository.
 
-To publish and release the SDK to Maven Central, run the following command in your terminal:
+### Pushing a snapshot
 
 ```bash
-./gradlew publishAndReleaseToMavenCentral --no-configuration-cache --stacktrace
+git tag v1.2.3-SNAPSHOT
+git push origin v1.2.3-SNAPSHOT
 ```
 
-- **`--no-configuration-cache`**: This flag disables the configuration cache, which can help avoid issues during the publishing process, especially if there are changes in the build configuration.
-- **`--stacktrace`**: This flag provides a detailed stack trace in case of errors, which can be useful for debugging and identifying issues during the publishing process.
+Snapshot versions are available immediately after the workflow completes. To consume a snapshot, add the Maven Central snapshots repository to your project:
 
-## Publishing Locally
+```kotlin
+repositories {
+    maven("https://central.sonatype.com/repository/maven-snapshots/")
+}
+```
 
-For testing changes locally before publishing to remote repositories, you can publish the SDK artifact to your local Maven repository. This is particularly useful for verifying changes without affecting the remote repositories.
+---
 
-To publish an artifact locally, run the following command:
+## Required GitHub Secrets
+
+The following secrets must be configured under **Settings → Secrets and variables → Actions** in the repository:
+
+| Secret | Description |
+|---|---|
+| `MAVEN_CENTRAL_USERNAME` | User token name from [central.sonatype.com](https://central.sonatype.com) → Account → User Token |
+| `MAVEN_CENTRAL_PASSWORD` | User token password from [central.sonatype.com](https://central.sonatype.com) → Account → User Token |
+| `SIGNING_KEY` | Armored GPG private key: `gpg --export-secret-keys --armor <KEY_ID>` |
+| `SIGNING_PASSWORD` | Passphrase for the GPG key |
+
+---
+
+## Publishing Locally (Testing)
+
+To verify the publish configuration without uploading to Maven Central, publish to the local staging directory:
 
 ```bash
-./gradlew publishToMavenLocal --no-configuration-cache
+cd android
+./gradlew :momo-api-sdk:publishReleasePublicationToLocalStagingRepository \
+  -PVERSION_NAME="1.2.3"
 ```
 
-This command will place the published artifact in your local Maven repository, typically located at `~/.m2/repository/`, allowing you to test the SDK in your local projects.
+The staged artifacts are written to `android/momo-api-sdk/build/staging-deploy/`. Inspect them to verify the POM metadata, signatures, and JARs are correct before pushing a tag.
 
-## Additional Information
+To publish to your local Maven repository (`~/.m2/`) for use in other local projects:
 
-- **Versioning**: Ensure that you follow [semantic versioning](https://semver.org/) practices when publishing releases. This helps users understand the nature of changes in each version (e.g., major, minor, patch). For example, increment the major version for breaking changes, the minor version for new features, and the patch version for bug fixes.
+```bash
+cd android
+./gradlew :momo-api-sdk:publishToMavenLocal -PVERSION_NAME="1.2.3"
+```
 
-- **Documentation**: It is essential to maintain up-to-date documentation for your SDK. Consider using tools like [Dokka](https://kotlinlang.org/docs/dokka/overview.html) to generate documentation from your Kotlin code. Well-documented SDKs improve usability and help developers integrate your library more effectively.
+---
 
-- **Changelog**: Maintain a changelog to document changes between versions. This can be a simple markdown file that outlines new features, bug fixes, and any breaking changes. This practice enhances transparency and helps users understand what to expect in each release.
+## Versioning
+
+Follow [semantic versioning](https://semver.org/):
+
+- **Patch** (`1.2.3` → `1.2.4`): Bug fixes, no API changes.
+- **Minor** (`1.2.3` → `1.3.0`): New features, backwards compatible.
+- **Major** (`1.2.3` → `2.0.0`): Breaking API changes.
+
+Append `-SNAPSHOT` to a version to publish a development preview (e.g. `1.3.0-SNAPSHOT`).
+
+---
 
 ## References
 
-- [Gradle Maven Publish Plugin Documentation](https://vanniktech.github.io/gradle-maven-publish-plugin/)
-- [Sonatype OSS Repository Hosting](https://central.sonatype.com/)
-- [Maven Central Repository](https://repo1.maven.org/maven2/)
+- [Gradle Maven Publish Plugin](https://docs.gradle.org/current/userguide/publishing_maven.html)
+- [Maven Central Portal](https://central.sonatype.com/)
+- [Maven Central — Publishing Guide](https://central.sonatype.org/publish/publish-portal-upload/)
 - [Semantic Versioning](https://semver.org/)
-- [Dokka Documentation](https://kotlinlang.org/docs/dokka/overview.html)
-- [Creating a Changelog](https://keepachangelog.com/en/1.0.0/)
-- [Best Practices for Publishing Java Libraries](https://www.baeldung.com/publishing-java-libraries)
-
-By following these guidelines, you can effectively publish the MTN MOMO API SDK, ensuring that it is accessible and usable for developers looking to integrate mobile money services into their applications.
+- [Dokka Documentation](https://kotlinlang.org/docs/dokka-introduction.html)
+- [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
