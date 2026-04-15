@@ -59,6 +59,5 @@ abstract class DataResponse {
      * @param errorMessage The error message to be returned.
      * @return A [NetworkResult.Error] containing the error message.
      */
-    private fun <T> error(errorMessage: String): NetworkResult<T> =
-        NetworkResult.Error(" : $errorMessage")
+    private fun <T> error(errorMessage: String): NetworkResult<T> = NetworkResult.Error(" : $errorMessage")
 }

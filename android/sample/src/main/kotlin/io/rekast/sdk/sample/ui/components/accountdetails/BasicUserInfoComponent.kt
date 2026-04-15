@@ -33,11 +33,15 @@ import io.rekast.sdk.model.BasicUserInfo
 import io.rekast.sdk.sample.R
 import io.rekast.sdk.sample.ui.components.general.SectionHeader
 
+/**
+ * Renders a section displaying basic user information fields: name, birth date, gender,
+ * updated-at date, locale, and sub identifier.
+ *
+ * @param modifier Modifier applied to the root [Column].
+ * @param basicUserInfo LiveData holding the [BasicUserInfo] to display; individual fields are hidden when null.
+ */
 @Composable
-fun BasicUserInfoComponent(
-    modifier: Modifier = Modifier,
-    basicUserInfo: MutableLiveData<BasicUserInfo?>
-) {
+fun BasicUserInfoComponent(modifier: Modifier = Modifier, basicUserInfo: MutableLiveData<BasicUserInfo?>) {
     Column(
         modifier = modifier.fillMaxWidth()
     ) {

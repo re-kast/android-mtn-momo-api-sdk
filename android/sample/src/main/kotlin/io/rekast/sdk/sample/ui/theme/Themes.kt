@@ -19,18 +19,23 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 
 /**
+ * Applies the application's Material theme to the provided [content], switching between
+ * [LightColors] and [DarkColors] based on the [darkTheme] flag.
+ *
+ * Note: To follow the system dark-mode preference, pass `darkTheme = isSystemInDarkTheme()`.
+ *
  * TODO fix issue with ktfmt formatting annotated high order functions. Current workaround below:
  * lambda in this format content: (@Composable() () -> Unit) to allow spotlessApply
  *
- * To enable sample theme set darkTheme = isSystemInDarkTheme
+ * @param darkTheme Whether to use the dark color palette; defaults to false.
+ * @param content The composable content to render inside the theme.
  */
 @Composable
 fun AppTheme(
     darkTheme: Boolean = false,
     content:
     (
-    @Composable
-    () -> Unit
+    @Composable () -> Unit
     )
 ) {
     MaterialTheme(

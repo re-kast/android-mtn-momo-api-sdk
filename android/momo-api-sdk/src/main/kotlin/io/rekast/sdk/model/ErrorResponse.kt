@@ -18,9 +18,12 @@ package io.rekast.sdk.model
 import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.Serializable
 
+/**
+ * Represents an error response returned by the MTN MOMO API.
+ *
+ * @property code The error code returned by the API (maps to [io.rekast.sdk.utils.MomoAPIErrorResponses]).
+ * @property message A human-readable description of the error.
+ * @property error The raw error identifier string from the API.
+ */
 @Serializable
-data class ErrorResponse(
-    @SerializedName("code") var code: String,
-    @SerializedName("message") var message: String,
-    @SerializedName("error") var error: String
-)
+data class ErrorResponse(@SerializedName("code") var code: String, @SerializedName("message") var message: String, @SerializedName("error") var error: String)

@@ -21,13 +21,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.colorResource
 import io.rekast.sdk.sample.R
 
+/**
+ * Returns a [TextFieldColors] configuration using the application's primary and background colors
+ * for focused, unfocused, and cursor states.
+ *
+ * @return [TextFieldColors] pre-configured with the app's color scheme.
+ */
 @Composable
-fun textFieldDefaultsComponent(): TextFieldColors {
-    return TextFieldDefaults.colors(
-        focusedIndicatorColor = colorResource(id = R.color.accent_primary),
-        unfocusedIndicatorColor = colorResource(id = R.color.black),
-        focusedContainerColor = colorResource(id = R.color.white),
-        unfocusedContainerColor = colorResource(id = R.color.whiteish),
-        cursorColor = colorResource(id = R.color.accent_primary)
-    )
-}
+fun textFieldDefaultsComponent(): TextFieldColors = TextFieldDefaults.colors(
+    focusedIndicatorColor = colorResource(id = R.color.accent_primary),
+    unfocusedIndicatorColor = colorResource(id = R.color.black),
+    focusedContainerColor = colorResource(id = R.color.white),
+    unfocusedContainerColor = colorResource(id = R.color.whiteish),
+    cursorColor = colorResource(id = R.color.accent_primary)
+)

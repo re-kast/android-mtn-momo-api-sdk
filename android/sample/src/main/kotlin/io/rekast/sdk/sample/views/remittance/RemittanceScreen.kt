@@ -48,6 +48,16 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 
+/**
+ * Renders the Remittance Transfer screen, showing a payment capture form when no transaction
+ * result is available, or a transaction summary once a [MomoTransaction] has been returned.
+ *
+ * @param navController [NavController] used to navigate between destinations via the drawer.
+ * @param snackStateFlow Flow emitting [SnackBarComponentConfiguration] messages to display.
+ * @param showProgressBar Whether to display a loading indicator instead of the form; defaults to false.
+ * @param remittanceScreenViewModel ViewModel providing form state and callbacks; may be null in previews.
+ * @param momoTransaction LiveData holding the completed [MomoTransaction]; null triggers the capture form.
+ */
 @Composable
 fun RemittanceScreen(
     navController: NavController?,
@@ -88,8 +98,8 @@ fun RemittanceScreen(
                     val phoneNumber by remittanceScreenViewModel.phoneNumber.observeAsState(Constants.EMPTY_STRING)
                     val financialId by remittanceScreenViewModel.financialId.observeAsState(Constants.EMPTY_STRING)
                     val amount by remittanceScreenViewModel.amount.observeAsState(Constants.EMPTY_STRING)
-                    val paymentMessage by remittanceScreenViewModel.paymentMessage.observeAsState(Constants.EMPTY_STRING)
-                    val paymentNote by remittanceScreenViewModel.paymentNote.observeAsState(Constants.EMPTY_STRING)
+                    val paymentMessage by remittanceScreenViewModel.payerMessage.observeAsState(Constants.EMPTY_STRING)
+                    val paymentNote by remittanceScreenViewModel.payerNote.observeAsState(Constants.EMPTY_STRING)
                     val deliveryNote by remittanceScreenViewModel.deliveryNote.observeAsState(Constants.EMPTY_STRING)
                     val referenceIdToRefund by remittanceScreenViewModel.referenceIdToRefund.observeAsState(Constants.EMPTY_STRING)
 

@@ -25,7 +25,4 @@ import kotlinx.serialization.Serializable
  * @property targetEnvironment The target environment for the API.
  */
 @Serializable
-data class ApiUser(
-    @SerializedName("providerCallbackHost") val providerCallbackHost: String? = null,
-    @SerializedName("targetEnvironment") val targetEnvironment: String? = null
-)
+data class ApiUser(@SerializedName("providerCallbackHost") val providerCallbackHost: String? = null, @SerializedName("targetEnvironment") val targetEnvironment: String? = null)

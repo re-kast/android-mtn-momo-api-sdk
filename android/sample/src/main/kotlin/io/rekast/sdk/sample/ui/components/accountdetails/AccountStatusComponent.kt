@@ -33,11 +33,14 @@ import io.rekast.sdk.model.AccountHolderStatus
 import io.rekast.sdk.sample.R
 import io.rekast.sdk.sample.ui.components.general.SectionHeader
 
+/**
+ * Renders a section displaying the active/inactive status of an account holder.
+ *
+ * @param modifier Modifier applied to the root [Column].
+ * @param accountHolderStatus LiveData holding the [AccountHolderStatus] to display; shows "Inactive" when null.
+ */
 @Composable
-fun AccountStatusComponent(
-    modifier: Modifier = Modifier,
-    accountHolderStatus: MutableLiveData<AccountHolderStatus?>
-) {
+fun AccountStatusComponent(modifier: Modifier = Modifier, accountHolderStatus: MutableLiveData<AccountHolderStatus?>) {
     Column(
         modifier = modifier.fillMaxWidth()
     ) {

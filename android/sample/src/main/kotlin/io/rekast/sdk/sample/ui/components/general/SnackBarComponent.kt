@@ -22,14 +22,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import io.rekast.sdk.sample.utils.parseColor
 
+/**
+ * Renders a [SnackbarHost] with a custom-themed [Snackbar] whose colors are specified as hex strings.
+ *
+ * @param modifier Modifier applied to the [Snackbar].
+ * @param snackBarHostState State object that controls snackbar visibility and content.
+ * @param backgroundColorHex Hex color string (e.g. "#EB9779") for the snackbar background.
+ * @param actionColorHex Hex color string for the action button text.
+ * @param contentColorHex Hex color string for the message text.
+ */
 @Composable
-fun SnackBarComponent(
-    modifier: Modifier = Modifier,
-    snackBarHostState: SnackbarHostState,
-    backgroundColorHex: String,
-    actionColorHex: String,
-    contentColorHex: String
-) {
+fun SnackBarComponent(modifier: Modifier = Modifier, snackBarHostState: SnackbarHostState, backgroundColorHex: String, actionColorHex: String, contentColorHex: String) {
     SnackbarHost(
         hostState = snackBarHostState,
         snackbar = { snackBarData ->

@@ -88,24 +88,18 @@ class DefaultRepository @Inject constructor(
      *
      * @return The current [BasicAuthCredentials].
      */
-    fun getBasicAuth(): BasicAuthCredentials {
-        return basicAuthCredentialsT
-    }
+    fun getBasicAuth(): BasicAuthCredentials = basicAuthCredentialsT
 
     /**
      * Retrieves the current access token authentication credentials.
      *
      * @return The current [AccessTokenCredentials].
      */
-    fun getAccessTokenAuth(): AccessTokenCredentials {
-        return accessTokenCredentialsT
-    }
+    fun getAccessTokenAuth(): AccessTokenCredentials = accessTokenCredentialsT
 
-    private fun <T> executeApiCall(apiCall: suspend () -> Response<T>): Flow<NetworkResult<T>> {
-        return flow<NetworkResult<T>> {
-            emit(safeApiCall { apiCall() })
-        }.flowOn(Dispatchers.IO)
-    }
+    private fun <T> executeApiCall(apiCall: suspend () -> Response<T>): Flow<NetworkResult<T>> = flow<NetworkResult<T>> {
+        emit(safeApiCall { apiCall() })
+    }.flowOn(Dispatchers.IO)
 
     /**
      * Creates a new API user.
@@ -116,14 +110,8 @@ class DefaultRepository @Inject constructor(
      * @param productSubscriptionKey The subscription key for the product.
      * @return A [Flow] emitting a [NetworkResult] containing the created [ApiUser].
      */
-    fun createApiUser(
-        providerCallBackHost: ProviderCallBackHost,
-        apiVersion: String,
-        uuid: String,
-        productSubscriptionKey: String
-    ): Flow<NetworkResult<ApiUser>> {
-        return executeApiCall { defaultSource.createApiUser(providerCallBackHost = providerCallBackHost, apiVersion = apiVersion, uuid = uuid, productSubscriptionKey = productSubscriptionKey) }
-    }
+    fun createApiUser(providerCallBackHost: ProviderCallBackHost, apiVersion: String, uuid: String, productSubscriptionKey: String): Flow<NetworkResult<ApiUser>> =
+        executeApiCall { defaultSource.createApiUser(providerCallBackHost = providerCallBackHost, apiVersion = apiVersion, uuid = uuid, productSubscriptionKey = productSubscriptionKey) }
 
     /**
      * Checks whether the supplied API user exists.
@@ -132,12 +120,8 @@ class DefaultRepository @Inject constructor(
      * @param productSubscriptionKey The subscription key for the product.
      * @return A [Flow] emitting a [NetworkResult] containing the [ApiUser] if found.
      */
-    fun checkApiUser(
-        apiVersion: String,
-        productSubscriptionKey: String
-    ): Flow<NetworkResult<ApiUser>> {
-        return executeApiCall { defaultSource.getApiUser(apiVersion, userId = BuildConfig.MOMO_API_USER_ID, productSubscriptionKey = productSubscriptionKey) }
-    }
+    fun checkApiUser(apiVersion: String, productSubscriptionKey: String): Flow<NetworkResult<ApiUser>> =
+        executeApiCall { defaultSource.getApiUser(apiVersion, userId = BuildConfig.MOMO_API_USER_ID, productSubscriptionKey = productSubscriptionKey) }
 
     /**
      * Gets the API Key based on the ApiUser Id and OCP Subscription Id.
@@ -146,12 +130,8 @@ class DefaultRepository @Inject constructor(
      * @param productSubscriptionKey The subscription key for the product.
      * @return A [Flow] emitting a [NetworkResult] containing the [ApiKey].
      */
-    fun createApiKey(
-        apiVersion: String,
-        productSubscriptionKey: String
-    ): Flow<NetworkResult<ApiKey>> {
-        return executeApiCall { defaultSource.createApiKey(apiVersion = apiVersion, userId = BuildConfig.MOMO_API_USER_ID, productSubscriptionKey = productSubscriptionKey) }
-    }
+    fun createApiKey(apiVersion: String, productSubscriptionKey: String): Flow<NetworkResult<ApiKey>> =
+        executeApiCall { defaultSource.createApiKey(apiVersion = apiVersion, userId = BuildConfig.MOMO_API_USER_ID, productSubscriptionKey = productSubscriptionKey) }
 
     /**
      * Gets the Access Token based on the ApiUser ID, OCP Subscription Id, and the API Key.
@@ -160,175 +140,127 @@ class DefaultRepository @Inject constructor(
      * @param productType The type of product for which to obtain the access token.
      * @return A [Response] containing the obtained [AccessToken].
      */
-    fun getAccessToken(
-        productSubscriptionKey: String,
-        productType: String
-    ): Flow<NetworkResult<AccessToken>> {
-        return executeApiCall { defaultSource.getAccessToken(productType = productType, productSubscriptionKey = productSubscriptionKey) }
-    }
+    fun getAccessToken(productSubscriptionKey: String, productType: String): Flow<NetworkResult<AccessToken>> =
+        executeApiCall { defaultSource.getAccessToken(productType = productType, productSubscriptionKey = productSubscriptionKey) }
 
     /**
-     * Gets the Access Token based on the ApiUser ID, OCP Subscription Id, and the API Key.
+     * Obtains an OAuth2 access token for use with consent-based API endpoints.
      *
+     * @param productType The type of product for which to obtain the OAuth2 access token.
      * @param productSubscriptionKey The subscription key for the product.
-     * @param productType The type of product for which to obtain the access token.
-     * @return A [Response] containing the obtained [AccessToken].
+     * @param environment The target environment (e.g., sandbox or production).
+     * @return A [Flow] emitting a [NetworkResult] containing the obtained [Oauth2AccessToken].
      */
-    fun getOauthAccessToken(
-        productType: String,
-        productSubscriptionKey: String,
-        environment: String
-    ): Flow<NetworkResult<Oauth2AccessToken>> {
-        return executeApiCall { defaultSource.getOauth2AccessToken(productType = productType, productSubscriptionKey = productSubscriptionKey, environment = environment) }
-    }
+    fun getOauthAccessToken(productType: String, productSubscriptionKey: String, environment: String): Flow<NetworkResult<Oauth2AccessToken>> =
+        executeApiCall { defaultSource.getOauth2AccessToken(productType = productType, productSubscriptionKey = productSubscriptionKey, environment = environment) }
 
     /**
      * Retrieves the basic user information for a specified MTN MOMO user.
      *
-     * @param accountHolder The identifier for the account holder.
-     * @param productSubscriptionKey The subscription key for the product.
-     * @param accessToken The access token for authentication.
-     * @param apiVersion The version of the API to use.
      * @param productType The type of product for which to retrieve the user information.
-     * @return A [Response] containing the [BasicUserInfo] of the specified user.
+     * @param apiVersion The version of the API to use.
+     * @param accountHolder The MSISDN or other identifier for the account holder.
+     * @param productSubscriptionKey The subscription key for the product.
+     * @param environment The target environment (e.g., sandbox or production).
+     * @return A [Flow] emitting a [NetworkResult] containing the [BasicUserInfo] of the specified user.
      */
-    fun getBasicUserInfo(
-        productType: String,
-        apiVersion: String,
-        accountHolder: String,
-        productSubscriptionKey: String,
-        environment: String
-    ): Flow<NetworkResult<BasicUserInfo>> {
-        return executeApiCall { defaultSource.getBasicUserInfo(productType = productType, apiVersion = apiVersion, accountHolder = accountHolder, productSubscriptionKey = productSubscriptionKey, environment = environment) }
+    fun getBasicUserInfo(productType: String, apiVersion: String, accountHolder: String, productSubscriptionKey: String, environment: String): Flow<NetworkResult<BasicUserInfo>> = executeApiCall {
+        defaultSource.getBasicUserInfo(productType = productType, apiVersion = apiVersion, accountHolder = accountHolder, productSubscriptionKey = productSubscriptionKey, environment = environment)
     }
 
     /**
-     * Retrieves the user information for a specified MTN MOMO user with consent.
+     * Retrieves extended user information for a MTN MOMO user who has granted consent.
      *
-     * @param productSubscriptionKey The subscription key for the product.
-     * @param accessToken The access token for authentication.
-     * @param apiVersion The version of the API to use.
      * @param productType The type of product for which to retrieve the user information.
-     * @return A [Response] containing the [UserInfoWithConsent] of the specified user.
+     * @param apiVersion The version of the API to use.
+     * @param productSubscriptionKey The subscription key for the product.
+     * @param environment The target environment (e.g., sandbox or production).
+     * @return A [Flow] emitting a [NetworkResult] containing the [UserInfoWithConsent] of the user.
      */
-    fun getUserInfoWithConsent(
-        productType: String,
-        apiVersion: String,
-        productSubscriptionKey: String,
-        environment: String
-    ): Flow<NetworkResult<UserInfoWithConsent>> {
-        return executeApiCall { defaultSource.getUserInfoWithConsent(productType = productType, apiVersion = apiVersion, productSubscriptionKey = productSubscriptionKey, environment = environment) }
+    fun getUserInfoWithConsent(productType: String, apiVersion: String, productSubscriptionKey: String, environment: String): Flow<NetworkResult<UserInfoWithConsent>> = executeApiCall {
+        defaultSource.getUserInfoWithConsent(productType = productType, apiVersion = apiVersion, productSubscriptionKey = productSubscriptionKey, environment = environment)
     }
 
     /**
-     * Validates the status of an account holder.
+     * Validates whether the specified account holder is active in the MTN MOMO system.
      *
-     * @param accountHolder The account holder details to validate.
+     * @param productType The type of product for which to validate the account holder.
      * @param apiVersion The version of the API to use.
-     * @param productType The type of product for the validation.
+     * @param accountHolder The account holder details (ID and type) to validate.
      * @param productSubscriptionKey The subscription key for the product.
-     * @param accessToken The access token for authentication.
-     * @return A [Response] indicating the result of the account holder status validation.
+     * @param environment The target environment (e.g., sandbox or production).
+     * @return A [Flow] emitting a [NetworkResult] with the raw validation result as a [ResponseBody].
      */
-    fun validateAccountHolderStatus(
-        productType: String,
-        apiVersion: String,
-        accountHolder: AccountHolder,
-        productSubscriptionKey: String,
-        environment: String
-    ): Flow<NetworkResult<ResponseBody>> {
-        return executeApiCall { defaultSource.validateAccountHolderStatus(productType, apiVersion = apiVersion, accountHolder = accountHolder, productSubscriptionKey = productSubscriptionKey, environment = environment) }
+    fun validateAccountHolderStatus(productType: String, apiVersion: String, accountHolder: AccountHolder, productSubscriptionKey: String, environment: String): Flow<NetworkResult<ResponseBody>> = executeApiCall {
+        defaultSource.validateAccountHolderStatus(productType, apiVersion = apiVersion, accountHolder = accountHolder, productSubscriptionKey = productSubscriptionKey, environment = environment)
     }
 
     /**
-     * Gets the account balance of the entity/user initiating the transaction. This only works with the [ProductType.COLLECTION]. It seems to break with the other API products.
-     * User EUR as the currency on sandbox
+     * Retrieves the account balance, optionally filtered by currency.
      *
-     * @param currency The currency for which to get the account balance.
-     * @param productSubscriptionKey The subscription key for the product.
-     * @param accessToken The access token for authentication.
-     * @param apiVersion The version of the API to use.
+     * Currently only works reliably with [io.rekast.sdk.utils.ProductType.COLLECTION].
+     * Use EUR as the currency value when testing on the sandbox environment.
+     *
      * @param productType The type of product for which to get the account balance.
-     * @return A [Response] containing the [AccountBalance].
+     * @param apiVersion The version of the API to use.
+     * @param currency An optional ISO currency code; when provided, the balance is returned for that currency only.
+     * @param productSubscriptionKey The subscription key for the product.
+     * @param environment The target environment (e.g., sandbox or production).
+     * @return A [Flow] emitting a [NetworkResult] containing the [AccountBalance].
      */
-    fun getAccountBalance(
-        productType: String,
-        apiVersion: String,
-        currency: String?,
-        productSubscriptionKey: String,
-        environment: String
-    ): Flow<NetworkResult<AccountBalance>> {
-        return executeApiCall {
-            if (StringUtils.isNotBlank(currency)) {
-                defaultSource.getAccountBalanceInSpecificCurrency(
-                    productType = productType,
-                    apiVersion = apiVersion,
-                    currency = currency.toString(),
-                    productSubscriptionKey = productSubscriptionKey,
-                    environment = environment
-                )
-            } else {
-                defaultSource.getAccountBalance(productType = productType, apiVersion = apiVersion, productSubscriptionKey = productSubscriptionKey, environment = environment)
-            }
+    fun getAccountBalance(productType: String, apiVersion: String, currency: String?, productSubscriptionKey: String, environment: String): Flow<NetworkResult<AccountBalance>> = executeApiCall {
+        if (StringUtils.isNotBlank(currency)) {
+            defaultSource.getAccountBalanceInSpecificCurrency(
+                productType = productType,
+                apiVersion = apiVersion,
+                currency = currency.toString(),
+                productSubscriptionKey = productSubscriptionKey,
+                environment = environment
+            )
+        } else {
+            defaultSource.getAccountBalance(productType = productType, apiVersion = apiVersion, productSubscriptionKey = productSubscriptionKey, environment = environment)
         }
     }
 
     /**
-     * Sends a request to transfer funds to a specified account.
+     * Initiates a fund transfer to a specified account.
      *
-     * @param accessToken The access token for authentication.
-     * @param momoTransaction The transaction details for the transfer.
-     * @param apiVersion The version of the API to use.
      * @param productType The type of product for the transfer.
+     * @param apiVersion The version of the API to use.
+     * @param momoTransaction The transaction details including amount, currency, and party information.
+     * @param uuid A UUID V4 used as the X-Reference-Id to uniquely identify this request.
      * @param productSubscriptionKey The subscription key for the product.
-     * @param uuid A unique identifier for the request.
-     * @return A [Response] indicating the result of the transfer request.
+     * @param environment The target environment (e.g., sandbox or production).
+     * @return A [Flow] emitting a [NetworkResult] with an empty [Unit] body on success.
      */
-    fun transfer(
-        productType: String,
-        apiVersion: String,
-        momoTransaction: MomoTransaction,
-        uuid: String,
-        productSubscriptionKey: String,
-        environment: String
-    ): Flow<NetworkResult<Unit>> {
-        return executeApiCall {
-            defaultSource.transfer(productType = productType, apiVersion = apiVersion, momoTransaction = momoTransaction, uuid = uuid, productSubscriptionKey = productSubscriptionKey, environment = environment)
-        }
+    fun transfer(productType: String, apiVersion: String, momoTransaction: MomoTransaction, uuid: String, productSubscriptionKey: String, environment: String): Flow<NetworkResult<Unit>> = executeApiCall {
+        defaultSource.transfer(productType = productType, apiVersion = apiVersion, momoTransaction = momoTransaction, uuid = uuid, productSubscriptionKey = productSubscriptionKey, environment = environment)
     }
 
     /**
-     * Retrieves the status of a transfer based on the provided transfer ID.
+     * Retrieves the status of a previously initiated fund transfer.
      *
-     * @param referenceId The reference ID of the transfer.
-     * @param apiVersion The version of the API to use.
      * @param productType The type of product for the transfer.
+     * @param apiVersion The version of the API to use.
+     * @param referenceId The UUID V4 reference ID used when calling [transfer].
      * @param productSubscriptionKey The subscription key for the product.
-     * @param accessToken The access token for authentication.
-     * @return A [Response] containing the status of the transfer.
+     * @param environment The target environment (e.g., sandbox or production).
+     * @return A [Flow] emitting a [NetworkResult] with the transfer status as a [ResponseBody].
      */
-    fun getTransferStatus(
-        productType: String,
-        apiVersion: String,
-        referenceId: String,
-        productSubscriptionKey: String,
-        environment: String
-    ): Flow<NetworkResult<ResponseBody>> {
-        return executeApiCall {
-            defaultSource.getTransferStatus(productType = productType, apiVersion = apiVersion, referenceId = referenceId, productSubscriptionKey = productSubscriptionKey, environment = environment)
-        }
+    fun getTransferStatus(productType: String, apiVersion: String, referenceId: String, productSubscriptionKey: String, environment: String): Flow<NetworkResult<ResponseBody>> = executeApiCall {
+        defaultSource.getTransferStatus(productType = productType, apiVersion = apiVersion, referenceId = referenceId, productSubscriptionKey = productSubscriptionKey, environment = environment)
     }
 
     /**
-     * Sends a request to pay a user, identified by the provided reference ID.
+     * Sends a delivery notification to the payer for an existing request-to-pay transaction.
      *
-     * @param momoNotification The notification details for the payment.
-     * @param referenceId The reference ID of the user to pay.
+     * @param productType The type of product for the notification.
      * @param apiVersion The version of the API to use.
-     * @param productType The type of product for the payment.
+     * @param referenceId The UUID V4 reference ID of the original request-to-pay transaction.
+     * @param momoNotification The notification payload containing the message to deliver.
      * @param productSubscriptionKey The subscription key for the product.
-     * @param accessToken The access token for authentication.
-     * @return A [Response] indicating the result of the payment request.
+     * @param environment The target environment (e.g., sandbox or production).
+     * @return A [Flow] emitting a [NetworkResult] with the raw result as a [ResponseBody].
      */
     fun requestToPayDeliveryNotification(
         productType: String,
@@ -337,168 +269,114 @@ class DefaultRepository @Inject constructor(
         momoNotification: MomoNotification,
         productSubscriptionKey: String,
         environment: String
-    ): Flow<NetworkResult<ResponseBody>> {
-        return executeApiCall {
-            defaultSource.requestToPayDeliveryNotification(
-                productType = productType,
-                apiVersion = apiVersion,
-                referenceId = referenceId,
-                momoNotification = momoNotification,
-                productSubscriptionKey = productSubscriptionKey,
-                environment = environment
-            )
-        }
+    ): Flow<NetworkResult<ResponseBody>> = executeApiCall {
+        defaultSource.requestToPayDeliveryNotification(
+            productType = productType,
+            apiVersion = apiVersion,
+            referenceId = referenceId,
+            momoNotification = momoNotification,
+            productSubscriptionKey = productSubscriptionKey,
+            environment = environment
+        )
     }
 
     /**
-     * Requests a payment to be processed.
+     * Initiates a request-to-pay directly via the Collection service.
      *
-     * @param accessToken The access token for authentication.
-     * @param momoTransaction The transaction details.
-     * @param apiVersion The version of the API to use.
-     * @param productSubscriptionKey The subscription key for the product.
-     * @param uuid A unique identifier for the request.
-     * @return A [Response] indicating the result of the request.
+     * @param accessToken The bearer access token used to authenticate the request.
+     * @param momoTransaction The transaction payload containing amount, currency, and party details.
+     * @param apiVersion The API version to target (e.g., v1_0 or v2_0).
+     * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Collection product.
+     * @param uuid A UUID V4 used as the X-Reference-Id to uniquely identify this request.
+     * @return A [retrofit2.Response] with an empty body; HTTP 202 indicates the request was accepted.
      */
-    suspend fun requestToPay(
-        accessToken: String,
-        momoTransaction: MomoTransaction,
-        apiVersion: String,
-        productSubscriptionKey: String,
-        uuid: String
-    ): Response<Unit> {
-        return collection.requestToPay(momoTransaction, apiVersion, productSubscriptionKey, BuildConfig.MOMO_ENVIRONMENT, uuid)
-    }
+    suspend fun requestToPay(accessToken: String, momoTransaction: MomoTransaction, apiVersion: String, productSubscriptionKey: String, uuid: String): Response<Unit> =
+        collection.requestToPay(momoTransaction, apiVersion, productSubscriptionKey, BuildConfig.MOMO_ENVIRONMENT, uuid)
 
     /**
-     * Requests the status of a payment transaction.
+     * Retrieves the status of a previously initiated request-to-pay transaction.
      *
-     * @param referenceId The reference ID of the transaction.
-     * @param apiVersion The version of the API to use.
-     * @param productSubscriptionKey The subscription key for the product.
-     * @param accessToken The access token for authentication.
-     * @return A [Response] containing the status of the transaction.
+     * @param referenceId The UUID V4 reference ID used when calling [requestToPay].
+     * @param apiVersion The API version to target (e.g., v1_0 or v2_0).
+     * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Collection product.
+     * @param accessToken The bearer access token used to authenticate the request.
+     * @return A [retrofit2.Response] whose body contains the transaction status as a [ResponseBody].
      */
-    suspend fun requestToPayTransactionStatus(
-        referenceId: String,
-        apiVersion: String,
-        productSubscriptionKey: String,
-        accessToken: String
-    ): Response<ResponseBody> {
-        return collection.requestToPayTransactionStatus(referenceId, apiVersion, productSubscriptionKey, BuildConfig.MOMO_ENVIRONMENT)
-    }
+    suspend fun requestToPayTransactionStatus(referenceId: String, apiVersion: String, productSubscriptionKey: String, accessToken: String): Response<ResponseBody> =
+        collection.requestToPayTransactionStatus(referenceId, apiVersion, productSubscriptionKey, BuildConfig.MOMO_ENVIRONMENT)
 
     /**
-     * Requests a withdrawal to be processed.
+     * Initiates a request-to-withdraw directly via the Collection service.
      *
-     * @param accessToken The access token for authentication.
-     * @param momoTransaction The transaction details.
-     * @param apiVersion The version of the API to use.
-     * @param productSubscriptionKey The subscription key for the product.
-     * @param uuid A unique identifier for the request.
-     * @return A [Response] indicating the result of the request.
+     * @param accessToken The bearer access token used to authenticate the request.
+     * @param momoTransaction The transaction payload containing amount, currency, and party details.
+     * @param apiVersion The API version to target (e.g., v1_0 or v2_0).
+     * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Collection product.
+     * @param uuid A UUID V4 used as the X-Reference-Id to uniquely identify this request.
+     * @return A [retrofit2.Response] with an empty body; HTTP 202 indicates the request was accepted.
      */
-    suspend fun requestToWithdraw(
-        accessToken: String,
-        momoTransaction: MomoTransaction,
-        apiVersion: String,
-        productSubscriptionKey: String,
-        uuid: String
-    ): Response<Unit> {
-        return collection.requestToWithdraw(momoTransaction, apiVersion, productSubscriptionKey, BuildConfig.MOMO_ENVIRONMENT, uuid)
-    }
+    suspend fun requestToWithdraw(accessToken: String, momoTransaction: MomoTransaction, apiVersion: String, productSubscriptionKey: String, uuid: String): Response<Unit> =
+        collection.requestToWithdraw(momoTransaction, apiVersion, productSubscriptionKey, BuildConfig.MOMO_ENVIRONMENT, uuid)
 
     /**
-     * Requests the status of a withdrawal transaction.
+     * Retrieves the status of a previously initiated request-to-withdraw transaction.
      *
-     * @param referenceId The reference ID of the transaction.
-     * @param apiVersion The version of the API to use.
-     * @param productSubscriptionKey The subscription key for the product.
-     * @param accessToken The access token for authentication.
-     * @return A [Response] containing the status of the transaction.
+     * @param referenceId The UUID V4 reference ID used when calling [requestToWithdraw].
+     * @param apiVersion The API version to target (e.g., v1_0 or v2_0).
+     * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Collection product.
+     * @param accessToken The bearer access token used to authenticate the request.
+     * @return A [retrofit2.Response] whose body contains the withdrawal status as a [ResponseBody].
      */
-    suspend fun requestToWithdrawTransactionStatus(
-        referenceId: String,
-        apiVersion: String,
-        productSubscriptionKey: String,
-        accessToken: String
-    ): Response<ResponseBody> {
-        return collection.requestToWithdrawTransactionStatus(referenceId, apiVersion, productSubscriptionKey, BuildConfig.MOMO_ENVIRONMENT)
-    }
+    suspend fun requestToWithdrawTransactionStatus(referenceId: String, apiVersion: String, productSubscriptionKey: String, accessToken: String): Response<ResponseBody> =
+        collection.requestToWithdrawTransactionStatus(referenceId, apiVersion, productSubscriptionKey, BuildConfig.MOMO_ENVIRONMENT)
 
     /**
-     * Requests a deposit to be processed.
+     * Initiates a deposit directly via the Disbursements service.
      *
-     * @param accessToken The access token for authentication.
-     * @param momoTransaction The transaction details.
-     * @param apiVersion The version of the API to use.
-     * @param productSubscriptionKey The subscription key for the product.
-     * @param uuid A unique identifier for the request.
-     * @return A [Response] indicating the result of the request.
+     * @param accessToken The bearer access token used to authenticate the request.
+     * @param momoTransaction The transaction payload containing amount, currency, and payee details.
+     * @param apiVersion The API version to target (e.g., v1_0 or v2_0).
+     * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Disbursements product.
+     * @param uuid A UUID V4 used as the X-Reference-Id to uniquely identify this request.
+     * @return A [retrofit2.Response] with an empty body; HTTP 202 indicates the request was accepted.
      */
-    suspend fun deposit(
-        accessToken: String,
-        momoTransaction: MomoTransaction,
-        apiVersion: String,
-        productSubscriptionKey: String,
-        uuid: String
-    ): Response<Unit> {
-        return disbursementsService.deposit(momoTransaction, apiVersion, productSubscriptionKey, BuildConfig.MOMO_ENVIRONMENT, uuid)
-    }
+    suspend fun deposit(accessToken: String, momoTransaction: MomoTransaction, apiVersion: String, productSubscriptionKey: String, uuid: String): Response<Unit> =
+        disbursementsService.deposit(momoTransaction, apiVersion, productSubscriptionKey, BuildConfig.MOMO_ENVIRONMENT, uuid)
 
     /**
-     * Gets the status of a deposit transaction.
+     * Retrieves the status of a previously initiated deposit transaction.
      *
-     * @param referenceId The reference ID of the transaction.
-     * @param apiVersion The version of the API to use.
-     * @param productSubscriptionKey The subscription key for the product.
-     * @param accessToken The access token for authentication.
-     * @return A [Response] containing the status of the deposit transaction.
+     * @param referenceId The UUID V4 reference ID used when calling [deposit].
+     * @param apiVersion The API version to target (e.g., v1_0 or v2_0).
+     * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Disbursements product.
+     * @param accessToken The bearer access token used to authenticate the request.
+     * @return A [retrofit2.Response] whose body contains the deposit status as a [ResponseBody].
      */
-    suspend fun getDepositStatus(
-        referenceId: String,
-        apiVersion: String,
-        productSubscriptionKey: String,
-        accessToken: String
-    ): Response<ResponseBody> {
-        return disbursementsService.getDepositStatus(referenceId, apiVersion, productSubscriptionKey, BuildConfig.MOMO_ENVIRONMENT)
-    }
+    suspend fun getDepositStatus(referenceId: String, apiVersion: String, productSubscriptionKey: String, accessToken: String): Response<ResponseBody> =
+        disbursementsService.getDepositStatus(referenceId, apiVersion, productSubscriptionKey, BuildConfig.MOMO_ENVIRONMENT)
 
     /**
-     * Requests a refund to be processed.
+     * Initiates a refund directly via the Disbursements service.
      *
-     * @param accessToken The access token for authentication.
-     * @param momoTransaction The transaction details.
-     * @param apiVersion The version of the API to use.
-     * @param productSubscriptionKey The subscription key for the product.
-     * @param uuid A unique identifier for the request.
-     * @return A [Response] indicating the result of the request.
+     * @param accessToken The bearer access token used to authenticate the request.
+     * @param momoTransaction The transaction payload; set [MomoTransaction.referenceIdToRefund] to the original transaction ID.
+     * @param apiVersion The API version to target (e.g., v1_0 or v2_0).
+     * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Disbursements product.
+     * @param uuid A UUID V4 used as the X-Reference-Id to uniquely identify this request.
+     * @return A [retrofit2.Response] with an empty body; HTTP 202 indicates the request was accepted.
      */
-    suspend fun refund(
-        accessToken: String,
-        momoTransaction: MomoTransaction,
-        apiVersion: String,
-        productSubscriptionKey: String,
-        uuid: String
-    ): Response<Unit> {
-        return disbursementsService.refund(momoTransaction, apiVersion, productSubscriptionKey, BuildConfig.MOMO_ENVIRONMENT, uuid)
-    }
+    suspend fun refund(accessToken: String, momoTransaction: MomoTransaction, apiVersion: String, productSubscriptionKey: String, uuid: String): Response<Unit> =
+        disbursementsService.refund(momoTransaction, apiVersion, productSubscriptionKey, BuildConfig.MOMO_ENVIRONMENT, uuid)
 
     /**
-     * Gets the status of a refund transaction.
+     * Retrieves the status of a previously initiated refund transaction.
      *
-     * @param referenceId The reference ID of the transaction.
-     * @param apiVersion The version of the API to use.
-     * @param productSubscriptionKey The subscription key for the product.
-     * @param accessToken The access token for authentication.
-     * @return A [Response] containing the status of the refund transaction.
+     * @param referenceId The UUID V4 reference ID used when calling [refund].
+     * @param apiVersion The API version to target (e.g., v1_0 or v2_0).
+     * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Disbursements product.
+     * @param accessToken The bearer access token used to authenticate the request.
+     * @return A [retrofit2.Response] whose body contains the refund status as a [ResponseBody].
      */
-    suspend fun getRefundStatus(
-        referenceId: String,
-        apiVersion: String,
-        productSubscriptionKey: String,
-        accessToken: String
-    ): Response<ResponseBody> {
-        return disbursementsService.getRefundStatus(referenceId, apiVersion, productSubscriptionKey, BuildConfig.MOMO_ENVIRONMENT)
-    }
+    suspend fun getRefundStatus(referenceId: String, apiVersion: String, productSubscriptionKey: String, accessToken: String): Response<ResponseBody> =
+        disbursementsService.getRefundStatus(referenceId, apiVersion, productSubscriptionKey, BuildConfig.MOMO_ENVIRONMENT)
 }

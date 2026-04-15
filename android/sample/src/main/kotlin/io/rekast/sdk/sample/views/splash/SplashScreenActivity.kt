@@ -26,6 +26,10 @@ import io.rekast.sdk.sample.ui.theme.AppTheme
 import io.rekast.sdk.sample.utils.applyWindowInsetListener
 import io.rekast.sdk.sample.views.AppMainActivity
 
+/**
+ * Entry-point activity that displays the [SplashScreen] for 3 seconds before launching
+ * [AppMainActivity] and finishing itself.
+ */
 @OptIn(ExperimentalMaterialApi::class)
 @AndroidEntryPoint
 class SplashScreenActivity : AppCompatActivity() {

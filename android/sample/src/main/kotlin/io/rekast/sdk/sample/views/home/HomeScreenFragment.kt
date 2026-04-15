@@ -39,6 +39,10 @@ import javax.inject.Inject
 import kotlin.getValue
 import kotlinx.coroutines.launch
 
+/**
+ * Fragment that hosts the Home screen, fetching user info, account status, and account balance on
+ * resume and rendering [MainScreen] via Jetpack Compose.
+ */
 @ExperimentalMaterialApi
 @AndroidEntryPoint
 class HomeScreenFragment : Fragment() {
@@ -50,25 +54,19 @@ class HomeScreenFragment : Fragment() {
     private lateinit var activity: AppMainActivity
     private val homeScreenViewModel by viewModels<HomeScreenViewModel>()
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        return ComposeView(requireContext()).apply {
-            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
-            setContent {
-                AppTheme {
-                    val showProgressBar by homeScreenViewModel.showProgressBar.observeAsState(false)
-                    MainScreen(
-                        navController = findNavController(),
-                        snackStateFlow = homeScreenViewModel.snackBarStateFlow,
-                        showProgressBar = showProgressBar,
-                        basicUserInfo = homeScreenViewModel.basicUserInfo,
-                        accountHolderStatus = homeScreenViewModel.accountHolderStatus,
-                        accountBalance = homeScreenViewModel.accountBalance
-                    )
-                }
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View = ComposeView(requireContext()).apply {
+        setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+        setContent {
+            AppTheme {
+                val showProgressBar by homeScreenViewModel.showProgressBar.observeAsState(false)
+                MainScreen(
+                    navController = findNavController(),
+                    snackStateFlow = homeScreenViewModel.snackBarStateFlow,
+                    showProgressBar = showProgressBar,
+                    basicUserInfo = homeScreenViewModel.basicUserInfo,
+                    accountHolderStatus = homeScreenViewModel.accountHolderStatus,
+                    accountBalance = homeScreenViewModel.accountBalance
+                )
             }
         }
     }

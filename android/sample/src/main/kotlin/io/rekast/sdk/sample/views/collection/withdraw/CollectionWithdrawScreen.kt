@@ -48,6 +48,16 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 
+/**
+ * Renders the Collection Request-to-Withdraw screen, showing a payment capture form when no
+ * transaction result is available, or a transaction summary once a [MomoTransaction] has been returned.
+ *
+ * @param navController [NavController] used to navigate between destinations via the drawer.
+ * @param snackStateFlow Flow emitting [SnackBarComponentConfiguration] messages to display.
+ * @param showProgressBar Whether to display a loading indicator instead of the form; defaults to false.
+ * @param collectionWithdrawScreenViewModel ViewModel providing form state and callbacks; may be null in previews.
+ * @param momoTransaction LiveData holding the completed [MomoTransaction]; null triggers the capture form.
+ */
 @Composable
 fun CollectionScreen(
     navController: NavController?,
@@ -88,8 +98,8 @@ fun CollectionScreen(
                     val phoneNumber by collectionWithdrawScreenViewModel.phoneNumber.observeAsState(Constants.EMPTY_STRING)
                     val financialId by collectionWithdrawScreenViewModel.financialId.observeAsState(Constants.EMPTY_STRING)
                     val amount by collectionWithdrawScreenViewModel.amount.observeAsState(Constants.EMPTY_STRING)
-                    val paymentMessage by collectionWithdrawScreenViewModel.paymentMessage.observeAsState(Constants.EMPTY_STRING)
-                    val paymentNote by collectionWithdrawScreenViewModel.paymentNote.observeAsState(Constants.EMPTY_STRING)
+                    val paymentMessage by collectionWithdrawScreenViewModel.payerMessage.observeAsState(Constants.EMPTY_STRING)
+                    val paymentNote by collectionWithdrawScreenViewModel.payerNote.observeAsState(Constants.EMPTY_STRING)
                     val deliveryNote by collectionWithdrawScreenViewModel.deliveryNote.observeAsState(Constants.EMPTY_STRING)
                     val referenceIdToRefund by collectionWithdrawScreenViewModel.referenceIdToRefund.observeAsState(Constants.EMPTY_STRING)
 

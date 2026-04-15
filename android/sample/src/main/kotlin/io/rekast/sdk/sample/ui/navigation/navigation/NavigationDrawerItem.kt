@@ -18,11 +18,13 @@ package io.rekast.sdk.sample.ui.navigation.navigation
 import io.rekast.sdk.sample.R
 import io.rekast.sdk.sample.utils.Constants
 
-sealed class NavigationDrawerItem(
-    var route: Int,
-    var icon: Int,
-    var title: String
-) {
+/**
+ * Sealed class representing each navigation destination available in the side drawer.
+ *
+ * Each subclass holds the fragment destination [route] resource ID, the [icon] drawable resource ID,
+ * and a human-readable [title] displayed in the drawer.
+ */
+sealed class NavigationDrawerItem(var route: Int, var icon: Int, var title: String) {
     object Home : NavigationDrawerItem(
         R.id.homeScreenFragment,
         R.drawable.home,
@@ -39,14 +41,14 @@ sealed class NavigationDrawerItem(
         NavigationDrawerItem(
             R.id.collectionPayScreenFragment,
             R.drawable.payments,
-            Constants.NavigationTitle.COLLECTION_Service_REQUEST_TO_PAY
+            Constants.NavigationTitle.COLLECTION_SERVICE_REQUEST_TO_PAY
         )
 
     object CollectionRequestToWithdraw :
         NavigationDrawerItem(
             R.id.collectionWithDrawScreenFragment,
             R.drawable.local_mall,
-            Constants.NavigationTitle.COLLECTION_Service_REQUEST_TO_WITHDRAW
+            Constants.NavigationTitle.COLLECTION_SERVICE_REQUEST_TO_WITHDRAW
         )
 
     object DisbursementDeposit :

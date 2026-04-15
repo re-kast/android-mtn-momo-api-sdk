@@ -23,6 +23,4 @@ import javax.inject.Inject
  *
  * @property accessToken The access token string used to authenticate API requests.
  */
-data class AccessTokenCredentials @Inject constructor(
-    var accessToken: String
-)
+data class AccessTokenCredentials @Inject constructor(var accessToken: String)

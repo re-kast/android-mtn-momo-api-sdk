@@ -29,10 +29,10 @@ import io.rekast.sdk.model.AccountHolderStatus
 import io.rekast.sdk.model.BasicUserInfo
 import io.rekast.sdk.repository.DefaultRepository
 import io.rekast.sdk.repository.data.NetworkResult
+import io.rekast.sdk.sample.utils.DispatcherProvider
 import io.rekast.sdk.sample.utils.SnackBarComponentConfiguration
 import io.rekast.sdk.sample.utils.Utils
 import io.rekast.sdk.utils.AccountHolderType
-import io.rekast.sdk.sample.utils.DispatcherProvider
 import io.rekast.sdk.utils.ProductType
 import io.rekast.sdk.utils.Settings
 import javax.inject.Inject
@@ -43,21 +43,35 @@ import kotlinx.coroutines.launch
 import org.apache.commons.lang3.StringUtils
 import timber.log.Timber
 
+/**
+ * ViewModel for the Home screen, responsible for fetching and exposing basic user info,
+ * account holder status, and account balance from the MTN MOMO API.
+ */
 @HiltViewModel
-class HomeScreenViewModel @Inject constructor(
-    private val defaultRepository: DefaultRepository,
-    @ApplicationContext private val context: Context,
-    private val settings: Settings,
-    private val dispatchers: DispatcherProvider
-) : ViewModel() {
+class HomeScreenViewModel @Inject constructor(private val defaultRepository: DefaultRepository, @ApplicationContext private val context: Context, private val settings: Settings, private val dispatchers: DispatcherProvider) :
+    ViewModel() {
+    /** Controls whether the circular progress indicator is shown on the Home screen. */
     val showProgressBar = MutableLiveData(false)
     private val _snackBarStateFlow = MutableSharedFlow<SnackBarComponentConfiguration>()
+
+    /** Flow of [SnackBarComponentConfiguration] events to be displayed as snackbars. */
     val snackBarStateFlow: SharedFlow<SnackBarComponentConfiguration> = _snackBarStateFlow.asSharedFlow()
+
+    /** Holds the fetched [BasicUserInfo] for the authenticated user; null until the API responds. */
     var basicUserInfo: MutableLiveData<BasicUserInfo?> = MutableLiveData(null)
+
+    /** Holds the fetched [AccountHolderStatus] for the account; null until the API responds. */
     var accountHolderStatus: MutableLiveData<AccountHolderStatus?> = MutableLiveData(null)
+
+    /** Holds the fetched [AccountBalance] for the account; null until the API responds. */
     var accountBalance: MutableLiveData<AccountBalance?> = MutableLiveData(null)
+
+    /** The current access token retrieved from shared preferences at ViewModel creation time. */
     val accessToken = context.let { Utils.getAccessToken(it) }
 
+    /**
+     * Fetches basic user info from the Remittance API and posts the result to [basicUserInfo].
+     */
     fun getBasicUserInfo() {
         showProgressBar.postValue(true)
         val productType = Utils.getProductSubscriptionKeys(ProductType.REMITTANCE)
@@ -104,6 +118,9 @@ class HomeScreenViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Fetches user info with OAuth2 consent from the Remittance API and logs the result.
+     */
     fun getUserInfoWithConsent() {
         showProgressBar.postValue(true)
         val productType = Utils.getProductSubscriptionKeys(productType = ProductType.REMITTANCE)
@@ -144,6 +161,9 @@ class HomeScreenViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Validates the account holder status via the Remittance API and posts the result to [accountHolderStatus].
+     */
     fun validateAccountHolderStatus() {
         viewModelScope.launch(dispatchers.io()) {
             showProgressBar.postValue(true)
@@ -170,6 +190,7 @@ class HomeScreenViewModel @Inject constructor(
                                 SnackBarComponentConfiguration(message = "Account Holder status was fetched successfully")
                             )
                         }
+
                         is NetworkResult.Error -> {
                             Timber.e("Account Holder status was not fetched %s", foundStatus.message)
                             showProgressBar.postValue(false)
@@ -180,7 +201,9 @@ class HomeScreenViewModel @Inject constructor(
                             )
                         }
 
-                        else -> { Timber.e("An error occurred!!") }
+                        else -> {
+                            Timber.e("An error occurred!!")
+                        }
                     }
                 }
             } else {
@@ -195,8 +218,10 @@ class HomeScreenViewModel @Inject constructor(
     }
 
     /**
-     * Only works with the Collection API
-     * */
+     * Fetches the account balance via the Collection API and posts the result to [accountBalance].
+     *
+     * Note: This function only works with the Collection API product type.
+     */
     fun getAccountBalance() {
         viewModelScope.launch(dispatchers.io()) {
             showProgressBar.postValue(true)
@@ -221,6 +246,7 @@ class HomeScreenViewModel @Inject constructor(
                                 )
                             )
                         }
+
                         is NetworkResult.Error<*> -> {
                             showProgressBar.postValue(false)
 
@@ -233,7 +259,9 @@ class HomeScreenViewModel @Inject constructor(
                             )
                         }
 
-                        else -> { Timber.e("An error occurred!!") }
+                        else -> {
+                            Timber.e("An error occurred!!")
+                        }
                     }
                 }
             } else {

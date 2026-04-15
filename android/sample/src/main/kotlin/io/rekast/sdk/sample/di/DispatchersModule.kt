@@ -22,9 +22,19 @@ import dagger.hilt.components.SingletonComponent
 import io.rekast.sdk.sample.utils.DefaultDispatcherProvider
 import io.rekast.sdk.sample.utils.DispatcherProvider
 
+/**
+ * Hilt module that binds the [DefaultDispatcherProvider] implementation to the [DispatcherProvider]
+ * interface for the singleton component scope.
+ */
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class DispatchersModule {
+    /**
+     * Binds [DefaultDispatcherProvider] as the application-wide [DispatcherProvider] implementation.
+     *
+     * @param impl The concrete [DefaultDispatcherProvider] instance to bind.
+     * @return The [DispatcherProvider] interface backed by [impl].
+     */
     @Binds
     abstract fun bindDispatcherProvider(impl: DefaultDispatcherProvider): DispatcherProvider
 }

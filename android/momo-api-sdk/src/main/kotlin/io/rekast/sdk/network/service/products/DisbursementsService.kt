@@ -26,17 +26,20 @@ import retrofit2.http.POST
 import retrofit2.http.Path
 
 /**
- * This is the retrofit interface to handle the various calls to the DisbursementsService API. This interface defines the
- * method, the request and response from the API.
+ * Retrofit service interface for the MTN MOMO Disbursements product API.
+ *
+ * Extends [CommonService] with disbursement-specific operations: deposit and refund.
  */
 sealed interface DisbursementsService : CommonService {
     /**
-     * Makes a request to deposit to a specific user
-     * @param[momoTransaction] -- This is the Transfer Payload [MomoTransaction]
-     * @param[apiVersion] -- The app Version (v1_0 or v2_0)
-     * @param[productSubscriptionKey] -- The Product subscription Key (Ocp-Apim-Subscription-Key)
-     * @param[environment] -- The API environment (X-Target-Environment)
-     * @return[Unit] -- Returns the Transfer Status
+     * Initiates a deposit, pushing funds to the specified payee account.
+     *
+     * @param momoTransaction The transaction payload containing amount, currency, and party details.
+     * @param apiVersion The API version to target (e.g., v1_0 or v2_0).
+     * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Disbursements product.
+     * @param environment The target environment (e.g., sandbox or production).
+     * @param uuid A UUID V4 used as the X-Reference-Id to uniquely identify this request.
+     * @return A [Response] with an empty body; HTTP 202 indicates the request was accepted.
      */
     @POST(MomoConstants.EndPoints.DEPOSIT)
     suspend fun deposit(
@@ -48,13 +51,13 @@ sealed interface DisbursementsService : CommonService {
     ): Response<Unit>
 
     /**
-     * Makes a request to check the status of the deposit request
-     * @param[referenceId] -- The Transfer Reference ID. This is a UUID V4.
-     * This is the ID used here [deposit]
-     * @param[apiVersion] -- The app Version (v1_0 or v2_0)
-     * @param[productSubscriptionKey] -- The Product subscription Key (Ocp-Apim-Subscription-Key)
-     * @param[environment] -- The API environment (X-Target-Environment)
-     * @return[ResponseBody] -- Returns the Transfer Status
+     * Retrieves the status of a previously initiated deposit request.
+     *
+     * @param referenceId The UUID V4 reference ID used when calling [deposit].
+     * @param apiVersion The API version to target (e.g., v1_0 or v2_0).
+     * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Disbursements product.
+     * @param environment The target environment (e.g., sandbox or production).
+     * @return A [Response] whose body contains the deposit status as a [ResponseBody].
      */
     @GET(MomoConstants.EndPoints.DEPOSIT_STATUS)
     suspend fun getDepositStatus(
@@ -65,12 +68,14 @@ sealed interface DisbursementsService : CommonService {
     ): Response<ResponseBody>
 
     /**
-     * Makes a request to refund a specific user
-     * @param[momoTransaction] -- This is the Transfer Payload [MomoTransaction]
-     * @param[apiVersion] -- The app Version (v1_0 or v2_0)
-     * @param[productSubscriptionKey] -- The Product subscription Key (Ocp-Apim-Subscription-Key)
-     * @param[environment] -- The API environment (X-Target-Environment)
-     * @return[Unit] -- Returns the Transfer Status
+     * Initiates a refund for a previously completed transaction.
+     *
+     * @param momoTransaction The transaction payload; set [MomoTransaction.referenceIdToRefund] to the original transaction ID.
+     * @param apiVersion The API version to target (e.g., v1_0 or v2_0).
+     * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Disbursements product.
+     * @param environment The target environment (e.g., sandbox or production).
+     * @param uuid A UUID V4 used as the X-Reference-Id to uniquely identify this request.
+     * @return A [Response] with an empty body; HTTP 202 indicates the request was accepted.
      */
     @POST(MomoConstants.EndPoints.REFUND)
     suspend fun refund(
@@ -82,13 +87,13 @@ sealed interface DisbursementsService : CommonService {
     ): Response<Unit>
 
     /**
-     * Makes a request to check the status of the refund
-     * @param[referenceId] -- The Transfer Reference ID. This is a UUID V4.
-     * This is the ID used here [refund]
-     * @param[apiVersion] -- The app Version (v1_0 or v2_0)
-     * @param[productSubscriptionKey] -- The Product subscription Key (Ocp-Apim-Subscription-Key)
-     * @param[environment] -- The API environment (X-Target-Environment)
-     * @return[ResponseBody] -- Returns the Transfer Status
+     * Retrieves the status of a previously initiated refund request.
+     *
+     * @param referenceId The UUID V4 reference ID used when calling [refund].
+     * @param apiVersion The API version to target (e.g., v1_0 or v2_0).
+     * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Disbursements product.
+     * @param environment The target environment (e.g., sandbox or production).
+     * @return A [Response] whose body contains the refund status as a [ResponseBody].
      */
     @GET(MomoConstants.EndPoints.REFUND_STATUS)
     suspend fun getRefundStatus(

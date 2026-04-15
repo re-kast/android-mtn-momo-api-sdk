@@ -23,19 +23,22 @@ import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import io.rekast.sdk.sample.R
 
+/**
+ * Renders a bold section title followed by a full-width horizontal divider.
+ *
+ * @param titleResId String resource ID for the section title text.
+ * @param modifier Modifier applied to the wrapping [Column].
+ */
 @Composable
-fun SectionHeader(
-    @StringRes titleResId: Int,
-    modifier: Modifier = Modifier
-) {
+fun SectionHeader(@StringRes titleResId: Int, modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
             .fillMaxWidth()

@@ -59,9 +59,7 @@ object NetworkModule {
      */
     @Provides
     @Singleton
-    fun provideBasicAuthCredentials(): BasicAuthCredentials {
-        return BasicAuthCredentials("", "")
-    }
+    fun provideBasicAuthCredentials(): BasicAuthCredentials = BasicAuthCredentials("", "")
 
     /**
      * Provides an instance of [AccessTokenCredentials].
@@ -70,9 +68,7 @@ object NetworkModule {
      */
     @Provides
     @Singleton
-    fun provideAccessTokenCredentials(): AccessTokenCredentials {
-        return AccessTokenCredentials("")
-    }
+    fun provideAccessTokenCredentials(): AccessTokenCredentials = AccessTokenCredentials("")
 
     /**
      * Provides an instance of [AuthenticationService].
@@ -82,8 +78,7 @@ object NetworkModule {
      */
     @Provides
     @Singleton
-    fun getAuthentication(retrofit: Retrofit): AuthenticationService =
-        retrofit.create(AuthenticationService::class.java)
+    fun getAuthentication(retrofit: Retrofit): AuthenticationService = retrofit.create(AuthenticationService::class.java)
 
     /**
      * Provides an instance of [CollectionService].
@@ -93,8 +88,7 @@ object NetworkModule {
      */
     @Provides
     @Singleton
-    fun getCollection(retrofit: Retrofit): CollectionService =
-        retrofit.create(CollectionService::class.java)
+    fun getCollection(retrofit: Retrofit): CollectionService = retrofit.create(CollectionService::class.java)
 
     /**
      * Provides an instance of [DisbursementsService].
@@ -104,8 +98,7 @@ object NetworkModule {
      */
     @Provides
     @Singleton
-    fun getDisbursement(retrofit: Retrofit): DisbursementsService =
-        retrofit.create(DisbursementsService::class.java)
+    fun getDisbursement(retrofit: Retrofit): DisbursementsService = retrofit.create(DisbursementsService::class.java)
 
     /**
      * Provides an instance of [CommonService].
@@ -115,8 +108,7 @@ object NetworkModule {
      */
     @Provides
     @Singleton
-    fun getCommonService(retrofit: Retrofit): CommonService =
-        retrofit.create(CommonService::class.java)
+    fun getCommonService(retrofit: Retrofit): CommonService = retrofit.create(CommonService::class.java)
 
     /**
      * Provides an instance of [Retrofit].
@@ -128,18 +120,12 @@ object NetworkModule {
      */
     @Provides
     @Singleton
-    fun provideRetrofit(
-        okHttpClient: OkHttpClient,
-        gson: Gson,
-        baseUrl: String
-    ): Retrofit {
-        return Retrofit.Builder()
-            .baseUrl(baseUrl)
-            .addConverterFactory(GsonConverterFactory.create(gson))
-            .addCallAdapterFactory(CoroutineCallAdapterFactory())
-            .client(okHttpClient)
-            .build()
-    }
+    fun provideRetrofit(okHttpClient: OkHttpClient, gson: Gson, baseUrl: String): Retrofit = Retrofit.Builder()
+        .baseUrl(baseUrl)
+        .addConverterFactory(GsonConverterFactory.create(gson))
+        .addCallAdapterFactory(CoroutineCallAdapterFactory())
+        .client(okHttpClient)
+        .build()
 
     /**
      * Provides an instance of [AuthInterface].
@@ -150,12 +136,7 @@ object NetworkModule {
      */
     @Provides
     @Singleton
-    fun provideApiAuthenticator(
-        basicAuthCredentials: BasicAuthCredentials,
-        accessTokenCredentials: AccessTokenCredentials
-    ): AuthInterface {
-        return AuthImplementation(basicAuthCredentials, accessTokenCredentials)
-    }
+    fun provideApiAuthenticator(basicAuthCredentials: BasicAuthCredentials, accessTokenCredentials: AccessTokenCredentials): AuthInterface = AuthImplementation(basicAuthCredentials, accessTokenCredentials)
 
     /**
      * Provides an instance of [HttpLoggingInterceptor].
@@ -164,9 +145,7 @@ object NetworkModule {
      */
     @Provides
     @Singleton
-    fun providesHttpLoggingInterceptor(): HttpLoggingInterceptor {
-        return HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
-    }
+    fun providesHttpLoggingInterceptor(): HttpLoggingInterceptor = HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
 
     /**
      * Provides an instance of [Gson].
@@ -175,9 +154,7 @@ object NetworkModule {
      */
     @Provides
     @Singleton
-    fun provideGson(): Gson {
-        return GsonBuilder().create()
-    }
+    fun provideGson(): Gson = GsonBuilder().create()
 
     /**
      * Provides the base URL for the API.
@@ -186,9 +163,7 @@ object NetworkModule {
      */
     @Provides
     @Singleton
-    fun providesBaseUrl(): String {
-        return BuildConfig.MOMO_BASE_URL
-    }
+    fun providesBaseUrl(): String = BuildConfig.MOMO_BASE_URL
 
     /**
      * Provides an instance of [OkHttpClient].
@@ -201,12 +176,7 @@ object NetworkModule {
      */
     @Provides
     @Singleton
-    fun provideOkHttpClient(
-        httpLoggingInterceptor: HttpLoggingInterceptor,
-        basicAuthCredentials: BasicAuthCredentials,
-        accessTokenCredentials: AccessTokenCredentials,
-        baseUrl: String
-    ): OkHttpClient {
+    fun provideOkHttpClient(httpLoggingInterceptor: HttpLoggingInterceptor, basicAuthCredentials: BasicAuthCredentials, accessTokenCredentials: AccessTokenCredentials, baseUrl: String): OkHttpClient {
         val builder = if (baseUrl.contains("https")) {
             OkHttpClient.Builder().addInterceptor(httpLoggingInterceptor)
         } else {
@@ -216,9 +186,9 @@ object NetworkModule {
         builder.addInterceptor(BasicAuthenticationInterceptor(basicAuthCredentials))
         builder.addInterceptor(AccessTokenInterceptor(accessTokenCredentials))
 
-        return builder.connectTimeout(Settings().CONNECT_TIMEOUT, TimeUnit.SECONDS)
-            .writeTimeout(Settings().WRITE_TIMEOUT, TimeUnit.SECONDS)
-            .readTimeout(Settings().READ_TIMEOUT, TimeUnit.SECONDS)
+        return builder.connectTimeout(Settings().connectTimeout, TimeUnit.SECONDS)
+            .writeTimeout(Settings().writeTimeout, TimeUnit.SECONDS)
+            .readTimeout(Settings().readTimeout, TimeUnit.SECONDS)
             .build()
     }
 }

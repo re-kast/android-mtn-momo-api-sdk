@@ -19,6 +19,7 @@ import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
 import androidx.compose.ui.graphics.Color
 
+/** Divider line color used throughout the UI. */
 val DividerColor = Color(0xFFDDDDDD)
 val SubtitleTextColor = Color(0xFF7A7A7A)
 val GreyTextColor = Color(0xFF5A5A5A)
@@ -45,8 +46,10 @@ val SearchHeaderColor = Color(0xFFF2F4F7)
 private val PrimaryColor = Color(0xFF005084)
 private val PrimaryVariantColor = Color(0xFF003D66)
 
+/** Material light color palette using the app's primary and danger colors. */
 val LightColors =
     lightColors(primary = PrimaryColor, primaryVariant = PrimaryVariantColor, error = DangerColor)
 
+/** Material dark color palette using the app's primary and danger colors. */
 val DarkColors =
     darkColors(primary = PrimaryColor, primaryVariant = PrimaryVariantColor, error = DangerColor)

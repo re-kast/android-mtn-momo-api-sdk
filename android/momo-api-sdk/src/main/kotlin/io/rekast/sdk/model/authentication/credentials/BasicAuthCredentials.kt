@@ -23,7 +23,4 @@ import javax.inject.Inject
  * @param apiUserId The API user ID.
  * @param apiKey The API key.
  */
-data class BasicAuthCredentials @Inject constructor(
-    var apiUserId: String,
-    var apiKey: String
-)
+data class BasicAuthCredentials @Inject constructor(var apiUserId: String, var apiKey: String)

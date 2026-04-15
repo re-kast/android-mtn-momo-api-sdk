@@ -24,10 +24,16 @@ import javax.net.ssl.X509TrustManager
 import okhttp3.OkHttpClient
 
 /**
- * This class allows Retrofit to accept any, even bad SSL Certificates.
+ * Provides an [OkHttpClient.Builder] that bypasses SSL certificate validation.
+ *
+ * Use this only in non-production environments (e.g., when the base URL uses plain HTTP
+ * or a self-signed certificate). Never use in production as it disables all SSL security checks.
  */
 class UnsafeOkHttpClient {
 
+    /**
+     * An [OkHttpClient.Builder] configured to trust all SSL certificates without validation.
+     */
     val unsafeOkHttpClient: OkHttpClient.Builder
         get() = try { // Create a trust manager that does not validate certificate chains
             val trustAllCerts = arrayOf<TrustManager>(

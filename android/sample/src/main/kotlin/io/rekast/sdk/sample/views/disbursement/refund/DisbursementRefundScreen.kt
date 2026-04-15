@@ -48,6 +48,16 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 
+/**
+ * Renders the Disbursement Refund screen, showing a payment capture form when no transaction
+ * result is available, or a transaction summary once a [MomoTransaction] has been returned.
+ *
+ * @param navController [NavController] used to navigate between destinations via the drawer.
+ * @param snackStateFlow Flow emitting [SnackBarComponentConfiguration] messages to display.
+ * @param showProgressBar Whether to display a loading indicator instead of the form; defaults to false.
+ * @param disbursementRefundScreenViewModel ViewModel providing form state and callbacks; may be null in previews.
+ * @param momoTransaction LiveData holding the completed [MomoTransaction]; null triggers the capture form.
+ */
 @Composable
 fun DisbursementScreen(
     navController: NavController?,
@@ -88,8 +98,8 @@ fun DisbursementScreen(
                     val phoneNumber by disbursementRefundScreenViewModel.phoneNumber.observeAsState(Constants.EMPTY_STRING)
                     val financialId by disbursementRefundScreenViewModel.financialId.observeAsState(Constants.EMPTY_STRING)
                     val amount by disbursementRefundScreenViewModel.amount.observeAsState(Constants.EMPTY_STRING)
-                    val paymentMessage by disbursementRefundScreenViewModel.paymentMessage.observeAsState(Constants.EMPTY_STRING)
-                    val paymentNote by disbursementRefundScreenViewModel.paymentNote.observeAsState(Constants.EMPTY_STRING)
+                    val paymentMessage by disbursementRefundScreenViewModel.payerMessage.observeAsState(Constants.EMPTY_STRING)
+                    val paymentNote by disbursementRefundScreenViewModel.payerNote.observeAsState(Constants.EMPTY_STRING)
                     val deliveryNote by disbursementRefundScreenViewModel.deliveryNote.observeAsState(Constants.EMPTY_STRING)
                     val referenceIdToRefund by disbursementRefundScreenViewModel.referenceIdToRefund.observeAsState(Constants.EMPTY_STRING)
 

@@ -19,11 +19,24 @@ import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 
+/**
+ * Abstraction over the standard [CoroutineDispatcher] set to allow dispatcher injection in tests.
+ */
 interface DispatcherProvider {
+    /** Returns the [Dispatchers.Main] dispatcher for UI-thread work. */
     fun main(): CoroutineDispatcher = Dispatchers.Main
+
+    /** Returns the [Dispatchers.Default] dispatcher for CPU-intensive work. */
     fun default(): CoroutineDispatcher = Dispatchers.Default
+
+    /** Returns the [Dispatchers.IO] dispatcher for I/O-bound work. */
     fun io(): CoroutineDispatcher = Dispatchers.IO
+
+    /** Returns the [Dispatchers.Unconfined] dispatcher that is not confined to any thread. */
     fun unconfined(): CoroutineDispatcher = Dispatchers.Unconfined
 }
 
+/**
+ * Production [DispatcherProvider] implementation that delegates to the real [Dispatchers].
+ */
 class DefaultDispatcherProvider @Inject constructor() : DispatcherProvider

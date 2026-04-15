@@ -34,10 +34,7 @@ import javax.inject.Inject
  * @property authenticationService The service for handling authentication-related API calls.
  * @property commonService The service for handling common API calls.
  */
-class DefaultSource @Inject constructor(
-    private val authenticationService: AuthenticationService,
-    private val commonService: CommonService
-) {
+class DefaultSource @Inject constructor(private val authenticationService: AuthenticationService, private val commonService: CommonService) {
 
     /**
      * Creates a new API user.
@@ -48,12 +45,7 @@ class DefaultSource @Inject constructor(
      * @param productSubscriptionKey The subscription key for the product.
      * @return A [Response] containing the created [io.rekast.sdk.model.authentication.ApiUser].
      */
-    suspend fun createApiUser(
-        providerCallBackHost: ProviderCallBackHost,
-        apiVersion: String,
-        uuid: String,
-        productSubscriptionKey: String
-    ) = authenticationService.createApiUser(
+    suspend fun createApiUser(providerCallBackHost: ProviderCallBackHost, apiVersion: String, uuid: String, productSubscriptionKey: String) = authenticationService.createApiUser(
         providerCallBackHost = providerCallBackHost,
         apiVersion = apiVersion,
         uuid = uuid,
@@ -68,11 +60,7 @@ class DefaultSource @Inject constructor(
      * @param productSubscriptionKey The subscription key for the product.
      * @return A [Response] containing the requested [io.rekast.sdk.model.authentication.ApiUser].
      */
-    suspend fun getApiUser(
-        apiVersion: String,
-        userId: String,
-        productSubscriptionKey: String
-    ) = authenticationService.getApiUser(
+    suspend fun getApiUser(apiVersion: String, userId: String, productSubscriptionKey: String) = authenticationService.getApiUser(
         apiVersion = apiVersion,
         apiUser = userId,
         productSubscriptionKey = productSubscriptionKey
@@ -86,11 +74,7 @@ class DefaultSource @Inject constructor(
      * @param productSubscriptionKey The subscription key for the product.
      * @return A [Response] containing the generated [io.rekast.sdk.model.authentication.ApiKey].
      */
-    suspend fun createApiKey(
-        apiVersion: String,
-        userId: String,
-        productSubscriptionKey: String
-    ) = authenticationService.createApiKey(
+    suspend fun createApiKey(apiVersion: String, userId: String, productSubscriptionKey: String) = authenticationService.createApiKey(
         apiVersion = apiVersion,
         apiUser = userId,
         productSubscriptionKey = productSubscriptionKey
@@ -103,10 +87,7 @@ class DefaultSource @Inject constructor(
      * @param productSubscriptionKey The subscription key for the product.
      * @return A [Response] containing the obtained [io.rekast.sdk.model.authentication.AccessToken].
      */
-    suspend fun getAccessToken(
-        productType: String,
-        productSubscriptionKey: String
-    ) = authenticationService.getAccessToken(
+    suspend fun getAccessToken(productType: String, productSubscriptionKey: String) = authenticationService.getAccessToken(
         productType = productType,
         productSubscriptionKey = productSubscriptionKey
     )
@@ -139,13 +120,7 @@ class DefaultSource @Inject constructor(
      * @param environment The API environment (e.g., production, sandbox).
      * @return A [Response] containing the [io.rekast.sdk.model.BasicUserInfo] of the specified user.
      */
-    suspend fun getBasicUserInfo(
-        productType: String,
-        apiVersion: String,
-        accountHolder: String,
-        productSubscriptionKey: String,
-        environment: String
-    ) = commonService.getBasicUserInfo(
+    suspend fun getBasicUserInfo(productType: String, apiVersion: String, accountHolder: String, productSubscriptionKey: String, environment: String) = commonService.getBasicUserInfo(
         productType = productType,
         apiVersion = apiVersion,
         accountHolder = accountHolder,
@@ -163,13 +138,7 @@ class DefaultSource @Inject constructor(
      * @param environment The API environment (e.g., production, sandbox).
      * @return A [Response] indicating the result of the account holder status validation.
      */
-    suspend fun validateAccountHolderStatus(
-        productType: String,
-        apiVersion: String,
-        accountHolder: AccountHolder,
-        productSubscriptionKey: String,
-        environment: String
-    ) = commonService.validateAccountHolderStatus(
+    suspend fun validateAccountHolderStatus(productType: String, apiVersion: String, accountHolder: AccountHolder, productSubscriptionKey: String, environment: String) = commonService.validateAccountHolderStatus(
         productType = productType,
         apiVersion = apiVersion,
         accountHolderId = accountHolder.partyId,
@@ -187,12 +156,7 @@ class DefaultSource @Inject constructor(
      * @param environment The API environment (e.g., production, sandbox).
      * @return A [Response] containing the [io.rekast.sdk.model.AccountBalance].
      */
-    suspend fun getAccountBalance(
-        productType: String,
-        apiVersion: String,
-        productSubscriptionKey: String,
-        environment: String
-    ) = commonService.getAccountBalance(
+    suspend fun getAccountBalance(productType: String, apiVersion: String, productSubscriptionKey: String, environment: String) = commonService.getAccountBalance(
         productType = productType,
         apiVersion = apiVersion,
         productSubscriptionKey = productSubscriptionKey,
@@ -209,13 +173,7 @@ class DefaultSource @Inject constructor(
      * @param environment The API environment (e.g., production, sandbox).
      * @return A [Response] containing the [io.rekast.sdk.model.AccountBalance].
      */
-    suspend fun getAccountBalanceInSpecificCurrency(
-        productType: String,
-        apiVersion: String,
-        currency: String,
-        productSubscriptionKey: String,
-        environment: String
-    ) = commonService.getAccountBalanceInSpecificCurrency(
+    suspend fun getAccountBalanceInSpecificCurrency(productType: String, apiVersion: String, currency: String, productSubscriptionKey: String, environment: String) = commonService.getAccountBalanceInSpecificCurrency(
         productType = productType,
         apiVersion = apiVersion,
         currency = currency,
@@ -232,12 +190,7 @@ class DefaultSource @Inject constructor(
      * @param environment The API environment (e.g., production, sandbox).
      * @return A [Response] containing the user information with consent.
      */
-    suspend fun getUserInfoWithConsent(
-        productType: String,
-        apiVersion: String,
-        productSubscriptionKey: String,
-        environment: String
-    ) = commonService.getUserInfoWithConsent(
+    suspend fun getUserInfoWithConsent(productType: String, apiVersion: String, productSubscriptionKey: String, environment: String) = commonService.getUserInfoWithConsent(
         productType = productType,
         apiVersion = apiVersion,
         productSubscriptionKey = productSubscriptionKey,
@@ -255,14 +208,7 @@ class DefaultSource @Inject constructor(
      * @param environment The API environment (e.g., production, sandbox).
      * @return A [Response] indicating the result of the transfer.
      */
-    suspend fun transfer(
-        productType: String,
-        apiVersion: String,
-        momoTransaction: MomoTransaction,
-        uuid: String,
-        productSubscriptionKey: String,
-        environment: String
-    ) = commonService.transfer(
+    suspend fun transfer(productType: String, apiVersion: String, momoTransaction: MomoTransaction, uuid: String, productSubscriptionKey: String, environment: String) = commonService.transfer(
         productType = productType,
         apiVersion = apiVersion,
         momoTransaction = momoTransaction,
@@ -281,13 +227,7 @@ class DefaultSource @Inject constructor(
      * @param environment The API environment (e.g., production, sandbox).
      * @return A [Response] containing the transfer status.
      */
-    suspend fun getTransferStatus(
-        productType: String,
-        apiVersion: String,
-        referenceId: String,
-        productSubscriptionKey: String,
-        environment: String
-    ) = commonService.getTransferStatus(
+    suspend fun getTransferStatus(productType: String, apiVersion: String, referenceId: String, productSubscriptionKey: String, environment: String) = commonService.getTransferStatus(
         productType = productType,
         apiVersion = apiVersion,
         referenceId = referenceId,
@@ -306,20 +246,14 @@ class DefaultSource @Inject constructor(
      * @param environment The API environment (e.g., production, sandbox).
      * @return A [Response] indicating the result of the notification request.
      */
-    suspend fun requestToPayDeliveryNotification(
-        productType: String,
-        apiVersion: String,
-        referenceId: String,
-        momoNotification: MomoNotification,
-        productSubscriptionKey: String,
-        environment: String
-    ) = commonService.requestToPayDeliveryNotification(
-        productType = productType,
-        apiVersion = apiVersion,
-        referenceId = referenceId,
-        momoNotification = momoNotification,
-        notificationMessage = momoNotification.notificationMessage,
-        productSubscriptionKey = productSubscriptionKey,
-        environment = environment
-    )
+    suspend fun requestToPayDeliveryNotification(productType: String, apiVersion: String, referenceId: String, momoNotification: MomoNotification, productSubscriptionKey: String, environment: String) =
+        commonService.requestToPayDeliveryNotification(
+            productType = productType,
+            apiVersion = apiVersion,
+            referenceId = referenceId,
+            momoNotification = momoNotification,
+            notificationMessage = momoNotification.notificationMessage,
+            productSubscriptionKey = productSubscriptionKey,
+            environment = environment
+        )
 }

@@ -25,10 +25,7 @@ package io.rekast.sdk.repository.data
  * @property response The response data if the operation was successful.
  * @property message An optional message providing additional information about the result.
  */
-sealed class NetworkResult<T>(
-    val response: T? = null,
-    val message: String? = null
-) {
+sealed class NetworkResult<T>(val response: T? = null, val message: String? = null) {
     /**
      * Represents a successful network operation.
      *

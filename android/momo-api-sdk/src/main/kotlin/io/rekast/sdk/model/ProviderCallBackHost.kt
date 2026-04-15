@@ -27,6 +27,4 @@ import kotlinx.serialization.Serializable
  * @property providerCallbackHost The callback host for the provider, represented as a nullable String.
  */
 @Serializable
-data class ProviderCallBackHost(
-    @SerializedName("providerCallbackHost") val providerCallbackHost: String? = null
-)
+data class ProviderCallBackHost(@SerializedName("providerCallbackHost") val providerCallbackHost: String? = null)

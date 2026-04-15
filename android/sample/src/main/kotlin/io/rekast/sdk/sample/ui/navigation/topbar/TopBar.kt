@@ -37,6 +37,13 @@ import io.rekast.sdk.sample.utils.Constants
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
+/**
+ * Renders the application top app bar with a hamburger menu icon that opens the navigation drawer.
+ *
+ * @param scope [CoroutineScope] used to launch the drawer open animation.
+ * @param scaffoldState [ScaffoldState] providing access to the drawer state.
+ * @param title String resource ID for the screen title displayed in the top bar.
+ */
 @Composable
 fun TopBar(scope: CoroutineScope, scaffoldState: ScaffoldState, title: Int) {
     TopAppBar(

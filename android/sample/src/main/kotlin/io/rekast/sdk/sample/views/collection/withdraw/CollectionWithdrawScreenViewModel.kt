@@ -32,65 +32,123 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 
+/**
+ * ViewModel for the Collection Request-to-Withdraw screen, managing form field state and the
+ * resulting [MomoTransaction] after a withdrawal request.
+ */
 @HiltViewModel
 class CollectionWithdrawScreenViewModel @Inject constructor(private val defaultRepository: DefaultRepository, @ApplicationContext private val context: Context) : ViewModel() {
+    /** Controls whether the circular progress indicator is shown instead of the form. */
     val showProgressBar = MutableLiveData(false)
+
+    /** Holds the completed [MomoTransaction] returned by the API; null while no request has succeeded. */
     var momoTransaction: MutableLiveData<MomoTransaction?> = MutableLiveData(null)
     private val _snackBarStateFlow = MutableSharedFlow<SnackBarComponentConfiguration>()
+
+    /** Flow of [SnackBarComponentConfiguration] events to be displayed as snackbars. */
     val snackBarStateFlow: SharedFlow<SnackBarComponentConfiguration> = _snackBarStateFlow.asSharedFlow()
 
     private val _phoneNumber = MutableLiveData(Constants.EMPTY_STRING)
+
+    /** The current phone number entered in the form. */
     val phoneNumber: LiveData<String>
         get() = _phoneNumber
 
     private val _financialId = MutableLiveData(Constants.EMPTY_STRING)
+
+    /** The current financial ID entered in the form. */
     val financialId: LiveData<String>
         get() = _financialId
 
     private val _referenceIdToRefund = MutableLiveData(Constants.EMPTY_STRING)
+
+    /** The current reference ID to refund entered in the form. */
     val referenceIdToRefund: LiveData<String>
         get() = _referenceIdToRefund
 
     private val _amount = MutableLiveData(Constants.EMPTY_STRING)
+
+    /** The current payment amount entered in the form. */
     val amount: LiveData<String>
         get() = _amount
 
     private val _payerMessage = MutableLiveData(Constants.EMPTY_STRING)
-    val paymentMessage: LiveData<String>
+
+    /** The current payer message entered in the form. */
+    val payerMessage: LiveData<String>
         get() = _payerMessage
 
     private val _payerNote = MutableLiveData(Constants.EMPTY_STRING)
-    val paymentNote: LiveData<String>
+
+    /** The current payer note entered in the form. */
+    val payerNote: LiveData<String>
         get() = _payerNote
 
     private val _deliveryNote = MutableLiveData(Constants.EMPTY_STRING)
+
+    /** The current delivery note entered in the form. */
     val deliveryNote: LiveData<String>
         get() = _deliveryNote
 
+    /**
+     * Updates the phone number field value.
+     *
+     * @param phoneNumber The new phone number string.
+     */
     fun onPhoneNumberUpdated(phoneNumber: String) {
         _phoneNumber.value = phoneNumber
     }
 
+    /**
+     * Updates the financial ID field value.
+     *
+     * @param financialId The new financial ID string.
+     */
     fun onFinancialIdUpdated(financialId: String) {
         _financialId.value = financialId
     }
 
+    /**
+     * Updates the amount field value.
+     *
+     * @param amount The new amount string.
+     */
     fun onAmountUpdated(amount: String) {
         _amount.value = amount
     }
 
+    /**
+     * Updates the payer message field value.
+     *
+     * @param payerMessage The new payer message string.
+     */
     fun onPayerMessageUpdated(payerMessage: String) {
         _payerMessage.value = payerMessage
     }
 
+    /**
+     * Updates the payer note field value.
+     *
+     * @param payerNote The new payer note string.
+     */
     fun onPayerNoteUpdated(payerNote: String) {
         _payerNote.value = payerNote
     }
 
+    /**
+     * Updates the delivery note field value.
+     *
+     * @param deliveryNote The new delivery note string.
+     */
     fun onDeliveryNoteUpdated(deliveryNote: String) {
         _deliveryNote.value = deliveryNote
     }
 
+    /**
+     * Updates the reference ID to refund field value.
+     *
+     * @param deliveryNote The new reference ID to refund string.
+     */
     fun onReferenceIdToRefundUpdated(deliveryNote: String) {
         _referenceIdToRefund.value = deliveryNote
     }
@@ -98,8 +156,8 @@ class CollectionWithdrawScreenViewModel @Inject constructor(private val defaultR
 /*    fun requestToWithdraw() {
         showProgressBar.postValue(true)
         if (phoneNumber.value!!.isNotEmpty() && financialId.value!!.isNotEmpty() &&
-            amount.value!!.isNotEmpty() && paymentMessage.value!!.isNotEmpty() &&
-            paymentNote.value!!.isNotEmpty()
+            amount.value!!.isNotEmpty() && payerMessage.value!!.isNotEmpty() &&
+            payerNote.value!!.isNotEmpty()
         ) {
             val accessToken = context?.let { Utils.getAccessToken(it) }
             val creditTransaction = createRequestToWithdrawTransaction()
@@ -201,8 +259,8 @@ class CollectionWithdrawScreenViewModel @Inject constructor(private val defaultR
             RandomStringUtils.randomAlphanumeric(Constants.STRING_LENGTH),
             null,
             AccountHolder(AccountHolderType.MSISDN.name, phoneNumber.value!!.toString()),
-            paymentMessage.value!!.toString(),
-            paymentNote.value!!.toString(),
+            payerMessage.value!!.toString(),
+            payerNote.value!!.toString(),
             null,
             null
         )

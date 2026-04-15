@@ -55,18 +55,18 @@ class SettingsTest {
     }
 
     @Test
-    fun `CONNECT_TIMEOUT is 60 seconds in milliseconds`() {
-        assertEquals(60_000L, settings.CONNECT_TIMEOUT)
+    fun `connectTimeout is 60 seconds in milliseconds`() {
+        assertEquals(60_000L, settings.connectTimeout)
     }
 
     @Test
-    fun `READ_TIMEOUT is 60 seconds in milliseconds`() {
-        assertEquals(60_000L, settings.READ_TIMEOUT)
+    fun `readTimeout is 60 seconds in milliseconds`() {
+        assertEquals(60_000L, settings.readTimeout)
     }
 
     @Test
-    fun `WRITE_TIMEOUT is 60 seconds in milliseconds`() {
-        assertEquals(60_000L, settings.WRITE_TIMEOUT)
+    fun `writeTimeout is 60 seconds in milliseconds`() {
+        assertEquals(60_000L, settings.writeTimeout)
     }
 
     @Test

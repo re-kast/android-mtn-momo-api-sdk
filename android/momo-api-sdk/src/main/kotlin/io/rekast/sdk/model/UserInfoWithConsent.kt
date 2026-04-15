@@ -18,6 +18,30 @@ package io.rekast.sdk.model
 import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.Serializable
 
+/**
+ * Represents extended user information returned by the MTN MOMO API after the user grants consent.
+ *
+ * This combines the basic profile from [BasicUserInfo] with additional verified and financial details.
+ *
+ * @property userBasicInfo Core profile fields such as name, gender, and locale.
+ * @property status The current status of the user account.
+ * @property middleName The user's middle name.
+ * @property email The user's email address.
+ * @property emailVerified Whether the user's email address has been verified.
+ * @property phonenumber The user's phone number.
+ * @property phoneNumberVerified Whether the user's phone number has been verified.
+ * @property address The user's physical address.
+ * @property updatedAt The timestamp of the last profile update.
+ * @property creditScore The user's credit score as reported by the MTN MOMO system.
+ * @property active Indicates whether the user's account is active.
+ * @property countryOfBirth The country where the user was born.
+ * @property regionOfBirth The region where the user was born.
+ * @property cityOfBirth The city where the user was born.
+ * @property occupation The user's occupation.
+ * @property employerName The name of the user's employer.
+ * @property identificationType The type of identification document provided (e.g., passport, national ID).
+ * @property identificationValue The value/number of the identification document.
+ */
 @Serializable
 data class UserInfoWithConsent(
     var userBasicInfo: BasicUserInfo,

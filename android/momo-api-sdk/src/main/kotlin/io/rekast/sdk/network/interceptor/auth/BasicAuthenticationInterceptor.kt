@@ -32,9 +32,7 @@ import timber.log.Timber
  *
  * @param basicAuthCredentials The credentials containing the API user ID and API key.
  */
-class BasicAuthenticationInterceptor @Inject constructor(
-    private val basicAuthCredentials: BasicAuthCredentials
-) : Interceptor {
+class BasicAuthenticationInterceptor @Inject constructor(private val basicAuthCredentials: BasicAuthCredentials) : Interceptor {
 
     /**
      * Intercepts the request and adds the Basic Authentication header.

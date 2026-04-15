@@ -34,6 +34,9 @@ import io.rekast.sdk.sample.views.AppMainActivity
 import io.rekast.sdk.sample.views.AppMainViewModel
 import kotlin.getValue
 
+/**
+ * Fragment that hosts the Collection Request-to-Withdraw screen, rendering [CollectionScreen] via Jetpack Compose.
+ */
 @ExperimentalMaterialApi
 @AndroidEntryPoint
 class CollectionWithdrawScreenFragment : Fragment() {
@@ -41,24 +44,18 @@ class CollectionWithdrawScreenFragment : Fragment() {
     private val collectionWithdrawScreenViewModel by viewModels<CollectionWithdrawScreenViewModel>()
     private val appMainViewModel by activityViewModels<AppMainViewModel>()
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        return ComposeView(requireContext()).apply {
-            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
-            setContent {
-                AppTheme {
-                    val showProgressBar by collectionWithdrawScreenViewModel.showProgressBar.observeAsState(false)
-                    CollectionScreen(
-                        navController = findNavController(),
-                        snackStateFlow = collectionWithdrawScreenViewModel.snackBarStateFlow,
-                        showProgressBar = showProgressBar,
-                        collectionWithdrawScreenViewModel = collectionWithdrawScreenViewModel,
-                        momoTransaction = collectionWithdrawScreenViewModel.momoTransaction
-                    )
-                }
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View = ComposeView(requireContext()).apply {
+        setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+        setContent {
+            AppTheme {
+                val showProgressBar by collectionWithdrawScreenViewModel.showProgressBar.observeAsState(false)
+                CollectionScreen(
+                    navController = findNavController(),
+                    snackStateFlow = collectionWithdrawScreenViewModel.snackBarStateFlow,
+                    showProgressBar = showProgressBar,
+                    collectionWithdrawScreenViewModel = collectionWithdrawScreenViewModel,
+                    momoTransaction = collectionWithdrawScreenViewModel.momoTransaction
+                )
             }
         }
     }

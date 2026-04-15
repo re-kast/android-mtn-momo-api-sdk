@@ -30,10 +30,7 @@ import javax.inject.Singleton
  * @param accessTokenCredentials The credentials for access token authentication.
  */
 @Singleton
-class AuthImplementation @Inject constructor(
-    private var basicAuthCredentials: BasicAuthCredentials,
-    private var accessTokenCredentials: AccessTokenCredentials
-) : AuthInterface {
+class AuthImplementation @Inject constructor(private var basicAuthCredentials: BasicAuthCredentials, private var accessTokenCredentials: AccessTokenCredentials) : AuthInterface {
 
     /**
      * Sets the basic authentication credentials.
@@ -67,10 +64,8 @@ class AuthImplementation @Inject constructor(
      *
      * @return Boolean indicating if basic auth is configured.
      */
-    override fun hasBasicAuth(): Boolean {
-        return basicAuthCredentials.apiUserId.isNotEmpty() &&
-            basicAuthCredentials.apiKey.isNotEmpty()
-    }
+    override fun hasBasicAuth(): Boolean = basicAuthCredentials.apiUserId.isNotEmpty() &&
+        basicAuthCredentials.apiKey.isNotEmpty()
 
     /**
      * Checks if the access token is set and valid.

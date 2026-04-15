@@ -48,8 +48,7 @@ fun String?.parseColor(): androidx.compose.ui.graphics.Color {
  * is applied after the setContent function of the activity is called.
  */
 fun Activity.applyWindowInsetListener() {
-    ViewCompat.setOnApplyWindowInsetsListener(this.findViewById(android.R.id.content)) { view, insets
-        ->
+    ViewCompat.setOnApplyWindowInsetsListener(this.findViewById(android.R.id.content)) { view, insets ->
         val bottom = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
         view.updatePadding(bottom = bottom)
         insets
@@ -74,10 +73,14 @@ fun isDeviceOnline(context: Context): Boolean {
     return transports.any { capabilities.hasTransport(it) }
 }
 
-suspend fun SharedFlow<SnackBarComponentConfiguration>.hookSnackBar(
-    scaffoldState: ScaffoldState,
-    action: () -> Unit = {}
-) {
+/**
+ * Collects this [SharedFlow] and shows a [Snackbar] via [scaffoldState] for each emitted
+ * [SnackBarComponentConfiguration] that contains a non-empty message.
+ *
+ * @param scaffoldState [ScaffoldState] used to display the snackbar.
+ * @param action Optional callback invoked when the snackbar action is performed; defaults to no-op.
+ */
+suspend fun SharedFlow<SnackBarComponentConfiguration>.hookSnackBar(scaffoldState: ScaffoldState, action: () -> Unit = {}) {
     this.collectLatest { snackBarState ->
         if (snackBarState.message.isNotEmpty()) {
             val snackBarResult =
@@ -90,6 +93,7 @@ suspend fun SharedFlow<SnackBarComponentConfiguration>.hookSnackBar(
                 SnackbarResult.ActionPerformed -> {
                     /**/
                 }
+
                 SnackbarResult.Dismissed -> {
                     /* Do nothing (for now) when snackBar is dismissed */
                 }

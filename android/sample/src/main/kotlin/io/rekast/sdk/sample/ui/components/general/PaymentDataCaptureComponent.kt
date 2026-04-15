@@ -37,16 +37,35 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import io.rekast.sdk.sample.R
 
+/**
+ * Renders a payment data capture form with fields for phone number, financial ID, amount,
+ * payment message, and payment note, along with a submit button.
+ *
+ * @param modifier Modifier applied to the root [Column].
+ * @param title Section header text displayed above the form fields.
+ * @param submitButtonText Label for the submit button.
+ * @param phoneNumber Current value of the phone number field.
+ * @param financialId Current value of the financial ID field.
+ * @param amount Current value of the amount field.
+ * @param paymentMessage Current value of the payer message field.
+ * @param paymentNote Current value of the payer note field.
+ * @param onRequestPayButtonClicked Callback invoked when the submit button is clicked.
+ * @param onPhoneNumberUpdated Callback invoked when the phone number field value changes.
+ * @param onFinancialIdUpdated Callback invoked when the financial ID field value changes.
+ * @param onAmountUpdated Callback invoked when the amount field value changes.
+ * @param onPayerMessageUpdated Callback invoked when the payment message field value changes.
+ * @param onPayerNoteUpdated Callback invoked when the payment note field value changes.
+ */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun PaymentDataScreenComponent(

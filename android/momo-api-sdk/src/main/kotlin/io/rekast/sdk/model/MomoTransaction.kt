@@ -18,6 +18,21 @@ package io.rekast.sdk.model
 import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.Serializable
 
+/**
+ * Represents a MTN MOMO transaction used for payments, withdrawals, deposits, transfers, and refunds.
+ *
+ * @property amount The transaction amount as a string.
+ * @property currency The ISO currency code for the transaction (e.g., EUR, UGX).
+ * @property financialTransactionId The unique financial transaction ID assigned by the MTN MOMO system, populated after the transaction completes.
+ * @property externalId A caller-assigned external reference ID for correlating the transaction on the integrator side.
+ * @property payee The account holder receiving the funds; populated for disbursement and transfer operations.
+ * @property payer The account holder sending the funds; populated for collection operations.
+ * @property payerMessage A message visible to the payer describing the purpose of the transaction.
+ * @property payeeNote A note visible to the payee describing the purpose of the transaction.
+ * @property status The current status of the transaction (see [io.rekast.sdk.utils.TransactionStatus]).
+ * @property reason The failure reason when the transaction status is FAILED.
+ * @property referenceIdToRefund The reference ID of the original transaction to refund; used only in refund operations.
+ */
 @Serializable
 data class MomoTransaction(
     @SerializedName("amount") var amount: String,

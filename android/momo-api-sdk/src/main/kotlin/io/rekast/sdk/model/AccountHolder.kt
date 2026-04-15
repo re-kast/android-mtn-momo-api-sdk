@@ -18,8 +18,11 @@ package io.rekast.sdk.model
 import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.Serializable
 
+/**
+ * Identifies a party (payer or payee) in a MTN MOMO transaction.
+ *
+ * @property partyIdType The type of identifier used, corresponding to an [io.rekast.sdk.utils.AccountHolderType] value (e.g., "msisdn", "email").
+ * @property partyId The actual identifier value for the party (e.g., a phone number or email address).
+ */
 @Serializable
-data class AccountHolder(
-    @SerializedName("partyIdType") var partyIdType: String,
-    @SerializedName("partyId") var partyId: String
-)
+data class AccountHolder(@SerializedName("partyIdType") var partyIdType: String, @SerializedName("partyId") var partyId: String)

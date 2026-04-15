@@ -25,8 +25,8 @@ import io.rekast.sdk.model.ProviderCallBackHost
 import io.rekast.sdk.model.authentication.credentials.BasicAuthCredentials
 import io.rekast.sdk.repository.DefaultRepository
 import io.rekast.sdk.repository.data.NetworkResult
-import io.rekast.sdk.sample.utils.Utils
 import io.rekast.sdk.sample.utils.DispatcherProvider
+import io.rekast.sdk.sample.utils.Utils
 import io.rekast.sdk.utils.ProductType
 import io.rekast.sdk.utils.Settings
 import javax.inject.Inject
@@ -74,19 +74,33 @@ open class AppMainViewModel @Inject constructor(
         viewModelScope.launch(dispatchers.io()) {
             defaultRepository.checkApiUser(BuildConfig.MOMO_API_VERSION_V1, productType).collect { apiUser ->
                 when (apiUser) {
-                    is NetworkResult.Success -> { createApiKey() }
+                    is NetworkResult.Success -> {
+                        createApiKey()
+                    }
+
                     is NetworkResult.Error -> {
                         Timber.e(apiUser.message)
                         val providerCallBackHost = ProviderCallBackHost(providerCallbackHost = BuildConfig.MOMO_PROVIDER_CALBACK_HOST)
                         defaultRepository.createApiUser(providerCallBackHost, BuildConfig.MOMO_API_VERSION_V1, BuildConfig.MOMO_API_USER_ID, productType).collect { newApiUser ->
                             when (newApiUser) {
-                                is NetworkResult.Success -> { checkUser() }
-                                is NetworkResult.Error -> { Timber.e("New Api user was not created %s", newApiUser.message) }
-                                else -> { Timber.e("An error occurred") }
+                                is NetworkResult.Success -> {
+                                    checkUser()
+                                }
+
+                                is NetworkResult.Error -> {
+                                    Timber.e("New Api user was not created %s", newApiUser.message)
+                                }
+
+                                else -> {
+                                    Timber.e("An error occurred")
+                                }
                             }
                         }
                     }
-                    else -> { Timber.e("An error occurred") }
+
+                    else -> {
+                        Timber.e("An error occurred")
+                    }
                 }
             }
         }
@@ -118,10 +132,14 @@ open class AppMainViewModel @Inject constructor(
                                 Timber.e("An Error occurred %s", exception.message)
                             }
                         }
+
                         is NetworkResult.Error -> {
                             Timber.e("Api Key creation failed %s", apiKey.message)
                         }
-                        else -> { Timber.e("Api Key creation failed") }
+
+                        else -> {
+                            Timber.e("Api Key creation failed")
+                        }
                     }
                 }
             }
@@ -152,9 +170,11 @@ open class AppMainViewModel @Inject constructor(
                                 Timber.e("An Error occurred %s", exception.message)
                             }
                         }
+
                         is NetworkResult.Error -> {
                             Timber.e("Access token creation failed %s", accessToken.message)
                         }
+
                         else -> {
                             Timber.e("Access token creation failed")
                         }
@@ -312,5 +332,4 @@ open class AppMainViewModel @Inject constructor(
             referenceIdToRefund = requestToPayUuid
         )
     }*/
-
 }
