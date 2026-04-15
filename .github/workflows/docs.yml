@@ -1,4 +1,4 @@
-name: Docs
+name: Publish Project Docs
 
 on:
   push:
@@ -91,4 +91,4 @@ jobs:
           branch: gh-pages # The branch the action should deploy to.
           folder: android/build/dokka/html # The folder the action should deploy.
           target-folder: dokka
-          ssh-key: ${{ secrets.DEPLOY_KEY }}
+          token: ${{ secrets.GITHUB_TOKEN }}
