@@ -117,6 +117,7 @@ class HomeScreenViewModel @Inject constructor(
                             activeRequestCount.incrementAndGet()
                             showProgressBar.postValue(true)
                         }
+
                         is NetworkResult.Success -> {
                             val userInfo = foundBasicUserInfo.response
                             val date = Utils.convertToDate(userInfo?.updatedAt!!.toLong())
@@ -129,6 +130,7 @@ class HomeScreenViewModel @Inject constructor(
                                 SnackBarComponentConfiguration(message = "Basic user info was fetched successfully")
                             )
                         }
+
                         is NetworkResult.Error -> {
                             Timber.e("Basic user info was not fetched %s", foundBasicUserInfo.message)
                             showProgressBar.postValue(activeRequestCount.decrementAndGet() > 0)
@@ -163,6 +165,7 @@ class HomeScreenViewModel @Inject constructor(
                             activeRequestCount.incrementAndGet()
                             showProgressBar.postValue(true)
                         }
+
                         is NetworkResult.Success -> {
                             Timber.d(userInfoWithConsent.response.toString())
 
@@ -172,6 +175,7 @@ class HomeScreenViewModel @Inject constructor(
                                 SnackBarComponentConfiguration(message = "Basic user info with consent was fetched successfully")
                             )
                         }
+
                         is NetworkResult.Error -> {
                             Timber.e("Basic user info with consent was not fetched %s", userInfoWithConsent.message)
                             showProgressBar.postValue(activeRequestCount.decrementAndGet() > 0)
@@ -209,6 +213,7 @@ class HomeScreenViewModel @Inject constructor(
                             activeRequestCount.incrementAndGet()
                             showProgressBar.postValue(true)
                         }
+
                         is NetworkResult.Success -> {
                             val status = Json.decodeFromString<AccountHolderStatus>(foundStatus.response!!.source().readUtf8())
                             accountHolderStatus.postValue(status)
@@ -219,6 +224,7 @@ class HomeScreenViewModel @Inject constructor(
                                 SnackBarComponentConfiguration(message = "Account Holder status was fetched successfully")
                             )
                         }
+
                         is NetworkResult.Error -> {
                             Timber.e("Account Holder status was not fetched %s", foundStatus.message)
                             showProgressBar.postValue(activeRequestCount.decrementAndGet() > 0)
@@ -260,6 +266,7 @@ class HomeScreenViewModel @Inject constructor(
                             activeRequestCount.incrementAndGet()
                             showProgressBar.postValue(true)
                         }
+
                         is NetworkResult.Success -> {
                             accountBalance.postValue(balance.response)
 
@@ -271,6 +278,7 @@ class HomeScreenViewModel @Inject constructor(
                                 )
                             )
                         }
+
                         is NetworkResult.Error -> {
                             showProgressBar.postValue(activeRequestCount.decrementAndGet() > 0)
 

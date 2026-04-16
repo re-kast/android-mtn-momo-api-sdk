@@ -49,7 +49,6 @@ class TokenAuthenticator(
     private val storage: CredentialStorage,
     private val config: MomoApiConfig
 ) {
-
     /** Separate client used only for token-refresh calls — no Authenticator, no Bearer interceptor. */
     private val authClient: OkHttpClient by lazy { OkHttpClient.Builder().build() }
 
@@ -75,7 +74,10 @@ class TokenAuthenticator(
      * @param response The 401 response received from the server.
      * @return The original request to trigger a retry, or `null` to propagate the 401 to the caller.
      */
-    fun authenticate(route: Route?, response: Response): Request? {
+    fun authenticate(
+        route: Route?,
+        response: Response
+    ): Request? {
         // Only handle responses to Bearer-authenticated requests.
         val authHeader = response.request.header(MomoConstants.Headers.AUTHORIZATION) ?: return null
         if (!authHeader.startsWith(MomoConstants.TokenTypes.BEARER)) return null
@@ -90,7 +92,9 @@ class TokenAuthenticator(
         }
 
         // Extract the product type (e.g. "collection") from the first URL path segment.
-        val productType = response.request.url.pathSegments.firstOrNull()
+        val productType =
+            response.request.url.pathSegments
+                .firstOrNull()
         if (productType.isNullOrBlank()) {
             Timber.w("TokenAuthenticator: could not determine product type from URL")
             return null
@@ -127,18 +131,24 @@ class TokenAuthenticator(
      *         cannot be parsed.
      */
     @OptIn(ExperimentalEncodingApi::class)
-    private fun refreshToken(productType: String, subscriptionKey: String, apiKey: String): AccessToken? {
+    private fun refreshToken(
+        productType: String,
+        subscriptionKey: String,
+        apiKey: String
+    ): AccessToken? {
         return try {
             val credentials = "${config.apiUserId}:$apiKey"
             val encoded = Base64.Default.encode(credentials.toByteArray())
 
             val tokenUrl = "${config.baseUrl.trimEnd('/')}/$productType/token/"
-            val refreshRequest = Request.Builder()
-                .url(tokenUrl)
-                .post("".toRequestBody(null))
-                .header(MomoConstants.Headers.AUTHORIZATION, "${MomoConstants.TokenTypes.BASIC} $encoded")
-                .header(MomoConstants.Headers.OCP_APIM_SUBSCRIPTION_KEY, subscriptionKey)
-                .build()
+            val refreshRequest =
+                Request
+                    .Builder()
+                    .url(tokenUrl)
+                    .post("".toRequestBody(null))
+                    .header(MomoConstants.Headers.AUTHORIZATION, "${MomoConstants.TokenTypes.BASIC} $encoded")
+                    .header(MomoConstants.Headers.OCP_APIM_SUBSCRIPTION_KEY, subscriptionKey)
+                    .build()
 
             val refreshResponse = authClient.newCall(refreshRequest).execute()
             if (!refreshResponse.isSuccessful) {

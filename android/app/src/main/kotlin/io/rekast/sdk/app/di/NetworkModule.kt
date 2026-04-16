@@ -52,7 +52,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
-
     /**
      * Provides the app's [CredentialProvider] that the SDK's interceptors call on every request.
      * Reads credentials from [CredentialStorage] at request time — the SDK never stores credentials.
@@ -77,8 +76,7 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun providesHttpLoggingInterceptor(): HttpLoggingInterceptor =
-        HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
+    fun providesHttpLoggingInterceptor(): HttpLoggingInterceptor = HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
 
     @Provides
     @Singleton
@@ -120,8 +118,13 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideRetrofit(okHttpClient: OkHttpClient, json: Json, config: MomoApiConfig): Retrofit =
-        Retrofit.Builder()
+    fun provideRetrofit(
+        okHttpClient: OkHttpClient,
+        json: Json,
+        config: MomoApiConfig
+    ): Retrofit =
+        Retrofit
+            .Builder()
             .baseUrl(config.baseUrl)
             .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
             .client(okHttpClient)
@@ -129,21 +132,17 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun getAuthentication(retrofit: Retrofit): AuthenticationService =
-        retrofit.create(AuthenticationService::class.java)
+    fun getAuthentication(retrofit: Retrofit): AuthenticationService = retrofit.create(AuthenticationService::class.java)
 
     @Provides
     @Singleton
-    fun getCollection(retrofit: Retrofit): CollectionService =
-        retrofit.create(CollectionService::class.java)
+    fun getCollection(retrofit: Retrofit): CollectionService = retrofit.create(CollectionService::class.java)
 
     @Provides
     @Singleton
-    fun getDisbursement(retrofit: Retrofit): DisbursementsService =
-        retrofit.create(DisbursementsService::class.java)
+    fun getDisbursement(retrofit: Retrofit): DisbursementsService = retrofit.create(DisbursementsService::class.java)
 
     @Provides
     @Singleton
-    fun getCommonService(retrofit: Retrofit): CommonService =
-        retrofit.create(CommonService::class.java)
+    fun getCommonService(retrofit: Retrofit): CommonService = retrofit.create(CommonService::class.java)
 }

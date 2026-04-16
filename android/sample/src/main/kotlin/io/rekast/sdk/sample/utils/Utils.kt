@@ -44,10 +44,9 @@ object Utils {
      * @param config The sample app runtime configuration.
      * @return The corresponding product subscription key.
      */
-    fun getProductSubscriptionKeys(productType: ProductType, config: SampleConfig): String =
-        when (productType) {
-            ProductType.COLLECTION -> config.collectionPrimaryKey.ifBlank { config.collectionSecondaryKey }
-            ProductType.REMITTANCE -> config.remittancePrimaryKey.ifBlank { config.remittanceSecondaryKey }
-            ProductType.DISBURSEMENTS -> config.disbursementsPrimaryKey.ifBlank { config.disbursementsSecondaryKey }
-        }
+    fun getProductSubscriptionKeys(productType: ProductType, config: SampleConfig): String = when (productType) {
+        ProductType.COLLECTION -> config.collectionPrimaryKey.ifBlank { config.collectionSecondaryKey }
+        ProductType.REMITTANCE -> config.remittancePrimaryKey.ifBlank { config.remittanceSecondaryKey }
+        ProductType.DISBURSEMENTS -> config.disbursementsPrimaryKey.ifBlank { config.disbursementsSecondaryKey }
+    }
 }

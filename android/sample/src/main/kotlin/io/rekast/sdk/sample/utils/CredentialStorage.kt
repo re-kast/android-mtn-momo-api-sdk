@@ -181,6 +181,5 @@ class CredentialStorage @Inject constructor(@ApplicationContext private val cont
      *
      * @param expiryMillis Absolute epoch-millisecond expiry timestamp.
      */
-    private fun isExpired(expiryMillis: Long): Boolean =
-        Calendar.getInstance().timeInMillis > expiryMillis
+    private fun isExpired(expiryMillis: Long): Boolean = Calendar.getInstance().timeInMillis > expiryMillis
 }

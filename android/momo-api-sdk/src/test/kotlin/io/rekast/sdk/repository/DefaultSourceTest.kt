@@ -297,7 +297,12 @@ class DefaultSourceTest {
         } returns Response.success(responseBody)
 
         defaultSource.requestToPayDeliveryNotification(
-            "collection", "v1_0", "ref-001", momoNotification, "sub-key", "sandbox"
+            "collection",
+            "v1_0",
+            "ref-001",
+            momoNotification,
+            "sub-key",
+            "sandbox"
         )
 
         coVerify(exactly = 1) {

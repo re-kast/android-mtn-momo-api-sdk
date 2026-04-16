@@ -84,11 +84,13 @@ open class AppMainViewModel @Inject constructor(
                 .flatMapLatest { result ->
                     when (result) {
                         is NetworkResult.Success -> flowOf(result)
+
                         is NetworkResult.Error -> {
                             Timber.e(result.message)
                             val callbackHost = ProviderCallBackHost(providerCallbackHost = sampleConfig.providerCallbackHost)
                             defaultRepository.createApiUser(callbackHost, sampleConfig.apiVersionV1, sampleConfig.apiUserId, productType)
                         }
+
                         is NetworkResult.Loading -> flowOf(result)
                     }
                 }
@@ -126,8 +128,11 @@ open class AppMainViewModel @Inject constructor(
                             Timber.e(e, "Failed to save API key")
                         }
                     }
+
                     is NetworkResult.Error -> {
-                        Timber.e("API key creation failed: %s", result.message)}
+                        Timber.e("API key creation failed: %s", result.message)
+                    }
+
                     is NetworkResult.Loading -> {}
                 }
             }
@@ -156,8 +161,11 @@ open class AppMainViewModel @Inject constructor(
                                 Timber.e(e, "Failed to save access token")
                             }
                         }
+
                         is NetworkResult.Error -> {
-                            Timber.e("Access token fetch failed: %s", result.message)}
+                            Timber.e("Access token fetch failed: %s", result.message)
+                        }
+
                         is NetworkResult.Loading -> {}
                     }
                 }
@@ -192,8 +200,11 @@ open class AppMainViewModel @Inject constructor(
                                 Timber.e(e, "Failed to save OAuth2 token")
                             }
                         }
+
                         is NetworkResult.Error -> {
-                            Timber.e("OAuth2 token fetch failed: %s", result.message)}
+                            Timber.e("OAuth2 token fetch failed: %s", result.message)
+                        }
+
                         is NetworkResult.Loading -> {}
                     }
                 }

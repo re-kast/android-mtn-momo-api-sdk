@@ -33,7 +33,6 @@ class CredentialProvider(
     private val storage: CredentialStorage,
     private val sampleConfig: SampleConfig
 ) : CredentialProvider {
-
     /** Returns the API user ID from static app configuration. */
     override fun getApiUserId(): String = sampleConfig.apiUserId
 

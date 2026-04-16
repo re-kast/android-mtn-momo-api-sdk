@@ -51,12 +51,8 @@ import retrofit2.Response
  * @property collection The service for collection-related API calls.
  */
 @Singleton
-class DefaultRepository @Inject constructor(
-    private val defaultSource: DefaultSource,
-    private val disbursementsService: DisbursementsService,
-    private val collection: CollectionService,
-    private val config: MomoApiConfig
-) : DataResponse() {
+class DefaultRepository @Inject constructor(private val defaultSource: DefaultSource, private val disbursementsService: DisbursementsService, private val collection: CollectionService, private val config: MomoApiConfig) :
+    DataResponse() {
 
     /**
      * Wraps a Retrofit suspend call in a cold [Flow] that always emits two items:
