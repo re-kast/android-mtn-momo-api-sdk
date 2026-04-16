@@ -3,6 +3,7 @@ name: Publish Project Docs
 on:
   push:
     branches: [ develop ]
+  workflow_dispatch:
 
 jobs:
   build-and-deploy:
