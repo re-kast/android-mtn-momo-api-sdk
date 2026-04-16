@@ -17,13 +17,12 @@ package io.rekast.sdk.sample.utils
 
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
+import androidx.core.content.edit
 import io.rekast.sdk.model.authentication.AccessToken
 import io.rekast.sdk.model.authentication.Oauth2AccessToken
-import io.rekast.sdk.sample.BuildConfig
 import io.rekast.sdk.utils.ProductType
 import java.text.SimpleDateFormat
 import java.util.Calendar
-import org.apache.commons.lang3.StringUtils
 
 private const val API_KEY = "apiKey"
 
@@ -58,11 +57,10 @@ object Utils {
      * @param apiKey The API key to be saved.
      */
     fun saveApiKey(context: Context, apiKey: String) {
-        val mSettings = context.getSharedPreferences(BuildConfig.APPLICATION_ID, MODE_PRIVATE)
-        val editor = mSettings.edit()
-
-        editor.putString(API_KEY, apiKey)
-        editor.apply()
+        val mSettings = context.getSharedPreferences(context.packageName, MODE_PRIVATE)
+        mSettings.edit {
+            putString(API_KEY, apiKey)
+        }
     }
 
     /**
@@ -72,7 +70,7 @@ object Utils {
      * @return The saved API key as a String, or an empty string if not found.
      */
     fun getApiKey(context: Context): String {
-        val mSettings = context.getSharedPreferences(BuildConfig.APPLICATION_ID, MODE_PRIVATE)
+        val mSettings = context.getSharedPreferences(context.packageName, MODE_PRIVATE)
         return mSettings.getString(API_KEY, "").toString()
     }
 
@@ -83,19 +81,18 @@ object Utils {
      * @param accessToken The access token to be saved.
      */
     fun saveAccessToken(context: Context, accessToken: AccessToken?) {
-        val tokenExpiry = if (StringUtils.isNotBlank(accessToken!!.expiresIn)) {
+        val tokenExpiry = if (!accessToken!!.expiresIn.isNullOrBlank()) {
             accessToken.expiresIn.toIntOrNull()
         } else {
             1
         }
 
-        val mSettings = context.getSharedPreferences(BuildConfig.APPLICATION_ID, MODE_PRIVATE)
-        val editor = mSettings.edit()
-
-        editor.putString(AccessTokenConstants.ACCESS_TOKEN, accessToken.accessToken)
-        editor.putLong(AccessTokenConstants.EXPIRY_DATE, returnExpiryINMilliseconds(tokenExpiry))
-        editor.putString(AccessTokenConstants.TOKEN_TYPE, accessToken.tokenType)
-        editor.apply()
+        val mSettings = context.getSharedPreferences(context.packageName, MODE_PRIVATE)
+        mSettings.edit {
+            putString(AccessTokenConstants.ACCESS_TOKEN, accessToken.accessToken)
+            putLong(AccessTokenConstants.EXPIRY_DATE, returnExpiryINMilliseconds(tokenExpiry))
+            putString(AccessTokenConstants.TOKEN_TYPE, accessToken.tokenType)
+        }
     }
 
     /**
@@ -105,27 +102,26 @@ object Utils {
      * @param oauth2AccessToken The OAuth 2.0 access token to be saved.
      */
     fun saveOauth2AccessToken(context: Context, oauth2AccessToken: Oauth2AccessToken?) {
-        val accessTokenExpiry = if (StringUtils.isNotBlank(oauth2AccessToken!!.expiresIn)) {
+        val accessTokenExpiry = if (!oauth2AccessToken!!.expiresIn.isNullOrBlank()) {
             oauth2AccessToken.expiresIn.toIntOrNull()
         } else {
             1
         }
-        val refreshTokenExpiry = if (StringUtils.isNotBlank(oauth2AccessToken!!.refreshTokenExpiredIn)) {
+        val refreshTokenExpiry = if (!oauth2AccessToken.refreshTokenExpiredIn.isNullOrBlank()) {
             oauth2AccessToken.refreshTokenExpiredIn.toIntOrNull()
         } else {
             1
         }
 
-        val mSettings = context.getSharedPreferences(BuildConfig.APPLICATION_ID, MODE_PRIVATE)
-        val editor = mSettings.edit()
-
-        editor.putString(Oauth2AccessTokenConstants.ACCESS_TOKEN, oauth2AccessToken.accessToken)
-        editor.putLong(Oauth2AccessTokenConstants.EXPIRY_DATE, returnExpiryINMilliseconds(accessTokenExpiry))
-        editor.putString(Oauth2AccessTokenConstants.TOKEN_TYPE, oauth2AccessToken.tokenType)
-        editor.putString(Oauth2AccessTokenConstants.SCOPE, oauth2AccessToken.scope)
-        editor.putString(Oauth2AccessTokenConstants.REFRESH_TOKEN, oauth2AccessToken.refreshToken)
-        editor.putLong(Oauth2AccessTokenConstants.REFRESH_TOKEN_EXPIRED_IN, returnExpiryINMilliseconds(refreshTokenExpiry))
-        editor.apply()
+        val mSettings = context.getSharedPreferences(context.packageName, MODE_PRIVATE)
+        mSettings.edit {
+            putString(Oauth2AccessTokenConstants.ACCESS_TOKEN, oauth2AccessToken.accessToken)
+            putLong(Oauth2AccessTokenConstants.EXPIRY_DATE, returnExpiryINMilliseconds(accessTokenExpiry))
+            putString(Oauth2AccessTokenConstants.TOKEN_TYPE, oauth2AccessToken.tokenType)
+            putString(Oauth2AccessTokenConstants.SCOPE, oauth2AccessToken.scope)
+            putString(Oauth2AccessTokenConstants.REFRESH_TOKEN, oauth2AccessToken.refreshToken)
+            putLong(Oauth2AccessTokenConstants.REFRESH_TOKEN_EXPIRED_IN, returnExpiryINMilliseconds(refreshTokenExpiry))
+        }
     }
 
     /**
@@ -135,7 +131,7 @@ object Utils {
      * @return The saved access token as a String, or an empty string if expired or not found.
      */
     fun getAccessToken(context: Context): String {
-        val mSettings = context.getSharedPreferences(BuildConfig.APPLICATION_ID, MODE_PRIVATE)
+        val mSettings = context.getSharedPreferences(context.packageName, MODE_PRIVATE)
         val expiryTime = mSettings.getLong(AccessTokenConstants.EXPIRY_DATE, 0)
 
         return if (expired(expiryTime)) {
@@ -152,7 +148,7 @@ object Utils {
      * @return The saved OAuth 2.0 access token as a String, or an empty string if expired or not found.
      */
     fun getOauthAccessToken(context: Context): String {
-        val mSettings = context.getSharedPreferences(BuildConfig.APPLICATION_ID, MODE_PRIVATE)
+        val mSettings = context.getSharedPreferences(context.packageName, MODE_PRIVATE)
         val expiryTime = mSettings.getLong(Oauth2AccessTokenConstants.EXPIRY_DATE, 0)
 
         return if (expired(expiryTime)) {
@@ -196,29 +192,27 @@ object Utils {
      * @param productType The MTN MOMO API product type.
      * @return The corresponding product key as a String.
      */
-    fun getProductSubscriptionKeys(productType: ProductType): String {
+    fun getProductSubscriptionKeys(productType: ProductType, config: SampleConfig): String {
         val productKey: String = when (productType) {
             ProductType.COLLECTION -> {
-                if ((StringUtils.isNotBlank(BuildConfig.MOMO_COLLECTION_PRIMARY_KEY))) {
-                    BuildConfig.MOMO_COLLECTION_PRIMARY_KEY
-                } else {
-                    BuildConfig.MOMO_COLLECTION_SECONDARY_KEY
+                config.collectionPrimaryKey.ifBlank {
+                    config.collectionSecondaryKey
                 }
             }
 
             ProductType.REMITTANCE -> {
-                if (StringUtils.isNotBlank(io.rekast.sdk.BuildConfig.MOMO_REMITTANCE_PRIMARY_KEY)) {
-                    BuildConfig.MOMO_REMITTANCE_PRIMARY_KEY
+                if (config.remittancePrimaryKey.isNotBlank()) {
+                    config.remittancePrimaryKey
                 } else {
-                    BuildConfig.MOMO_REMITTANCE_SECONDARY_KEY
+                    config.remittanceSecondaryKey
                 }
             }
 
             ProductType.DISBURSEMENTS -> {
-                if (StringUtils.isNotBlank(io.rekast.sdk.BuildConfig.MOMO_DISBURSEMENTS_PRIMARY_KEY)) {
-                    BuildConfig.MOMO_DISBURSEMENTS_PRIMARY_KEY
+                if (config.disbursementsPrimaryKey.isNotBlank()) {
+                    config.disbursementsPrimaryKey
                 } else {
-                    BuildConfig.MOMO_DISBURSEMENTS_SECONDARY_KEY
+                    config.disbursementsSecondaryKey
                 }
             }
         }

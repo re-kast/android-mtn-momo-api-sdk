@@ -1,0 +1,17 @@
+R_DEF: Internal format may change without notice
+local
+id collectionPayScreenFragment
+id collectionWithDrawScreenFragment
+id disbursementDepositScreenFragment
+id disbursementRefundScreenFragment
+id homeFragment
+id homeScreenFragment
+id navigateToCollectionPay
+id navigateToCollectionWithdraw
+id navigateToDisbursementDeposit
+id navigateToDisbursementRefund
+id navigateToHome
+id navigateToRemittance
+id navigation_graph
+id remittanceScreenFragment
+navigation navigation_graph

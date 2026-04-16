@@ -34,6 +34,17 @@ import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Test
 
+/**
+ * Unit tests for [BasicAuthenticationInterceptor].
+ *
+ * Verifies that the interceptor Base64-encodes `userId:apiKey` and attaches
+ * a `Basic` Authorization header when both credentials are non-empty, omits
+ * the header when either credential is blank, and always forwards the request
+ * to the chain exactly once.
+ *
+ * [android.util.Base64] is statically mocked via MockK so that the tests run
+ * on the JVM without requiring the Android framework.
+ */
 class BasicAuthenticationInterceptorTest {
 
     private val mockChain = mockk<Interceptor.Chain>()
@@ -58,6 +69,7 @@ class BasicAuthenticationInterceptorTest {
         .message("OK")
         .build()
 
+    /** Verifies the Authorization header is `Basic <base64(userId:apiKey)>` when both fields are set. */
     @Test
     fun `adds Basic authorization header when both userId and apiKey are non-empty`() {
         val credentials = BasicAuthCredentials("user-123", "key-abc")
@@ -77,6 +89,7 @@ class BasicAuthenticationInterceptorTest {
         )
     }
 
+    /** Verifies the Authorization header is omitted when userId is an empty string. */
     @Test
     fun `does not add authorization header when userId is empty`() {
         val credentials = BasicAuthCredentials("", "key-abc")
@@ -92,6 +105,7 @@ class BasicAuthenticationInterceptorTest {
         assertNull(capturedRequest.captured.header(MomoConstants.Headers.AUTHORIZATION))
     }
 
+    /** Verifies the Authorization header is omitted when apiKey is an empty string. */
     @Test
     fun `does not add authorization header when apiKey is empty`() {
         val credentials = BasicAuthCredentials("user-123", "")
@@ -107,6 +121,7 @@ class BasicAuthenticationInterceptorTest {
         assertNull(capturedRequest.captured.header(MomoConstants.Headers.AUTHORIZATION))
     }
 
+    /** Verifies the Authorization header is omitted when both userId and apiKey are empty. */
     @Test
     fun `does not add authorization header when both are empty`() {
         val credentials = BasicAuthCredentials("", "")
@@ -122,6 +137,7 @@ class BasicAuthenticationInterceptorTest {
         assertNull(capturedRequest.captured.header(MomoConstants.Headers.AUTHORIZATION))
     }
 
+    /** Verifies the interceptor returns the response produced by the chain unchanged. */
     @Test
     fun `returns response from chain`() {
         val credentials = BasicAuthCredentials("user-123", "key-abc")

@@ -1,96 +1,111 @@
+/*
+ * Copyright 2023-2024, Benjamin Mwalimu
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 plugins {
-    alias(libs.plugins.android.library)
-    alias(libs.plugins.dagger.hilt.android)
+    alias(libs.plugins.kotlin.multiplatform)
+    // AGP 9.x combined plugin — replaces com.android.library and resolves the
+    // kotlin.multiplatform + com.android.library incompatibility introduced in AGP 9.0.
+    alias(libs.plugins.android.kotlin.multiplatform.library)
     alias(libs.plugins.ksp)
-    alias(libs.plugins.secrets)
     alias(libs.plugins.kotlin.serialization)
     id("maven-publish")
     id("signing")
     alias(libs.plugins.kover)
 }
 
-secrets {
-    ignoreList.add("sdk.*")
-}
+kotlin {
+    jvmToolchain(17)
 
-android {
-    namespace = "io.rekast.sdk"
-    compileSdk = 37
-
-    buildFeatures {
-        dataBinding = true
-        viewBinding = true
-        buildConfig = true
-    }
-
-    defaultConfig {
+    // With com.android.kotlin.multiplatform.library the Android target is configured
+    // inside kotlin { android { } } — there is no separate top-level android {} block.
+    android {
+        namespace = "io.rekast.sdk"
+        compileSdk = 37
         minSdk = 24
-        vectorDrawables.useSupportLibrary = true
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-    }
 
-    testOptions {
-        animationsDisabled = true
-        unitTests.apply {
+        compilerOptions {
+            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
+        }
+
+        // Enable unit tests (host-side); disabled by default in the new plugin.
+        withHostTestBuilder {}.configure {
             isReturnDefaultValues = true
             isIncludeAndroidResources = false
         }
+
+        // Enable instrumented tests (device-side); disabled by default.
+        withDeviceTestBuilder {}
     }
 
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
+    jvm()
 
-    publishing {
-        singleVariant("release")
+    sourceSets {
+        commonMain.dependencies {
+            implementation(libs.squareup.retrofit)
+            implementation(libs.squareup.okhttp)
+            implementation(libs.squareup.okhttp.logging)
+            implementation(libs.squareup.retrofit.serialization)
+            implementation(libs.kotlinx.serialization.json)
+            implementation(libs.kotlinx.coroutines.core)
+            // JSR-330 annotations used in commonMain (@Inject, @Singleton).
+            // Hilt (androidMain) pulls this in transitively on Android; the explicit
+            // declaration here makes it available for JVM target compilation too.
+            implementation("javax.inject:javax.inject:1")
+        }
+        androidMain.dependencies {
+            implementation(libs.androidx.core.ktx)
+            implementation(libs.jakewharton.timber)
+            implementation(libs.kotlinx.coroutines)
+        }
+        // With the new plugin, unit-test sources live in androidHostTest and
+        // instrumented-test sources live in androidDeviceTest.
+        named("androidHostTest") {
+            kotlin.srcDirs("src/test/kotlin")
+            dependencies {
+                implementation(libs.junit)
+                implementation(libs.mockk)
+                implementation(libs.mockito.core)
+                implementation(libs.mockito.inline)
+                implementation(libs.mockito.kotlin)
+            }
+        }
+        named("androidDeviceTest") {
+            kotlin.srcDirs("src/androidTest/kotlin")
+            dependencies {
+                implementation(libs.androidx.monitor)
+                implementation(libs.androidx.test.runner)
+            }
+        }
     }
 }
 
-kotlin {
-    jvmToolchain(17)
-}
-
-dependencies {
-    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.kotlinx.serialization.json)
-
-    // Network - Retrofit, OKHTTP, chucker
-    implementation(libs.squareup.retrofit)
-    implementation(libs.squareup.retrofit.gson)
-    implementation(libs.squareup.okhttp)
-    implementation(libs.squareup.okhttp.logging)
-
-    implementation(libs.apache.commons.lang3)
-    implementation(libs.androidx.navigation.fragment)
-    implementation(libs.androidx.navigation.ui)
-    implementation(libs.androidx.navigation.compose)
-    implementation(libs.jakewharton.timber)
-    implementation(libs.kotlinx.coroutines)
-    implementation(libs.retrofit.coroutines)
-
-    implementation(libs.google.dagger.hilt)
-    implementation(libs.androidx.hilt.work)
-    androidTestImplementation(libs.androidx.monitor)
-    androidTestImplementation(libs.androidx.test.runner)
-    ksp(libs.hilt.android.compiler)
-
-    debugImplementation(libs.chuckerteam.chucker)
-    releaseImplementation(libs.chuckerteam.chucker.noop)
-
-    testImplementation(libs.mockito.core)
-    testImplementation(libs.mockito.inline)
-    testImplementation(libs.mockito.kotlin)
-    testImplementation(libs.junit)
-    testImplementation(libs.mockk)
-}
+// No KSP processors needed at the SDK level — Hilt wiring is done in the consuming app.
 
 dokka {
     dokkaSourceSets {
-        register("main") {
-            sourceRoots.from(file("src/main/kotlin"))
+        named("commonMain") {
+            displayName.set("Common")
+            sourceRoots.from(file("src/commonMain/kotlin"))
+        }
+        named("androidMain") {
             displayName.set("Android")
+            sourceRoots.from(file("src/androidMain/kotlin"))
+        }
+        named("jvmMain") {
+            displayName.set("JVM")
+            sourceRoots.from(file("src/jvmMain/kotlin"))
         }
     }
     pluginsConfiguration.html {
@@ -101,7 +116,7 @@ dokka {
 }
 
 tasks.matching { it.name.startsWith("dokkaGenerate") }.configureEach {
-    dependsOn("kspDebugKotlin", "kspReleaseKotlin")
+    dependsOn("kspAndroidDebugKotlin", "kspAndroidReleaseKotlin")
 }
 
 kover {
@@ -123,11 +138,6 @@ kover {
 }
 
 afterEvaluate {
-    val sourcesJar by tasks.registering(Jar::class) {
-        archiveClassifier.set("sources")
-        from("src/main/kotlin")
-    }
-
     val javadocJar by tasks.registering(Jar::class) {
         archiveClassifier.set("javadoc")
         val dokkaHtml = tasks.named("dokkaGenerateHtml")
@@ -136,52 +146,46 @@ afterEvaluate {
     }
 
     publishing {
-        publications {
-            create<MavenPublication>("release") {
-                from(components["release"])
-                artifact(sourcesJar)
-                artifact(javadocJar)
+        val versionName = (project.properties["VERSION_NAME"] as? String) ?: "unspecified"
+        val groupName = (project.properties["GROUP"] as? String) ?: "io.rekast"
 
-                groupId = project.properties["GROUP"] as String
-                artifactId = project.properties["POM_ARTIFACT_ID"] as String
-                version = project.properties["VERSION_NAME"] as String
+        publications.withType<MavenPublication>().configureEach {
+            artifact(javadocJar)
+            groupId = groupName
+            version = versionName
 
-                pom {
-                    name.set(project.properties["POM_NAME"] as String)
-                    description.set(project.properties["POM_DESCRIPTION"] as String)
-                    url.set(project.properties["POM_URL"] as String)
-                    inceptionYear.set(project.properties["POM_INCEPTION_YEAR"] as String)
+            pom {
+                name.set(project.properties["POM_NAME"] as? String ?: "MTN MoMo API SDK")
+                description.set(project.properties["POM_DESCRIPTION"] as? String ?: "")
+                url.set(project.properties["POM_URL"] as? String ?: "")
+                inceptionYear.set(project.properties["POM_INCEPTION_YEAR"] as? String ?: "2023")
 
-                    licenses {
-                        license {
-                            name.set(project.properties["POM_LICENSE_NAME"] as String)
-                            url.set(project.properties["POM_LICENSE_URL"] as String)
-                            distribution.set(project.properties["POM_LICENSE_DIST"] as String)
-                        }
+                licenses {
+                    license {
+                        name.set(project.properties["POM_LICENSE_NAME"] as? String ?: "")
+                        url.set(project.properties["POM_LICENSE_URL"] as? String ?: "")
+                        distribution.set(project.properties["POM_LICENSE_DIST"] as? String ?: "")
                     }
+                }
 
-                    developers {
-                        developer {
-                            id.set(project.properties["POM_DEVELOPER_ID"] as String)
-                            name.set(project.properties["POM_DEVELOPER_NAME"] as String)
-                            url.set(project.properties["POM_DEVELOPER_URL"] as String)
-                        }
+                developers {
+                    developer {
+                        id.set(project.properties["POM_DEVELOPER_ID"] as? String ?: "")
+                        name.set(project.properties["POM_DEVELOPER_NAME"] as? String ?: "")
+                        url.set(project.properties["POM_DEVELOPER_URL"] as? String ?: "")
                     }
+                }
 
-                    scm {
-                        url.set(project.properties["POM_SCM_URL"] as String)
-                        connection.set(project.properties["POM_SCM_CONNECTION"] as String)
-                        developerConnection.set(project.properties["POM_SCM_DEV_CONNECTION"] as String)
-                    }
+                scm {
+                    url.set(project.properties["POM_SCM_URL"] as? String ?: "")
+                    connection.set(project.properties["POM_SCM_CONNECTION"] as? String ?: "")
+                    developerConnection.set(project.properties["POM_SCM_DEV_CONNECTION"] as? String ?: "")
                 }
             }
         }
 
         repositories {
-            val version = project.properties["VERSION_NAME"] as String
-
-            if (version.endsWith("SNAPSHOT")) {
-                // Snapshots deploy directly to the Maven Central snapshots repository.
+            if (versionName.endsWith("SNAPSHOT")) {
                 maven {
                     name = "mavenCentralSnapshots"
                     url = uri("https://central.sonatype.com/repository/maven-snapshots/")
@@ -191,15 +195,12 @@ afterEvaluate {
                     }
                 }
             } else {
-                // Releases are written to a local staging dir. CI bundles them into a
-                // ZIP and uploads to the Maven Central portal API.
                 maven {
                     name = "localStaging"
                     url = uri(layout.buildDirectory.dir("staging-deploy"))
                 }
             }
 
-            // GitHub Packages — published for both releases and snapshots.
             maven {
                 name = "githubPackages"
                 url = uri("https://maven.pkg.github.com/re-kast/android-mtn-momo-api-sdk")
@@ -216,7 +217,7 @@ afterEvaluate {
         val signingPassword = providers.environmentVariable("SIGNING_PASSWORD").orNull
         if (signingKey != null) {
             useInMemoryPgpKeys(signingKey, signingPassword)
-            sign(publishing.publications["release"])
+            sign(publishing.publications)
         }
     }
 }
