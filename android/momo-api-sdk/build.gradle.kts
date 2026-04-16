@@ -115,10 +115,6 @@ dokka {
     }
 }
 
-tasks.matching { it.name.startsWith("dokkaGenerate") }.configureEach {
-    dependsOn("kspAndroidDebugKotlin", "kspAndroidReleaseKotlin")
-}
-
 kover {
     reports {
         filters {
@@ -140,7 +136,7 @@ kover {
 afterEvaluate {
     val javadocJar by tasks.registering(Jar::class) {
         archiveClassifier.set("javadoc")
-        val dokkaHtml = tasks.named("dokkaGenerateHtml")
+        val dokkaHtml = tasks.named("dokkaGenerateModuleHtml")
         dependsOn(dokkaHtml)
         from(dokkaHtml.map { it.outputs.files })
     }
@@ -172,6 +168,7 @@ afterEvaluate {
                     developer {
                         id.set(project.properties["POM_DEVELOPER_ID"] as? String ?: "")
                         name.set(project.properties["POM_DEVELOPER_NAME"] as? String ?: "")
+                        email.set(project.properties["POM_DEVELOPER_EMAIL"] as? String ?: "")
                         url.set(project.properties["POM_DEVELOPER_URL"] as? String ?: "")
                     }
                 }
