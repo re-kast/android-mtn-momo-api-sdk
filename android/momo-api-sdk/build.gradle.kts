@@ -13,6 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import org.gradle.api.publish.maven.tasks.AbstractPublishToMaven
+import org.gradle.plugins.signing.Sign
+
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
     // AGP 9.x combined plugin — replaces com.android.library and resolves the
@@ -216,5 +219,12 @@ afterEvaluate {
             useInMemoryPgpKeys(signingKey, signingPassword)
             sign(publishing.publications)
         }
+    }
+
+    // Gradle 9.x strict dependency ordering fix for KMP + signing:
+    // each publication's publish task shares the javadoc .asc artifact produced
+    // by the other publications' sign tasks, so we must declare explicit ordering.
+    tasks.withType<AbstractPublishToMaven>().configureEach {
+        mustRunAfter(tasks.withType<Sign>())
     }
 }
