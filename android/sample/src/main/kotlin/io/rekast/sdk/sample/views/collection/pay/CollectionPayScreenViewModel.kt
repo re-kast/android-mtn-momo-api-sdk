@@ -37,7 +37,7 @@ import kotlinx.coroutines.launch
  * resulting [MomoTransaction] after a payment request.
  */
 @HiltViewModel
-class CollectionPayScreenViewModel @Inject constructor(private val defaultRepository: DefaultRepository, @ApplicationContext private val context: Context) : ViewModel() {
+class CollectionPayScreenViewModel @Inject constructor(private val defaultRepository: DefaultRepository, @param:ApplicationContext private val context: Context) : ViewModel() {
     /** Controls whether the circular progress indicator is shown instead of the form. */
     val showProgressBar = MutableLiveData(false)
 

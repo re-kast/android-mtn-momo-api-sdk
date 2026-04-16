@@ -37,7 +37,7 @@ import kotlinx.coroutines.launch
  * [MomoTransaction] after a deposit request.
  */
 @HiltViewModel
-class DisbursementDepositScreenViewModel @Inject constructor(private val defaultRepository: DefaultRepository, @ApplicationContext private val context: Context) : ViewModel() {
+class DisbursementDepositScreenViewModel @Inject constructor(private val defaultRepository: DefaultRepository, @param:ApplicationContext private val context: Context) : ViewModel() {
     /** Controls whether the circular progress indicator is shown instead of the form. */
     val showProgressBar = MutableLiveData(false)
 

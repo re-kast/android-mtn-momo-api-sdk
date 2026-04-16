@@ -18,6 +18,7 @@ package io.rekast.sdk.sample.views.splash
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material.ExperimentalMaterialApi
@@ -42,7 +43,7 @@ class SplashScreenActivity : AppCompatActivity() {
             AppTheme { SplashScreen() }
         }
 
-        Handler().postDelayed({
+        Handler(Looper.getMainLooper()).postDelayed({
             val i = Intent(this@SplashScreenActivity, AppMainActivity::class.java)
             startActivity(i)
             finish()

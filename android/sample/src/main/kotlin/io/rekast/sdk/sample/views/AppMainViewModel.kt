@@ -46,7 +46,7 @@ import timber.log.Timber
 @HiltViewModel
 open class AppMainViewModel @Inject constructor(
     private val defaultRepository: DefaultRepository,
-    @ApplicationContext private val context: Context,
+    @param:ApplicationContext private val context: Context,
     private val settings: Settings,
     private val dispatchers: DispatcherProvider
 ) : ViewModel() {

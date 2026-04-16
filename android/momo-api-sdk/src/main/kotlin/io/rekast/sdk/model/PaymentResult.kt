@@ -15,6 +15,9 @@
  */
 package io.rekast.sdk.model
 
+import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.Serializable
+
 /**
  * Represents the result returned after initiating a payment request.
  *
@@ -24,4 +27,11 @@ package io.rekast.sdk.model
  * @property responseDescription A human-readable description of the response code.
  * @property customerMessage A message intended to be displayed to the customer.
  */
-data class PaymentResult(var merchantRequestID: String, var checkoutRequestID: String, var responseCode: String, var responseDescription: String, var customerMessage: String)
+@Serializable
+data class PaymentResult(
+    @SerializedName("MerchantRequestID") var merchantRequestID: String,
+    @SerializedName("CheckoutRequestID") var checkoutRequestID: String,
+    @SerializedName("ResponseCode") var responseCode: String,
+    @SerializedName("ResponseDescription") var responseDescription: String,
+    @SerializedName("CustomerMessage") var customerMessage: String
+)

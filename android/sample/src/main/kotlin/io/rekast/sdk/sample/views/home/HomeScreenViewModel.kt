@@ -48,8 +48,12 @@ import timber.log.Timber
  * account holder status, and account balance from the MTN MOMO API.
  */
 @HiltViewModel
-class HomeScreenViewModel @Inject constructor(private val defaultRepository: DefaultRepository, @ApplicationContext private val context: Context, private val settings: Settings, private val dispatchers: DispatcherProvider) :
-    ViewModel() {
+class HomeScreenViewModel @Inject constructor(
+    private val defaultRepository: DefaultRepository,
+    @param:ApplicationContext private val context: Context,
+    private val settings: Settings,
+    private val dispatchers: DispatcherProvider
+) : ViewModel() {
     /** Controls whether the circular progress indicator is shown on the Home screen. */
     val showProgressBar = MutableLiveData(false)
     private val _snackBarStateFlow = MutableSharedFlow<SnackBarComponentConfiguration>()
