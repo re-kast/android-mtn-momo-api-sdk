@@ -58,6 +58,7 @@ rules = "1.7.0"
 runner = "1.7.0"
 rxJava = "3.1.11"
 secrets = "2.0.1"
+securityCrypto = "1.1.0-alpha06"
 spotless = "8.4.0"
 timber = "5.0.1"
 truth = "1.4.5"
@@ -142,6 +143,7 @@ mockito-inline = { group = "org.mockito", name = "mockito-inline", version.ref =
 mockito-kotlin = { group = "org.mockito.kotlin", name = "mockito-kotlin", version.ref = "mockito-kotlin" }
 navigation-safe-args-gradle-plugin = { group = "androidx.navigation", name = "navigation-safe-args-gradle-plugin", version.ref = "navigation" }
 robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "roboelectric" }
+androidx-security-crypto = { group = "androidx.security", name = "security-crypto", version.ref = "securityCrypto" }
 squareup-leakcanary = { group = "com.squareup.leakcanary", name = "leakcanary-android", version.ref = "leakCanary" }
 squareup-okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
 squareup-okhttp-logging = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "loggingInterceptor" }

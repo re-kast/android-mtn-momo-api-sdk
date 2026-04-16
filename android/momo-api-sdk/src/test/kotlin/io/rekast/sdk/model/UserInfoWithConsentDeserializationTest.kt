@@ -1,0 +1,155 @@
+/*
+ * Copyright 2023-2024, Benjamin Mwalimu
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package io.rekast.sdk.model
+
+import kotlinx.serialization.json.Json
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
+import org.junit.Test
+
+/**
+ * Deserialization tests for [UserInfoWithConsent].
+ *
+ * The MTN MOMO `getUserInfoWithConsent` endpoint returns a **flat** JSON object — all
+ * fields at the top level, not nested under a `userBasicInfo` key. [UserInfoWithConsent]
+ * was restructured to match this shape and all previously-required fields were made
+ * nullable so that a sparse API response never causes a deserialization failure.
+ */
+class UserInfoWithConsentDeserializationTest {
+
+    private val json = Json { ignoreUnknownKeys = true }
+
+    private val fullJson = """
+        {
+          "sub": "sub-456",
+          "name": "John Doe",
+          "given_name": "John",
+          "family_name": "Doe",
+          "birthdate": "1990-01-01",
+          "locale": "en_UG",
+          "gender": "M",
+          "updated_at": 1580000000,
+          "status": "ACTIVE",
+          "middle_name": "Middle",
+          "email": "john@example.com",
+          "email_verified": true,
+          "phone_number": "256700000000",
+          "phone_number_verified": true,
+          "address": "Kampala",
+          "credit_score": "700",
+          "active": "true",
+          "country_of_birth": "UG",
+          "region_of_birth": "Central",
+          "city_of_birth": "Kampala",
+          "occupation": "Engineer",
+          "employer_name": "ACME",
+          "identification_type": "PASSPORT",
+          "identification_value": "A1234567"
+        }
+    """.trimIndent()
+
+    /** Only sub and name are truly required by the endpoint. */
+    private val minimalJson = """
+        {
+          "sub": "sub-789",
+          "name": "Alice"
+        }
+    """.trimIndent()
+
+    /** Verifies the full payload deserializes without throwing. */
+    @Test
+    fun `deserializes full JSON with all fields`() {
+        val result = json.decodeFromString<UserInfoWithConsent>(fullJson)
+        assertNotNull(result)
+    }
+
+    /** Verifies every field in the full payload is mapped to the correct property. */
+    @Test
+    fun `all fields in full JSON are mapped correctly`() {
+        val result = json.decodeFromString<UserInfoWithConsent>(fullJson)
+        assertEquals("sub-456", result.sub)
+        assertEquals("John Doe", result.name)
+        assertEquals("John", result.givenName)
+        assertEquals("Doe", result.familyName)
+        assertEquals("1990-01-01", result.birthDate)
+        assertEquals("en_UG", result.locale)
+        assertEquals("M", result.gender)
+        assertEquals(1580000000, result.updatedAt)
+        assertEquals("ACTIVE", result.status)
+        assertEquals("Middle", result.middleName)
+        assertEquals("john@example.com", result.email)
+        assertEquals(true, result.emailVerified)
+        assertEquals("256700000000", result.phonenumber)
+        assertEquals(true, result.phoneNumberVerified)
+        assertEquals("Kampala", result.address)
+        assertEquals("700", result.creditScore)
+        assertEquals("true", result.active)
+        assertEquals("UG", result.countryOfBirth)
+        assertEquals("Central", result.regionOfBirth)
+        assertEquals("Kampala", result.cityOfBirth)
+        assertEquals("Engineer", result.occupation)
+        assertEquals("ACME", result.employerName)
+        assertEquals("PASSPORT", result.identificationType)
+        assertEquals("A1234567", result.identificationValue)
+    }
+
+    /** Verifies a sparse response (only required fields) deserializes successfully. */
+    @Test
+    fun `deserializes minimal JSON with only required fields`() {
+        val result = json.decodeFromString<UserInfoWithConsent>(minimalJson)
+        assertNotNull(result)
+        assertEquals("sub-789", result.sub)
+        assertEquals("Alice", result.name)
+    }
+
+    /** Verifies every optional field defaults to null when absent from the JSON. */
+    @Test
+    fun `optional fields default to null when absent`() {
+        val result = json.decodeFromString<UserInfoWithConsent>(minimalJson)
+        assertNull(result.givenName)
+        assertNull(result.familyName)
+        assertNull(result.birthDate)
+        assertNull(result.locale)
+        assertNull(result.gender)
+        assertNull(result.updatedAt)
+        assertNull(result.status)
+        assertNull(result.middleName)
+        assertNull(result.email)
+        assertNull(result.emailVerified)
+        assertNull(result.phonenumber)
+        assertNull(result.phoneNumberVerified)
+        assertNull(result.address)
+        assertNull(result.creditScore)
+        assertNull(result.active)
+        assertNull(result.countryOfBirth)
+        assertNull(result.regionOfBirth)
+        assertNull(result.cityOfBirth)
+        assertNull(result.occupation)
+        assertNull(result.employerName)
+        assertNull(result.identificationType)
+        assertNull(result.identificationValue)
+    }
+
+    /** Verifies updated_at is deserialized as Int (not String). */
+    @Test
+    fun `updated_at is deserialized as Int`() {
+        val result = json.decodeFromString<UserInfoWithConsent>(fullJson)
+        assertTrue(result.updatedAt is Int)
+        assertEquals(1580000000, result.updatedAt)
+    }
+}

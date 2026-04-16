@@ -15,15 +15,14 @@
  */
 package io.rekast.sdk.sample.utils
 
-import kotlinx.serialization.Serializable
-
 /**
  * Theming options for a snackbar, specifying colors as hex strings for message text, action text,
  * and background.
+ *
+ * Used only for in-memory UI configuration — no serialization needed.
  *
  * @property messageTextColor Hex color string for the snackbar message text; defaults to white.
  * @property actionTextColor Hex color string for the snackbar action button text; defaults to yellow.
  * @property backgroundColor Hex color string for the snackbar background; defaults to a warm orange.
  */
-@Serializable
-data class SnackBarThemeOptions(val messageTextColor: String = "#FFFFFF", val actionTextColor: String = "#FFE400", val backgroundColor: String = "#EB9779") : java.io.Serializable
+data class SnackBarThemeOptions(val messageTextColor: String = "#FFFFFF", val actionTextColor: String = "#FFCB05", val backgroundColor: String = "#004F71")

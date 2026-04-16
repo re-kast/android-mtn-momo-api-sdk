@@ -45,14 +45,16 @@ open class AppMainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(FragmentContainerView(this).apply { id = R.id.navigation_host })
-        navHostFragment =
-            NavHostFragment.create(R.navigation.navigation_graph)
-
-        supportFragmentManager
-            .beginTransaction()
-            .replace(R.id.navigation_host, navHostFragment)
-            .setPrimaryNavigationFragment(navHostFragment)
-            .commit()
+        if (savedInstanceState == null) {
+            navHostFragment = NavHostFragment.create(R.navigation.navigation_graph)
+            supportFragmentManager
+                .beginTransaction()
+                .replace(R.id.navigation_host, navHostFragment)
+                .setPrimaryNavigationFragment(navHostFragment)
+                .commit()
+        } else {
+            navHostFragment = supportFragmentManager.findFragmentById(R.id.navigation_host) as NavHostFragment
+        }
     }
 
     /**

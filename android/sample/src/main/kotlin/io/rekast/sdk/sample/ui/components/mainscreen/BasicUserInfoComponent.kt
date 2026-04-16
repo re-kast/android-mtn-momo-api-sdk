@@ -107,7 +107,7 @@ fun BasicUserInfoComponent(modifier: Modifier = Modifier, basicUserInfo: Mutable
                 )
             }
             Column(modifier = modifier.padding(end = 10.dp)) {
-                basicUserInfo.value?.updatedAt?.let {
+                basicUserInfo.value?.displayUpdatedAt?.let {
                     Text(
                         text = it,
                         color = colorResource(id = R.color.black)

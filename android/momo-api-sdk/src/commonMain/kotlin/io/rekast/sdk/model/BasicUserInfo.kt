@@ -17,18 +17,21 @@ package io.rekast.sdk.model
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 
 /**
- * Data class representing basic user information.
+ * Data class representing basic user information returned by the MTN MOMO API.
  *
  * @property sub The subject identifier for the user.
- * @property name The name of the user.
+ * @property name The full name of the user.
  * @property givenName The given name of the user.
  * @property familyName The family name of the user.
  * @property birthDate The birthdate of the user.
  * @property locale The locale of the user.
  * @property gender The gender of the user.
- * @property updatedAt The last updated timestamp.
+ * @property updatedAt The last updated timestamp as a Unix epoch integer (seconds).
+ * @property displayUpdatedAt A human-readable formatted version of [updatedAt]; computed locally,
+ *   not present in the API response.
  */
 @Serializable
 data class BasicUserInfo(
@@ -39,5 +42,6 @@ data class BasicUserInfo(
     @SerialName("birthdate") var birthDate: String,
     @SerialName("locale") var locale: String,
     @SerialName("gender") var gender: String,
-    @SerialName("updated_at") var updatedAt: String
+    @SerialName("updated_at") var updatedAt: Int,
+    @Transient var displayUpdatedAt: String = ""
 )

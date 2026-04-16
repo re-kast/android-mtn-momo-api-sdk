@@ -20,32 +20,43 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material.ExperimentalMaterialApi
 import dagger.hilt.android.AndroidEntryPoint
 import io.rekast.sdk.sample.ui.theme.AppTheme
 import io.rekast.sdk.sample.utils.applyWindowInsetListener
 import io.rekast.sdk.sample.views.AppMainActivity
+import io.rekast.sdk.sample.views.AppMainViewModel
 
 /**
  * Entry-point activity that displays the [SplashScreen] for 3 seconds before launching
  * [AppMainActivity] and finishing itself.
+ *
+ * [AppMainViewModel.checkUser] is called here so that ART bytecode verification of the
+ * ViewModel and Repository coroutine lambdas (and the credential bootstrap network calls)
+ * happen during the existing 3-second splash window instead of on the main thread when
+ * [AppMainActivity.onResume] runs.
  */
 @OptIn(ExperimentalMaterialApi::class)
 @AndroidEntryPoint
 class SplashScreenActivity : AppCompatActivity() {
+    private val appMainViewModel by viewModels<AppMainViewModel>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val splashScreenActivity = this@SplashScreenActivity
-        splashScreenActivity.applyWindowInsetListener()
+        applyWindowInsetListener()
 
         setContent {
             AppTheme { SplashScreen() }
         }
 
+        // Kick off credential bootstrap early — hides ART class verification latency
+        // and network round-trips behind the splash delay.
+        appMainViewModel.checkUser()
+
         Handler(Looper.getMainLooper()).postDelayed({
-            val i = Intent(this@SplashScreenActivity, AppMainActivity::class.java)
-            startActivity(i)
+            startActivity(Intent(this, AppMainActivity::class.java))
             finish()
         }, 3000)
     }

@@ -30,7 +30,6 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import io.rekast.sdk.sample.ui.theme.AppTheme
-import io.rekast.sdk.sample.views.AppMainActivity
 import io.rekast.sdk.sample.views.AppMainViewModel
 import kotlin.getValue
 
@@ -40,28 +39,29 @@ import kotlin.getValue
 @ExperimentalMaterialApi
 @AndroidEntryPoint
 class RemittanceScreenFragment : Fragment() {
-    private lateinit var activity: AppMainActivity
     private val remittanceScreenViewModel by viewModels<RemittanceScreenViewModel>()
     private val appMainViewModel by activityViewModels<AppMainViewModel>()
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View = ComposeView(requireContext()).apply {
-        setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
-        setContent {
-            AppTheme {
-                val showProgressBar by remittanceScreenViewModel.showProgressBar.observeAsState(false)
-                RemittanceScreen(
-                    navController = findNavController(),
-                    snackStateFlow = remittanceScreenViewModel.snackBarStateFlow,
-                    showProgressBar = showProgressBar,
-                    remittanceScreenViewModel = remittanceScreenViewModel,
-                    momoTransaction = remittanceScreenViewModel.momoTransaction
-                )
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        val navController = findNavController()
+        return ComposeView(requireContext()).apply {
+            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+            setContent {
+                AppTheme {
+                    val showProgressBar by remittanceScreenViewModel.showProgressBar.observeAsState(false)
+                    RemittanceScreen(
+                        navController = navController,
+                        snackStateFlow = remittanceScreenViewModel.snackBarStateFlow,
+                        showProgressBar = showProgressBar,
+                        remittanceScreenViewModel = remittanceScreenViewModel,
+                        momoTransaction = remittanceScreenViewModel.momoTransaction
+                    )
+                }
             }
         }
     }
 
     override fun onResume() {
         super.onResume()
-        activity = requireActivity() as AppMainActivity
     }
 }

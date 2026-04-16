@@ -15,27 +15,30 @@
  */
 package io.rekast.sdk.sample.views.splash
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.height
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import io.rekast.sdk.sample.R
 import io.rekast.sdk.sample.utils.annotation.PreviewWithBackgroundExcludeGenerated
 import kotlinx.coroutines.delay
 
 /**
- * Renders the splash screen showing the application name centered on a full-screen background.
+ * Renders the splash screen showing the MTN MoMo logo centered on a full-screen background.
  *
  * @param modifier Modifier applied to the root [Box].
  */
@@ -52,14 +55,18 @@ fun SplashScreen(modifier: Modifier = Modifier) = Box(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
+        Image(
+            painter = painterResource(id = R.drawable.momo_mtnb),
+            contentDescription = null,
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+        )
+        Spacer(modifier = Modifier.height(16.dp))
         Text(
-            text = stringResource(R.string.app_name),
+            text = stringResource(id = R.string.app_title),
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
-            fontSize = with(LocalDensity.current) { dimensionResource(id = R.dimen.font_size_xlarge).toSp() },
-            modifier = Modifier
-                .padding(all = dimensionResource(id = R.dimen.spacing_large))
-                .align(Alignment.CenterHorizontally)
+            fontSize = 18.sp,
+            modifier = Modifier.align(Alignment.CenterHorizontally)
         )
     }
 }

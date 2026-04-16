@@ -97,7 +97,7 @@ fun PaymentDataScreenComponent(
             .fillMaxSize()
             .padding(dimensionResource(id = R.dimen.spacing_medium))
     ) {
-        Column(modifier = modifier.padding(end = dimensionResource(id = R.dimen.spacing_large))) {
+        Column(modifier = modifier.padding(start = dimensionResource(id = R.dimen.spacing_large))) {
             Text(
                 text = title,
                 style = TextStyle(

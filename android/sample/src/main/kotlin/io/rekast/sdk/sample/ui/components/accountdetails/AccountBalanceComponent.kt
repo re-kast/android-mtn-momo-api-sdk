@@ -46,14 +46,14 @@ fun AccountBalanceComponent(modifier: Modifier = Modifier, accountBalance: Mutab
     ) {
         SectionHeader(titleResId = R.string.account_balance_title)
         Row(horizontalArrangement = Arrangement.SpaceEvenly) {
-            Column(modifier = modifier.padding(end = dimensionResource(id = R.dimen.spacing_large))) {
+            Column(modifier = modifier.padding(start = dimensionResource(id = R.dimen.spacing_large), end = dimensionResource(id = R.dimen.spacing_large))) {
                 Text(
                     text = stringResource(id = R.string.available_balance),
                     color = colorResource(id = R.color.black),
                     fontWeight = FontWeight.Bold
                 )
             }
-            Column(modifier = modifier.padding(end = dimensionResource(id = R.dimen.spacing_medium))) {
+            Column(modifier = modifier.padding(start = dimensionResource(id = R.dimen.spacing_medium), end = dimensionResource(id = R.dimen.spacing_medium))) {
                 accountBalance.value?.availableBalance?.let {
                     Text(
                         text = it,
@@ -65,14 +65,14 @@ fun AccountBalanceComponent(modifier: Modifier = Modifier, accountBalance: Mutab
             }
         }
         Row(horizontalArrangement = Arrangement.SpaceEvenly) {
-            Column(modifier = modifier.padding(end = dimensionResource(id = R.dimen.spacing_large))) {
+            Column(modifier = modifier.padding(start = dimensionResource(id = R.dimen.spacing_large), end = dimensionResource(id = R.dimen.spacing_large))) {
                 Text(
                     text = stringResource(id = R.string.currency),
                     color = colorResource(id = R.color.black),
                     fontWeight = FontWeight.Bold
                 )
             }
-            Column(modifier = modifier.padding(end = dimensionResource(id = R.dimen.spacing_medium))) {
+            Column(modifier = modifier.padding(start = dimensionResource(id = R.dimen.spacing_medium), end = dimensionResource(id = R.dimen.spacing_medium))) {
                 accountBalance.value?.currency?.let {
                     Text(
                         text = it,

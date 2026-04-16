@@ -15,7 +15,6 @@
  */
 package io.rekast.sdk.sample.views.home
 
-import android.content.Context
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -27,6 +26,7 @@ import io.rekast.sdk.model.AccountBalance
 import io.rekast.sdk.model.BasicUserInfo
 import io.rekast.sdk.repository.DefaultRepository
 import io.rekast.sdk.repository.data.NetworkResult
+import io.rekast.sdk.sample.utils.CredentialStorage
 import io.rekast.sdk.sample.utils.DispatcherProvider
 import io.rekast.sdk.sample.utils.SampleConfig
 import io.rekast.sdk.sample.utils.Utils
@@ -73,7 +73,7 @@ class HomeScreenViewModelTest {
         override fun io(): CoroutineDispatcher = testDispatcher
     }
     private val mockRepository = mockk<DefaultRepository>(relaxed = true)
-    private val mockContext = mockk<Context>(relaxed = true)
+    private val mockStorage = mockk<CredentialStorage>(relaxed = true)
     private val mockSettings = mockk<Settings>(relaxed = true)
     private val mockSampleConfig = SampleConfig(
         apiVersionV1 = "v1_0",
@@ -95,10 +95,10 @@ class HomeScreenViewModelTest {
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
         mockkObject(Utils)
-        every { Utils.getAccessToken(any()) } returns "test-access-token"
+        every { mockStorage.getAccessToken() } returns "test-access-token"
         every { Utils.getProductSubscriptionKeys(any(), any()) } returns "test-subscription-key"
         every { Utils.convertToDate(any()) } returns "2001-09-09"
-        viewModel = HomeScreenViewModel(mockRepository, mockContext, mockSettings, testDispatcherProvider, mockSampleConfig)
+        viewModel = HomeScreenViewModel(mockRepository, mockStorage, mockSettings, testDispatcherProvider, mockSampleConfig)
     }
 
     @After
@@ -154,7 +154,7 @@ class HomeScreenViewModelTest {
             birthDate = "1990-01-01",
             locale = "en",
             gender = "male",
-            updatedAt = "1000000000"
+            updatedAt = 1000000000
         )
         coEvery {
             mockRepository.getBasicUserInfo(any(), any(), any(), any(), any())
@@ -219,8 +219,9 @@ class HomeScreenViewModelTest {
     /** Verifies getAccountBalance exits early (showProgressBar stays false) when access token is blank. */
     @Test
     fun `getAccountBalance sets showProgressBar false when access token is blank`() = runTest {
-        every { Utils.getAccessToken(any()) } returns ""
-        val vmWithNoToken = HomeScreenViewModel(mockRepository, mockContext, mockSettings, testDispatcherProvider, mockSampleConfig)
+        val mockStorageNoToken = mockk<CredentialStorage>(relaxed = true)
+        every { mockStorageNoToken.getAccessToken() } returns ""
+        val vmWithNoToken = HomeScreenViewModel(mockRepository, mockStorageNoToken, mockSettings, testDispatcherProvider, mockSampleConfig)
 
         vmWithNoToken.getAccountBalance()
 
@@ -230,8 +231,9 @@ class HomeScreenViewModelTest {
     /** Verifies validateAccountHolderStatus exits early (showProgressBar stays false) when access token is blank. */
     @Test
     fun `validateAccountHolderStatus sets showProgressBar false when access token is blank`() = runTest {
-        every { Utils.getAccessToken(any()) } returns ""
-        val vmWithNoToken = HomeScreenViewModel(mockRepository, mockContext, mockSettings, testDispatcherProvider, mockSampleConfig)
+        val mockStorageNoToken = mockk<CredentialStorage>(relaxed = true)
+        every { mockStorageNoToken.getAccessToken() } returns ""
+        val vmWithNoToken = HomeScreenViewModel(mockRepository, mockStorageNoToken, mockSettings, testDispatcherProvider, mockSampleConfig)
 
         vmWithNoToken.validateAccountHolderStatus()
 

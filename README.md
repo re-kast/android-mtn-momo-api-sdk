@@ -46,6 +46,85 @@ This SDK empowers Android developers to integrate MTN MOMO services confidently,
 
 For detailed instructions on integrating and configuring the MTN MOMO API SDK, please consult the official [MTN MOMO API documentation](https://momodeveloper.mtn.com/).
 
+## Authentication & Credential Management
+
+The SDK uses a **pull-based credential model** — it never stores credentials internally. Instead, it calls your app's `CredentialProvider` implementation on every request to retrieve the current API user ID, API key, and access token.
+
+### How It Works
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                        Your App                             │
+│                                                             │
+│  CredentialStorage          CredentialProvider              │
+│  (EncryptedSharedPrefs) ◄── (reads from storage)           │
+│          ▲                          │                       │
+│          │                          ▼                       │
+│  AppMainViewModel           SDK Interceptors                │
+│  (writes credentials)       BasicAuthInterceptor            │
+│                             AccessTokenInterceptor          │
+│                                     │                       │
+│                             TokenAuthenticator              │
+│                             (refreshes on 401)              │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Credential Storage
+
+Credentials are stored using `EncryptedSharedPreferences` (AES-256-GCM via the Android Keystore) through `CredentialStorage`. Tokens include expiry timestamps so that expired tokens are never returned — an expired token is treated the same as no token.
+
+### Automatic Token Refresh
+
+The `TokenAuthenticator` (an OkHttp `Authenticator`) fires automatically on every HTTP 401 response from a Bearer-protected endpoint:
+
+1. Verifies the failed request was using Bearer auth.
+2. Calls the MTN MoMo token endpoint using Basic Auth (API user ID + API key) on a separate, minimal `OkHttpClient` to avoid a circular dependency.
+3. Saves the refreshed token to `CredentialStorage`.
+4. Returns the original request so OkHttp re-runs the interceptors — `AccessTokenInterceptor` reads the new token from storage and attaches the correct `Authorization` header on the retry.
+
+After at most **one retry**, the authenticator gives up and propagates the 401 to the caller.
+
+### Implementing `CredentialProvider`
+
+```kotlin
+class MyCredentialProvider(
+    private val storage: CredentialStorage,
+    private val config: SampleConfig
+) : CredentialProvider {
+
+    override fun getApiUserId(): String = config.apiUserId
+
+    // Return the API key only when no valid access token exists.
+    // This prevents Basic Auth from being sent on Bearer-protected requests.
+    override fun getApiKey(): String =
+        if (storage.getAccessToken().isBlank()) storage.getApiKey() else ""
+
+    override fun getAccessToken(): String = storage.getAccessToken()
+}
+```
+
+Register it in your Hilt module:
+
+```kotlin
+@Provides
+@Singleton
+fun provideCredentialProvider(
+    storage: CredentialStorage,
+    config: SampleConfig
+): CredentialProvider = MyCredentialProvider(storage, config)
+```
+
+### Credential Bootstrap
+
+On first launch, `AppMainViewModel` runs a one-time sequence to provision credentials:
+
+1. **Check API user** — if the user does not exist, create it.
+2. **Create API key** — stored to `CredentialStorage`; skipped if a key already exists.
+3. **Fetch access token** — stored with its expiry; skipped if a valid token is already present.
+4. **Fetch OAuth2 token** — stored with its expiry; skipped if a valid token is already present.
+
+Subsequent app launches skip any step where a valid, non-expired credential is already stored. Token expiry is checked automatically by `CredentialStorage` — no manual refresh calls are needed.
+
 ## Getting Started
 
 ### Installation

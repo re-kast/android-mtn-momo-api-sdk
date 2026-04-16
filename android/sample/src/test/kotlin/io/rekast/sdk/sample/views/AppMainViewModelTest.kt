@@ -15,20 +15,16 @@
  */
 package io.rekast.sdk.sample.views
 
-import android.content.Context
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.mockkObject
-import io.mockk.unmockkObject
 import io.rekast.sdk.model.authentication.ApiUser
-import io.rekast.sdk.model.authentication.credentials.BasicAuthCredentials
 import io.rekast.sdk.repository.DefaultRepository
 import io.rekast.sdk.repository.data.NetworkResult
+import io.rekast.sdk.sample.utils.CredentialStorage
 import io.rekast.sdk.sample.utils.DispatcherProvider
 import io.rekast.sdk.sample.utils.SampleConfig
-import io.rekast.sdk.sample.utils.Utils
 import io.rekast.sdk.utils.Settings
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -45,15 +41,8 @@ import org.junit.Test
 /**
  * Unit tests for [AppMainViewModel].
  *
- * Verifies the authentication lifecycle:
- * - Setting Basic-Auth credentials forwards them to the repository
- * - [AppMainViewModel.checkUser] delegates to the repository and, on a 404 error,
- *   proceeds to [DefaultRepository.createApiUser]
- * - A successful user-check skips the create-user path entirely
- *
- * [Utils] is mocked as an object so that SharedPreferences calls do not
- * require an Android runtime. [UnconfinedTestDispatcher] is used so
- * coroutines launched on the IO dispatcher run synchronously in tests.
+ * Credentials are injected via a [CredentialStorage] mock, so there is no
+ * dependency on SharedPreferences or any Android runtime.
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 class AppMainViewModelTest {
@@ -63,7 +52,7 @@ class AppMainViewModelTest {
         override fun io(): CoroutineDispatcher = testDispatcher
     }
     private val mockRepository = mockk<DefaultRepository>(relaxed = true)
-    private val mockContext = mockk<Context>(relaxed = true)
+    private val mockStorage = mockk<CredentialStorage>(relaxed = true)
     private val mockSettings = mockk<Settings>(relaxed = true)
     private val mockSampleConfig = SampleConfig(
         apiVersionV1 = "v1_0",
@@ -84,41 +73,19 @@ class AppMainViewModelTest {
     @Before
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
-        mockkObject(Utils)
-        every { Utils.getProductSubscriptionKeys(any(), any()) } returns "test-subscription-key"
-        every { Utils.getApiKey(any()) } returns ""
-        every { Utils.getAccessToken(any()) } returns ""
-        every { Utils.getOauthAccessToken(any()) } returns ""
-        viewModel = AppMainViewModel(mockRepository, mockContext, mockSettings, testDispatcherProvider, mockSampleConfig)
+        // Default: no credentials stored yet
+        every { mockStorage.getApiKey() } returns ""
+        every { mockStorage.getAccessToken() } returns ""
+        every { mockStorage.getOauthAccessToken() } returns ""
+        viewModel = AppMainViewModel(mockRepository, mockStorage, mockSettings, testDispatcherProvider, mockSampleConfig)
     }
 
     @After
     fun tearDown() {
-        unmockkObject(Utils)
         Dispatchers.resetMain()
     }
 
-    /** Verifies setBasicAuth forwards the exact userId and apiKey to the repository. */
-    @Test
-    fun `setBasicAuth calls repository setUpBasicAuth with correct credentials`() = runTest {
-        viewModel.setBasicAuth("user-id", "api-key")
-
-        coVerify {
-            mockRepository.setUpBasicAuth(
-                match { it.apiUserId == "user-id" && it.apiKey == "api-key" }
-            )
-        }
-    }
-
-    /** Verifies setBasicAuth with blank credentials still delegates to the repository. */
-    @Test
-    fun `setBasicAuth with empty strings calls repository`() = runTest {
-        viewModel.setBasicAuth("", "")
-
-        coVerify { mockRepository.setUpBasicAuth(BasicAuthCredentials("", "")) }
-    }
-
-    /** Verifies checkUser always calls checkApiUser on the repository. */
+    /** Verifies checkUser always delegates to the repository. */
     @Test
     fun `checkUser calls checkApiUser on repository`() = runTest {
         coEvery { mockRepository.checkApiUser(any(), any()) } returns flowOf(
@@ -148,7 +115,7 @@ class AppMainViewModelTest {
         coVerify { mockRepository.createApiUser(any(), any(), any(), any()) }
     }
 
-    /** Verifies createApiUser is NOT called when checkApiUser succeeds (user already exists). */
+    /** Verifies createApiUser is NOT called when the user already exists. */
     @Test
     fun `checkUser does not call createApiUser when checkApiUser succeeds`() = runTest {
         coEvery { mockRepository.checkApiUser(any(), any()) } returns flowOf(
