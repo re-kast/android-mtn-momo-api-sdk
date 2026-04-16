@@ -1,1 +1,1 @@
-sourceset_dependencies = '{":momo-api-sdk/main":[],":sample/main":[]}'
+sourceset_dependencies = '{":momo-api-sdk/androidMain":[":momo-api-sdk/commonMain"],":momo-api-sdk/commonMain":[],":momo-api-sdk/jvmMain":[":momo-api-sdk/commonMain"]}'
