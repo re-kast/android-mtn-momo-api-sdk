@@ -1,6 +1,9 @@
 $dokka.format:html-v1
 $dokka.linkExtension:html
 
+module:app
+io.rekast.sdk.app
+io.rekast.sdk.app.di
 module:momo-api-sdk
 io.rekast.sdk
 io.rekast.sdk.model
@@ -15,3 +18,22 @@ io.rekast.sdk.network.service.products
 io.rekast.sdk.repository
 io.rekast.sdk.repository.data
 io.rekast.sdk.utils
+module:sample
+io.rekast.sdk.sample.ui.components.accountdetails
+io.rekast.sdk.sample.ui.components.general
+io.rekast.sdk.sample.ui.components.mainscreen
+io.rekast.sdk.sample.ui.components.screens
+io.rekast.sdk.sample.ui.navigation.drawer
+io.rekast.sdk.sample.ui.navigation.navigation
+io.rekast.sdk.sample.ui.navigation.topbar
+io.rekast.sdk.sample.ui.theme
+io.rekast.sdk.sample.utils
+io.rekast.sdk.sample.utils.annotation
+io.rekast.sdk.sample.views
+io.rekast.sdk.sample.views.collection.pay
+io.rekast.sdk.sample.views.collection.withdraw
+io.rekast.sdk.sample.views.disbursement.deposit
+io.rekast.sdk.sample.views.disbursement.refund
+io.rekast.sdk.sample.views.home
+io.rekast.sdk.sample.views.remittance
+io.rekast.sdk.sample.views.splash

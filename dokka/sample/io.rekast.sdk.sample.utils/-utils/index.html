@@ -1,0 +1,249 @@
+<!doctype html>
+<html class="no-js" lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>Utils</title>
+<link href="../../../images/logo-icon.svg" rel="icon" type="image/svg"><script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js", "js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+      if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      } else {
+        const savedDarkMode = JSON.parse(storage)
+        if (savedDarkMode === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async></script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../ui-kit/ui-kit.min.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/safe-local-storage_blocking.js"></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async></script>
+<script type="text/javascript" src="../../../ui-kit/ui-kit.min.js" defer></script>
+<link href="../../../images/logo-icon.svg">
+<link href="../../../styles/rekast.css" rel="Stylesheet"></head>
+<body>
+<div class="root">
+    <header class="navigation theme-dark" id="navigation-wrapper" role="banner">
+<a class="library-name--link" href="../../../index.html" tabindex="1">
+                    | MTN MOMO ANDROID SDK
+            </a>        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle" type="button">Toggle table of contents
+        </button>
+        <div class="navigation-controls--break ui-kit_mobile-only"></div>
+        <div class="library-version" id="library-version">
+        </div>
+        <div class="navigation-controls">
+        <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
+                <button class="platform-tag platform-selector jvm-like" data-active="" aria-pressed="true" data-filter=":sample/main">Sample</button>
+            <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
+                <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox" data-role="dropdown-toggle" aria-controls="platform-tags-listbox" aria-haspopup="listbox" aria-expanded="false" aria-label="Toggle source sets"></button>
+                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox" aria-label="Target filter">
+                    <div class="dropdown--header"><span>Target filter</span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close target filter">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                        <li role="option" class="dropdown--option platform-selector-option jvm-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":sample/main" data-filter=":sample/main">
+                                <span class="checkbox--icon"></span>
+                                Sample
+                            </label>
+                        </li>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </ul>
+            <button class="navigation-controls--btn navigation-controls--btn_theme" id="theme-toggle-button" type="button">Switch theme
+            </button>
+            <div class="navigation-controls--btn navigation-controls--btn_search" id="searchBar" role="button">Search in
+                API
+            </div>
+        </div>
+    </header>
+    <div id="container">
+        <nav id="leftColumn" class="sidebar" data-item-type="SECTION" data-item-config="{&quot;defaultSize&quot;: 280, &quot;minSize&quot;: 200, &quot;maxSize&quot;: 400}">
+            <a class="toc--skip-link" href="#main">Skip to content</a>
+            <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
+                <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list" data-role="dropdown-listbox" aria-label="Table of contents">
+                    <div class="dropdown--header">
+                            <span>
+                                    | MTN MOMO ANDROID SDK
+                            </span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                    <div class="sidebar--inner" id="sideMenu"></div>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </nav>
+        <div id="resizer" class="resizer" data-item-type="BAR"></div>
+        <div id="main" data-item-type="SECTION" role="main">
+<div class="main-content" data-page-type="classlike" id="content" pageids="sample::io.rekast.sdk.sample.utils/Utils///PointingToDeclaration//326565223">
+  <div class="breadcrumbs"><a href="../../index.html">sample</a><span class="delimiter">/</span><a href="../index.html">io.rekast.sdk.sample.utils</a><span class="delimiter">/</span><span class="current">Utils</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span><span>Utils</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":sample/main"><div class="symbol monospace"><span class="token keyword">object </span><a href="index.html">Utils</a></div><p class="paragraph">Utility object providing various helper functions for the MTN MOMO SDK sample application.</p><p class="paragraph">This object contains methods for saving and retrieving API keys and access tokens, as well as checking token expiration and formatting dates.</p></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="FUNCTION">
+        <h2 class="tableheader">Functions</h2>
+        <div class="table"><a data-name="-149805560%2FFunctions%2F326565223" anchor-label="convertToDate" id="-149805560%2FFunctions%2F326565223" data-filterable-set=":sample/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":sample/main" data-filterable-set=":sample/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="convert-to-date.html"><span>convert</span><wbr><span>To</span><wbr><span><span>Date</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-149805560%2FFunctions%2F326565223"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":sample/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="convert-to-date.html"><span class="token function">convertToDate</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">milliseconds<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-long/index.html">Long</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div><div class="brief "><p class="paragraph">Converts the given milliseconds to a formatted date string.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="185394575%2FFunctions%2F326565223" anchor-label="getAccessToken" id="185394575%2FFunctions%2F326565223" data-filterable-set=":sample/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":sample/main" data-filterable-set=":sample/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-access-token.html"><span>get</span><wbr><span>Access</span><wbr><span><span>Token</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="185394575%2FFunctions%2F326565223"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":sample/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="get-access-token.html"><span class="token function">getAccessToken</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">context<span class="token operator">: </span>ERROR CLASS: Symbol not found for Context</span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div><div class="brief "><p class="paragraph">Retrieves the saved access token from shared preferences.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="656229195%2FFunctions%2F326565223" anchor-label="getApiKey" id="656229195%2FFunctions%2F326565223" data-filterable-set=":sample/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":sample/main" data-filterable-set=":sample/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-api-key.html"><span>get</span><wbr><span>Api</span><wbr><span><span>Key</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="656229195%2FFunctions%2F326565223"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":sample/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="get-api-key.html"><span class="token function">getApiKey</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">context<span class="token operator">: </span>ERROR CLASS: Symbol not found for Context</span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div><div class="brief "><p class="paragraph">Retrieves the saved API key from shared preferences.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-529267772%2FFunctions%2F326565223" anchor-label="getOauthAccessToken" id="-529267772%2FFunctions%2F326565223" data-filterable-set=":sample/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":sample/main" data-filterable-set=":sample/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-oauth-access-token.html"><span>get</span><wbr><span>Oauth</span><wbr><span>Access</span><wbr><span><span>Token</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-529267772%2FFunctions%2F326565223"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":sample/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="get-oauth-access-token.html"><span class="token function">getOauthAccessToken</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">context<span class="token operator">: </span>ERROR CLASS: Symbol not found for Context</span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div><div class="brief "><p class="paragraph">Retrieves the saved OAuth 2.0 access token from shared preferences.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="784844966%2FFunctions%2F326565223" anchor-label="getProductSubscriptionKeys" id="784844966%2FFunctions%2F326565223" data-filterable-set=":sample/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":sample/main" data-filterable-set=":sample/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-product-subscription-keys.html"><span>get</span><wbr><span>Product</span><wbr><span>Subscription</span><wbr><span><span>Keys</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="784844966%2FFunctions%2F326565223"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":sample/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="get-product-subscription-keys.html"><span class="token function">getProductSubscriptionKeys</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">productType<span class="token operator">: </span>ERROR CLASS: Symbol not found for ProductType<span class="token punctuation">, </span></span><span class="parameter ">config<span class="token operator">: </span><a href="../-sample-config/index.html">SampleConfig</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div><div class="brief "><p class="paragraph">Retrieves the product subscription keys based on the specified product</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1605435616%2FFunctions%2F326565223" anchor-label="saveAccessToken" id="-1605435616%2FFunctions%2F326565223" data-filterable-set=":sample/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":sample/main" data-filterable-set=":sample/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="save-access-token.html"><span>save</span><wbr><span>Access</span><wbr><span><span>Token</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1605435616%2FFunctions%2F326565223"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":sample/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="save-access-token.html"><span class="token function">saveAccessToken</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">context<span class="token operator">: </span>ERROR CLASS: Symbol not found for Context<span class="token punctuation">, </span></span><span class="parameter ">accessToken<span class="token operator">: </span>ERROR CLASS: Symbol not found for AccessToken?<span class="token operator">?</span></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Saves the provided access token in the shared preferences along with its expiry date.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="517798135%2FFunctions%2F326565223" anchor-label="saveApiKey" id="517798135%2FFunctions%2F326565223" data-filterable-set=":sample/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":sample/main" data-filterable-set=":sample/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="save-api-key.html"><span>save</span><wbr><span>Api</span><wbr><span><span>Key</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="517798135%2FFunctions%2F326565223"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":sample/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="save-api-key.html"><span class="token function">saveApiKey</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">context<span class="token operator">: </span>ERROR CLASS: Symbol not found for Context<span class="token punctuation">, </span></span><span class="parameter ">apiKey<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Saves the provided API key in the shared preferences.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-652980992%2FFunctions%2F326565223" anchor-label="saveOauth2AccessToken" id="-652980992%2FFunctions%2F326565223" data-filterable-set=":sample/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":sample/main" data-filterable-set=":sample/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="save-oauth2-access-token.html"><span>save</span><wbr><span>Oauth2Access</span><wbr><span><span>Token</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-652980992%2FFunctions%2F326565223"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":sample/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="save-oauth2-access-token.html"><span class="token function">saveOauth2AccessToken</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">context<span class="token operator">: </span>ERROR CLASS: Symbol not found for Context<span class="token punctuation">, </span></span><span class="parameter ">oauth2AccessToken<span class="token operator">: </span>ERROR CLASS: Symbol not found for Oauth2AccessToken?<span class="token operator">?</span></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Saves the provided OAuth 2.0 access token in shared preferences along with its expiry dates.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    <div class="footer">
+        <div class="footer--container">
+            <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
+            <div class="footer--content">
+                <div>
+                    <span>Generated by </span>
+                    <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
+                        Dokka
+                    </a>
+                    <div>© Re.Kast Limited</div>
+                </div>
+            </div>
+        </div>
+    </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
