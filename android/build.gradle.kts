@@ -4,6 +4,8 @@ import org.gradle.process.ExecOperations
 plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.android.library) apply false
+    alias(libs.plugins.android.kotlin.multiplatform.library) apply false
+    alias(libs.plugins.kotlin.multiplatform) apply false
     alias(libs.plugins.ksp) apply false
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.dagger.hilt.android) apply false
@@ -40,14 +42,16 @@ allprojects {
             targetExclude("**/buildSrc/src/main/kotlin/*.kt")
             trimTrailingWhitespace()
             ktlint(libs.versions.klint.get())
-                .setEditorConfigPath(".editorconfig")
+                // Use the root project's .editorconfig so that this path resolves correctly
+                // for every subproject inside allprojects {}, not just the root module.
+                .setEditorConfigPath("${rootProject.projectDir}/.editorconfig")
 
             endWithNewline()
-            licenseHeaderFile("$projectDir/license-header.txt")
+            licenseHeaderFile("${rootProject.projectDir}/license-header.txt")
         }
         kotlinGradle {
             target("*.gradle.kts")
-            licenseHeaderFile("$projectDir/license-header.txt", "")
+            licenseHeaderFile("${rootProject.projectDir}/license-header.txt", "")
             ktlint()
         }
     }

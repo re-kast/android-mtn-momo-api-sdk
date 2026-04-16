@@ -9,6 +9,7 @@ pluginManagement {
         id("com.android.application") version "9.1.1"
         id("com.android.library") version "9.1.1"
         id("com.google.firebase.crashlytics") version "3.0.6"
+        id("org.jetbrains.kotlin.multiplatform") version "2.3.20"
     }
 
     resolutionStrategy {
@@ -23,7 +24,8 @@ plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
 }
 
-include("sample")
+include(":app")
+include(":sample")
 include(":momo-api-sdk")
 
 rootProject.name = "MTN Momo API SDK"

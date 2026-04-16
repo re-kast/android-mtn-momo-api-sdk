@@ -28,6 +28,7 @@ import io.rekast.sdk.model.BasicUserInfo
 import io.rekast.sdk.repository.DefaultRepository
 import io.rekast.sdk.repository.data.NetworkResult
 import io.rekast.sdk.sample.utils.DispatcherProvider
+import io.rekast.sdk.sample.utils.SampleConfig
 import io.rekast.sdk.sample.utils.Utils
 import io.rekast.sdk.utils.Settings
 import kotlinx.coroutines.CoroutineDispatcher
@@ -46,6 +47,21 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
+/**
+ * Unit tests for [HomeScreenViewModel].
+ *
+ * Verifies initial LiveData state and the three main data-fetching operations:
+ * [HomeScreenViewModel.getBasicUserInfo], [HomeScreenViewModel.getAccountBalance],
+ * and [HomeScreenViewModel.validateAccountHolderStatus].
+ *
+ * For each operation the tests cover the happy path (repository returns success),
+ * the error path (repository returns an error), and the guard condition
+ * (access token is blank — the repository should not be called).
+ *
+ * [InstantTaskExecutorRule] ensures LiveData `postValue` calls are applied
+ * synchronously. [UnconfinedTestDispatcher] runs IO-dispatcher coroutines
+ * on the calling thread so no `advanceUntilIdle` is needed.
+ */
 @OptIn(ExperimentalCoroutinesApi::class)
 class HomeScreenViewModelTest {
 
@@ -59,6 +75,19 @@ class HomeScreenViewModelTest {
     private val mockRepository = mockk<DefaultRepository>(relaxed = true)
     private val mockContext = mockk<Context>(relaxed = true)
     private val mockSettings = mockk<Settings>(relaxed = true)
+    private val mockSampleConfig = SampleConfig(
+        apiVersionV1 = "v1_0",
+        apiVersionV2 = "v2_0",
+        environment = "sandbox",
+        providerCallbackHost = "localhost",
+        apiUserId = "test-user-id",
+        collectionPrimaryKey = "collection-key",
+        collectionSecondaryKey = "collection-secondary-key",
+        remittancePrimaryKey = "remittance-key",
+        remittanceSecondaryKey = "remittance-secondary-key",
+        disbursementsPrimaryKey = "disbursements-key",
+        disbursementsSecondaryKey = "disbursements-secondary-key"
+    )
 
     private lateinit var viewModel: HomeScreenViewModel
 
@@ -67,9 +96,9 @@ class HomeScreenViewModelTest {
         Dispatchers.setMain(testDispatcher)
         mockkObject(Utils)
         every { Utils.getAccessToken(any()) } returns "test-access-token"
-        every { Utils.getProductSubscriptionKeys(any()) } returns "test-subscription-key"
+        every { Utils.getProductSubscriptionKeys(any(), any()) } returns "test-subscription-key"
         every { Utils.convertToDate(any()) } returns "2001-09-09"
-        viewModel = HomeScreenViewModel(mockRepository, mockContext, mockSettings, testDispatcherProvider)
+        viewModel = HomeScreenViewModel(mockRepository, mockContext, mockSettings, testDispatcherProvider, mockSampleConfig)
     }
 
     @After
@@ -78,26 +107,31 @@ class HomeScreenViewModelTest {
         Dispatchers.resetMain()
     }
 
+    /** Verifies showProgressBar is initialised to false before any API call is made. */
     @Test
     fun `initial state has showProgressBar false`() {
         assertFalse(viewModel.showProgressBar.value!!)
     }
 
+    /** Verifies basicUserInfo is null before getBasicUserInfo is called. */
     @Test
     fun `initial state has null basicUserInfo`() {
         assertNull(viewModel.basicUserInfo.value)
     }
 
+    /** Verifies accountHolderStatus is null before validateAccountHolderStatus is called. */
     @Test
     fun `initial state has null accountHolderStatus`() {
         assertNull(viewModel.accountHolderStatus.value)
     }
 
+    /** Verifies accountBalance is null before getAccountBalance is called. */
     @Test
     fun `initial state has null accountBalance`() {
         assertNull(viewModel.accountBalance.value)
     }
 
+    /** Verifies getBasicUserInfo delegates to the repository when access token is present. */
     @Test
     fun `getBasicUserInfo calls repository getBasicUserInfo`() = runTest {
         coEvery {
@@ -109,6 +143,7 @@ class HomeScreenViewModelTest {
         coVerify { mockRepository.getBasicUserInfo(any(), any(), any(), any(), any()) }
     }
 
+    /** Verifies basicUserInfo LiveData is populated and showProgressBar cleared on a successful response. */
     @Test
     fun `getBasicUserInfo posts userInfo on success`() = runTest {
         val userInfo = BasicUserInfo(
@@ -131,6 +166,7 @@ class HomeScreenViewModelTest {
         assertFalse(viewModel.showProgressBar.value!!)
     }
 
+    /** Verifies showProgressBar is cleared to false when getBasicUserInfo receives an error response. */
     @Test
     fun `getBasicUserInfo sets showProgressBar false on error`() = runTest {
         coEvery {
@@ -142,6 +178,7 @@ class HomeScreenViewModelTest {
         assertFalse(viewModel.showProgressBar.value!!)
     }
 
+    /** Verifies getAccountBalance delegates to the repository when access token is present. */
     @Test
     fun `getAccountBalance calls repository getAccountBalance`() = runTest {
         coEvery {
@@ -153,6 +190,7 @@ class HomeScreenViewModelTest {
         coVerify { mockRepository.getAccountBalance(any(), any(), any(), any(), any()) }
     }
 
+    /** Verifies accountBalance LiveData is populated and showProgressBar cleared on a successful response. */
     @Test
     fun `getAccountBalance posts balance on success`() = runTest {
         val balance = AccountBalance(availableBalance = "100.00", currency = "EUR")
@@ -166,6 +204,7 @@ class HomeScreenViewModelTest {
         assertFalse(viewModel.showProgressBar.value!!)
     }
 
+    /** Verifies showProgressBar is cleared to false when getAccountBalance receives an error response. */
     @Test
     fun `getAccountBalance sets showProgressBar false on error`() = runTest {
         coEvery {
@@ -177,20 +216,22 @@ class HomeScreenViewModelTest {
         assertFalse(viewModel.showProgressBar.value!!)
     }
 
+    /** Verifies getAccountBalance exits early (showProgressBar stays false) when access token is blank. */
     @Test
     fun `getAccountBalance sets showProgressBar false when access token is blank`() = runTest {
         every { Utils.getAccessToken(any()) } returns ""
-        val vmWithNoToken = HomeScreenViewModel(mockRepository, mockContext, mockSettings, testDispatcherProvider)
+        val vmWithNoToken = HomeScreenViewModel(mockRepository, mockContext, mockSettings, testDispatcherProvider, mockSampleConfig)
 
         vmWithNoToken.getAccountBalance()
 
         assertFalse(vmWithNoToken.showProgressBar.value!!)
     }
 
+    /** Verifies validateAccountHolderStatus exits early (showProgressBar stays false) when access token is blank. */
     @Test
     fun `validateAccountHolderStatus sets showProgressBar false when access token is blank`() = runTest {
         every { Utils.getAccessToken(any()) } returns ""
-        val vmWithNoToken = HomeScreenViewModel(mockRepository, mockContext, mockSettings, testDispatcherProvider)
+        val vmWithNoToken = HomeScreenViewModel(mockRepository, mockContext, mockSettings, testDispatcherProvider, mockSampleConfig)
 
         vmWithNoToken.validateAccountHolderStatus()
 

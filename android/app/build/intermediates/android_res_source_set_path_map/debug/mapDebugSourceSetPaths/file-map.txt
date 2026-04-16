@@ -1,0 +1,6 @@
+io.rekast.sdk.app-updated_navigation_xml-0 /Users/kenya/code/rekast/mobile/android-mtn-momo-api-sdk/android/app/build/generated/updated_navigation_xml/debug
+io.rekast.sdk.app-packageDebugResources-1 /Users/kenya/code/rekast/mobile/android-mtn-momo-api-sdk/android/app/build/intermediates/incremental/debug/packageDebugResources/merged.dir
+io.rekast.sdk.app-packageDebugResources-2 /Users/kenya/code/rekast/mobile/android-mtn-momo-api-sdk/android/app/build/intermediates/incremental/debug/packageDebugResources/stripped.dir
+io.rekast.sdk.app-debug-3 /Users/kenya/code/rekast/mobile/android-mtn-momo-api-sdk/android/app/build/intermediates/merged_res/debug/mergeDebugResources
+io.rekast.sdk.app-debug-4 /Users/kenya/code/rekast/mobile/android-mtn-momo-api-sdk/android/app/src/debug/res
+io.rekast.sdk.app-main-5 /Users/kenya/code/rekast/mobile/android-mtn-momo-api-sdk/android/app/src/main/res

@@ -10,7 +10,7 @@ sidebar_label: Developer Setup
 
 Before you begin setting up your development environment, ensure that you have the following prerequisites installed:
 
-- **Android Studio Ladybug (2024.2.1) or later**: This is the official Integrated Development Environment (IDE) for Android development, providing all the necessary tools to build, test, and debug Android applications. Make sure to keep it updated to leverage the latest features and improvements.
+- **Android Studio Meerkat (2024.3.1) or later**: This is the official Integrated Development Environment (IDE) for Android development, providing all the necessary tools to build, test, and debug Android applications. The project targets AGP 9.1 which requires Meerkat or later. Make sure to keep it updated to leverage the latest features and improvements.
 
 - **OpenJDK 17**: Ensure that you have OpenJDK 17 installed and configured in Android Studio. This version is required for compiling and running the project. You can download OpenJDK from the [Adoptium](https://adoptium.net/) or [OpenJDK](https://openjdk.java.net/install/) websites.
 
@@ -84,11 +84,19 @@ By following these steps, you will have a fully set up development environment r
 
 ## Application Architecture
 
-The MTN MOMO SDK is based on the **MVVM (Model-View-ViewModel) Android application architecture**. This architecture promotes a clear separation of concerns, making the codebase more manageable and testable. It also follows the recommended [Repository Pattern](https://developer.android.com/jetpack/guide) on its data layer, which helps in abstracting data sources and providing a clean API for data access.
+The MTN MOMO SDK is based on the **MVVM (Model-View-ViewModel)** architecture and follows the recommended [Repository Pattern](https://developer.android.com/jetpack/guide) on the data layer. The core SDK (`momo-api-sdk`) is built with **Kotlin Multiplatform (KMP)**, sharing the network layer, repository, and data models across the Android and JVM targets. The Android UI layer (`sample`) consumes the shared SDK via standard Android dependencies.
 
 ## Project Structure
 
-The project currently consists of an application module (`sample`) and one Android library module (`momo-api-sdk`). This modular structure allows for better organization of code and easier maintenance.
+The project consists of three modules:
+
+| Module | Plugin | Purpose |
+|---|---|---|
+| `momo-api-sdk` | `com.android.kotlin.multiplatform.library` (KMP) | Core SDK — network layer, repository, models, interceptors. Published to Maven Central. |
+| `sample` | `com.android.library` | UI layer — Activities, Fragments, ViewModels, Compose screens. Depends on `momo-api-sdk`. |
+| `app` | `com.android.application` | Thin application shell — wires Hilt DI modules (`NetworkModule`, `AppModule`), provides `BuildConfig` values from `local.properties` via the Secrets Gradle Plugin, and declares the `Application` class. |
+
+This separation is required by AGP 9.x: the `kotlin.multiplatform` plugin is incompatible with `com.android.application` in the same module, so the application entry point lives in `app` while the SDK and UI code are in separate library modules.
 
 ## References
 

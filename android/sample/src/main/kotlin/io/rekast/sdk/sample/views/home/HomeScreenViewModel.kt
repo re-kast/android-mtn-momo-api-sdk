@@ -19,10 +19,8 @@ import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
-import io.rekast.sdk.BuildConfig
 import io.rekast.sdk.model.AccountBalance
 import io.rekast.sdk.model.AccountHolder
 import io.rekast.sdk.model.AccountHolderStatus
@@ -30,6 +28,7 @@ import io.rekast.sdk.model.BasicUserInfo
 import io.rekast.sdk.repository.DefaultRepository
 import io.rekast.sdk.repository.data.NetworkResult
 import io.rekast.sdk.sample.utils.DispatcherProvider
+import io.rekast.sdk.sample.utils.SampleConfig
 import io.rekast.sdk.sample.utils.SnackBarComponentConfiguration
 import io.rekast.sdk.sample.utils.Utils
 import io.rekast.sdk.utils.AccountHolderType
@@ -40,7 +39,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
-import org.apache.commons.lang3.StringUtils
+import kotlinx.serialization.json.Json
 import timber.log.Timber
 
 /**
@@ -52,7 +51,8 @@ class HomeScreenViewModel @Inject constructor(
     private val defaultRepository: DefaultRepository,
     @param:ApplicationContext private val context: Context,
     private val settings: Settings,
-    private val dispatchers: DispatcherProvider
+    private val dispatchers: DispatcherProvider,
+    private val sampleConfig: SampleConfig
 ) : ViewModel() {
     /** Controls whether the circular progress indicator is shown on the Home screen. */
     val showProgressBar = MutableLiveData(false)
@@ -78,16 +78,16 @@ class HomeScreenViewModel @Inject constructor(
      */
     fun getBasicUserInfo() {
         showProgressBar.postValue(true)
-        val productType = Utils.getProductSubscriptionKeys(ProductType.REMITTANCE)
+        val productType = Utils.getProductSubscriptionKeys(ProductType.REMITTANCE, sampleConfig)
 
         viewModelScope.launch(dispatchers.io()) {
-            if (StringUtils.isNotBlank(accessToken)) {
+            if (accessToken.isNotBlank()) {
                 defaultRepository.getBasicUserInfo(
                     productType = ProductType.REMITTANCE.productType,
-                    apiVersion = BuildConfig.MOMO_API_VERSION_V1,
+                    apiVersion = sampleConfig.apiVersionV1,
                     accountHolder = "99733123459",
                     productSubscriptionKey = productType,
-                    environment = BuildConfig.MOMO_ENVIRONMENT
+                    environment = sampleConfig.environment
                 ).collect { foundBasicUserInfo ->
                     when (foundBasicUserInfo) {
                         is NetworkResult.Success -> {
@@ -127,15 +127,15 @@ class HomeScreenViewModel @Inject constructor(
      */
     fun getUserInfoWithConsent() {
         showProgressBar.postValue(true)
-        val productType = Utils.getProductSubscriptionKeys(productType = ProductType.REMITTANCE)
+        val productType = Utils.getProductSubscriptionKeys(ProductType.REMITTANCE, sampleConfig)
 
         viewModelScope.launch(dispatchers.io()) {
-            if (StringUtils.isNotBlank(accessToken)) {
+            if (accessToken.isNotBlank()) {
                 defaultRepository.getUserInfoWithConsent(
                     productType = ProductType.REMITTANCE.productType,
-                    apiVersion = BuildConfig.MOMO_API_VERSION_V1,
+                    apiVersion = sampleConfig.apiVersionV1,
                     productSubscriptionKey = productType,
-                    environment = BuildConfig.MOMO_ENVIRONMENT
+                    environment = sampleConfig.environment
                 ).collect { userInfoWithConsent ->
                     when (userInfoWithConsent) {
                         is NetworkResult.Success -> {
@@ -175,17 +175,17 @@ class HomeScreenViewModel @Inject constructor(
                 partyId = "99733123459",
                 partyIdType = AccountHolderType.MSISDN.accountHolderType
             )
-            if (StringUtils.isNotBlank(accessToken)) {
+            if (accessToken.isNotBlank()) {
                 defaultRepository.validateAccountHolderStatus(
                     productType = ProductType.REMITTANCE.productType,
-                    apiVersion = BuildConfig.MOMO_API_VERSION_V1,
+                    apiVersion = sampleConfig.apiVersionV1,
                     accountHolder = accountHolder,
-                    productSubscriptionKey = Utils.getProductSubscriptionKeys(ProductType.REMITTANCE),
-                    environment = BuildConfig.MOMO_ENVIRONMENT
+                    productSubscriptionKey = Utils.getProductSubscriptionKeys(ProductType.REMITTANCE, sampleConfig),
+                    environment = sampleConfig.environment
                 ).collect { foundStatus ->
                     when (foundStatus) {
                         is NetworkResult.Success -> {
-                            val status = Gson().fromJson(foundStatus.response!!.source().readUtf8(), AccountHolderStatus::class.java)
+                            val status = Json.decodeFromString<AccountHolderStatus>(foundStatus.response!!.source().readUtf8())
                             accountHolderStatus.postValue(status)
 
                             Timber.d("Account Holder status was fetched successfully")
@@ -229,13 +229,13 @@ class HomeScreenViewModel @Inject constructor(
     fun getAccountBalance() {
         viewModelScope.launch(dispatchers.io()) {
             showProgressBar.postValue(true)
-            if (StringUtils.isNotBlank(accessToken)) {
+            if (accessToken.isNotBlank()) {
                 defaultRepository.getAccountBalance(
                     productType = ProductType.COLLECTION.productType,
-                    apiVersion = BuildConfig.MOMO_API_VERSION_V1,
+                    apiVersion = sampleConfig.apiVersionV1,
                     currency = "",
-                    productSubscriptionKey = Utils.getProductSubscriptionKeys(ProductType.COLLECTION),
-                    environment = BuildConfig.MOMO_ENVIRONMENT
+                    productSubscriptionKey = Utils.getProductSubscriptionKeys(ProductType.COLLECTION, sampleConfig),
+                    environment = sampleConfig.environment
                 ).collect { balance ->
                     when (balance) {
                         is NetworkResult.Success<*> -> {

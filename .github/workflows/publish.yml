@@ -75,11 +75,11 @@ jobs:
 
       - name: Run unit tests
         working-directory: android
-        run: ./gradlew :momo-api-sdk:test :sample:testDebugUnitTest
+        run: ./gradlew :momo-api-sdk:testAndroidHostTest :momo-api-sdk:jvmTest :sample:testDebugUnitTest
 
       - name: Assemble sample app
         working-directory: android
-        run: ./gradlew :sample:assembleDebug
+        run: ./gradlew :app:assembleDebug
 
       # ── 1. MAVEN CENTRAL ───────────────────────────────────────────────────
 
@@ -92,7 +92,7 @@ jobs:
           SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
           SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
         run: |
-          ./gradlew :momo-api-sdk:publishReleasePublicationToMavenCentralSnapshotsRepository \
+          ./gradlew :momo-api-sdk:publishAllPublicationsToMavenCentralSnapshotsRepository \
             -PVERSION_NAME="${{ steps.version.outputs.VERSION }}"
 
       - name: Publish release to local staging
@@ -102,7 +102,7 @@ jobs:
           SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
           SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
         run: |
-          ./gradlew :momo-api-sdk:publishReleasePublicationToLocalStagingRepository \
+          ./gradlew :momo-api-sdk:publishAllPublicationsToLocalStagingRepository \
             -PVERSION_NAME="${{ steps.version.outputs.VERSION }}"
 
       - name: Bundle and upload to Maven Central
@@ -133,7 +133,7 @@ jobs:
           SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
           SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
         run: |
-          ./gradlew :momo-api-sdk:publishReleasePublicationToGithubPackagesRepository \
+          ./gradlew :momo-api-sdk:publishAllPublicationsToGithubPackagesRepository \
             -PVERSION_NAME="${{ steps.version.outputs.VERSION }}"
 
       # ── 3. GITHUB RELEASE (releases only) ─────────────────────────────────
@@ -170,5 +170,4 @@ jobs:
           files: |
             android/momo-api-sdk/build/staging-deploy/io/rekast/momo-api-sdk/${{ steps.version.outputs.VERSION }}/momo-api-sdk-${{ steps.version.outputs.VERSION }}.aar
             android/momo-api-sdk/build/staging-deploy/io/rekast/momo-api-sdk/${{ steps.version.outputs.VERSION }}/momo-api-sdk-${{ steps.version.outputs.VERSION }}-sources.jar
-            android/momo-api-sdk/build/staging-deploy/io/rekast/momo-api-sdk/${{ steps.version.outputs.VERSION }}/momo-api-sdk-${{ steps.version.outputs.VERSION }}.pom
-
+            android/momo-api-sdk/build/staging-deploy/io/rekast/momo-api-sdk/${{ steps.version.outputs.VERSION }}/momo-api-sdk-${{ steps.version.outputs.VERSION }}.module
