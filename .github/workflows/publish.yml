@@ -171,4 +171,3 @@ jobs:
             android/momo-api-sdk/build/staging-deploy/io/rekast/momo-api-sdk/${{ steps.version.outputs.VERSION }}/momo-api-sdk-${{ steps.version.outputs.VERSION }}.aar
             android/momo-api-sdk/build/staging-deploy/io/rekast/momo-api-sdk/${{ steps.version.outputs.VERSION }}/momo-api-sdk-${{ steps.version.outputs.VERSION }}-sources.jar
             android/momo-api-sdk/build/staging-deploy/io/rekast/momo-api-sdk/${{ steps.version.outputs.VERSION }}/momo-api-sdk-${{ steps.version.outputs.VERSION }}.pom
-
