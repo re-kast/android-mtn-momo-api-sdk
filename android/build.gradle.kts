@@ -78,6 +78,7 @@ dokka {
 dependencies {
     dokka(project(":momo-api-sdk"))
     dokka(project(":sample"))
+    dokka(project(":app"))
     kover(project(":momo-api-sdk"))
     kover(project(":sample"))
 }
