@@ -22,11 +22,10 @@ Generate an HTML report for interactive browsing or an XML report for CI consump
 ```bash
 # Per-module (debug variant)
 ./gradlew :momo-api-sdk:koverHtmlReportDebug
-./gradlew :sample:koverHtmlReportDebug
+./gradlew :momo-api-sdk:koverXmlReportDebug
 
-# Aggregated across both modules
-./gradlew koverHtmlReportDebug
-./gradlew koverXmlReportDebug
+./gradlew :sample:koverHtmlReportDebug
+./gradlew :sample:koverXmlReportDebug
 ```
 
 Reports are written to:
@@ -35,7 +34,6 @@ Reports are written to:
 |---|---|---|
 | `momo-api-sdk` | `android/momo-api-sdk/build/reports/kover/htmlDebug/index.html` | `android/momo-api-sdk/build/reports/kover/reportDebug.xml` |
 | `sample` | `android/sample/build/reports/kover/htmlDebug/index.html` | `android/sample/build/reports/kover/reportDebug.xml` |
-| Aggregated (root) | `android/build/reports/kover/htmlDebug/index.html` | `android/build/reports/kover/reportDebug.xml` |
 
 ### Kover configuration
 
@@ -59,7 +57,7 @@ kover {
 }
 ```
 
-The root `build.gradle.kts` aggregates both modules so a single `koverHtmlReportDebug` run from the root produces a unified report across the whole SDK.
+CI runs coverage for both modules and uploads both reports to Codecov. Run the per-module tasks locally to inspect coverage for each module individually.
 
 ## Unit Tests
 
