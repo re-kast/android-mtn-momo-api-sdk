@@ -25,8 +25,7 @@ foundation = "1.10.5"
 firebase = "34.11.0"
 flowLayout = "0.36.0"
 gradleVersionsPlugin = "0.53.0"
-hiyaJacoco = "0.3"
-jacoco = "0.8.12"
+kover = "0.9.8"
 junit = "4.13.2"
 kakao = "3.7.0"
 klint = "1.8.0"
@@ -165,5 +164,6 @@ kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", versi
 navigation-safeargs = { id = "androidx.navigation.safeargs.kotlin", version.ref = "navigation" }
 secrets = { id = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin", version.ref = "secrets" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
+kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
 
 versions = { id = "com.github.ben-manes.versions", version.ref = "gradleVersionsPlugin" }

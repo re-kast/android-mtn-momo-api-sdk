@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     id("maven-publish")
     id("signing")
+    alias(libs.plugins.kover)
 }
 
 secrets {
@@ -101,6 +102,24 @@ dokka {
 
 tasks.matching { it.name.startsWith("dokkaGenerate") }.configureEach {
     dependsOn("kspDebugKotlin", "kspReleaseKotlin")
+}
+
+kover {
+    reports {
+        filters {
+            excludes {
+                androidGeneratedClasses()
+                annotatedBy("*Generated*")
+                classes(
+                    "**/Hilt_*",
+                    "**/*_HiltModules*",
+                    "**/*_Provide*",
+                    "**/*ComponentTreeDeps*",
+                    "**/dagger/**",
+                )
+            }
+        }
+    }
 }
 
 afterEvaluate {
