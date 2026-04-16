@@ -75,7 +75,7 @@ jobs:
 
       - name: Run unit tests
         working-directory: android
-        run: ./gradlew :momo-api-sdk:testAndroidHostTest :momo-api-sdk:jvmTest :sample:testAndroidHostTest
+        run: ./gradlew :momo-api-sdk:testAndroidHostTest :momo-api-sdk:jvmTest :sample:testDebugUnitTest
 
       - name: Assemble sample app
         working-directory: android

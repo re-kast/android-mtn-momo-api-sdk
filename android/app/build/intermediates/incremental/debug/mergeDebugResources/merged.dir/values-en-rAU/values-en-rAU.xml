@@ -43,9 +43,6 @@
     <string msgid="1890207353314751437" name="dropdown_menu">"Drop-down menu"</string>
     <string msgid="6827826412747255547" name="in_progress">"In progress"</string>
     <string msgid="7933458017204019916" name="indeterminate">"Partially ticked"</string>
-    <string msgid="475402237100444685" name="installation_cancelled">"Installation cancelled."</string>
-    <string msgid="863287960437940689" name="installation_failed">"Installation failed."</string>
-    <string msgid="5968445461040787716" name="installing_module">"Installing module:"</string>
     <string msgid="2988463736136100848" name="m3c_bottom_sheet_collapse_description">"Collapse bottom sheet"</string>
     <string msgid="1555567894577437024" name="m3c_bottom_sheet_dismiss_description">"Dismiss bottom sheet"</string>
     <string msgid="8403354765404029791" name="m3c_bottom_sheet_drag_handle_description">"Drag handle"</string>
@@ -113,15 +110,10 @@
     <string msgid="6564222473543418073" name="m3c_wide_navigation_rail_close_rail">"Close rail"</string>
     <string msgid="8350283435461615411" name="m3c_wide_navigation_rail_pane_title">"Navigation rail"</string>
     <string msgid="8471891128988107974" name="mc2_snackbar_pane_title">"Alert"</string>
-    <string msgid="6301633601645100427" name="nav_app_bar_navigate_up_description">"Navigate up"</string>
-    <string msgid="7456070600745802113" name="nav_app_bar_open_drawer_description">"Open navigation drawer"</string>
     <string msgid="542007171693138492" name="navigation_menu">"Navigation menu"</string>
     <string msgid="6610465462668679431" name="not_selected">"Not selected"</string>
-    <string msgid="4702104660890557116" name="ok">"OK"</string>
-    <string msgid="8366783942222789124" name="progress">"Progress:"</string>
     <string msgid="5941395253238309765" name="range_end">"Range end"</string>
     <string msgid="7097486360902471446" name="range_start">"Range start"</string>
-    <string msgid="1065327189183624288" name="retry">"Retry"</string>
     <string msgid="6264217191555673260" name="search_menu_title">"Search"</string>
     <string msgid="6043586758067023" name="selected">"Selected"</string>
     <string msgid="2792228137354697160" name="snackbar_pane_title">"Alert"</string>

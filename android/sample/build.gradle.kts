@@ -39,13 +39,6 @@ android {
         compose = true
     }
 
-    // Include the platform-agnostic commonMain sources (annotation + constants).
-    sourceSets {
-        named("main") {
-            kotlin.srcDirs("src/main/kotlin", "src/commonMain/kotlin")
-        }
-    }
-
     testOptions {
         unitTests {
             isReturnDefaultValues = true
@@ -59,20 +52,16 @@ dependencies {
     implementation(project(":momo-api-sdk"))
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.coroutines)
     implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.google.android.material)
+    implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.lifecycle.livedata.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.runtime.compose)
-    implementation(libs.androidx.lifecycle.viewmodel.savedstate)
-    implementation(libs.androidx.lifecycle.service)
-    implementation(libs.androidx.lifecycle.process)
-    implementation(libs.androidx.lifecycle.viewmodel.android)
-    implementation(libs.androidx.lifecycle.reactivestreams.ktx)
-    implementation(libs.work.runtime.ktx)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.google.android.material)
     implementation(libs.androidx.compose.material)
     implementation(libs.compose.material.icons.core)
     implementation(libs.androidx.compose.material3)
@@ -80,25 +69,15 @@ dependencies {
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.ui.tooling)
-    implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.compose.runtime.livedata)
-    implementation(libs.androidx.compose.runtime.rxjava)
-    implementation(libs.androidx.customview)
-    implementation(libs.androidx.customview.poolingcontainer)
     implementation(libs.androidx.compose.foundation)
-    implementation(libs.google.dagger.hilt)
-    implementation(libs.androidx.hilt.work)
-    implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.navigation.fragment)
-    implementation(libs.androidx.navigation.ui)
-    implementation(libs.androidx.navigation.dynamic)
-    implementation(libs.squareup.retrofit)
-    implementation(libs.squareup.retrofit.serialization)
-    implementation(libs.squareup.okhttp)
-    implementation(libs.squareup.okhttp.logging)
+    implementation(libs.google.dagger.hilt)
     implementation(libs.jakewharton.timber)
-    implementation(libs.kotlinx.coroutines)
+    // ViewModels read ResponseBody directly (SDK returns NetworkResult<ResponseBody>).
+    // okhttp3.ResponseBody is not transitively exposed from momo-api-sdk's implementation deps.
+    implementation(libs.squareup.okhttp)
 
     ksp(libs.hilt.android.compiler)
     ksp(libs.androidx.lifecycle.lifecycle.compiler)

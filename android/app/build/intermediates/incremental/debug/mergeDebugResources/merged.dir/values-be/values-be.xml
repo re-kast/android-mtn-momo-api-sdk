@@ -57,7 +57,6 @@
     <string name="clear_text_end_icon_content_description">Ачысціць тэкст</string>
     <string msgid="406453423630273620" name="close_drawer">"Закрыць меню навігацыі"</string>
     <string msgid="7573152094250666567" name="close_sheet">"Закрыць аркуш"</string>
-    <string name="common_google_play_services_unknown_issue">У праграмы %1$s узніклі праблемы са службамі Google Play. Паўтарыце спробу.</string>
     <string msgid="8038256446254964252" name="default_error_message">"Памылка ўводу"</string>
     <string msgid="6312721426453364202" name="default_popup_window_title">"Усплывальнае акно"</string>
     <string msgid="1890207353314751437" name="dropdown_menu">"Выпадное меню"</string>
@@ -67,9 +66,6 @@
     <string name="icon_content_description">Значок дыялогавага акна</string>
     <string msgid="6827826412747255547" name="in_progress">"У працэсе"</string>
     <string msgid="7933458017204019916" name="indeterminate">"Выбрана часткова"</string>
-    <string msgid="475402237100444685" name="installation_cancelled">"Усталёўка скасавана."</string>
-    <string msgid="863287960437940689" name="installation_failed">"Адбылася памылка ўсталёўкі."</string>
-    <string msgid="5968445461040787716" name="installing_module">"Усталёўваецца модуль:"</string>
     <string name="item_view_role_description">Укладка</string>
     <string name="m3_loading_indicator_content_description">Ідзе загрузка</string>
     <string name="m3_overflow_linear_layout_button_content_description">Меню з пашырэннем</string>
@@ -217,16 +213,11 @@
     <string name="mtrl_picker_toggle_to_year_selection">Пераключыцца на рэжым прагляду гадоў</string>
     <string name="mtrl_timepicker_cancel">Скасаваць</string>
     <string name="mtrl_timepicker_confirm">ОК</string>
-    <string msgid="6301633601645100427" name="nav_app_bar_navigate_up_description">"Перайсці ўверх"</string>
-    <string msgid="7456070600745802113" name="nav_app_bar_open_drawer_description">"Адкрыць высоўнае меню навігацыі"</string>
     <string msgid="542007171693138492" name="navigation_menu">"Меню навігацыі"</string>
     <string msgid="6610465462668679431" name="not_selected">"Не выбрана"</string>
-    <string msgid="4702104660890557116" name="ok">"ОК"</string>
     <string name="password_toggle_content_description">Паказаць пароль</string>
-    <string msgid="8366783942222789124" name="progress">"Прагрэс:"</string>
     <string msgid="5941395253238309765" name="range_end">"Канец пераліку"</string>
     <string msgid="7097486360902471446" name="range_start">"Пачатак пераліку"</string>
-    <string msgid="1065327189183624288" name="retry">"Паўтарыць"</string>
     <string msgid="6264217191555673260" name="search_menu_title">"Пошук"</string>
     <string name="searchview_clear_text_content_description">Ачысціць тэкст</string>
     <string name="searchview_navigation_content_description">Назад</string>

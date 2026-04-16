@@ -56,7 +56,6 @@
     <string name="clear_text_end_icon_content_description">מחיקת הטקסט</string>
     <string msgid="406453423630273620" name="close_drawer">"סגירת תפריט הניווט"</string>
     <string msgid="7573152094250666567" name="close_sheet">"סגירת הגיליון"</string>
-    <string name="common_google_play_services_unknown_issue">‏%1$s נתקלה בבעיה בשירותי Google Play. נסה שוב.</string>
     <string msgid="8038256446254964252" name="default_error_message">"הקלט לא תקין"</string>
     <string msgid="6312721426453364202" name="default_popup_window_title">"חלון קופץ"</string>
     <string msgid="1890207353314751437" name="dropdown_menu">"תפריט נפתח"</string>
@@ -66,9 +65,6 @@
     <string name="icon_content_description">סמל לתיבת דו-שיח</string>
     <string msgid="6827826412747255547" name="in_progress">"בתהליך"</string>
     <string msgid="7933458017204019916" name="indeterminate">"מסומנת חלקית"</string>
-    <string msgid="475402237100444685" name="installation_cancelled">"ההתקנה בוטלה."</string>
-    <string msgid="863287960437940689" name="installation_failed">"ההתקנה נכשלה."</string>
-    <string msgid="5968445461040787716" name="installing_module">"מתבצעת התקנה של המודול:"</string>
     <string name="item_view_role_description">מקש Tab</string>
     <string name="m3_loading_indicator_content_description">בטעינה</string>
     <string name="m3_overflow_linear_layout_button_content_description">אפשרויות נוספות</string>
@@ -216,16 +212,11 @@
     <string name="mtrl_picker_toggle_to_year_selection">מעבר לתצוגה שנתית</string>
     <string name="mtrl_timepicker_cancel">ביטול</string>
     <string name="mtrl_timepicker_confirm">אישור</string>
-    <string msgid="6301633601645100427" name="nav_app_bar_navigate_up_description">"ניווט למעלה"</string>
-    <string msgid="7456070600745802113" name="nav_app_bar_open_drawer_description">"פתיחת חלונית ההזזה לניווט"</string>
     <string msgid="542007171693138492" name="navigation_menu">"תפריט הניווט"</string>
     <string msgid="6610465462668679431" name="not_selected">"לא נבחר"</string>
-    <string msgid="4702104660890557116" name="ok">"אישור"</string>
     <string name="password_toggle_content_description">הצגת סיסמה</string>
-    <string msgid="8366783942222789124" name="progress">"התקדמות:"</string>
     <string msgid="5941395253238309765" name="range_end">"סוף הטווח"</string>
     <string msgid="7097486360902471446" name="range_start">"תחילת הטווח"</string>
-    <string msgid="1065327189183624288" name="retry">"ניסיון חוזר"</string>
     <string msgid="6264217191555673260" name="search_menu_title">"חיפוש"</string>
     <string name="searchview_clear_text_content_description">מחיקת הטקסט</string>
     <string name="searchview_navigation_content_description">חזרה</string>

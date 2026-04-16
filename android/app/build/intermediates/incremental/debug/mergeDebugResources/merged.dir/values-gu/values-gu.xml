@@ -55,7 +55,6 @@
     <string name="clear_text_end_icon_content_description">ટેક્સ્ટ સાફ કરો</string>
     <string msgid="406453423630273620" name="close_drawer">"નૅવિગેશન મેનૂ બંધ કરો"</string>
     <string msgid="7573152094250666567" name="close_sheet">"શીટ બંધ કરો"</string>
-    <string name="common_google_play_services_unknown_issue">%1$s ને Google Play સેવાઓમાં મુશ્કેલી આવી રહી છે. કૃપા કરીને ફરી પ્રયાસ કરો.</string>
     <string msgid="8038256446254964252" name="default_error_message">"અમાન્ય ઇનપુટ"</string>
     <string msgid="6312721426453364202" name="default_popup_window_title">"પૉપ-અપ વિન્ડો"</string>
     <string msgid="1890207353314751437" name="dropdown_menu">"ડ્રૉપડાઉન મેનૂ"</string>
@@ -65,9 +64,6 @@
     <string name="icon_content_description">સંવાદનું આઇકન</string>
     <string msgid="6827826412747255547" name="in_progress">"પ્રક્રિયામાં છે"</string>
     <string msgid="7933458017204019916" name="indeterminate">"આંશિક રીતે ચેક કરેલા વિકલ્પો"</string>
-    <string msgid="475402237100444685" name="installation_cancelled">"ઇન્સ્ટૉલ કરવાનું રદ કર્યું."</string>
-    <string msgid="863287960437940689" name="installation_failed">"ઇન્સ્ટૉલ કરવામાં નિષ્ફળ રહ્યાં."</string>
-    <string msgid="5968445461040787716" name="installing_module">"મૉડ્યૂલ ઇન્સ્ટૉલ કરી રહ્યાં છીએ:"</string>
     <string name="item_view_role_description">ટૅબ</string>
     <string name="m3_loading_indicator_content_description">લોડ કરી રહ્યાં છીએ</string>
     <string name="m3_overflow_linear_layout_button_content_description">ઓવરફ્લો મેનૂ</string>
@@ -215,16 +211,11 @@
     <string name="mtrl_picker_toggle_to_year_selection">\'વર્ષ\' વ્યૂ પર સ્વિચ કરો</string>
     <string name="mtrl_timepicker_cancel">રદ કરો</string>
     <string name="mtrl_timepicker_confirm">ઓકે</string>
-    <string msgid="6301633601645100427" name="nav_app_bar_navigate_up_description">"ઉપર નૅવિગેટ કરો"</string>
-    <string msgid="7456070600745802113" name="nav_app_bar_open_drawer_description">"નૅવિગેશન ડ્રૉઅર ખોલો"</string>
     <string msgid="542007171693138492" name="navigation_menu">"નૅવિગેશન મેનૂ"</string>
     <string msgid="6610465462668679431" name="not_selected">"પસંદગી કરી નથી"</string>
-    <string msgid="4702104660890557116" name="ok">"ઓકે"</string>
     <string name="password_toggle_content_description">પાસવર્ડ બતાવો</string>
-    <string msgid="8366783942222789124" name="progress">"પ્રગતિ:"</string>
     <string msgid="5941395253238309765" name="range_end">"રેંજની સમાપ્તિ"</string>
     <string msgid="7097486360902471446" name="range_start">"રેંજની શરૂઆત"</string>
-    <string msgid="1065327189183624288" name="retry">"ફરી પ્રયાસ કરો"</string>
     <string msgid="6264217191555673260" name="search_menu_title">"શોધો"</string>
     <string name="searchview_clear_text_content_description">ટેક્સ્ટ સાફ કરો</string>
     <string name="searchview_navigation_content_description">પાછળ</string>

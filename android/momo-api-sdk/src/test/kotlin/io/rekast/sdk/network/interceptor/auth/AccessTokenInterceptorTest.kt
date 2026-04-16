@@ -29,6 +29,14 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
 
+/**
+ * Unit tests for [AccessTokenInterceptor].
+ *
+ * Verifies that the interceptor attaches a `Bearer` Authorization header
+ * when a non-empty access token is provided, omits the header when the
+ * token is empty, and always delegates the request to the underlying
+ * [Interceptor.Chain] exactly once regardless of token state.
+ */
 class AccessTokenInterceptorTest {
 
     private val mockChain = mockk<Interceptor.Chain>()
@@ -40,6 +48,7 @@ class AccessTokenInterceptorTest {
         .message("OK")
         .build()
 
+    /** Verifies the Authorization header value is `Bearer <token>` for a valid token. */
     @Test
     fun `adds bearer authorization header when token is not empty`() {
         val credentials = AccessTokenCredentials("test-token-123")
@@ -58,6 +67,7 @@ class AccessTokenInterceptorTest {
         )
     }
 
+    /** Verifies the Authorization header is absent when the token is an empty string. */
     @Test
     fun `does not add authorization header when token is empty`() {
         val credentials = AccessTokenCredentials("")
@@ -73,6 +83,7 @@ class AccessTokenInterceptorTest {
         assertNull(capturedRequest.captured.header(MomoConstants.Headers.AUTHORIZATION))
     }
 
+    /** Verifies the interceptor returns the response produced by the chain unchanged. */
     @Test
     fun `returns response from chain`() {
         val credentials = AccessTokenCredentials("some-token")
@@ -89,6 +100,7 @@ class AccessTokenInterceptorTest {
         verify(exactly = 1) { mockChain.proceed(any()) }
     }
 
+    /** Verifies the chain is called exactly once for both a valid and an empty token. */
     @Test
     fun `proceeds once regardless of token state`() {
         listOf("valid-token", "").forEach { token ->

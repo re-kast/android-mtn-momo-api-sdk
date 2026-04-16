@@ -1,6 +1,5 @@
 package io.rekast.sdk.app;
 
-import androidx.hilt.work.HiltWrapper_WorkerFactoryModule;
 import dagger.Binds;
 import dagger.Component;
 import dagger.Module;
@@ -147,7 +146,6 @@ public final class MomoApplication_HiltComponents {
           ApplicationContextModule.class,
           DispatchersModule.class,
           HiltWrapper_FragmentGetContextFix_FragmentGetContextFixModule.class,
-          HiltWrapper_WorkerFactoryModule.class,
           ActivityRetainedCBuilderModule.class,
           ServiceCBuilderModule.class,
           NetworkModule.class

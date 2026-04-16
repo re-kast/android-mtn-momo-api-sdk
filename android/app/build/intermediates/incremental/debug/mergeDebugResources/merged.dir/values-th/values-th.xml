@@ -55,7 +55,6 @@
     <string name="clear_text_end_icon_content_description">ล้างข้อความ</string>
     <string msgid="406453423630273620" name="close_drawer">"ปิดเมนูการนำทาง"</string>
     <string msgid="7573152094250666567" name="close_sheet">"ปิดชีต"</string>
-    <string name="common_google_play_services_unknown_issue">%1$s มีปัญหาเกี่ยวกับบริการของ Google Play โปรดลองอีกครั้ง</string>
     <string msgid="8038256446254964252" name="default_error_message">"อินพุตไม่ถูกต้อง"</string>
     <string msgid="6312721426453364202" name="default_popup_window_title">"หน้าต่างป๊อปอัป"</string>
     <string msgid="1890207353314751437" name="dropdown_menu">"เมนูแบบเลื่อนลง"</string>
@@ -65,9 +64,6 @@
     <string name="icon_content_description">ไอคอนกล่องโต้ตอบ</string>
     <string msgid="6827826412747255547" name="in_progress">"กำลังดำเนินการ"</string>
     <string msgid="7933458017204019916" name="indeterminate">"เลือกบางส่วน"</string>
-    <string msgid="475402237100444685" name="installation_cancelled">"ยกเลิกการติดตั้งแล้ว"</string>
-    <string msgid="863287960437940689" name="installation_failed">"การติดตั้งไม่สำเร็จ"</string>
-    <string msgid="5968445461040787716" name="installing_module">"กำลังติดตั้งโมดูล:"</string>
     <string name="item_view_role_description">แท็บ</string>
     <string name="m3_loading_indicator_content_description">กำลังโหลด</string>
     <string name="m3_overflow_linear_layout_button_content_description">เมนูรายการเพิ่มเติม</string>
@@ -215,16 +211,11 @@
     <string name="mtrl_picker_toggle_to_year_selection">เปลี่ยนเป็นมุมมองปี</string>
     <string name="mtrl_timepicker_cancel">ยกเลิก</string>
     <string name="mtrl_timepicker_confirm">ตกลง</string>
-    <string msgid="6301633601645100427" name="nav_app_bar_navigate_up_description">"นำทางขึ้น"</string>
-    <string msgid="7456070600745802113" name="nav_app_bar_open_drawer_description">"เปิดลิ้นชักการนำทาง"</string>
     <string msgid="542007171693138492" name="navigation_menu">"เมนูการนำทาง"</string>
     <string msgid="6610465462668679431" name="not_selected">"ไม่ได้เลือก"</string>
-    <string msgid="4702104660890557116" name="ok">"ตกลง"</string>
     <string name="password_toggle_content_description">แสดงรหัสผ่าน</string>
-    <string msgid="8366783942222789124" name="progress">"ความคืบหน้า:"</string>
     <string msgid="5941395253238309765" name="range_end">"จุดสิ้นสุดของช่วง"</string>
     <string msgid="7097486360902471446" name="range_start">"จุดเริ่มต้นของช่วง"</string>
-    <string msgid="1065327189183624288" name="retry">"ลองอีกครั้ง"</string>
     <string msgid="6264217191555673260" name="search_menu_title">"ค้นหา"</string>
     <string name="searchview_clear_text_content_description">ล้างข้อความ</string>
     <string name="searchview_navigation_content_description">กลับ</string>

@@ -15,6 +15,24 @@
  */
 package io.rekast.sdk.sample.utils
 
+/**
+ * Runtime configuration values required by the sample app to initialise the MTN MOMO SDK.
+ *
+ * All values are sourced from [io.rekast.sdk.app.BuildConfig] (populated via the Secrets Gradle
+ * Plugin from `local.properties`) and injected by `AppModule` through Hilt.
+ *
+ * @property apiVersionV1 API version string for v1 endpoints (e.g. `"v1_0"` on sandbox, `"v1"` on production).
+ * @property apiVersionV2 API version string for v2 endpoints (e.g. `"v2_0"` on sandbox, `"v2"` on production).
+ * @property environment Target environment identifier (e.g. `"sandbox"` or `"production"`).
+ * @property providerCallbackHost Host used for provider callback URLs (e.g. `"localhost"` on sandbox).
+ * @property apiUserId UUID identifying the API user created on the MTN MOMO Developer portal.
+ * @property collectionPrimaryKey Primary subscription key for the Collection product.
+ * @property collectionSecondaryKey Secondary subscription key for the Collection product.
+ * @property remittancePrimaryKey Primary subscription key for the Remittance product.
+ * @property remittanceSecondaryKey Secondary subscription key for the Remittance product.
+ * @property disbursementsPrimaryKey Primary subscription key for the Disbursements product.
+ * @property disbursementsSecondaryKey Secondary subscription key for the Disbursements product.
+ */
 data class SampleConfig(
     val apiVersionV1: String,
     val apiVersionV2: String,
@@ -26,5 +44,5 @@ data class SampleConfig(
     val remittancePrimaryKey: String,
     val remittanceSecondaryKey: String,
     val disbursementsPrimaryKey: String,
-    val disbursementsSecondaryKey: String,
+    val disbursementsSecondaryKey: String
 )

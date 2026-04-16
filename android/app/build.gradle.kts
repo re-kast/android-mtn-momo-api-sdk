@@ -71,7 +71,6 @@ dependencies {
 
     // Hilt — application-level DI wiring.
     implementation(libs.google.dagger.hilt)
-    implementation(libs.androidx.hilt.work)
     ksp(libs.hilt.android.compiler)
 
     // Network stack used by NetworkModule.
@@ -85,7 +84,5 @@ dependencies {
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines)
 
-    // Misc
-    implementation(libs.work.runtime.ktx)
     implementation(libs.jakewharton.timber)
 }

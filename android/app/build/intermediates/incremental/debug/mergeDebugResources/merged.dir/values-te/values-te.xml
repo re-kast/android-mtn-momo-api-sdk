@@ -55,7 +55,6 @@
     <string name="clear_text_end_icon_content_description">రాసినదాన్ని తీసివేయండి</string>
     <string msgid="406453423630273620" name="close_drawer">"నావిగేషన్ మెనూను మూసివేయండి"</string>
     <string msgid="7573152094250666567" name="close_sheet">"షీట్‌ను మూసివేయండి"</string>
-    <string name="common_google_play_services_unknown_issue">%1$s Google Play సేవలతో సమస్య కలిగి ఉంది. దయచేసి మళ్లీ ప్రయత్నించండి.</string>
     <string msgid="8038256446254964252" name="default_error_message">"ఇన్‌పుట్ చెల్లదు"</string>
     <string msgid="6312721426453364202" name="default_popup_window_title">"పాప్-అప్ విండో"</string>
     <string msgid="1890207353314751437" name="dropdown_menu">"డ్రాప్‌డౌన్ మెనూ"</string>
@@ -65,9 +64,6 @@
     <string name="icon_content_description">డైలాగ్ చిహ్నం</string>
     <string msgid="6827826412747255547" name="in_progress">"ప్రోగ్రెస్‌లో ఉంది"</string>
     <string msgid="7933458017204019916" name="indeterminate">"పాక్షికంగా ఎంచుకోబడింది"</string>
-    <string msgid="475402237100444685" name="installation_cancelled">"ఇన్‌స్టాలేషన్ రద్దయింది."</string>
-    <string msgid="863287960437940689" name="installation_failed">"ఇన్‌స్టాల్ చేయడం విఫలమైంది"</string>
-    <string msgid="5968445461040787716" name="installing_module">"మాడ్యూల్‌ను ఇన్‌స్టాల్ చేస్తోంది:"</string>
     <string name="item_view_role_description">ట్యాబ్</string>
     <string name="m3_loading_indicator_content_description">లోడ్ అవుతోంది</string>
     <string name="m3_overflow_linear_layout_button_content_description">ఓవర్ ఫ్లో మెనూ</string>
@@ -215,16 +211,11 @@
     <string name="mtrl_picker_toggle_to_year_selection">సంవత్సరం వీక్షణకు మారండి</string>
     <string name="mtrl_timepicker_cancel">రద్దు చేయండి</string>
     <string name="mtrl_timepicker_confirm">సరే</string>
-    <string msgid="6301633601645100427" name="nav_app_bar_navigate_up_description">"పైకి నావిగేట్ చేయి"</string>
-    <string msgid="7456070600745802113" name="nav_app_bar_open_drawer_description">"నావిగేషన్ డ్రాయర్‌ను తెరవండి"</string>
     <string msgid="542007171693138492" name="navigation_menu">"నావిగేషన్ మెనూ"</string>
     <string msgid="6610465462668679431" name="not_selected">"ఎంచుకోబడలేదు"</string>
-    <string msgid="4702104660890557116" name="ok">"సరే"</string>
     <string name="password_toggle_content_description">పాస్‌వర్డ్‌ను చూపు</string>
-    <string msgid="8366783942222789124" name="progress">"ప్రోగ్రెస్:"</string>
     <string msgid="5941395253238309765" name="range_end">"పరిధి ముగిసింది"</string>
     <string msgid="7097486360902471446" name="range_start">"పరిధి ప్రారంభమయింది"</string>
-    <string msgid="1065327189183624288" name="retry">"మళ్లీ ప్రయత్నించు"</string>
     <string msgid="6264217191555673260" name="search_menu_title">"సెర్చ్"</string>
     <string name="searchview_clear_text_content_description">టెక్స్ట్‌ను క్లియర్ చేయండి</string>
     <string name="searchview_navigation_content_description">వెనుకకు</string>

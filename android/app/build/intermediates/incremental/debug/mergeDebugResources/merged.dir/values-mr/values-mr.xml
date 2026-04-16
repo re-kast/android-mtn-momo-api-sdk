@@ -55,7 +55,6 @@
     <string name="clear_text_end_icon_content_description">मजकूर साफ करा</string>
     <string msgid="406453423630273620" name="close_drawer">"नेव्हिगेशन मेनू बंद करा"</string>
     <string msgid="7573152094250666567" name="close_sheet">"शीट बंद करा"</string>
-    <string name="common_google_play_services_unknown_issue">%1$s ला Google Play सेवांमध्ये समस्या येत आहे. कृपया पुन्हा प्रयत्न करा.</string>
     <string msgid="8038256446254964252" name="default_error_message">"इनपुट चुकीचे आहे"</string>
     <string msgid="6312721426453364202" name="default_popup_window_title">"पॉप-अप विंडो"</string>
     <string msgid="1890207353314751437" name="dropdown_menu">"ड्रॉपडाउन मेनू"</string>
@@ -65,9 +64,6 @@
     <string name="icon_content_description">डायलॉग आयकन</string>
     <string msgid="6827826412747255547" name="in_progress">"प्रगतीपथावर आहे"</string>
     <string msgid="7933458017204019916" name="indeterminate">"अंशतः तपासले"</string>
-    <string msgid="475402237100444685" name="installation_cancelled">"इंस्टॉल करणे रद्द झाले."</string>
-    <string msgid="863287960437940689" name="installation_failed">"इंस्टॉल करता आले नाही."</string>
-    <string msgid="5968445461040787716" name="installing_module">"मॉड्युल इंस्टॉल करत आहे:"</string>
     <string name="item_view_role_description">टॅब</string>
     <string name="m3_loading_indicator_content_description">लोड करत आहे</string>
     <string name="m3_overflow_linear_layout_button_content_description">ओव्हरफ्लो मेनू</string>
@@ -215,16 +211,11 @@
     <string name="mtrl_picker_toggle_to_year_selection">वर्ष व्ह्यूवर स्विच करा</string>
     <string name="mtrl_timepicker_cancel">रद्द करा</string>
     <string name="mtrl_timepicker_confirm">ओके</string>
-    <string msgid="6301633601645100427" name="nav_app_bar_navigate_up_description">"वर नेव्‍हिगेट करा"</string>
-    <string msgid="7456070600745802113" name="nav_app_bar_open_drawer_description">"नेव्हिगेशन ड्रॉवर उघडा"</string>
     <string msgid="542007171693138492" name="navigation_menu">"नेव्हिगेशन मेनू"</string>
     <string msgid="6610465462668679431" name="not_selected">"निवडला नाही"</string>
-    <string msgid="4702104660890557116" name="ok">"ओके"</string>
     <string name="password_toggle_content_description">पासवर्ड दाखवा</string>
-    <string msgid="8366783942222789124" name="progress">"प्रगती:"</string>
     <string msgid="5941395253238309765" name="range_end">"रेंजचा शेवट"</string>
     <string msgid="7097486360902471446" name="range_start">"रेंजची सुरुवात"</string>
-    <string msgid="1065327189183624288" name="retry">"पुन्हा प्रयत्न करा"</string>
     <string msgid="6264217191555673260" name="search_menu_title">"शोध"</string>
     <string name="searchview_clear_text_content_description">मजकूर साफ करा</string>
     <string name="searchview_navigation_content_description">मागे जा</string>

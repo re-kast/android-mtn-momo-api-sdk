@@ -55,7 +55,6 @@
     <string name="clear_text_end_icon_content_description">Mətni silin</string>
     <string msgid="406453423630273620" name="close_drawer">"Naviqasiya menyusunu bağlayın"</string>
     <string msgid="7573152094250666567" name="close_sheet">"Səhifəni bağlayın"</string>
-    <string name="common_google_play_services_unknown_issue">%1$s tətbiqi ilə Google Play xidmətləri arasında problem var. Daha sonra yenidən cəhd edin.</string>
     <string msgid="8038256446254964252" name="default_error_message">"Yanlış daxiletmə"</string>
     <string msgid="6312721426453364202" name="default_popup_window_title">"Popap Pəncərəsi"</string>
     <string msgid="1890207353314751437" name="dropdown_menu">"Aşağı açılan menyu"</string>
@@ -65,9 +64,6 @@
     <string name="icon_content_description">Dialoq ikonası</string>
     <string msgid="6827826412747255547" name="in_progress">"Davam edir"</string>
     <string msgid="7933458017204019916" name="indeterminate">"Qismən yoxlanıb"</string>
-    <string msgid="475402237100444685" name="installation_cancelled">"Quraşdırma ləğv edildi."</string>
-    <string msgid="863287960437940689" name="installation_failed">"Quraşdırma alınmadı."</string>
-    <string msgid="5968445461040787716" name="installing_module">"Modul quraşdırılır:"</string>
     <string name="item_view_role_description">Tab</string>
     <string name="m3_loading_indicator_content_description">Yüklənir</string>
     <string name="m3_overflow_linear_layout_button_content_description">Əlavə menyu</string>
@@ -215,16 +211,11 @@
     <string name="mtrl_picker_toggle_to_year_selection">İl görünüşünə dəyişin</string>
     <string name="mtrl_timepicker_cancel">Ləğv edin</string>
     <string name="mtrl_timepicker_confirm">OK</string>
-    <string msgid="6301633601645100427" name="nav_app_bar_navigate_up_description">"Yuxarı keçin"</string>
-    <string msgid="7456070600745802113" name="nav_app_bar_open_drawer_description">"Naviqasiya panelini açın"</string>
     <string msgid="542007171693138492" name="navigation_menu">"Naviqasiya menyusu"</string>
     <string msgid="6610465462668679431" name="not_selected">"Seçilməyib"</string>
-    <string msgid="4702104660890557116" name="ok">"Oldu"</string>
     <string name="password_toggle_content_description">Parolu göstərin</string>
-    <string msgid="8366783942222789124" name="progress">"Gedişat:"</string>
     <string msgid="5941395253238309765" name="range_end">"Sıranın sonu"</string>
     <string msgid="7097486360902471446" name="range_start">"Sıranın başlanğıcı"</string>
-    <string msgid="1065327189183624288" name="retry">"Təkrar sınayın"</string>
     <string msgid="6264217191555673260" name="search_menu_title">"Axtarın"</string>
     <string name="searchview_clear_text_content_description">Mətni təmizləyin</string>
     <string name="searchview_navigation_content_description">Geri</string>

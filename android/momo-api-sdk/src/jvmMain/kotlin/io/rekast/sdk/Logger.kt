@@ -15,7 +15,19 @@
  */
 package io.rekast.sdk
 
+/**
+ * JVM-specific implementation of the platform-agnostic [Logger].
+ *
+ * Writes log output to standard output using the format `D/<tag>: <message>`,
+ * suitable for server-side or desktop JVM use cases where Timber is unavailable.
+ */
 actual object Logger {
+    /**
+     * Prints a debug message to standard output.
+     *
+     * @param tag Log tag, typically the calling class name.
+     * @param message Human-readable message to log.
+     */
     actual fun d(tag: String, message: String) {
         println("D/$tag: $message")
     }

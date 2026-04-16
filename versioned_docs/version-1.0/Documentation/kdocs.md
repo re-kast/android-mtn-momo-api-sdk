@@ -94,16 +94,36 @@ dependencies {
 }
 ```
 
-**Each module's `build.gradle.kts`** (`momo-api-sdk` and `sample`) — registers the Kotlin source set explicitly, since Dokka V2 does not auto-detect Android source sets:
+**`momo-api-sdk/build.gradle.kts`** — registers the three KMP source sets explicitly so Dokka V2 picks them up:
 
 ```kotlin
 dokka {
     dokkaSourceSets {
-        register("main") {
-            sourceRoots.from(file("src/main/kotlin"))
+        named("commonMain") {
+            displayName.set("Common")
+            sourceRoots.from(file("src/commonMain/kotlin"))
+        }
+        named("androidMain") {
             displayName.set("Android")
+            sourceRoots.from(file("src/androidMain/kotlin"))
+        }
+        named("jvmMain") {
+            displayName.set("JVM")
+            sourceRoots.from(file("src/jvmMain/kotlin"))
         }
     }
+    pluginsConfiguration.html {
+        customAssets.from(rootProject.layout.projectDirectory.file("assets/logo-icon.svg"))
+        customStyleSheets.from(rootProject.layout.projectDirectory.file("assets/rekast.css"))
+        footerMessage.set("&copy; Re.Kast Limited")
+    }
+}
+```
+
+**`sample/build.gradle.kts`** — `sample` is a plain Android library; Dokka auto-detects its sources, so only the HTML customisation is needed:
+
+```kotlin
+dokka {
     pluginsConfiguration.html {
         customAssets.from(rootProject.layout.projectDirectory.file("assets/logo-icon.svg"))
         customStyleSheets.from(rootProject.layout.projectDirectory.file("assets/rekast.css"))

@@ -55,7 +55,6 @@
     <string name="clear_text_end_icon_content_description">Fjern teksten</string>
     <string msgid="406453423630273620" name="close_drawer">"Lukk navigasjonsmenyen"</string>
     <string msgid="7573152094250666567" name="close_sheet">"Lukk arket"</string>
-    <string name="common_google_play_services_unknown_issue">%1$s har problemer med Google Play-tjenester. Prøv på nytt.</string>
     <string msgid="8038256446254964252" name="default_error_message">"Ugyldige inndata"</string>
     <string msgid="6312721426453364202" name="default_popup_window_title">"Forgrunnsvindu"</string>
     <string msgid="1890207353314751437" name="dropdown_menu">"Rullegardinmeny"</string>
@@ -65,9 +64,6 @@
     <string name="icon_content_description">Dialogboksikon</string>
     <string msgid="6827826412747255547" name="in_progress">"Pågår"</string>
     <string msgid="7933458017204019916" name="indeterminate">"Delvis avmerket"</string>
-    <string msgid="475402237100444685" name="installation_cancelled">"Installeringen er kansellert."</string>
-    <string msgid="863287960437940689" name="installation_failed">"Installasjonen mislyktes."</string>
-    <string msgid="5968445461040787716" name="installing_module">"Installerer modul:"</string>
     <string name="item_view_role_description">Fane</string>
     <string name="m3_loading_indicator_content_description">Laster inn</string>
     <string name="m3_overflow_linear_layout_button_content_description">Overflytsmeny</string>
@@ -215,16 +211,11 @@
     <string name="mtrl_picker_toggle_to_year_selection">Bytt til årsvisning</string>
     <string name="mtrl_timepicker_cancel">Avbryt</string>
     <string name="mtrl_timepicker_confirm">OK</string>
-    <string msgid="6301633601645100427" name="nav_app_bar_navigate_up_description">"Naviger opp"</string>
-    <string msgid="7456070600745802113" name="nav_app_bar_open_drawer_description">"Åpne uttrekksmenyen"</string>
     <string msgid="542007171693138492" name="navigation_menu">"Navigasjonsmeny"</string>
     <string msgid="6610465462668679431" name="not_selected">"Ikke valgt"</string>
-    <string msgid="4702104660890557116" name="ok">"Ok"</string>
     <string name="password_toggle_content_description">Vis passordet</string>
-    <string msgid="8366783942222789124" name="progress">"Fremdrift:"</string>
     <string msgid="5941395253238309765" name="range_end">"Områdeslutt"</string>
     <string msgid="7097486360902471446" name="range_start">"Områdestart"</string>
-    <string msgid="1065327189183624288" name="retry">"Prøv på nytt"</string>
     <string msgid="6264217191555673260" name="search_menu_title">"Søk"</string>
     <string name="searchview_clear_text_content_description">Fjern teksten</string>
     <string name="searchview_navigation_content_description">Tilbake</string>

@@ -42,14 +42,16 @@ allprojects {
             targetExclude("**/buildSrc/src/main/kotlin/*.kt")
             trimTrailingWhitespace()
             ktlint(libs.versions.klint.get())
-                .setEditorConfigPath(".editorconfig")
+                // Use the root project's .editorconfig so that this path resolves correctly
+                // for every subproject inside allprojects {}, not just the root module.
+                .setEditorConfigPath("${rootProject.projectDir}/.editorconfig")
 
             endWithNewline()
-            licenseHeaderFile("$projectDir/license-header.txt")
+            licenseHeaderFile("${rootProject.projectDir}/license-header.txt")
         }
         kotlinGradle {
             target("*.gradle.kts")
-            licenseHeaderFile("$projectDir/license-header.txt", "")
+            licenseHeaderFile("${rootProject.projectDir}/license-header.txt", "")
             ktlint()
         }
     }

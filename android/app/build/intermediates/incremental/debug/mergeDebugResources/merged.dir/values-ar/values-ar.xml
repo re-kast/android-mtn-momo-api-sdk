@@ -60,7 +60,6 @@
     <string name="clear_text_end_icon_content_description">محو النص</string>
     <string msgid="406453423630273620" name="close_drawer">"إغلاق قائمة التنقل"</string>
     <string msgid="7573152094250666567" name="close_sheet">"إغلاق الورقة"</string>
-    <string name="common_google_play_services_unknown_issue">‏لدى %1$s مشكلة في خدمات Google Play. يُرجى إعادة المحاولة.</string>
     <string msgid="8038256446254964252" name="default_error_message">"إدخال غير صالح"</string>
     <string msgid="6312721426453364202" name="default_popup_window_title">"نافذة منبثقة"</string>
     <string msgid="1890207353314751437" name="dropdown_menu">"قائمة منسدلة"</string>
@@ -70,9 +69,6 @@
     <string name="icon_content_description">رمز مربع الحوار</string>
     <string msgid="6827826412747255547" name="in_progress">"قيد التقدم"</string>
     <string msgid="7933458017204019916" name="indeterminate">"تم وضع علامة في المربّع بشكل جزئي"</string>
-    <string msgid="475402237100444685" name="installation_cancelled">"تم إلغاء التثبيت."</string>
-    <string msgid="863287960437940689" name="installation_failed">"تعذّر تثبيت التطبيق."</string>
-    <string msgid="5968445461040787716" name="installing_module">"جارٍ تثبيت الوحدة:"</string>
     <string name="item_view_role_description">علامة تبويب</string>
     <string name="m3_loading_indicator_content_description">جارٍ التحميل</string>
     <string name="m3_overflow_linear_layout_button_content_description">القائمة الكاملة</string>
@@ -220,16 +216,11 @@
     <string name="mtrl_picker_toggle_to_year_selection">التبديل إلى العرض حسب السنة</string>
     <string name="mtrl_timepicker_cancel">إلغاء</string>
     <string name="mtrl_timepicker_confirm">حسنًا</string>
-    <string msgid="6301633601645100427" name="nav_app_bar_navigate_up_description">"التنقل إلى أعلى"</string>
-    <string msgid="7456070600745802113" name="nav_app_bar_open_drawer_description">"فتح لائحة التنقل"</string>
     <string msgid="542007171693138492" name="navigation_menu">"قائمة تنقل"</string>
     <string msgid="6610465462668679431" name="not_selected">"غير محدّد"</string>
-    <string msgid="4702104660890557116" name="ok">"حسنًا"</string>
     <string name="password_toggle_content_description">عرض كلمة المرور</string>
-    <string msgid="8366783942222789124" name="progress">"التقدم:"</string>
     <string msgid="5941395253238309765" name="range_end">"نهاية النطاق"</string>
     <string msgid="7097486360902471446" name="range_start">"بداية النطاق"</string>
-    <string msgid="1065327189183624288" name="retry">"إعادة المحاولة"</string>
     <string msgid="6264217191555673260" name="search_menu_title">"البحث"</string>
     <string name="searchview_clear_text_content_description">محو النص</string>
     <string name="searchview_navigation_content_description">رجوع</string>

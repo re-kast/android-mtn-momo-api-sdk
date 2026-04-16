@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.rekast.sdk.sample.di
+package io.rekast.sdk.app.di
 
 import dagger.Module
 import dagger.Provides
@@ -37,28 +37,36 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
-
+    /**
+     * Provides the [MomoApiConfig] used by the SDK to configure the base URL, API user, and environment.
+     */
     @Provides
     @Singleton
-    fun provideMomoApiConfig(): MomoApiConfig = MomoApiConfig(
-        baseUrl = BuildConfig.MOMO_BASE_URL,
-        apiUserId = BuildConfig.MOMO_API_USER_ID,
-        environment = BuildConfig.MOMO_ENVIRONMENT
-    )
+    fun provideMomoApiConfig(): MomoApiConfig =
+        MomoApiConfig(
+            baseUrl = BuildConfig.MOMO_BASE_URL,
+            apiUserId = BuildConfig.MOMO_API_USER_ID,
+            environment = BuildConfig.MOMO_ENVIRONMENT
+        )
 
+    /**
+     * Provides the [SampleConfig] used by the sample app's ViewModels to supply
+     * API versions, product subscription keys, and other runtime configuration values.
+     */
     @Provides
     @Singleton
-    fun provideSampleConfig(): SampleConfig = SampleConfig(
-        apiVersionV1 = BuildConfig.MOMO_API_VERSION_V1,
-        apiVersionV2 = BuildConfig.MOMO_API_VERSION_V2,
-        environment = BuildConfig.MOMO_ENVIRONMENT,
-        providerCallbackHost = BuildConfig.MOMO_PROVIDER_CALBACK_HOST,
-        apiUserId = BuildConfig.MOMO_API_USER_ID,
-        collectionPrimaryKey = BuildConfig.MOMO_COLLECTION_PRIMARY_KEY,
-        collectionSecondaryKey = BuildConfig.MOMO_COLLECTION_SECONDARY_KEY,
-        remittancePrimaryKey = BuildConfig.MOMO_REMITTANCE_PRIMARY_KEY,
-        remittanceSecondaryKey = BuildConfig.MOMO_REMITTANCE_SECONDARY_KEY,
-        disbursementsPrimaryKey = BuildConfig.MOMO_DISBURSEMENTS_PRIMARY_KEY,
-        disbursementsSecondaryKey = BuildConfig.MOMO_DISBURSEMENTS_SECONDARY_KEY,
-    )
+    fun provideSampleConfig(): SampleConfig =
+        SampleConfig(
+            apiVersionV1 = BuildConfig.MOMO_API_VERSION_V1,
+            apiVersionV2 = BuildConfig.MOMO_API_VERSION_V2,
+            environment = BuildConfig.MOMO_ENVIRONMENT,
+            providerCallbackHost = BuildConfig.MOMO_PROVIDER_CALBACK_HOST,
+            apiUserId = BuildConfig.MOMO_API_USER_ID,
+            collectionPrimaryKey = BuildConfig.MOMO_COLLECTION_PRIMARY_KEY,
+            collectionSecondaryKey = BuildConfig.MOMO_COLLECTION_SECONDARY_KEY,
+            remittancePrimaryKey = BuildConfig.MOMO_REMITTANCE_PRIMARY_KEY,
+            remittanceSecondaryKey = BuildConfig.MOMO_REMITTANCE_SECONDARY_KEY,
+            disbursementsPrimaryKey = BuildConfig.MOMO_DISBURSEMENTS_PRIMARY_KEY,
+            disbursementsSecondaryKey = BuildConfig.MOMO_DISBURSEMENTS_SECONDARY_KEY
+        )
 }

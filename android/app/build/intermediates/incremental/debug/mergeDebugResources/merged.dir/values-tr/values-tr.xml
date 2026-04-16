@@ -55,7 +55,6 @@
     <string name="clear_text_end_icon_content_description">Metni temizle</string>
     <string msgid="406453423630273620" name="close_drawer">"Gezinme menüsünü kapat"</string>
     <string msgid="7573152094250666567" name="close_sheet">"Sayfayı kapat"</string>
-    <string name="common_google_play_services_unknown_issue">%1$s, Google Play hizmetleriyle ilgili sorun yaşıyor. Lütfen tekrar deneyin.</string>
     <string msgid="8038256446254964252" name="default_error_message">"Geçersiz giriş"</string>
     <string msgid="6312721426453364202" name="default_popup_window_title">"Pop-up Pencere"</string>
     <string msgid="1890207353314751437" name="dropdown_menu">"Açılır menü"</string>
@@ -65,9 +64,6 @@
     <string name="icon_content_description">İletişim kutusu simgesi</string>
     <string msgid="6827826412747255547" name="in_progress">"Devam ediyor"</string>
     <string msgid="7933458017204019916" name="indeterminate">"Kısmi olarak kontrol edildi"</string>
-    <string msgid="475402237100444685" name="installation_cancelled">"Yükleme iptal edildi."</string>
-    <string msgid="863287960437940689" name="installation_failed">"Yükleme başarısız oldu."</string>
-    <string msgid="5968445461040787716" name="installing_module">"Modül yükleniyor:"</string>
     <string name="item_view_role_description">Sekme</string>
     <string name="m3_loading_indicator_content_description">Yükleniyor</string>
     <string name="m3_overflow_linear_layout_button_content_description">Taşma menüsü</string>
@@ -215,16 +211,11 @@
     <string name="mtrl_picker_toggle_to_year_selection">Yıl görünümüne geç</string>
     <string name="mtrl_timepicker_cancel">İptal</string>
     <string name="mtrl_timepicker_confirm">Tamam</string>
-    <string msgid="6301633601645100427" name="nav_app_bar_navigate_up_description">"Yukarı git"</string>
-    <string msgid="7456070600745802113" name="nav_app_bar_open_drawer_description">"Gezinme çekmecesini aç"</string>
     <string msgid="542007171693138492" name="navigation_menu">"Gezinme menüsü"</string>
     <string msgid="6610465462668679431" name="not_selected">"Seçili değil"</string>
-    <string msgid="4702104660890557116" name="ok">"Tamam"</string>
     <string name="password_toggle_content_description">Şifreyi göster</string>
-    <string msgid="8366783942222789124" name="progress">"İlerleme durumu:"</string>
     <string msgid="5941395253238309765" name="range_end">"Aralık sonu"</string>
     <string msgid="7097486360902471446" name="range_start">"Aralık başlangıcı"</string>
-    <string msgid="1065327189183624288" name="retry">"Tekrar dene"</string>
     <string msgid="6264217191555673260" name="search_menu_title">"Ara"</string>
     <string name="searchview_clear_text_content_description">Metni temizle</string>
     <string name="searchview_navigation_content_description">Geri</string>

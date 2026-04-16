@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "io.rekast.sdk.app-mergeDebugResources-76:/values-w1240dp-v13/values-w1240dp-v13.xml",
+            "outputFile": "io.rekast.sdk.app-mergeDebugResources-60:/values-w1240dp-v13/values-w1240dp-v13.xml",
             "map": [
                 {
                     "source": "/Users/kenya/code/rekast/mobile/android-mtn-momo-api-sdk/android/sample/build/intermediates/packaged_res/debug/packageDebugResources/values-w1240dp-v13/values-w1240dp-v13.xml",

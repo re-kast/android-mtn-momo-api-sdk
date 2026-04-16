@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "io.rekast.sdk.app-mergeDebugResources-76:/values-v30/values-v30.xml",
+            "outputFile": "io.rekast.sdk.app-mergeDebugResources-60:/values-v30/values-v30.xml",
             "map": [
                 {
                     "source": "/Users/kenya/.gradle/caches/9.3.1/transforms/1a53a8361ce1483ff3aa8614a1d1414a/transformed/material3/res/values-v30/values-v30.xml",

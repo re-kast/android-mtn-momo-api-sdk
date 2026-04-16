@@ -96,7 +96,7 @@ jobs:
         working-directory: android
 
       - name: Run unit tests and generate coverage reports
-        run: ./gradlew :momo-api-sdk:testAndroidHostTest :momo-api-sdk:jvmTest :momo-api-sdk:koverXmlReportAndroid :sample:koverXmlReportAndroid
+        run: ./gradlew :momo-api-sdk:testAndroidHostTest :momo-api-sdk:jvmTest :sample:testDebugUnitTest :momo-api-sdk:koverXmlReportAndroid :sample:koverXmlReportDebug
         working-directory: android
 
       - name: Upload momo-api-sdk coverage to Codecov
@@ -111,6 +111,6 @@ jobs:
         uses: codecov/codecov-action@v4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: android/sample/build/reports/kover/reportAndroid.xml
+          files: android/sample/build/reports/kover/reportDebug.xml
           flags: sample
           fail_ci_if_error: true

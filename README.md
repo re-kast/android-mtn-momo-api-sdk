@@ -4,7 +4,7 @@
 
 ## Overview
 
-The MTN MOMO API SDK is a powerful and versatile Android library designed to simplify the integration of MTN’s Mobile Money (MOMO) services into native Android applications. This SDK enables developers to seamlessly interact with MTN’s extensive mobile payment infrastructure, facilitating core functionalities such as secure user authentication, balance inquiries, and efficient transaction processing. By abstracting the complexities of the MOMO API, this library provides a reliable and secure bridge between Android applications and MTN’s financial services, allowing developers to focus on building exceptional user experiences.
+The MTN MOMO API SDK is a **Kotlin Multiplatform (KMP)** library designed to simplify the integration of MTN’s Mobile Money (MOMO) services into Android and JVM applications. The core SDK targets both Android and JVM platforms, while a full-featured Android sample app demonstrates every API operation. This SDK enables developers to seamlessly interact with MTN’s extensive mobile payment infrastructure, facilitating core functionalities such as secure user authentication, balance inquiries, and efficient transaction processing. By abstracting the complexities of the MOMO API, this library provides a reliable and secure bridge between Android applications and MTN’s financial services, allowing developers to focus on building exceptional user experiences.
 
 For more information about the MTN MOMO API, please visit the official documentation [here](https://momodeveloper.mtn.com/).
 
@@ -26,7 +26,7 @@ For a complete overview of available operations, refer to the full MTN MOMO API 
 
 ### Built with Modern Android Development Practices
 
-- **Kotlin**: Developed using Kotlin, the preferred language for Android development, ensuring compatibility with contemporary Android codebases.
+- **Kotlin Multiplatform**: The core SDK (`momo-api-sdk`) is built with Kotlin Multiplatform, targeting Android and JVM. This makes the network, repository, and model layers reusable across platforms.
   
 - **Coroutines for Asynchronous Operations**: Utilizes Kotlin Coroutines to handle asynchronous operations efficiently, ensuring non-blocking API interactions that enhance user experience.
   
@@ -54,7 +54,7 @@ To include the MTN MOMO API SDK in your project, add the following dependency to
 
 ```kotlin
 dependencies {
-    implementation("io.rekast:momo-api-sdk:0.0.2-SNAPSHOT")
+    implementation("io.rekast:momo-api-sdk:0.1.0-SNAPSHOT")
 }
 ```
 

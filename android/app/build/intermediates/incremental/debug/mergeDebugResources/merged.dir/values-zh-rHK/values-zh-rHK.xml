@@ -55,7 +55,6 @@
     <string name="clear_text_end_icon_content_description">清除文字</string>
     <string msgid="406453423630273620" name="close_drawer">"閂導覽選單"</string>
     <string msgid="7573152094250666567" name="close_sheet">"閂表單"</string>
-    <string name="common_google_play_services_unknown_issue">「%1$s」存取 Google Play 服務時發生問題。請稍後再試一次。</string>
     <string msgid="8038256446254964252" name="default_error_message">"輸入嘅資料無效"</string>
     <string msgid="6312721426453364202" name="default_popup_window_title">"彈出式視窗"</string>
     <string msgid="1890207353314751437" name="dropdown_menu">"下拉式選單"</string>
@@ -65,9 +64,6 @@
     <string name="icon_content_description">對話框圖示</string>
     <string msgid="6827826412747255547" name="in_progress">"進行中"</string>
     <string msgid="7933458017204019916" name="indeterminate">"部分剔咗"</string>
-    <string msgid="475402237100444685" name="installation_cancelled">"已取消安裝。"</string>
-    <string msgid="863287960437940689" name="installation_failed">"安裝失敗。"</string>
-    <string msgid="5968445461040787716" name="installing_module">"正在安裝模組："</string>
     <string name="item_view_role_description">分頁</string>
     <string name="m3_loading_indicator_content_description">正在載入</string>
     <string name="m3_overflow_linear_layout_button_content_description">展開式選單</string>
@@ -215,16 +211,11 @@
     <string name="mtrl_picker_toggle_to_year_selection">切換去按年檢視模式</string>
     <string name="mtrl_timepicker_cancel">取消</string>
     <string name="mtrl_timepicker_confirm">確定</string>
-    <string msgid="6301633601645100427" name="nav_app_bar_navigate_up_description">"向上導覽"</string>
-    <string msgid="7456070600745802113" name="nav_app_bar_open_drawer_description">"開啟導覽列"</string>
     <string msgid="542007171693138492" name="navigation_menu">"導覽選單"</string>
     <string msgid="6610465462668679431" name="not_selected">"未揀"</string>
-    <string msgid="4702104660890557116" name="ok">"確定"</string>
     <string name="password_toggle_content_description">顯示密碼</string>
-    <string msgid="8366783942222789124" name="progress">"進度："</string>
     <string msgid="5941395253238309765" name="range_end">"範圍結束"</string>
     <string msgid="7097486360902471446" name="range_start">"範圍開始"</string>
-    <string msgid="1065327189183624288" name="retry">"重試"</string>
     <string msgid="6264217191555673260" name="search_menu_title">"搜尋"</string>
     <string name="searchview_clear_text_content_description">清除文字</string>
     <string name="searchview_navigation_content_description">返回</string>

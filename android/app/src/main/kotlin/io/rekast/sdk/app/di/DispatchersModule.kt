@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.rekast.sdk.sample.di
+package io.rekast.sdk.app.di
 
 import dagger.Binds
 import dagger.Module

@@ -510,7 +510,6 @@
     <attr format="reference" name="materialTimePickerTitleStyle"/>
     <attr format="integer" name="minHideDelay"/>
     <attr format="dimension" name="minTouchTargetSize"/>
-    <attr format="string|reference" name="moduleName"/>
     <attr format="integer" name="motionDurationExtraLong1"/>
     <attr format="integer" name="motionDurationExtraLong2"/>
     <attr format="integer" name="motionDurationExtraLong3"/>
@@ -794,12 +793,8 @@
     </attr>
     <bool name="abc_action_bar_embed_tabs">true</bool>
     <bool name="abc_config_actionMenuItemAllCaps">true</bool>
-    <bool name="enable_system_alarm_service_default">false</bool>
-    <bool name="enable_system_foreground_service_default">true</bool>
-    <bool name="enable_system_job_service_default">true</bool>
     <bool name="mtrl_btn_textappearance_all_caps">true</bool>
     <bool name="timepicker_force_input_mode_keyboard">true</bool>
-    <bool name="workmanager_test_configuration">false</bool>
     <color name="abc_decor_view_status_guard">#ff000000</color>
     <color name="abc_decor_view_status_guard_light">#ffffffff</color>
     <color name="abc_search_url_text_normal">#7fa87f</color>
@@ -2465,7 +2460,6 @@
     <item name="compose_prefetch_scheduler" type="id"/>
     <item name="compose_view_saveable_id_tag" type="id"/>
     <item name="consume_window_insets_tag" type="id"/>
-    <item name="dfn_progress_fragment" type="id"/>
     <item name="fragment_container_view_tag" type="id"/>
     <item name="ghost_view" type="id"/>
     <item name="ghost_view_holder" type="id"/>
@@ -2561,11 +2555,9 @@
     <integer name="app_bar_elevation_anim_duration">150</integer>
     <integer name="bottom_sheet_slide_duration">150</integer>
     <integer name="cancel_button_image_alpha">127</integer>
-    <integer name="config_navAnimTime">150</integer>
     <integer name="config_tooltipAnimTime">150</integer>
     <integer name="design_snackbar_text_max_lines">2</integer>
     <integer name="design_tab_indicator_anim_duration_ms">300</integer>
-    <integer name="google_play_services_version">12451000</integer>
     <integer name="hide_password_duration">320</integer>
     <integer name="m3_badge_max_number">999</integer>
     <integer name="m3_btn_anim_delay_ms">100</integer>
@@ -2705,14 +2697,12 @@
     <string name="collection_request_to_withdraw">Collection | Request To Withdraw</string>
     <string name="collections_pay_screen">Collections | Request To Pay</string>
     <string name="collections_withdraw_screen">Collections | Request To Withdraw</string>
-    <string name="common_google_play_services_unknown_issue"><ns2:g id="app_name">%1$s</ns2:g> is having trouble with Google Play services. Please try again.</string>
     <string name="copyrights">Developed by Benjamin Mwalimu</string>
     <string name="currency">Currency:</string>
     <string name="default_error_message">"Invalid input"</string>
     <string name="default_popup_window_title" ns1:ignore="ExtraTranslation">"Pop-Up Window"</string>
     <string name="delivery_note">Delivery note *</string>
     <string name="delivery_note_display">Delivery note</string>
-    <string name="dest_title">destination title</string>
     <string name="disbursement_Refund_screen">Disbursement | Refund</string>
     <string name="disbursement_deposit">Disbursement | Deposit</string>
     <string name="disbursement_deposit_screen">Disbursement | Deposit</string>
@@ -2737,9 +2727,6 @@
     <string name="in_Active">In Active</string>
     <string name="in_progress">In progress</string>
     <string name="indeterminate">Partially checked</string>
-    <string name="installation_cancelled">Installation cancelled.</string>
-    <string name="installation_failed">Installation failed.</string>
-    <string name="installing_module">Installing module:</string>
     <string name="item_view_role_description">Tab</string>
     <string name="locale">Locale:</string>
     <string name="m3_exceed_max_badge_text_suffix" translatable="false"><ns2:g example="Some te" id="part of a long text">%1$s</ns2:g><ns2:g example="…" id="suffix">%2$s</ns2:g></string>
@@ -2944,8 +2931,6 @@
     <string description="Button text to indicate that the widget will ignore the user&apos;s selection [CHAR_LIMIT=16]" name="mtrl_timepicker_cancel">Cancel</string>
     <string description="Button text to indicate that the widget will save the user&apos;s selection [CHAR_LIMIT=16]" name="mtrl_timepicker_confirm">OK</string>
     <string name="name">Name:</string>
-    <string name="nav_app_bar_navigate_up_description">Navigate up</string>
-    <string name="nav_app_bar_open_drawer_description">Open navigation drawer</string>
     <string description="Screen reader announcement for when navigation rail is collapsed [CHAR LIMIT=NONE]" name="nav_rail_collapsed_a11y_label">
     Collapsed
   </string>
@@ -2955,7 +2940,6 @@
     <string name="navigation_menu">"Navigation menu"</string>
     <string name="next">Next</string>
     <string name="not_selected">Not selected</string>
-    <string name="ok">Okay</string>
     <string name="password_toggle_content_description">Show password</string>
     <string name="path_password_eye" translatable="false">M12,4.5C7,4.5 2.73,7.61 1,12c1.73,4.39 6,7.5 11,7.5s9.27,-3.11 11,-7.5c-1.73,-4.39 -6,-7.5 -11,-7.5zM12,17c-2.76,0 -5,-2.24 -5,-5s2.24,-5 5,-5 5,2.24 5,5 -2.24,5 -5,5zM12,9c-1.66,0 -3,1.34 -3,3s1.34,3 3,3 3,-1.34 3,-3 -1.34,-3 -3,-3z</string>
     <string name="path_password_eye_mask_strike_through" translatable="false">M2,4.27 L19.73,22 L22.27,19.46 L4.54,1.73 L4.54,1 L23,1 L23,23 L1,23 L1,4.27 Z</string>
@@ -2971,7 +2955,6 @@
     <string name="payment_note_display">Payment note</string>
     <string name="phone_number">Phone number *</string>
     <string name="previous">Previous</string>
-    <string name="progress">Progress:</string>
     <string name="range_end">"Range end"</string>
     <string name="range_start">"Range start"</string>
     <string name="reason">Reason:</string>
@@ -2986,7 +2969,6 @@
     <string name="request_to_transfer_title">Request to Transfer</string>
     <string name="request_to_withdraw_title">Request to Withdraw</string>
     <string name="request_withdraw_submit_button">Withdraw</string>
-    <string name="retry">Retry</string>
     <string name="search_menu_title">Search</string>
     <string name="searchbar_scrolling_view_behavior" translatable="false">
     com.google.android.material.search.SearchBar$ScrollingViewBehavior
@@ -8742,14 +8724,6 @@
     <item name="windowActionBar">false</item>
     <item name="windowNoTitle">true</item>
   </style>
-    <style name="Theme.PlayCore.Transparent" parent="android:Theme">
-<item name="android:windowIsTranslucent">true</item>
-<item name="android:windowBackground">@android:color/transparent</item>
-<item name="android:windowContentOverlay">@null</item>
-<item name="android:windowNoTitle">true</item>
-<item name="android:windowIsFloating">true</item>
-<item name="android:backgroundDimEnabled">false</item>
-</style>
     <style name="ThemeOverlay.AppCompat" parent="Base.ThemeOverlay.AppCompat"/>
     <style name="ThemeOverlay.AppCompat.ActionBar" parent="Base.ThemeOverlay.AppCompat.ActionBar"/>
     <style name="ThemeOverlay.AppCompat.Dark" parent="Base.ThemeOverlay.AppCompat.Dark"/>
@@ -14652,21 +14626,6 @@
     <declare-styleable name="DrawerLayout">
         
         <attr name="elevation"/>
-    </declare-styleable>
-    <declare-styleable name="DynamicActivityNavigator">
-        <attr name="moduleName"/>
-    </declare-styleable>
-    <declare-styleable name="DynamicFragmentNavigator">
-        <attr name="moduleName"/>
-    </declare-styleable>
-    <declare-styleable name="DynamicGraphNavigator">
-        <attr name="moduleName"/>
-        <attr format="reference" name="progressDestination"/>
-    </declare-styleable>
-    <declare-styleable name="DynamicIncludeGraphNavigator">
-        <attr name="moduleName"/>
-        <attr format="string|reference" name="graphResName"/>
-        <attr format="string|reference" name="graphPackage"/>
     </declare-styleable>
     <declare-styleable name="ExtendedFloatingActionButton">
     

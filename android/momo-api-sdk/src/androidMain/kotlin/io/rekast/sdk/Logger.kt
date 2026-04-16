@@ -17,7 +17,20 @@ package io.rekast.sdk
 
 import timber.log.Timber
 
+/**
+ * Android-specific implementation of the platform-agnostic [Logger].
+ *
+ * Delegates all log output to [timber.log.Timber], which must be planted
+ * (e.g. via `Timber.plant(Timber.DebugTree())`) in the application's
+ * `onCreate` before any SDK calls are made.
+ */
 actual object Logger {
+    /**
+     * Logs a debug message via Timber using the given [tag].
+     *
+     * @param tag Log tag, typically the calling class name.
+     * @param message Human-readable message to log.
+     */
     actual fun d(tag: String, message: String) {
         Timber.tag(tag).d(message)
     }

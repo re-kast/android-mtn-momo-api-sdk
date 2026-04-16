@@ -20,10 +20,11 @@ For code coverage we use [Kover](https://github.com/Kotlin/kotlinx-kover), JetBr
 Generate an HTML report for interactive browsing or an XML report for CI consumption:
 
 ```bash
-# Per-module (debug variant)
-./gradlew :momo-api-sdk:koverHtmlReportDebug
-./gradlew :momo-api-sdk:koverXmlReportDebug
+# momo-api-sdk is a Kotlin Multiplatform module — reports use the Android variant name.
+./gradlew :momo-api-sdk:koverHtmlReportAndroid
+./gradlew :momo-api-sdk:koverXmlReportAndroid
 
+# sample is a plain Android library — reports use the debug build variant.
 ./gradlew :sample:koverHtmlReportDebug
 ./gradlew :sample:koverXmlReportDebug
 ```
@@ -32,7 +33,7 @@ Reports are written to:
 
 | Module | HTML | XML |
 |---|---|---|
-| `momo-api-sdk` | `android/momo-api-sdk/build/reports/kover/htmlDebug/index.html` | `android/momo-api-sdk/build/reports/kover/reportDebug.xml` |
+| `momo-api-sdk` | `android/momo-api-sdk/build/reports/kover/htmlAndroid/index.html` | `android/momo-api-sdk/build/reports/kover/reportAndroid.xml` |
 | `sample` | `android/sample/build/reports/kover/htmlDebug/index.html` | `android/sample/build/reports/kover/reportDebug.xml` |
 
 ### Kover configuration

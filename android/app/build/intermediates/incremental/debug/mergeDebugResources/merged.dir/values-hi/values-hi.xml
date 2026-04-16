@@ -55,7 +55,6 @@
     <string name="clear_text_end_icon_content_description">टेक्स्ट मिटाएं</string>
     <string msgid="406453423630273620" name="close_drawer">"नेविगेशन मेन्यू बंद करें"</string>
     <string msgid="7573152094250666567" name="close_sheet">"शीट बंद करें"</string>
-    <string name="common_google_play_services_unknown_issue">%1$s को Google Play सेवाओं के साथ समस्या आ रही है. कृपया फिर से कोशिश करें.</string>
     <string msgid="8038256446254964252" name="default_error_message">"अमान्य इनपुट"</string>
     <string msgid="6312721426453364202" name="default_popup_window_title">"पॉप-अप विंडो"</string>
     <string msgid="1890207353314751437" name="dropdown_menu">"ड्रॉपडाउन मेन्यू"</string>
@@ -65,9 +64,6 @@
     <string name="icon_content_description">डायलॉग का आइकॉन</string>
     <string msgid="6827826412747255547" name="in_progress">"जारी है"</string>
     <string msgid="7933458017204019916" name="indeterminate">"कुछ विकल्पों को चुना गया"</string>
-    <string msgid="475402237100444685" name="installation_cancelled">"इंस्टॉल करना रद्द किया गया"</string>
-    <string msgid="863287960437940689" name="installation_failed">"इंस्टॉल नहीं हो सका"</string>
-    <string msgid="5968445461040787716" name="installing_module">"इंस्टॉल किया जा रहा मॉड्यूल:"</string>
     <string name="item_view_role_description">टैब</string>
     <string name="m3_loading_indicator_content_description">लोड हो रहा है</string>
     <string name="m3_overflow_linear_layout_button_content_description">ओवरफ़्लो मेन्यू</string>
@@ -215,16 +211,11 @@
     <string name="mtrl_picker_toggle_to_year_selection">साल के व्यू पर स्विच करें</string>
     <string name="mtrl_timepicker_cancel">रद्द करें</string>
     <string name="mtrl_timepicker_confirm">ठीक है</string>
-    <string msgid="6301633601645100427" name="nav_app_bar_navigate_up_description">"वापस जाएं"</string>
-    <string msgid="7456070600745802113" name="nav_app_bar_open_drawer_description">"नेविगेशन पैनल खोलें"</string>
     <string msgid="542007171693138492" name="navigation_menu">"नेविगेशन मेन्यू"</string>
     <string msgid="6610465462668679431" name="not_selected">"नहीं चुना गया"</string>
-    <string msgid="4702104660890557116" name="ok">"ठीक है"</string>
     <string name="password_toggle_content_description">पासवर्ड दिखाएं</string>
-    <string msgid="8366783942222789124" name="progress">"प्रगति:"</string>
     <string msgid="5941395253238309765" name="range_end">"रेंज की सीमा"</string>
     <string msgid="7097486360902471446" name="range_start">"रेंज की शुरुआत"</string>
-    <string msgid="1065327189183624288" name="retry">"फिर कोशिश करें"</string>
     <string msgid="6264217191555673260" name="search_menu_title">"खोजें"</string>
     <string name="searchview_clear_text_content_description">टेक्स्ट मिटाएं</string>
     <string name="searchview_navigation_content_description">वापस जाएं</string>
