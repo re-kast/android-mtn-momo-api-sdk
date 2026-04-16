@@ -8,11 +8,9 @@ module:momo-api-sdk
 io.rekast.sdk
 io.rekast.sdk.model
 io.rekast.sdk.model.authentication
-io.rekast.sdk.model.authentication.credentials
 io.rekast.sdk.network.interceptor
 io.rekast.sdk.network.interceptor.auth
-io.rekast.sdk.network.interfaces.auth
-io.rekast.sdk.network.interfaces.implementation.auth
+io.rekast.sdk.network.interfaces
 io.rekast.sdk.network.service
 io.rekast.sdk.network.service.products
 io.rekast.sdk.repository
