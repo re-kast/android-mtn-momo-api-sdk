@@ -32,10 +32,7 @@ class ModelsDeserializationTest {
 
     private val json = Json { ignoreUnknownKeys = true }
 
-    // -----------------------------------------------------------------------------------------
-    // AccountBalance
-    // -----------------------------------------------------------------------------------------
-
+    /** Verifies that [AccountBalance.availableBalance] and [AccountBalance.currency] are mapped correctly. */
     @Test
     fun `AccountBalance fields are mapped correctly from JSON`() {
         val raw = """
@@ -50,10 +47,7 @@ class ModelsDeserializationTest {
         assertEquals("EUR", result.currency)
     }
 
-    // -----------------------------------------------------------------------------------------
-    // AccountHolder
-    // -----------------------------------------------------------------------------------------
-
+    /** Verifies that [AccountHolder.partyIdType] and [AccountHolder.partyId] are mapped correctly. */
     @Test
     fun `AccountHolder fields are mapped correctly from JSON`() {
         val raw = """
@@ -68,10 +62,7 @@ class ModelsDeserializationTest {
         assertEquals("256700000000", result.partyId)
     }
 
-    // -----------------------------------------------------------------------------------------
-    // AccountHolderStatus
-    // -----------------------------------------------------------------------------------------
-
+    /** Verifies that [AccountHolderStatus.result] is `true` when the JSON contains `true`. */
     @Test
     fun `AccountHolderStatus result is true when JSON contains true`() {
         val raw = """{ "result": true }"""
@@ -80,6 +71,7 @@ class ModelsDeserializationTest {
         assertEquals(true, result.result)
     }
 
+    /** Verifies that [AccountHolderStatus.result] is `false` when the JSON contains `false`. */
     @Test
     fun `AccountHolderStatus result is false when JSON contains false`() {
         val raw = """{ "result": false }"""
@@ -88,10 +80,7 @@ class ModelsDeserializationTest {
         assertEquals(false, result.result)
     }
 
-    // -----------------------------------------------------------------------------------------
-    // ErrorResponse
-    // -----------------------------------------------------------------------------------------
-
+    /** Verifies that all [ErrorResponse] fields are mapped correctly from JSON. */
     @Test
     fun `ErrorResponse fields are mapped correctly from JSON`() {
         val raw = """
@@ -108,10 +97,7 @@ class ModelsDeserializationTest {
         assertEquals("404", result.error)
     }
 
-    // -----------------------------------------------------------------------------------------
-    // MomoNotification
-    // -----------------------------------------------------------------------------------------
-
+    /** Verifies that [MomoNotification.notificationMessage] is mapped correctly from JSON. */
     @Test
     fun `MomoNotification fields are mapped correctly from JSON`() {
         val raw = """{ "notificationMessage": "Payment received successfully." }"""
@@ -120,10 +106,7 @@ class ModelsDeserializationTest {
         assertEquals("Payment received successfully.", result.notificationMessage)
     }
 
-    // -----------------------------------------------------------------------------------------
-    // ProviderCallBackHost
-    // -----------------------------------------------------------------------------------------
-
+    /** Verifies that [ProviderCallBackHost.providerCallbackHost] is mapped correctly from JSON. */
     @Test
     fun `ProviderCallBackHost fields are mapped correctly from JSON`() {
         val raw = """{ "providerCallbackHost": "https://example.com/callback" }"""
@@ -132,6 +115,10 @@ class ModelsDeserializationTest {
         assertEquals("https://example.com/callback", result.providerCallbackHost)
     }
 
+    /**
+     * Verifies that [ProviderCallBackHost.providerCallbackHost] defaults to `null` when the key
+     * is absent, confirming the field is genuinely nullable.
+     */
     @Test
     fun `ProviderCallBackHost providerCallbackHost defaults to null when absent`() {
         val raw = """{}"""
@@ -140,10 +127,7 @@ class ModelsDeserializationTest {
         assertNull(result.providerCallbackHost)
     }
 
-    // -----------------------------------------------------------------------------------------
-    // MomoTransaction
-    // -----------------------------------------------------------------------------------------
-
+    /** Verifies that all required [MomoTransaction] fields and the nested [AccountHolder] payer are mapped. */
     @Test
     fun `MomoTransaction required fields are mapped correctly from JSON`() {
         val raw = """
@@ -171,6 +155,10 @@ class ModelsDeserializationTest {
         assertEquals("256700000001", result.payer?.partyId)
     }
 
+    /**
+     * Verifies that optional [MomoTransaction] fields default to empty strings or null when
+     * absent from the payload, matching the field default values declared on the model.
+     */
     @Test
     fun `MomoTransaction optional fields default correctly when absent`() {
         val raw = """
@@ -192,6 +180,10 @@ class ModelsDeserializationTest {
         assertEquals("", result.referenceIdToRefund)
     }
 
+    /**
+     * Verifies that both [MomoTransaction.payee] and [MomoTransaction.payer] are mapped correctly
+     * when both are present, along with all other non-nullable fields.
+     */
     @Test
     fun `MomoTransaction payee and payer are mapped when both present`() {
         val raw = """
@@ -224,10 +216,7 @@ class ModelsDeserializationTest {
         assertEquals("221700000003", result.payer?.partyId)
     }
 
-    // -----------------------------------------------------------------------------------------
-    // PaymentResult
-    // -----------------------------------------------------------------------------------------
-
+    /** Verifies that all [PaymentResult] fields are mapped correctly from the MTN MoMo response keys. */
     @Test
     fun `PaymentResult fields are mapped correctly from JSON`() {
         val raw = """

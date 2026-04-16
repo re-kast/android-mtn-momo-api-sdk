@@ -18,6 +18,7 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.dagger.hilt.android)
     alias(libs.plugins.secrets)
+    alias(libs.plugins.kover)
 }
 
 secrets {
@@ -78,7 +79,30 @@ tasks.matching { it.name.startsWith("dokkaGenerate") }.configureEach {
     dependsOn("kspDebugKotlin", "kspReleaseKotlin")
 }
 
+kover {
+    reports {
+        filters {
+            excludes {
+                androidGeneratedClasses()
+                annotatedBy("*Generated*")
+                classes(
+                    "**/Hilt_*",
+                    "**/*_HiltModules*",
+                    "**/*_Provide*",
+                    "**/*ComponentTreeDeps*",
+                    "**/dagger/**",
+                )
+            }
+        }
+    }
+}
+
 dependencies {
+    // Unit-test dependencies.
+    testImplementation(libs.junit)
+    testImplementation(libs.mockk)
+    testImplementation(libs.squareup.okhttp.mockwebserver)
+
     // The sample library provides all UI, ViewModels, and activities.
     implementation(project(":sample"))
 

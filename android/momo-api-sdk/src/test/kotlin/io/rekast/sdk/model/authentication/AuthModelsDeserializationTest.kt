@@ -33,10 +33,7 @@ class AuthModelsDeserializationTest {
 
     private val json = Json { ignoreUnknownKeys = true }
 
-    // -----------------------------------------------------------------------------------------
-    // AccessToken
-    // -----------------------------------------------------------------------------------------
-
+    /** Verifies that all [AccessToken] fields are mapped correctly from their JSON equivalents. */
     @Test
     fun `AccessToken fields are mapped correctly from JSON`() {
         val raw = """
@@ -53,6 +50,10 @@ class AuthModelsDeserializationTest {
         assertEquals(3600, result.expiresIn)
     }
 
+    /**
+     * Verifies that [AccessToken.expiresIn] is deserialized as [Int], not [String],
+     * confirming the `@SerialName("expires_in")` annotation targets the numeric JSON field.
+     */
     @Test
     fun `AccessToken expires_in is deserialized as Int`() {
         val raw = """
@@ -67,10 +68,7 @@ class AuthModelsDeserializationTest {
         assertEquals(7200::class, result.expiresIn::class)
     }
 
-    // -----------------------------------------------------------------------------------------
-    // Oauth2AccessToken
-    // -----------------------------------------------------------------------------------------
-
+    /** Verifies that all [Oauth2AccessToken] fields are mapped correctly from their JSON equivalents. */
     @Test
     fun `Oauth2AccessToken fields are mapped correctly from JSON`() {
         val raw = """
@@ -93,6 +91,10 @@ class AuthModelsDeserializationTest {
         assertEquals(86400, result.refreshTokenExpiredIn)
     }
 
+    /**
+     * Verifies that [Oauth2AccessToken.expiresIn] is deserialized as [Int],
+     * confirming numeric mapping of `expires_in`.
+     */
     @Test
     fun `Oauth2AccessToken expires_in is deserialized as Int`() {
         val raw = """
@@ -110,6 +112,10 @@ class AuthModelsDeserializationTest {
         assertEquals(1800::class, result.expiresIn::class)
     }
 
+    /**
+     * Verifies that [Oauth2AccessToken.refreshTokenExpiredIn] is deserialized as [Int],
+     * confirming numeric mapping of `refresh_token_expired_in`.
+     */
     @Test
     fun `Oauth2AccessToken refresh_token_expired_in is deserialized as Int`() {
         val raw = """
@@ -127,10 +133,7 @@ class AuthModelsDeserializationTest {
         assertEquals(43200::class, result.refreshTokenExpiredIn::class)
     }
 
-    // -----------------------------------------------------------------------------------------
-    // ApiKey
-    // -----------------------------------------------------------------------------------------
-
+    /** Verifies that [ApiKey.apiKey] is mapped correctly from the `apiKey` JSON field. */
     @Test
     fun `ApiKey apiKey field is mapped correctly from JSON`() {
         val raw = """{ "apiKey": "test-api-key-12345" }"""
@@ -139,6 +142,7 @@ class AuthModelsDeserializationTest {
         assertEquals("test-api-key-12345", result.apiKey)
     }
 
+    /** Verifies that [ApiKey.apiKey] defaults to `null` when the `apiKey` key is absent from the payload. */
     @Test
     fun `ApiKey apiKey defaults to null when absent from JSON`() {
         val raw = """{}"""
@@ -147,10 +151,7 @@ class AuthModelsDeserializationTest {
         assertNull(result.apiKey)
     }
 
-    // -----------------------------------------------------------------------------------------
-    // ApiUser
-    // -----------------------------------------------------------------------------------------
-
+    /** Verifies that both [ApiUser] fields are mapped correctly when both are present in the JSON. */
     @Test
     fun `ApiUser fields are mapped correctly from JSON`() {
         val raw = """
@@ -165,6 +166,10 @@ class AuthModelsDeserializationTest {
         assertEquals("sandbox", result.targetEnvironment)
     }
 
+    /**
+     * Verifies that [ApiUser.providerCallbackHost] defaults to `null` when absent,
+     * confirming the field is independently nullable.
+     */
     @Test
     fun `ApiUser providerCallbackHost defaults to null when absent from JSON`() {
         val raw = """{ "targetEnvironment": "production" }"""
@@ -174,6 +179,10 @@ class AuthModelsDeserializationTest {
         assertEquals("production", result.targetEnvironment)
     }
 
+    /**
+     * Verifies that [ApiUser.targetEnvironment] defaults to `null` when absent,
+     * confirming the field is independently nullable.
+     */
     @Test
     fun `ApiUser targetEnvironment defaults to null when absent from JSON`() {
         val raw = """{ "providerCallbackHost": "https://example.com/callback" }"""
@@ -183,6 +192,10 @@ class AuthModelsDeserializationTest {
         assertNull(result.targetEnvironment)
     }
 
+    /**
+     * Verifies that all nullable [ApiUser] fields default to `null` when the JSON payload
+     * is empty, confirming there are no accidental non-null defaults.
+     */
     @Test
     fun `ApiUser all nullable fields default to null when JSON is empty`() {
         val raw = """{}"""
