@@ -10,7 +10,7 @@ sidebar_label: Developer Setup
 
 Before you begin setting up your development environment, ensure that you have the following prerequisites installed:
 
-- **Android Studio Arctic Fox** or later: This is the official Integrated Development Environment (IDE) for Android development, providing all the necessary tools to build, test, and debug Android applications. Make sure to keep it updated to leverage the latest features and improvements.
+- **Android Studio Ladybug (2024.2.1) or later**: This is the official Integrated Development Environment (IDE) for Android development, providing all the necessary tools to build, test, and debug Android applications. Make sure to keep it updated to leverage the latest features and improvements.
 
 - **OpenJDK 17**: Ensure that you have OpenJDK 17 installed and configured in Android Studio. This version is required for compiling and running the project. You can download OpenJDK from the [Adoptium](https://adoptium.net/) or [OpenJDK](https://openjdk.java.net/install/) websites.
 
@@ -50,11 +50,12 @@ Follow these steps to set up the project for development:
    - Provide the required properties for the SDK and Sample App to run by updating the `local.properties` file. Here’s an example configuration:
 
    :::info
-   **Important Note**: Ensure that all entries in the `local.properties` file are filled out correctly. The application will fail to compile if any required entries are missing. Double-check your configuration to avoid compilation errors. For more information on how to find the different keys, read more [here](./engineering/getting-started/developer-setup).
+   **Important Note**: Ensure that all entries in the `local.properties` file are filled out correctly. The application will fail to compile if any required entries are missing. Double-check your configuration to avoid compilation errors. You can find the subscription keys in the [MTN MOMO Developer portal](https://momodeveloper.mtn.com/).
    ```properties
    # Local properties for the MTN MOMO API SDK
    
    MOMO_BASE_URL="" ## Use https://sandbox.momodeveloper.mtn.com for sandbox and https://momodeveloper.mtn.com for production
+   MOMO_PROVIDER_CALBACK_HOST="" ## The provider callback host, use 'localhost' for sandbox
    MOMO_COLLECTION_PRIMARY_KEY="" ## The collection endpoint/product subscription primary key
    MOMO_COLLECTION_SECONDARY_KEY="" ## The collection endpoint/product subscription secondary key
    MOMO_REMITTANCE_PRIMARY_KEY="" ## The remittance endpoint/product subscription primary key
@@ -85,11 +86,9 @@ By following these steps, you will have a fully set up development environment r
 
 The MTN MOMO SDK is based on the **MVVM (Model-View-ViewModel) Android application architecture**. This architecture promotes a clear separation of concerns, making the codebase more manageable and testable. It also follows the recommended [Repository Pattern](https://developer.android.com/jetpack/guide) on its data layer, which helps in abstracting data sources and providing a clean API for data access.
 
-At the core is the Android FHIR SDK, which provides various APIs, including Data Access API, Search API, Sync API, Smart Guidelines API, and Data Capture API.
-
 ## Project Structure
 
-The project currently consists of an application module (`sample`) and two Android library modules (`momo-api-sdk`). This modular structure allows for better organization of code and easier maintenance.
+The project currently consists of an application module (`sample`) and one Android library module (`momo-api-sdk`). This modular structure allows for better organization of code and easier maintenance.
 
 ## References
 

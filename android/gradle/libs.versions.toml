@@ -1,71 +1,71 @@
 [versions]
-androidXJUnit = "1.2.1"
-androidXJUnitTest = "1.1.5"
-androidXTestCore = "1.6.1"
-androidXTestMonitor = "1.6.1"
-appCompat = "1.7.0"
-application = "8.7.2"
+androidXJUnit = "1.3.0"
+androidXJUnitTest = "1.3.0"
+androidXTestCore = "1.7.0"
+androidXTestMonitor = "1.8.0"
+appCompat = "1.7.1"
+application = "9.1.1"
 arch = "2.2.0"
-chucker = "4.0.0"
-commonsLang3 = "3.14.0"
-composeActivity = "1.9.3"
-composeBom = "2024.10.01"
-composeMaterial = "1.7.5"
-composeMaterial3 = "1.3.1"
-composeUi = "1.7.5"
-composeUiTest = "1.7.5"
-constraintLayout = "2.2.0"
-coreKtx = "1.15.0"
-customView = "1.2.0-alpha02"
-daggerHilt = "2.51.1" #don't change
-dokka = "1.9.20"
-espresso = "3.6.1"
-foundation = "1.7.5"
-firebase = "33.5.1"
-flowLayout = "0.31.1"
-gradleVersionsPlugin = "0.47.0"
-hiyaJacoco = "0.3"
-jacoco = "0.8.10"
+chucker = "4.3.1"
+commonsLang3 = "3.20.0"
+composeActivity = "1.13.0"
+composeBom = "2026.03.00"
+composeMaterial = "1.10.5"
+composeMaterial3 = "1.4.0"
+composeUi = "1.10.5"
+composeUiTest = "1.10.5"
+constraintLayout = "2.2.1"
+coreKtx = "1.18.0"
+customView = "1.2.0"
+daggerHilt = "2.59.2"
+androidxHilt = "1.3.0"
+dokka = "2.1.0"
+espresso = "3.7.0"
+foundation = "1.10.5"
+firebase = "34.11.0"
+flowLayout = "0.36.0"
+gradleVersionsPlugin = "0.53.0"
+kover = "0.9.8"
 junit = "4.13.2"
-kakao = "3.4.3"
-klint = "0.50.0"
+kakao = "3.7.0"
+klint = "1.8.0"
 kotlinCompiler = "1.5.15"
-kotlinComposeVersion = "2.0.21"
-kotlinHilt = "1.2.0"
-kotlinKapt = "1.9.25" #don't change
-kotlinVersion = "1.9.25" #don't change
-kotlinxCoroutines = "1.9.0"
+kotlinComposeVersion = "2.3.20"
+kotlinHilt = "1.3.0"
+ksp = "2.3.6"
+kotlinVersion = "2.3.20"
+kotlinxCoroutines = "1.10.2"
 kotlinxMetadataJvm = "0.9.0"
-kotlinxSerializationJson = "1.7.3"
-leakCanary = "2.12"
-library = "8.1.4"
-lifecycle = "2.8.7"
+kotlinxSerializationJson = "1.10.0"
+leakCanary = "2.14"
+library = "9.1.1"
+lifecycle = "2.10.0"
 liveDataTesting = "1.3.0"
-loggingInterceptor = "4.12.0"
-material = "1.12.0"
-materialIcon = "1.5.1"
-mockK = "1.13.8"
-mockWebServer = "4.11.0"
-mockito = "5.12.0"
+loggingInterceptor = "5.3.2"
+material = "1.14.0-alpha10"
+materialIcon = "1.10.5"
+mockK = "1.14.9"
+mockWebServer ="5.3.2"
+mockito = "5.23.0"
 mockito-inline = "5.2.0"
-mockito-kotlin = "5.4.0"
-navigation = "2.8.3"
-okhttp = "4.12.0"
-poolingContainer = "1.0.0"
-retrofit = "2.11.0"
-roboelectric = "4.13"
-rules = "1.6.1"
-runner = "1.6.2"
-rxJava = "3.1.6"
+mockito-kotlin = "6.3.0"
+navigation = "2.9.7"
+okhttp = "5.3.2"
+poolingContainer = "1.1.0"
+retrofit = "3.0.0"
+roboelectric = "4.16.1"
+rules = "1.7.0"
+runner = "1.7.0"
+rxJava = "3.1.11"
 secrets = "2.0.1"
-spotless = "6.25.0"
+spotless = "8.4.0"
 timber = "5.0.1"
-truth = "1.1.5"
-vanniktechMavenPublish = "0.30.0"
-workRuntimeKtx = "2.10.0"
-coroutines = "1.9.0"
+truth = "1.4.5"
+
+workRuntimeKtx = "2.11.1"
+coroutines = "1.10.2"
 retrofit-coroutines = "0.9.2"
-monitor = "1.7.2"
+monitor = "1.8.0"
 
 [libraries]
 agoda-kakao = { group = "io.github.kakaocup", name = "kakao", version.ref = "kakao" }
@@ -76,6 +76,7 @@ androidx-arch-core-testing = { group = "androidx.arch.core", name = "core-testin
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
 androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "foundation" }
 androidx-compose-material = { group = "androidx.compose.material", name = "material", version.ref = "composeMaterial" }
+compose-material-icons-core = { group = "androidx.compose.material", name = "material-icons-core" }
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "composeMaterial3" }
 androidx-compose-material3-window = { group = "androidx.compose.material3", name = "material3-window-size-class", version.ref = "composeMaterial3" }
 androidx-compose-runtime-livedata = { group = "androidx.compose.runtime", name = "runtime-livedata", version.ref = "composeUi" }
@@ -91,7 +92,7 @@ androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = 
 androidx-customview = { group = "androidx.customview", name = "customview", version.ref = "customView" }
 androidx-customview-poolingcontainer = { group = "androidx.customview", name = "customview-poolingcontainer", version.ref = "poolingContainer" }
 androidx-hilt-compiler = { group = "androidx.hilt", name = "hilt-compiler", version.ref = "kotlinHilt" }
-androidx-hilt-work = { group = "androidx.hilt", name = "hilt-work", version.ref = "kotlinHilt" }
+androidx-hilt-work = { group = "androidx.hilt", name = "hilt-work", version.ref = "androidxHilt" } # Changed to androidxHilt
 androidx-lifecycle-lifecycle-compiler = { group = "androidx.lifecycle", name = "lifecycle-compiler", version.ref = "lifecycle" }
 androidx-lifecycle-livedata-ktx = { group = "androidx.lifecycle", name = "lifecycle-livedata-ktx", version.ref = "lifecycle" }
 androidx-lifecycle-process = { group = "androidx.lifecycle", name = "lifecycle-process", version.ref = "lifecycle" }
@@ -118,7 +119,6 @@ chuckerteam-chucker = { group = "com.github.chuckerteam.chucker", name = "librar
 chuckerteam-chucker-noop = { group = "com.github.chuckerteam.chucker", name = "library-no-op", version.ref = "chucker" }
 compose-compiler = { group = "androidx.compose.compiler", name ="compiler", version.ref = "kotlinCompiler" }
 google-accompanist-flowlayout = { group = "com.google.accompanist", name = "accompanist-flowlayout", version.ref = "flowLayout" }
-dokka-base = { group = "org.jetbrains.dokka", name = "dokka-base", version.ref = "dokka" }
 google-android-material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 google-dagger-hilt = { group = "com.google.dagger", name = "hilt-android", version.ref = "daggerHilt" }
 google-dagger-hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "daggerHilt" }
@@ -137,9 +137,9 @@ kotlinx-metadata-jvm = { group = "org.jetbrains.kotlinx", name = "kotlinx-metada
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 mockk = { group = "io.mockk", name = "mockk", version.ref = "mockK" }
 mockk-android = { group = "io.mockk", name = "mockk-android", version.ref = "mockK" }
-mockk-core = { group = "org.mockito", name = "mockito-core", version.ref = "mockito" }
-mockk-inline = { group = "org.mockito", name = "mockito-inline", version.ref = "mockito-inline" }
-mockk-kotlin = { group = "org.mockito.kotlin", name = "mockito-kotlin", version.ref = "mockito-kotlin" }
+mockito-core = { group = "org.mockito", name = "mockito-core", version.ref = "mockito" }
+mockito-inline = { group = "org.mockito", name = "mockito-inline", version.ref = "mockito-inline" }
+mockito-kotlin = { group = "org.mockito.kotlin", name = "mockito-kotlin", version.ref = "mockito-kotlin" }
 navigation-safe-args-gradle-plugin = { group = "androidx.navigation", name = "navigation-safe-args-gradle-plugin", version.ref = "navigation" }
 robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "roboelectric" }
 squareup-leakcanary = { group = "com.squareup.leakcanary", name = "leakcanary-android", version.ref = "leakCanary" }
@@ -159,11 +159,11 @@ android-library = { id = "com.android.library", version.ref = "library" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlinComposeVersion" }
 dagger-hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "daggerHilt" }
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlinVersion" }
-kotlin-kapt = { id = "org.jetbrains.kotlin.kapt" , version.ref = "kotlinKapt"}
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlinVersion" }
 navigation-safeargs = { id = "androidx.navigation.safeargs.kotlin", version.ref = "navigation" }
 secrets = { id = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin", version.ref = "secrets" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
-vanniktech-maven-publish = { id = "com.vanniktech.maven.publish", version.ref = "vanniktechMavenPublish" }
+kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
+
 versions = { id = "com.github.ben-manes.versions", version.ref = "gradleVersionsPlugin" }

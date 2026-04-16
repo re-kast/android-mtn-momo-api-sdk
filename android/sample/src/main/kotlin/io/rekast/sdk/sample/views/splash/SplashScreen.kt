@@ -1,0 +1,71 @@
+/*
+ * Copyright 2023-2024, Benjamin Mwalimu
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package io.rekast.sdk.sample.views.splash
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import io.rekast.sdk.sample.R
+import io.rekast.sdk.sample.utils.annotation.PreviewWithBackgroundExcludeGenerated
+import kotlinx.coroutines.delay
+
+/**
+ * Renders the splash screen showing the application name centered on a full-screen background.
+ *
+ * @param modifier Modifier applied to the root [Box].
+ */
+@Composable
+fun SplashScreen(modifier: Modifier = Modifier) = Box(
+    modifier = modifier.fillMaxSize()
+) {
+    LaunchedEffect(Unit) {
+        delay(300)
+    }
+
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(
+            text = stringResource(R.string.app_name),
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center,
+            fontSize = with(LocalDensity.current) { dimensionResource(id = R.dimen.font_size_xlarge).toSp() },
+            modifier = Modifier
+                .padding(all = dimensionResource(id = R.dimen.spacing_large))
+                .align(Alignment.CenterHorizontally)
+        )
+    }
+}
+
+@PreviewWithBackgroundExcludeGenerated
+@Composable
+fun SplashScreenPreview() {
+    SplashScreen()
+}

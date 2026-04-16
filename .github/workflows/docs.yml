@@ -1,78 +1,48 @@
-name: Docs
+name: Publish Project Docs
 
 on:
   push:
     branches: [ develop ]
-env:
-  MOMO_BASE_URL: ${{ secrets.MOMO_BASE_URL }}
-  MOMO_COLLECTION_PRIMARY_KEY: ${{ secrets.MOMO_COLLECTION_PRIMARY_KEY }}
-  MOMO_COLLECTION_SECONDARY_KEY: ${{ secrets.MOMO_COLLECTION_SECONDARY_KEY }}
-  MOMO_REMITTANCE_PRIMARY_KEY: ${{ secrets.MOMO_REMITTANCE_PRIMARY_KEY }}
-  MOMO_REMITTANCE_SECONDARY_KEY: ${{ secrets.MOMO_REMITTANCE_SECONDARY_KEY }}
-  MOMO_DISBURSEMENTS_PRIMARY_KEY: ${{ secrets.MOMO_DISBURSEMENTS_PRIMARY_KEY }}
-  MOMO_DISBURSEMENTS_SECONDARY_KEY: ${{ secrets.MOMO_DISBURSEMENTS_SECONDARY_KEY }}
-  MOMO_API_USER_ID: ${{ secrets.MOMO_API_USER_ID }}
-  MOMO_ENVIRONMENT: ${{ secrets.MOMO_ENVIRONMENT }}
-  MOMO_API_VERSION_V1: ${{ secrets.MOMO_API_VERSION_V1 }}
-  MOMO_API_VERSION_V2: ${{ secrets.MOMO_API_VERSION_V2 }}
 
 jobs:
-  build-and-deploy-docusaurus:
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2.3.1
-      - uses: actions/setup-node@v3
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
         with:
           node-version: 18
           cache: yarn
 
-      - name: Install dependencies
-        run: yarn install
-
-      - name: Build website
-        run: yarn build
-      - name: copy docs into build working-directory
-        run: |
-          cp -r docs ./build
-          cp -r CNAME ./build
-      - name: Deploy to gh-pages
-        if: ${{ github.event_name == 'push' }}
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_branch: gh-pages
-          publish_dir: ./build
-          user_name: github-actions[bot]
-          user_email: 41898282+github-actions[bot]@users.noreply.github.com
-
-  build-and-deploy-dokka:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout 🛎️
-        uses: actions/checkout@v2.3.1
-
       - name: Set up JDK 17
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v4
         with:
-          java-version: 17
+          java-version: '17'
+          distribution: 'temurin'
+          cache: gradle
 
-      - name: Add empty local.properties
-        run: |
-          touch local.properties
-          echo "MOMO_BASE_URL=${MOMO_BASE_URL}" >> local.properties
-          echo "MOMO_COLLECTION_PRIMARY_KEY=${MOMO_COLLECTION_PRIMARY_KEY}" >> local.properties
-          echo "MOMO_COLLECTION_SECONDARY_KEY=${MOMO_COLLECTION_SECONDARY_KEY}" >> local.properties
-          echo "MOMO_REMITTANCE_PRIMARY_KEY=${MOMO_REMITTANCE_PRIMARY_KEY}" >> local.properties
-          echo "MOMO_REMITTANCE_SECONDARY_KEY=${MOMO_REMITTANCE_SECONDARY_KEY}" >> local.properties
-          echo "MOMO_DISBURSEMENTS_PRIMARY_KEY=${MOMO_DISBURSEMENTS_PRIMARY_KEY}" >> local.properties
-          echo "MOMO_DISBURSEMENTS_SECONDARY_KEY=${MOMO_DISBURSEMENTS_SECONDARY_KEY}" >> local.properties
-          echo "MOMO_API_USER_ID=${MOMO_API_USER_ID}" >> local.properties
-          echo "MOMO_ENVIRONMENT=${MOMO_ENVIRONMENT}" >> local.properties
-          echo "MOMO_API_VERSION_V1=${MOMO_API_VERSION_V1}" >> local.properties
-          echo "MOMO_API_VERSION_V2=${MOMO_API_VERSION_V2}" >> local.properties
+      - name: Create local.properties
         working-directory: android
+        run: |
+          cat <<'EOF' > local.properties
+          MOMO_BASE_URL="https://sandbox.momodeveloper.mtn.com/"
+          MOMO_PROVIDER_CALBACK_HOST="localhost"
+          MOMO_COLLECTION_PRIMARY_KEY="placeholder"
+          MOMO_COLLECTION_SECONDARY_KEY="placeholder"
+          MOMO_REMITTANCE_PRIMARY_KEY="placeholder"
+          MOMO_REMITTANCE_SECONDARY_KEY="placeholder"
+          MOMO_DISBURSEMENTS_PRIMARY_KEY="placeholder"
+          MOMO_DISBURSEMENTS_SECONDARY_KEY="placeholder"
+          MOMO_API_USER_ID="placeholder"
+          MOMO_ENVIRONMENT="sandbox"
+          MOMO_API_VERSION_V1="v1_0"
+          MOMO_API_VERSION_V2="v2_0"
+          EOF
 
-      - name: Add empty keystore.properties
+      - name: Create keystore.properties
         run: touch keystore.properties
         working-directory: android
 
@@ -80,15 +50,28 @@ jobs:
         run: chmod +x gradlew
         working-directory: android
 
-      - name: Document modules with dokka
-        run: ./gradlew dokkaHtmlMultiModule
+      - name: Generate Dokka docs
+        run: ./gradlew dokkaGenerate
         working-directory: android
 
-      - name: Deploy 🚀
+      - name: Install Docusaurus dependencies
+        run: yarn install
+
+      - name: Build Docusaurus site
+        run: yarn build
+
+      - name: Copy Dokka output into Docusaurus build
+        run: |
+          mkdir -p ./build/dokka
+          cp -r android/build/dokka/html/. ./build/dokka/
+          cp -r CNAME ./build
+
+      - name: Deploy to gh-pages
         if: ${{ github.event_name == 'push' }}
-        uses: JamesIves/github-pages-deploy-action@v4.4.1
+        uses: peaceiris/actions-gh-pages@v4
         with:
-          branch: gh-pages # The branch the action should deploy to.
-          folder: android/build/dokka # The folder the action should deploy.
-          target-folder: dokka
-          ssh-key: ${{ secrets.DEPLOY_KEY }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: ./build
+          user_name: github-actions[bot]
+          user_email: 41898282+github-actions[bot]@users.noreply.github.com

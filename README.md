@@ -1,6 +1,6 @@
 # MTN MOMO API SDK for Android
 
-[![Create staging repository](https://github.com/dubdabasoduba/android-mtn-momo-api/actions/workflows/main.yml/badge.svg?branch=develop)](https://github.com/dubdabasoduba/android-mtn-momo-api/actions/workflows/main.yml) [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/B0B315PHS1)
+[![Publish to Maven Central](https://github.com/re-kast/android-mtn-momo-api-sdk/actions/workflows/publish.yml/badge.svg)](https://github.com/re-kast/android-mtn-momo-api-sdk/actions/workflows/publish.yml) [![CI](https://github.com/re-kast/android-mtn-momo-api-sdk/actions/workflows/ci.yml/badge.svg)](https://github.com/re-kast/android-mtn-momo-api-sdk/actions/workflows/ci.yml) [![codecov](https://codecov.io/gh/re-kast/android-mtn-momo-api-sdk/graph/badge.svg)](https://codecov.io/gh/re-kast/android-mtn-momo-api-sdk) [![code style: spotless](https://img.shields.io/badge/code%20style-spotless-ff69b4.svg)](https://github.com/diffplug/spotless) [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/B0B315PHS1)
 
 ## Overview
 
@@ -66,6 +66,7 @@ To configure your local environment for the MTN MOMO API SDK, create a `local.pr
 # Local properties for the MTN MOMO API SDK
 
 MOMO_BASE_URL="" ## Use https://sandbox.momodeveloper.mtn.com for sandbox and https://momodeveloper.mtn.com for production
+MOMO_PROVIDER_CALBACK_HOST="" ## The provider callback host, use 'localhost' for sandbox
 MOMO_COLLECTION_PRIMARY_KEY="" ## The collection endpoint/product subscription primary key
 MOMO_COLLECTION_SECONDARY_KEY="" ## The collection endpoint/product subscription secondary key
 MOMO_REMITTANCE_PRIMARY_KEY="" ## The remittance endpoint/product subscription primary key

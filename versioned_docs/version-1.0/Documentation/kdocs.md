@@ -15,37 +15,35 @@ You can access the Kdocs directly via this link: [Kdocs Documentation](https://m
 
 ## GitHub Actions Workflow for Dokka
 
-The following YAML configuration outlines the steps involved in building and deploying the Dokka documentation:
+Dokka documentation is generated as part of the same `docs.yml` workflow that builds and deploys the Docusaurus site. The relevant steps are shown below:
 
 ```yaml
-build-and-deploy-dokka:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout 🛎️
-        uses: actions/checkout@v2.3.1
-
       - name: Set up JDK 17
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v4
         with:
-          java-version: 17
+          java-version: '17'
+          distribution: 'temurin'
+          cache: gradle
 
-      - name: Add empty local.properties
-        run: |
-          touch local.properties
-          echo "MOMO_BASE_URL=${MOMO_BASE_URL}" >> local.properties
-          echo "MOMO_COLLECTION_PRIMARY_KEY=${MOMO_COLLECTION_PRIMARY_KEY}" >> local.properties
-          echo "MOMO_COLLECTION_SECONDARY_KEY=${MOMO_COLLECTION_SECONDARY_KEY}" >> local.properties
-          echo "MOMO_REMITTANCE_PRIMARY_KEY=${MOMO_REMITTANCE_PRIMARY_KEY}" >> local.properties
-          echo "MOMO_REMITTANCE_SECONDARY_KEY=${MOMO_REMITTANCE_SECONDARY_KEY}" >> local.properties
-          echo "MOMO_DISBURSEMENTS_PRIMARY_KEY=${MOMO_DISBURSEMENTS_PRIMARY_KEY}" >> local.properties
-          echo "MOMO_DISBURSEMENTS_SECONDARY_KEY=${MOMO_DISBURSEMENTS_SECONDARY_KEY}" >> local.properties
-          echo "MOMO_API_USER_ID=${MOMO_API_USER_ID}" >> local.properties
-          echo "MOMO_ENVIRONMENT=${MOMO_ENVIRONMENT}" >> local.properties
-          echo "MOMO_API_VERSION_V1=${MOMO_API_VERSION_V1}" >> local.properties
-          echo "MOMO_API_VERSION_V2=${MOMO_API_VERSION_V2}" >> local.properties
+      - name: Create local.properties
         working-directory: android
+        run: |
+          cat <<'EOF' > local.properties
+          MOMO_BASE_URL="https://sandbox.momodeveloper.mtn.com/"
+          MOMO_PROVIDER_CALBACK_HOST="localhost"
+          MOMO_COLLECTION_PRIMARY_KEY="placeholder"
+          MOMO_COLLECTION_SECONDARY_KEY="placeholder"
+          MOMO_REMITTANCE_PRIMARY_KEY="placeholder"
+          MOMO_REMITTANCE_SECONDARY_KEY="placeholder"
+          MOMO_DISBURSEMENTS_PRIMARY_KEY="placeholder"
+          MOMO_DISBURSEMENTS_SECONDARY_KEY="placeholder"
+          MOMO_API_USER_ID="placeholder"
+          MOMO_ENVIRONMENT="sandbox"
+          MOMO_API_VERSION_V1="v1_0"
+          MOMO_API_VERSION_V2="v2_0"
+          EOF
 
-      - name: Add empty keystore.properties
+      - name: Create keystore.properties
         run: touch keystore.properties
         working-directory: android
 
@@ -53,52 +51,64 @@ build-and-deploy-dokka:
         run: chmod +x gradlew
         working-directory: android
 
-      - name: Document modules with Dokka
-        run: ./gradlew dokkaHtmlMultiModule
+      - name: Generate Dokka docs
+        run: ./gradlew dokkaGenerate
         working-directory: android
 
-      - name: Deploy 🚀
-        if: ${{ github.event_name == 'push' }}
-        uses: JamesIves/github-pages-deploy-action@v4.4.1
-        with:
-          branch: gh-pages # The branch the action should deploy to.
-          folder: android/build/dokka # The folder the action should deploy.
-          target-folder: dokka
-          ssh-key: ${{ secrets.DEPLOY_KEY }}
+      - name: Copy Dokka output into Docusaurus build
+        run: |
+          mkdir -p ./build/dokka
+          cp -r android/build/dokka/html/. ./build/dokka/
+          cp -r CNAME ./build
 ```
 
 ### Explanation of Workflow Steps
 
-1. **Checkout the Repository**: The workflow starts by checking out the repository to access the documentation files.
-2. **Set up JDK 17**: It sets up the Java Development Kit (JDK) version 17, which is required for building the documentation.
-3. **Add Local Properties**: Creates a `local.properties` file with necessary environment variables for the build process.
-4. **Add Keystore Properties**: Creates an empty `keystore.properties` file, which may be required for signing the application.
-5. **Grant Execute Permission**: Ensures that the `gradlew` script has execute permissions.
-6. **Document Modules with Dokka**: Runs the Dokka task to generate HTML documentation for all modules.
-7. **Deploy to GitHub Pages**: Finally, the generated documentation is deployed to the `gh-pages` branch, making it accessible via the specified URL.
+1. **Set up JDK 17**: Sets up OpenJDK 17, required for the Gradle/Dokka build.
+2. **Create `local.properties`**: Creates the required properties file with placeholder values so the Android build compiles without real API keys.
+3. **Create `keystore.properties`**: Creates an empty keystore file required by the Gradle build.
+4. **Grant Execute Permission**: Ensures that the `gradlew` script has execute permissions.
+5. **Generate Dokka docs**: Runs `./gradlew dokkaGenerate` to produce HTML documentation for all modules. The aggregated output lands in `android/build/dokka/html/`.
+6. **Copy Dokka output**: Copies the generated KDoc HTML into the Docusaurus build at `build/dokka/`, making it accessible at [https://mtn-momo-sdk.rekast.io/dokka/](https://mtn-momo-sdk.rekast.io/dokka/).
 
 ## Generating Documentation Locally
 
 You can also generate documentation locally to preview what will be deployed once the GitHub Actions run. This is made possible by the configuration specified in the `build.gradle.kts` file:
 
+**Root `android/build.gradle.kts`** — sets the module name, custom styling, and aggregates both submodules:
+
 ```kotlin
-tasks.named<org.jetbrains.dokka.gradle.DokkaMultiModuleTask>("dokkaHtmlMultiModule") {
+dokka {
     moduleName.set("| MTN MOMO ANDROID SDK")
-    moduleVersion.set(project.version.toString())
-    outputDirectory.set(layout.buildDirectory.dir("dokka"))
-
-    pluginConfiguration<DokkaBase, DokkaBaseConfiguration> {
-        customAssets = listOf(layout.projectDirectory.file("assets/logo-icon.svg").asFile)
-        customStyleSheets = listOf((layout.projectDirectory.file("assets/rekast.css").asFile))
-        footerMessage = "&copy; Re.Kast Limited"
-        separateInheritedMembers = false
+    pluginsConfiguration.html {
+        customAssets.from(layout.projectDirectory.file("assets/logo-icon.svg"))
+        customStyleSheets.from(layout.projectDirectory.file("assets/rekast.css"))
+        footerMessage.set("&copy; Re.Kast Limited")
+        separateInheritedMembers.set(false)
     }
+}
 
-    pluginsMapConfiguration.set(
-        mapOf(
-            "org.jetbrains.dokka.base.DokkaBase" to """{ "separateInheritedMembers": false }"""
-        )
-    )
+dependencies {
+    dokka(project(":momo-api-sdk"))
+    dokka(project(":sample"))
+}
+```
+
+**Each module's `build.gradle.kts`** (`momo-api-sdk` and `sample`) — registers the Kotlin source set explicitly, since Dokka V2 does not auto-detect Android source sets:
+
+```kotlin
+dokka {
+    dokkaSourceSets {
+        register("main") {
+            sourceRoots.from(file("src/main/kotlin"))
+            displayName.set("Android")
+        }
+    }
+    pluginsConfiguration.html {
+        customAssets.from(rootProject.layout.projectDirectory.file("assets/logo-icon.svg"))
+        customStyleSheets.from(rootProject.layout.projectDirectory.file("assets/rekast.css"))
+        footerMessage.set("&copy; Re.Kast Limited")
+    }
 }
 ```
 
@@ -110,10 +120,10 @@ tasks.named<org.jetbrains.dokka.gradle.DokkaMultiModuleTask>("dokkaHtmlMultiModu
    ```
 2. Run the following command to generate the documentation:
    ```bash
-   ./gradlew dokkaHtmlMultiModule
+   ./gradlew dokkaGenerate
    ```
-3. Check the root `build` folder for a folder named `dokka`.
-4. Open the `index.html` file generated in the `dokka` folder to preview the documentation.
+3. Check `build/dokka/html/` in the root build folder.
+4. Open `index.html` to preview the documentation.
 
 ## Additional Resources
 
