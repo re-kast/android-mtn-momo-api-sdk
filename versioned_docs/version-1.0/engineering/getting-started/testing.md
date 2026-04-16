@@ -30,10 +30,10 @@ Generate an HTML report for interactive browsing or an XML report for CI consump
 
 Reports are written to:
 
-| Module | HTML | XML |
-|---|---|---|
+| Module         | HTML                                                            | XML                                                        |
+|----------------|-----------------------------------------------------------------|------------------------------------------------------------|
 | `momo-api-sdk` | `android/momo-api-sdk/build/reports/kover/htmlDebug/index.html` | `android/momo-api-sdk/build/reports/kover/reportDebug.xml` |
-| `sample` | `android/sample/build/reports/kover/htmlDebug/index.html` | `android/sample/build/reports/kover/reportDebug.xml` |
+| `sample`       | `android/sample/build/reports/kover/htmlDebug/index.html`       | `android/sample/build/reports/kover/reportDebug.xml`       |
 
 ### Kover configuration
 
