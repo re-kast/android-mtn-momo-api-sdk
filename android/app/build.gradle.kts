@@ -61,6 +61,12 @@ android {
 }
 
 dokka {
+    dokkaSourceSets {
+        create("main") {
+            displayName.set("App")
+            sourceRoots.from(file("src/main/kotlin"))
+        }
+    }
     pluginsConfiguration.html {
         customAssets.from(rootProject.layout.projectDirectory.file("assets/logo-icon.svg"))
         customStyleSheets.from(rootProject.layout.projectDirectory.file("assets/rekast.css"))
