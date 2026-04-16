@@ -1,6 +1,6 @@
 # MTN MOMO API SDK for Android
 
-[![Publish to Maven Central](https://github.com/re-kast/android-mtn-momo-api-sdk/actions/workflows/publish.yml/badge.svg)](https://github.com/re-kast/android-mtn-momo-api-sdk/actions/workflows/publish.yml) [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/B0B315PHS1)
+[![Publish to Maven Central](https://github.com/re-kast/android-mtn-momo-api-sdk/actions/workflows/publish.yml/badge.svg)](https://github.com/re-kast/android-mtn-momo-api-sdk/actions/workflows/publish.yml) [![CI](https://github.com/re-kast/android-mtn-momo-api-sdk/actions/workflows/ci.yml/badge.svg)](https://github.com/re-kast/android-mtn-momo-api-sdk/actions/workflows/ci.yml) [![codecov](https://codecov.io/gh/re-kast/android-mtn-momo-api-sdk/graph/badge.svg)](https://codecov.io/gh/re-kast/android-mtn-momo-api-sdk) [![code style: spotless](https://img.shields.io/badge/code%20style-spotless-ff69b4.svg)](https://github.com/diffplug/spotless) [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/B0B315PHS1)
 
 ## Overview
 

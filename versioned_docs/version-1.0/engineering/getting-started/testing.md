@@ -13,7 +13,51 @@ The MTM Momo Android SDK is designed with a robust testing framework that includ
 
 To maintain a high standard of code quality, we utilize [ktlint](https://github.com/pinterest/ktlint) in combination with [spotless](https://github.com/diffplug/spotless). This setup allows us to enforce strict style checks across the entire codebase. By making these style checks as rigorous as possible, we aim to reduce the amount of bikeshedding—unproductive discussions about code style—during code reviews. This helps developers focus on the functionality and logic of the code rather than its appearance.
 
-For assessing code coverage, we employ [Jacoco](https://www.jacoco.org/jacoco/) to generate detailed coverage reports. These reports are then tracked over time using [Codecov](https://codecov.io), which provides insights into how much of the codebase is being tested. We enforce a minimum coverage percentage for any new code added in a pull request, as well as a minimum reduction in overall coverage percentage change. This ensures that new contributions do not decrease the overall test coverage of the project, thereby maintaining a high standard of reliability.
+For code coverage we use [Kover](https://github.com/Kotlin/kotlinx-kover), JetBrains' first-party coverage tool for Kotlin. Unlike JaCoCo, Kover instruments bytecode at the Kotlin compiler level, which gives accurate results for Kotlin-specific constructs such as inline functions, coroutines, and lambdas.
+
+### Running coverage locally
+
+Generate an HTML report for interactive browsing or an XML report for CI consumption:
+
+```bash
+# Per-module (debug variant)
+./gradlew :momo-api-sdk:koverHtmlReportDebug
+./gradlew :momo-api-sdk:koverXmlReportDebug
+
+./gradlew :sample:koverHtmlReportDebug
+./gradlew :sample:koverXmlReportDebug
+```
+
+Reports are written to:
+
+| Module | HTML | XML |
+|---|---|---|
+| `momo-api-sdk` | `android/momo-api-sdk/build/reports/kover/htmlDebug/index.html` | `android/momo-api-sdk/build/reports/kover/reportDebug.xml` |
+| `sample` | `android/sample/build/reports/kover/htmlDebug/index.html` | `android/sample/build/reports/kover/reportDebug.xml` |
+
+### Kover configuration
+
+Coverage is configured in each module's `build.gradle.kts`. Android-generated classes, Hilt-generated classes, and classes annotated with `@Generated` are excluded from the report to keep metrics meaningful:
+
+```kotlin
+kover {
+    reports {
+        filters {
+            excludes {
+                androidGeneratedClasses()          // R, BuildConfig, DataBinding
+                annotatedBy("*Generated*")
+                classes(
+                    "**/Hilt_*",
+                    "**/*_HiltModules*",
+                    "**/*_Provide*",
+                )
+            }
+        }
+    }
+}
+```
+
+CI runs coverage for both modules and uploads both reports to Codecov. Run the per-module tasks locally to inspect coverage for each module individually.
 
 ## Unit Tests
 
