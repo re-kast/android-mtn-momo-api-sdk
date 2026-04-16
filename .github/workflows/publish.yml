@@ -37,6 +37,21 @@ jobs:
             echo "IS_SNAPSHOT=false" >> "$GITHUB_OUTPUT"
           fi
 
+      - name: Generate changelog
+        id: changelog
+        run: |
+          PREV_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
+          if [ -n "$PREV_TAG" ]; then
+            LOG=$(git log --pretty=format:"- %s (%h)" "${PREV_TAG}..HEAD")
+          else
+            LOG=$(git log --pretty=format:"- %s (%h)" --max-count=20)
+          fi
+          {
+            echo "LOG<<ENDOFLOG"
+            echo "$LOG"
+            echo "ENDOFLOG"
+          } >> "$GITHUB_OUTPUT"
+
       - name: Create local.properties
         working-directory: android
         run: |
@@ -132,14 +147,19 @@ jobs:
           body: |
             ## io.rekast:momo-api-sdk:${{ steps.version.outputs.VERSION }}
 
-            ### Gradle
+            ### What's Changed
+            ${{ steps.changelog.outputs.LOG }}
+
+            ### Installation
+
+            #### Gradle
             ```kotlin
             dependencies {
                 implementation("io.rekast:momo-api-sdk:${{ steps.version.outputs.VERSION }}")
             }
             ```
 
-            ### Maven
+            #### Maven
             ```xml
             <dependency>
                 <groupId>io.rekast</groupId>
@@ -151,3 +171,42 @@ jobs:
             android/momo-api-sdk/build/staging-deploy/io/rekast/momo-api-sdk/${{ steps.version.outputs.VERSION }}/momo-api-sdk-${{ steps.version.outputs.VERSION }}.aar
             android/momo-api-sdk/build/staging-deploy/io/rekast/momo-api-sdk/${{ steps.version.outputs.VERSION }}/momo-api-sdk-${{ steps.version.outputs.VERSION }}-sources.jar
             android/momo-api-sdk/build/staging-deploy/io/rekast/momo-api-sdk/${{ steps.version.outputs.VERSION }}/momo-api-sdk-${{ steps.version.outputs.VERSION }}.pom
+
+      - name: Update GitHub Package version description
+        if: steps.version.outputs.IS_SNAPSHOT == 'false'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          VERSION="${{ steps.version.outputs.VERSION }}"
+          DESCRIPTION="${{ steps.changelog.outputs.LOG }}"
+
+          # Look up the package version ID for the just-published version
+          PACKAGE_VERSION_ID=$(gh api graphql \
+            -f query='query($owner:String!,$repo:String!,$version:String!){
+              repository(owner:$owner,name:$repo){
+                packages(names:["momo-api-sdk"],first:1){
+                  nodes{
+                    versions(last:10){
+                      nodes{ id version }
+                    }
+                  }
+                }
+              }
+            }' \
+            -f owner="re-kast" \
+            -f repo="android-mtn-momo-api-sdk" \
+            -f version="$VERSION" \
+            --jq ".data.repository.packages.nodes[0].versions.nodes[] | select(.version == \"$VERSION\") | .id")
+
+          if [ -n "$PACKAGE_VERSION_ID" ]; then
+            gh api graphql \
+              -f query='mutation($pvId:ID!,$desc:String!){
+                updatePackageVersion(input:{packageVersionId:$pvId,description:$desc}){
+                  packageVersion{ id version }
+                }
+              }' \
+              -f pvId="$PACKAGE_VERSION_ID" \
+              -f desc="$DESCRIPTION"
+          else
+            echo "Package version $VERSION not found yet — skipping description update"
+          fi
