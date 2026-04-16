@@ -91,6 +91,15 @@ kover {
                     "**/*_Provide*",
                     "**/*ComponentTreeDeps*",
                     "**/dagger/**",
+                    // Hilt-generated InstanceHolder inner classes
+                    "**/*Factory\$InstanceHolder",
+                    // Hilt aggregated injectors
+                    "hilt_aggregated_deps/**",
+                    // MomoApplication is an Android Application class (not unit-testable)
+                    "**/MomoApplication",
+                    // DispatchersModule is a Hilt module providing coroutine dispatchers;
+                    // its single line is not independently testable.
+                    "**/DispatchersModule",
                 )
             }
         }

@@ -19,7 +19,10 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
+import io.rekast.sdk.model.authentication.AccessToken
+import io.rekast.sdk.model.authentication.ApiKey
 import io.rekast.sdk.model.authentication.ApiUser
+import io.rekast.sdk.model.authentication.Oauth2AccessToken
 import io.rekast.sdk.repository.DefaultRepository
 import io.rekast.sdk.repository.data.NetworkResult
 import io.rekast.sdk.sample.utils.CredentialStorage
@@ -128,5 +131,201 @@ class AppMainViewModelTest {
         viewModel.checkUser()
 
         coVerify(exactly = 0) { mockRepository.createApiUser(any(), any(), any(), any()) }
+    }
+
+    /**
+     * Verifies that [AppMainViewModel.checkUser] triggers [DefaultRepository.createApiKey] when
+     * [checkApiUser] returns success but no API key is yet stored in [CredentialStorage].
+     */
+    @Test
+    fun `checkUser calls createApiKey when checkApiUser succeeds and no key stored`() = runTest {
+        every { mockStorage.getApiKey() } returns ""
+        coEvery { mockRepository.checkApiUser(any(), any()) } returns flowOf(
+            NetworkResult.Success(ApiUser(targetEnvironment = "sandbox"))
+        )
+        coEvery { mockRepository.createApiKey(any(), any()) } returns flowOf(
+            NetworkResult.Error("Failed")
+        )
+
+        viewModel.checkUser()
+
+        coVerify { mockRepository.createApiKey(any(), any()) }
+    }
+
+    /**
+     * Verifies that [AppMainViewModel.checkUser] skips [DefaultRepository.createApiKey] and
+     * proceeds directly to fetching the access token when an API key is already stored.
+     */
+    @Test
+    fun `checkUser skips createApiKey when API key already stored`() = runTest {
+        every { mockStorage.getApiKey() } returns "existing-api-key"
+        every { mockStorage.getAccessToken() } returns ""
+        coEvery { mockRepository.checkApiUser(any(), any()) } returns flowOf(
+            NetworkResult.Success(ApiUser(targetEnvironment = "sandbox"))
+        )
+        coEvery { mockRepository.getAccessToken(any(), any()) } returns flowOf(
+            NetworkResult.Error("Failed")
+        )
+
+        viewModel.checkUser()
+
+        coVerify(exactly = 0) { mockRepository.createApiKey(any(), any()) }
+    }
+
+    /**
+     * Verifies that when [DefaultRepository.createApiKey] returns [NetworkResult.Success],
+     * the new API key is written to [CredentialStorage] before proceeding.
+     */
+    @Test
+    fun `checkUser saves API key after successful createApiKey`() = runTest {
+        every { mockStorage.getApiKey() } returnsMany listOf("", "new-api-key", "new-api-key")
+        every { mockStorage.getAccessToken() } returns "existing-token"
+        coEvery { mockRepository.checkApiUser(any(), any()) } returns flowOf(
+            NetworkResult.Success(ApiUser(targetEnvironment = "sandbox"))
+        )
+        coEvery { mockRepository.createApiKey(any(), any()) } returns flowOf(
+            NetworkResult.Success(ApiKey(apiKey = "new-api-key"))
+        )
+
+        viewModel.checkUser()
+
+        coVerify { mockStorage.saveApiKey("new-api-key") }
+    }
+
+    /**
+     * Verifies that [DefaultRepository.getAccessToken] is called when the API key is present
+     * in [CredentialStorage] but no access token has been stored yet.
+     */
+    @Test
+    fun `checkUser calls getAccessToken when API key present but no access token`() = runTest {
+        every { mockStorage.getApiKey() } returns "stored-api-key"
+        every { mockStorage.getAccessToken() } returns ""
+        coEvery { mockRepository.checkApiUser(any(), any()) } returns flowOf(
+            NetworkResult.Success(ApiUser(targetEnvironment = "sandbox"))
+        )
+        coEvery { mockRepository.getAccessToken(any(), any()) } returns flowOf(
+            NetworkResult.Error("Failed")
+        )
+
+        viewModel.checkUser()
+
+        coVerify { mockRepository.getAccessToken(any(), any()) }
+    }
+
+    /**
+     * Verifies that [DefaultRepository.getAccessToken] is NOT called when a valid access token
+     * is already stored — the ViewModel skips straight to [DefaultRepository.getOauthAccessToken].
+     */
+    @Test
+    fun `checkUser skips getAccessToken when access token already stored`() = runTest {
+        every { mockStorage.getApiKey() } returns "stored-api-key"
+        every { mockStorage.getAccessToken() } returns "valid-token"
+        every { mockStorage.getOauthAccessToken() } returns ""
+        coEvery { mockRepository.checkApiUser(any(), any()) } returns flowOf(
+            NetworkResult.Success(ApiUser(targetEnvironment = "sandbox"))
+        )
+        coEvery { mockRepository.getOauthAccessToken(any(), any(), any()) } returns flowOf(
+            NetworkResult.Error("Failed")
+        )
+
+        viewModel.checkUser()
+
+        coVerify(exactly = 0) { mockRepository.getAccessToken(any(), any()) }
+        coVerify { mockRepository.getOauthAccessToken(any(), any(), any()) }
+    }
+
+    /**
+     * Verifies that [DefaultRepository.getOauthAccessToken] is called when an access token is
+     * available but no OAuth2 token has been stored yet.
+     */
+    @Test
+    fun `checkUser calls getOauthAccessToken when access token present but no oauth token`() = runTest {
+        every { mockStorage.getApiKey() } returns "stored-api-key"
+        every { mockStorage.getAccessToken() } returns "valid-token"
+        every { mockStorage.getOauthAccessToken() } returns ""
+        coEvery { mockRepository.checkApiUser(any(), any()) } returns flowOf(
+            NetworkResult.Success(ApiUser(targetEnvironment = "sandbox"))
+        )
+        coEvery { mockRepository.getOauthAccessToken(any(), any(), any()) } returns flowOf(
+            NetworkResult.Error("Failed")
+        )
+
+        viewModel.checkUser()
+
+        coVerify { mockRepository.getOauthAccessToken(any(), any(), any()) }
+    }
+
+    /**
+     * Verifies that [DefaultRepository.getOauthAccessToken] is NOT called when an OAuth2 token
+     * is already stored — the bootstrap sequence is complete.
+     */
+    @Test
+    fun `checkUser skips getOauthAccessToken when oauth token already stored`() = runTest {
+        every { mockStorage.getApiKey() } returns "stored-api-key"
+        every { mockStorage.getAccessToken() } returns "valid-token"
+        every { mockStorage.getOauthAccessToken() } returns "valid-oauth-token"
+        coEvery { mockRepository.checkApiUser(any(), any()) } returns flowOf(
+            NetworkResult.Success(ApiUser(targetEnvironment = "sandbox"))
+        )
+
+        viewModel.checkUser()
+
+        coVerify(exactly = 0) { mockRepository.getOauthAccessToken(any(), any(), any()) }
+    }
+
+    /**
+     * Verifies that [CredentialStorage.saveOauthAccessToken] is called after a successful
+     * [DefaultRepository.getOauthAccessToken] response.
+     */
+    @Test
+    fun `checkUser saves oauth token after successful getOauthAccessToken`() = runTest {
+        val oauthToken = Oauth2AccessToken(
+            accessToken = "new-oauth-tok",
+            tokenType = "Bearer",
+            expiresIn = 3600,
+            scope = "profile",
+            refreshToken = "refresh",
+            refreshTokenExpiredIn = 7200
+        )
+        every { mockStorage.getApiKey() } returns "stored-api-key"
+        every { mockStorage.getAccessToken() } returns "valid-token"
+        every { mockStorage.getOauthAccessToken() } returns ""
+        coEvery { mockRepository.checkApiUser(any(), any()) } returns flowOf(
+            NetworkResult.Success(ApiUser(targetEnvironment = "sandbox"))
+        )
+        coEvery { mockRepository.getOauthAccessToken(any(), any(), any()) } returns flowOf(
+            NetworkResult.Success(oauthToken)
+        )
+
+        viewModel.checkUser()
+
+        coVerify { mockStorage.saveOauthAccessToken(oauthToken) }
+    }
+
+    /**
+     * Verifies that [CredentialStorage.saveAccessToken] is called after a successful
+     * [DefaultRepository.getAccessToken] response, and that [DefaultRepository.getOauthAccessToken]
+     * is then invoked to continue the bootstrap sequence.
+     */
+    @Test
+    fun `checkUser saves access token and calls getOauthAccessToken after getAccessToken success`() = runTest {
+        val accessToken = AccessToken(accessToken = "new-token", tokenType = "Bearer", expiresIn = 3600)
+        every { mockStorage.getApiKey() } returns "stored-api-key"
+        every { mockStorage.getAccessToken() } returnsMany listOf("", "new-token", "new-token")
+        every { mockStorage.getOauthAccessToken() } returns ""
+        coEvery { mockRepository.checkApiUser(any(), any()) } returns flowOf(
+            NetworkResult.Success(ApiUser(targetEnvironment = "sandbox"))
+        )
+        coEvery { mockRepository.getAccessToken(any(), any()) } returns flowOf(
+            NetworkResult.Success(accessToken)
+        )
+        coEvery { mockRepository.getOauthAccessToken(any(), any(), any()) } returns flowOf(
+            NetworkResult.Error("Failed")
+        )
+
+        viewModel.checkUser()
+
+        coVerify { mockStorage.saveAccessToken(accessToken) }
+        coVerify { mockRepository.getOauthAccessToken(any(), any(), any()) }
     }
 }

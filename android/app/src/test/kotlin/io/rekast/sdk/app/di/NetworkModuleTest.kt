@@ -16,6 +16,9 @@
 package io.rekast.sdk.app.di
 
 import io.mockk.mockk
+import io.rekast.sdk.network.service.AuthenticationService
+import io.rekast.sdk.network.service.products.CollectionService
+import io.rekast.sdk.network.service.products.DisbursementsService
 import io.rekast.sdk.utils.MomoApiConfig
 import okhttp3.logging.HttpLoggingInterceptor
 import org.junit.Assert.assertEquals
@@ -136,5 +139,53 @@ class NetworkModuleTest {
                 config = httpsConfig
             )
         assertNotNull(NetworkModule.provideRetrofit(client, json, httpsConfig))
+    }
+
+    /**
+     * Verifies that [NetworkModule.getAuthentication] returns a non-null [AuthenticationService]
+     * proxy for the given [Retrofit] instance.
+     */
+    @Test
+    fun `getAuthentication returns non-null AuthenticationService`() {
+        val retrofit = buildRetrofit(httpsConfig)
+        assertNotNull(NetworkModule.getAuthentication(retrofit))
+    }
+
+    /**
+     * Verifies that [NetworkModule.getCollection] returns a non-null [CollectionService]
+     * proxy for the given [Retrofit] instance.
+     */
+    @Test
+    fun `getCollection returns non-null CollectionService`() {
+        val retrofit = buildRetrofit(httpsConfig)
+        assertNotNull(NetworkModule.getCollection(retrofit))
+    }
+
+    /**
+     * Verifies that [NetworkModule.getDisbursement] returns a non-null [DisbursementsService]
+     * proxy for the given [Retrofit] instance.
+     */
+    @Test
+    fun `getDisbursement returns non-null DisbursementsService`() {
+        val retrofit = buildRetrofit(httpsConfig)
+        assertNotNull(NetworkModule.getDisbursement(retrofit))
+    }
+
+    // Note: getCommonService cannot be tested here because CommonService is the root of a
+    // sealed-interface hierarchy and the JVM's Proxy.validateProxyInterfaces rejects it
+    // (isSealed() == true). The sub-interfaces (CollectionService, DisbursementsService) work
+    // because they are not themselves the root of a PermittedSubclasses declaration.
+
+    /** Builds a [Retrofit] instance using [NetworkModule] helpers for the given [config]. */
+    private fun buildRetrofit(config: MomoApiConfig): Retrofit {
+        val json = NetworkModule.provideJson()
+        val client =
+            NetworkModule.provideOkHttpClient(
+                httpLoggingInterceptor = NetworkModule.providesHttpLoggingInterceptor(),
+                credentialProvider = mockk(relaxed = true),
+                tokenAuthenticator = TokenAuthenticator(mockk(relaxed = true), config),
+                config = config
+            )
+        return NetworkModule.provideRetrofit(client, json, config)
     }
 }

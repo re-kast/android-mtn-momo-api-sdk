@@ -23,7 +23,9 @@ import io.mockk.mockk
 import io.mockk.mockkObject
 import io.mockk.unmockkObject
 import io.rekast.sdk.model.AccountBalance
+import io.rekast.sdk.model.AccountHolder
 import io.rekast.sdk.model.BasicUserInfo
+import io.rekast.sdk.model.UserInfoWithConsent
 import io.rekast.sdk.repository.DefaultRepository
 import io.rekast.sdk.repository.data.NetworkResult
 import io.rekast.sdk.sample.utils.CredentialStorage
@@ -39,6 +41,8 @@ import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.After
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
@@ -238,5 +242,105 @@ class HomeScreenViewModelTest {
         vmWithNoToken.validateAccountHolderStatus()
 
         assertFalse(vmWithNoToken.showProgressBar.value!!)
+    }
+
+    /** Verifies validateAccountHolderStatus delegates to the repository when access token is present. */
+    @Test
+    fun `validateAccountHolderStatus calls repository validateAccountHolderStatus`() = runTest {
+        coEvery {
+            mockRepository.validateAccountHolderStatus(any(), any(), any(), any(), any())
+        } returns flowOf(NetworkResult.Error("404"))
+
+        viewModel.validateAccountHolderStatus()
+
+        coVerify { mockRepository.validateAccountHolderStatus(any(), any(), any(), any(), any()) }
+    }
+
+    /**
+     * Verifies [HomeScreenViewModel.validateAccountHolderStatus] posts the decoded
+     * [io.rekast.sdk.model.AccountHolderStatus] to [HomeScreenViewModel.accountHolderStatus]
+     * and clears the progress bar on a successful response.
+     */
+    @Test
+    fun `validateAccountHolderStatus posts status on success`() = runTest {
+        val responseBody = """{"result":true}""".toResponseBody("application/json".toMediaType())
+        coEvery {
+            mockRepository.validateAccountHolderStatus(any(), any(), any<AccountHolder>(), any(), any())
+        } returns flowOf(NetworkResult.Success(responseBody))
+
+        viewModel.validateAccountHolderStatus()
+
+        assertNotNull(viewModel.accountHolderStatus.value)
+        assertFalse(viewModel.showProgressBar.value!!)
+    }
+
+    /**
+     * Verifies [HomeScreenViewModel.validateAccountHolderStatus] clears the progress bar when
+     * the repository returns an error response.
+     */
+    @Test
+    fun `validateAccountHolderStatus sets showProgressBar false on error`() = runTest {
+        coEvery {
+            mockRepository.validateAccountHolderStatus(any(), any(), any<AccountHolder>(), any(), any())
+        } returns flowOf(NetworkResult.Error("500"))
+
+        viewModel.validateAccountHolderStatus()
+
+        assertFalse(viewModel.showProgressBar.value!!)
+    }
+
+    /** Verifies getUserInfoWithConsent delegates to the repository when access token is present. */
+    @Test
+    fun `getUserInfoWithConsent calls repository getUserInfoWithConsent`() = runTest {
+        coEvery {
+            mockRepository.getUserInfoWithConsent(any(), any(), any(), any())
+        } returns flowOf(NetworkResult.Error("403"))
+
+        viewModel.getUserInfoWithConsent()
+
+        coVerify { mockRepository.getUserInfoWithConsent(any(), any(), any(), any()) }
+    }
+
+    /**
+     * Verifies [HomeScreenViewModel.getUserInfoWithConsent] clears the progress bar on a
+     * successful response.
+     */
+    @Test
+    fun `getUserInfoWithConsent sets showProgressBar false on success`() = runTest {
+        val userInfo = UserInfoWithConsent(sub = "sub-1", name = "John Doe")
+        coEvery {
+            mockRepository.getUserInfoWithConsent(any(), any(), any(), any())
+        } returns flowOf(NetworkResult.Success(userInfo))
+
+        viewModel.getUserInfoWithConsent()
+
+        assertFalse(viewModel.showProgressBar.value!!)
+    }
+
+    /**
+     * Verifies [HomeScreenViewModel.getUserInfoWithConsent] clears the progress bar when the
+     * repository returns an error response.
+     */
+    @Test
+    fun `getUserInfoWithConsent sets showProgressBar false on error`() = runTest {
+        coEvery {
+            mockRepository.getUserInfoWithConsent(any(), any(), any(), any())
+        } returns flowOf(NetworkResult.Error("404"))
+
+        viewModel.getUserInfoWithConsent()
+
+        assertFalse(viewModel.showProgressBar.value!!)
+    }
+
+    /** Verifies getUserInfoWithConsent exits early when access token is blank. */
+    @Test
+    fun `getUserInfoWithConsent does not call repository when access token is blank`() = runTest {
+        val mockStorageNoToken = mockk<CredentialStorage>(relaxed = true)
+        every { mockStorageNoToken.getAccessToken() } returns ""
+        val vmWithNoToken = HomeScreenViewModel(mockRepository, mockStorageNoToken, mockSettings, testDispatcherProvider, mockSampleConfig)
+
+        vmWithNoToken.getUserInfoWithConsent()
+
+        coVerify(exactly = 0) { mockRepository.getUserInfoWithConsent(any(), any(), any(), any()) }
     }
 }
