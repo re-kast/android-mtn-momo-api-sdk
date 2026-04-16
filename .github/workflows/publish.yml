@@ -182,7 +182,7 @@ jobs:
 
           # Look up the package version ID for the just-published version
           PACKAGE_VERSION_ID=$(gh api graphql \
-            -f query='query($owner:String!,$repo:String!,$version:String!){
+            -f query='query($owner:String!,$repo:String!){
               repository(owner:$owner,name:$repo){
                 packages(names:["momo-api-sdk"],first:1){
                   nodes{
@@ -195,7 +195,6 @@ jobs:
             }' \
             -f owner="re-kast" \
             -f repo="android-mtn-momo-api-sdk" \
-            -f version="$VERSION" \
             --jq ".data.repository.packages.nodes[0].versions.nodes[] | select(.version == \"$VERSION\") | .id")
 
           if [ -n "$PACKAGE_VERSION_ID" ]; then
