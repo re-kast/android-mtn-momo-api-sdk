@@ -1,1 +1,0 @@
-/Users/kenya/code/rekast/mobile/android-mtn-momo-api-sdk/android/app/build/intermediates/compiled_navigation_res/debug/compileDebugNavigationResources/navigation_navigation_graph.xml.flat 
