@@ -12,6 +12,7 @@ plugins {
     id("com.diffplug.spotless") version libs.versions.spotless
     id("org.jetbrains.dokka") version libs.versions.dokka
     id("com.github.ben-manes.versions") version libs.versions.gradleVersionsPlugin
+    alias(libs.plugins.kover)
 }
 
 allprojects {
@@ -73,6 +74,8 @@ dokka {
 dependencies {
     dokka(project(":momo-api-sdk"))
     dokka(project(":sample"))
+    kover(project(":momo-api-sdk"))
+    kover(project(":sample"))
 }
 
 tasks.register<Copy>("copyDocsToGhPages") {

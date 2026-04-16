@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.spotless)
     alias(libs.plugins.dokka)
     alias(libs.plugins.versions)
+    alias(libs.plugins.kover)
 }
 
 secrets {
@@ -176,4 +177,22 @@ dokka {
 
 tasks.matching { it.name.startsWith("dokkaGenerate") }.configureEach {
     dependsOn("kspDebugKotlin", "kspReleaseKotlin")
+}
+
+kover {
+    reports {
+        filters {
+            excludes {
+                androidGeneratedClasses()
+                annotatedBy("*Generated*")
+                classes(
+                    "**/Hilt_*",
+                    "**/*_HiltModules*",
+                    "**/*_Provide*",
+                    "**/*ComponentTreeDeps*",
+                    "**/dagger/**",
+                )
+            }
+        }
+    }
 }
