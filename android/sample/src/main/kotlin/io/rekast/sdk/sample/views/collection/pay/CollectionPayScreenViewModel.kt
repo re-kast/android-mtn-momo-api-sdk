@@ -25,6 +25,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import io.rekast.sdk.model.MomoTransaction
 import io.rekast.sdk.repository.DefaultRepository
 import io.rekast.sdk.sample.utils.Constants
+import io.rekast.sdk.sample.utils.SampleConfig
 import io.rekast.sdk.sample.utils.SnackBarComponentConfiguration
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -37,7 +38,7 @@ import kotlinx.coroutines.launch
  * resulting [MomoTransaction] after a payment request.
  */
 @HiltViewModel
-class CollectionPayScreenViewModel @Inject constructor(private val defaultRepository: DefaultRepository, @param:ApplicationContext private val context: Context) : ViewModel() {
+class CollectionPayScreenViewModel @Inject constructor(private val defaultRepository: DefaultRepository, @param:ApplicationContext private val context: Context, private val sampleConfig: SampleConfig) : ViewModel() {
     /** Controls whether the circular progress indicator is shown instead of the form. */
     val showProgressBar = MutableLiveData(false)
 

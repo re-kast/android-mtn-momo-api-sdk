@@ -20,18 +20,17 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
-import io.rekast.sdk.BuildConfig
 import io.rekast.sdk.model.ProviderCallBackHost
 import io.rekast.sdk.model.authentication.credentials.BasicAuthCredentials
 import io.rekast.sdk.repository.DefaultRepository
 import io.rekast.sdk.repository.data.NetworkResult
 import io.rekast.sdk.sample.utils.DispatcherProvider
+import io.rekast.sdk.sample.utils.SampleConfig
 import io.rekast.sdk.sample.utils.Utils
 import io.rekast.sdk.utils.ProductType
 import io.rekast.sdk.utils.Settings
 import javax.inject.Inject
 import kotlinx.coroutines.launch
-import org.apache.commons.lang3.StringUtils
 import timber.log.Timber
 
 /**
@@ -48,7 +47,8 @@ open class AppMainViewModel @Inject constructor(
     private val defaultRepository: DefaultRepository,
     @param:ApplicationContext private val context: Context,
     private val settings: Settings,
-    private val dispatchers: DispatcherProvider
+    private val dispatchers: DispatcherProvider,
+    private val sampleConfig: SampleConfig
 ) : ViewModel() {
 
     /**
@@ -70,9 +70,9 @@ open class AppMainViewModel @Inject constructor(
      * This method checks if the API user exists and creates a new one if it does not.
      */
     fun checkUser() {
-        val productType = Utils.getProductSubscriptionKeys(ProductType.COLLECTION)
+        val productType = Utils.getProductSubscriptionKeys(ProductType.COLLECTION, sampleConfig)
         viewModelScope.launch(dispatchers.io()) {
-            defaultRepository.checkApiUser(BuildConfig.MOMO_API_VERSION_V1, productType).collect { apiUser ->
+            defaultRepository.checkApiUser(sampleConfig.apiVersionV1, productType).collect { apiUser ->
                 when (apiUser) {
                     is NetworkResult.Success -> {
                         createApiKey()
@@ -80,8 +80,8 @@ open class AppMainViewModel @Inject constructor(
 
                     is NetworkResult.Error -> {
                         Timber.e(apiUser.message)
-                        val providerCallBackHost = ProviderCallBackHost(providerCallbackHost = BuildConfig.MOMO_PROVIDER_CALBACK_HOST)
-                        defaultRepository.createApiUser(providerCallBackHost, BuildConfig.MOMO_API_VERSION_V1, BuildConfig.MOMO_API_USER_ID, productType).collect { newApiUser ->
+                        val providerCallBackHost = ProviderCallBackHost(providerCallbackHost = sampleConfig.providerCallbackHost)
+                        defaultRepository.createApiUser(providerCallBackHost, sampleConfig.apiVersionV1, sampleConfig.apiUserId, productType).collect { newApiUser ->
                             when (newApiUser) {
                                 is NetworkResult.Success -> {
                                     checkUser()
@@ -112,20 +112,20 @@ open class AppMainViewModel @Inject constructor(
      * This method retrieves the API key for the user and sets up basic authentication.
      */
     private fun createApiKey() {
-        val productType = Utils.getProductSubscriptionKeys(ProductType.REMITTANCE)
+        val productType = Utils.getProductSubscriptionKeys(ProductType.REMITTANCE, sampleConfig)
         viewModelScope.launch(dispatchers.io()) {
             val apiUserKey = Utils.getApiKey(context)
-            if (StringUtils.isNotBlank(apiUserKey)) {
-                setBasicAuth(apiUserId = BuildConfig.MOMO_API_USER_ID, apiKey = apiUserKey)
+            if (apiUserKey.isNotBlank()) {
+                setBasicAuth(apiUserId = sampleConfig.apiUserId, apiKey = apiUserKey)
                 getAccessToken()
             } else {
-                defaultRepository.createApiKey(apiVersion = BuildConfig.MOMO_API_VERSION_V1, productSubscriptionKey = productType).collect { apiKey ->
+                defaultRepository.createApiKey(apiVersion = sampleConfig.apiVersionV1, productSubscriptionKey = productType).collect { apiKey ->
                     when (apiKey) {
                         is NetworkResult.Success -> {
                             try {
                                 val newApiKey = apiKey.response?.apiKey.orEmpty()
                                 Utils.saveApiKey(context = context, apiKey = newApiKey)
-                                setBasicAuth(apiUserId = BuildConfig.MOMO_API_USER_ID, apiKey = newApiKey)
+                                setBasicAuth(apiUserId = sampleConfig.apiUserId, apiKey = newApiKey)
                                 Timber.d("Api Key fetched and saved successfully")
                                 getAccessToken()
                             } catch (exception: Exception) {
@@ -152,12 +152,12 @@ open class AppMainViewModel @Inject constructor(
      * This method checks if the access token is available and retrieves it if not.
      */
     private fun getAccessToken() {
-        val productType = Utils.getProductSubscriptionKeys(productType = ProductType.REMITTANCE)
+        val productType = Utils.getProductSubscriptionKeys(ProductType.REMITTANCE, sampleConfig)
         viewModelScope.launch(dispatchers.io()) {
             val apiUserKey = context.let { Utils.getApiKey(it) }
             val accessToken = context.let { Utils.getAccessToken(it) }
 
-            if (StringUtils.isNotBlank(apiUserKey) && StringUtils.isBlank(accessToken)) {
+            if (apiUserKey.isNotBlank() && accessToken.isBlank()) {
                 defaultRepository.getAccessToken(productSubscriptionKey = productType, productType = ProductType.REMITTANCE.productType).collect { accessToken ->
                     when (accessToken) {
                         is NetworkResult.Success -> {
@@ -194,13 +194,13 @@ open class AppMainViewModel @Inject constructor(
      * This method checks if the access token is available and retrieves it if not.
      */
     private fun getOauthAccessToken() {
-        val productType = Utils.getProductSubscriptionKeys(productType = ProductType.COLLECTION)
+        val productType = Utils.getProductSubscriptionKeys(ProductType.COLLECTION, sampleConfig)
         viewModelScope.launch(dispatchers.io()) {
             val userAccessToken = Utils.getAccessToken(context)
             val userOauthAccessToken = Utils.getOauthAccessToken(context)
 
-            if (StringUtils.isNotBlank(userAccessToken) && StringUtils.isBlank(userOauthAccessToken)) {
-                defaultRepository.getOauthAccessToken(productType = ProductType.COLLECTION.productType, productSubscriptionKey = productType, environment = BuildConfig.MOMO_ENVIRONMENT).collect { oauthAccessToken ->
+            if (userAccessToken.isNotBlank() && userOauthAccessToken.isBlank()) {
+                defaultRepository.getOauthAccessToken(productType = ProductType.COLLECTION.productType, productSubscriptionKey = productType, environment = sampleConfig.environment).collect { oauthAccessToken ->
                     when (oauthAccessToken) {
                         is NetworkResult.Success -> {
                             try {
