@@ -68,7 +68,6 @@ fun Drawer(scope: CoroutineScope, scaffoldState: ScaffoldState, navController: N
     )
     Column {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
-        val currentRoute = navBackStackEntry?.destination?.route
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
@@ -91,7 +90,7 @@ fun Drawer(scope: CoroutineScope, scaffoldState: ScaffoldState, navController: N
             }
         }
         items.forEach { item ->
-            DrawerItem(item = item, selected = currentRoute == item.route.toString(), onItemClick = {
+            DrawerItem(item = item, selected = navBackStackEntry?.destination?.id == item.route, onItemClick = {
                 navController.navigate(item.route)
                 scope.launch {
                     scaffoldState.drawerState.close()

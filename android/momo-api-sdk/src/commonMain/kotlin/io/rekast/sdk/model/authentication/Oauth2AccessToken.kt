@@ -23,17 +23,17 @@ import kotlinx.serialization.Serializable
  *
  * @property accessToken The access token string used to authenticate API requests.
  * @property tokenType The type of the token (e.g., Bearer).
- * @property expiresIn The duration in seconds for which the access token is valid.
+ * @property expiresIn The number of seconds until the access token expires (e.g. 3600 = 1 hour).
  * @property scope The scope of access granted by the token.
  * @property refreshToken The token used to obtain a new access token when the current one expires.
- * @property refreshTokenExpiredIn The duration in seconds for which the refresh token is valid.
+ * @property refreshTokenExpiredIn The number of seconds until the refresh token expires.
  */
 @Serializable
 data class Oauth2AccessToken(
     @SerialName("access_token") var accessToken: String,
     @SerialName("token_type") var tokenType: String,
-    @SerialName("expires_in") var expiresIn: String,
+    @SerialName("expires_in") var expiresIn: Int,
     @SerialName("scope") var scope: String,
     @SerialName("refresh_token") var refreshToken: String,
-    @SerialName("refresh_token_expired_in") var refreshTokenExpiredIn: String
+    @SerialName("refresh_token_expired_in") var refreshTokenExpiredIn: Int
 )

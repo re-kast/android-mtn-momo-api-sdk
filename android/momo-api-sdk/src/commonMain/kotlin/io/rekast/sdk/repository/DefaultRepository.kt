@@ -26,8 +26,6 @@ import io.rekast.sdk.model.authentication.AccessToken
 import io.rekast.sdk.model.authentication.ApiKey
 import io.rekast.sdk.model.authentication.ApiUser
 import io.rekast.sdk.model.authentication.Oauth2AccessToken
-import io.rekast.sdk.model.authentication.credentials.AccessTokenCredentials
-import io.rekast.sdk.model.authentication.credentials.BasicAuthCredentials
 import io.rekast.sdk.network.service.products.CollectionService
 import io.rekast.sdk.network.service.products.DisbursementsService
 import io.rekast.sdk.repository.data.DataResponse
@@ -51,53 +49,23 @@ import retrofit2.Response
  * @property defaultSource The source for handling API calls related to user management and authentication.
  * @property disbursementsService The service for disbursement-related API calls.
  * @property collection The service for collection-related API calls.
- * @property basicAuthCredentialsT The credentials for basic authentication.
- * @property accessTokenCredentialsT The credentials for access token authentication.
  */
 @Singleton
-class DefaultRepository @Inject constructor(
-    private val defaultSource: DefaultSource,
-    private val disbursementsService: DisbursementsService,
-    private val collection: CollectionService,
-    private val basicAuthCredentialsT: BasicAuthCredentials,
-    private val accessTokenCredentialsT: AccessTokenCredentials,
-    private val config: MomoApiConfig
-) : DataResponse() {
+class DefaultRepository @Inject constructor(private val defaultSource: DefaultSource, private val disbursementsService: DisbursementsService, private val collection: CollectionService, private val config: MomoApiConfig) :
+    DataResponse() {
 
     /**
-     * Sets up basic authentication credentials.
+     * Wraps a Retrofit suspend call in a cold [Flow] that always emits two items:
+     * 1. [NetworkResult.Loading] — emitted immediately so that collectors can show a loading indicator.
+     * 2. [NetworkResult.Success] or [NetworkResult.Error] — the terminal result from [safeApiCall].
      *
-     * @param basicAuthCredentials The basic authentication credentials to set.
-     */
-    fun setUpBasicAuth(basicAuthCredentials: BasicAuthCredentials) {
-        basicAuthCredentialsT.apiUserId = basicAuthCredentials.apiUserId
-        basicAuthCredentialsT.apiKey = basicAuthCredentials.apiKey
-    }
-
-    /**
-     * Sets up access token authentication credentials.
+     * The flow runs entirely on [Dispatchers.IO]; collectors need not specify their own dispatcher.
      *
-     * @param accessTokenCredentials The access token credentials to set.
+     * @param apiCall The suspend lambda that performs the Retrofit call and returns a [Response].
+     * @return A cold [Flow] that emits exactly two [NetworkResult] values then completes.
      */
-    fun setUpAccessTokenAuth(accessTokenCredentials: AccessTokenCredentials) {
-        accessTokenCredentialsT.accessToken = accessTokenCredentials.accessToken
-    }
-
-    /**
-     * Retrieves the current basic authentication credentials.
-     *
-     * @return The current [BasicAuthCredentials].
-     */
-    fun getBasicAuth(): BasicAuthCredentials = basicAuthCredentialsT
-
-    /**
-     * Retrieves the current access token authentication credentials.
-     *
-     * @return The current [AccessTokenCredentials].
-     */
-    fun getAccessTokenAuth(): AccessTokenCredentials = accessTokenCredentialsT
-
-    private fun <T> executeApiCall(apiCall: suspend () -> Response<T>): Flow<NetworkResult<T>> = flow<NetworkResult<T>> {
+    private fun <T> executeApiCall(apiCall: suspend () -> Response<T>): Flow<NetworkResult<T>> = flow {
+        emit(NetworkResult.Loading())
         emit(safeApiCall { apiCall() })
     }.flowOn(Dispatchers.IO)
 
@@ -213,7 +181,7 @@ class DefaultRepository @Inject constructor(
             defaultSource.getAccountBalanceInSpecificCurrency(
                 productType = productType,
                 apiVersion = apiVersion,
-                currency = currency.toString(),
+                currency = currency,
                 productSubscriptionKey = productSubscriptionKey,
                 environment = environment
             )

@@ -82,6 +82,7 @@ kotlin {
                 implementation(libs.mockito.core)
                 implementation(libs.mockito.inline)
                 implementation(libs.mockito.kotlin)
+                implementation(libs.kotlinx.coroutines.test)
             }
         }
         named("androidDeviceTest") {
@@ -131,6 +132,11 @@ kover {
                     "**/*ComponentTreeDeps*",
                     "**/dagger/**",
                 )
+                // DefaultSource is pure delegation to sealed Retrofit service interfaces.
+                // The sealed keyword prevents both MockK and JVM Proxy from creating
+                // test doubles, making unit testing impossible without a full Hilt graph.
+                // All meaningful logic is tested via DefaultRepository (which mocks DefaultSource).
+                classes("**/DefaultSource")
             }
         }
     }

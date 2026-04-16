@@ -30,7 +30,6 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import io.rekast.sdk.sample.ui.theme.AppTheme
-import io.rekast.sdk.sample.views.AppMainActivity
 import io.rekast.sdk.sample.views.AppMainViewModel
 import kotlin.getValue
 
@@ -40,28 +39,29 @@ import kotlin.getValue
 @ExperimentalMaterialApi
 @AndroidEntryPoint
 class DisbursementDepositScreenFragment : Fragment() {
-    private lateinit var activity: AppMainActivity
     private val disbursementDepositScreenViewModel by viewModels<DisbursementDepositScreenViewModel>()
     private val appMainViewModel by activityViewModels<AppMainViewModel>()
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View = ComposeView(requireContext()).apply {
-        setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
-        setContent {
-            AppTheme {
-                val showProgressBar by disbursementDepositScreenViewModel.showProgressBar.observeAsState(false)
-                DisbursementScreen(
-                    navController = findNavController(),
-                    snackStateFlow = disbursementDepositScreenViewModel.snackBarStateFlow,
-                    showProgressBar = showProgressBar,
-                    disbursementDepositScreenViewModel = disbursementDepositScreenViewModel,
-                    momoTransaction = disbursementDepositScreenViewModel.momoTransaction
-                )
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        val navController = findNavController()
+        return ComposeView(requireContext()).apply {
+            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+            setContent {
+                AppTheme {
+                    val showProgressBar by disbursementDepositScreenViewModel.showProgressBar.observeAsState(false)
+                    DisbursementScreen(
+                        navController = navController,
+                        snackStateFlow = disbursementDepositScreenViewModel.snackBarStateFlow,
+                        showProgressBar = showProgressBar,
+                        disbursementDepositScreenViewModel = disbursementDepositScreenViewModel,
+                        momoTransaction = disbursementDepositScreenViewModel.momoTransaction
+                    )
+                }
             }
         }
     }
 
     override fun onResume() {
         super.onResume()
-        activity = requireActivity() as AppMainActivity
     }
 }

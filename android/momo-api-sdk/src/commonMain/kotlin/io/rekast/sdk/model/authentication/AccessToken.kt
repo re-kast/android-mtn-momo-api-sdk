@@ -23,7 +23,7 @@ import kotlinx.serialization.Serializable
  *
  * @property accessToken The access token as a String.
  * @property tokenType The type of the token (e.g., Bearer).
- * @property expiresIn The duration in which the token expires.
+ * @property expiresIn The number of seconds until the token expires (e.g. 3600 = 1 hour).
  */
 @Serializable
-data class AccessToken(@SerialName("access_token") var accessToken: String, @SerialName("token_type") var tokenType: String, @SerialName("expires_in") var expiresIn: String)
+data class AccessToken(@SerialName("access_token") var accessToken: String, @SerialName("token_type") var tokenType: String, @SerialName("expires_in") var expiresIn: Int)

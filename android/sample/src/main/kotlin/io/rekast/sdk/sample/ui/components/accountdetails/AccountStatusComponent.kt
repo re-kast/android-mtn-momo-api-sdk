@@ -46,14 +46,14 @@ fun AccountStatusComponent(modifier: Modifier = Modifier, accountHolderStatus: M
     ) {
         SectionHeader(titleResId = R.string.account_status_title)
         Row(horizontalArrangement = Arrangement.SpaceEvenly) {
-            Column(modifier = modifier.padding(end = dimensionResource(id = R.dimen.spacing_large))) {
+            Column(modifier = modifier.padding(start = dimensionResource(id = R.dimen.spacing_large), end = dimensionResource(id = R.dimen.spacing_large))) {
                 Text(
                     text = stringResource(id = R.string.status),
                     color = colorResource(id = R.color.black),
                     fontWeight = FontWeight.Bold
                 )
             }
-            Column(modifier = modifier.padding(end = dimensionResource(id = R.dimen.spacing_medium))) {
+            Column(modifier = modifier.padding(start = dimensionResource(id = R.dimen.spacing_medium), end = dimensionResource(id = R.dimen.spacing_large))) {
                 accountHolderStatus.value?.result.let { result ->
                     var text = stringResource(id = R.string.in_Active)
                     if (result == true) {

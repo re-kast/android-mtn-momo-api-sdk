@@ -16,15 +16,15 @@
 package io.rekast.sdk.sample.utils
 
 import androidx.compose.material.SnackbarDuration
-import kotlinx.serialization.Serializable
 
 /**
  * Configuration data for displaying a [Snackbar], encapsulating message text, optional action
  * label, and display duration.
  *
+ * Passed in-memory via [kotlinx.coroutines.flow.SharedFlow] — no serialization needed.
+ *
  * @property message The text to display in the snackbar body.
  * @property actionLabel Optional label for the snackbar action button; null means no action.
  * @property duration How long the snackbar should be visible; defaults to [SnackbarDuration.Short].
  */
-@Serializable
-data class SnackBarComponentConfiguration(val message: String = "", val actionLabel: String? = null, val duration: SnackbarDuration = SnackbarDuration.Short) : java.io.Serializable
+data class SnackBarComponentConfiguration(val message: String = "", val actionLabel: String? = null, val duration: SnackbarDuration = SnackbarDuration.Short)

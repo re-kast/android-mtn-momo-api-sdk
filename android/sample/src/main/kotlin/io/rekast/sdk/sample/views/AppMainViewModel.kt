@@ -15,321 +15,202 @@
  */
 package io.rekast.sdk.sample.views
 
-import android.content.Context
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import io.rekast.sdk.model.ProviderCallBackHost
-import io.rekast.sdk.model.authentication.credentials.BasicAuthCredentials
 import io.rekast.sdk.repository.DefaultRepository
 import io.rekast.sdk.repository.data.NetworkResult
+import io.rekast.sdk.sample.utils.CredentialStorage
 import io.rekast.sdk.sample.utils.DispatcherProvider
 import io.rekast.sdk.sample.utils.SampleConfig
 import io.rekast.sdk.sample.utils.Utils
 import io.rekast.sdk.utils.ProductType
 import io.rekast.sdk.utils.Settings
 import javax.inject.Inject
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
 /**
- * ViewModel for managing authentication and API interactions.
+ * ViewModel that bootstraps authentication on first launch.
  *
- * This ViewModel handles setting authentication credentials and making API calls.
+ * Responsible for the one-time credential provisioning sequence:
+ * 1. **Check/create API user** — verifies the sandbox user exists; creates it if not.
+ * 2. **Create API key** — skipped if one is already stored in [CredentialStorage].
+ * 3. **Fetch access token** — skipped if a non-expired token is already stored.
+ * 4. **Fetch OAuth2 token** — skipped if a non-expired token is already stored.
  *
- * @property defaultRepository The repository for handling API calls related to MTN MOMO.
- * @property context The application context for accessing resources and utilities.
- * @property settings The settings utility for managing application settings.
+ * All credentials are written to [CredentialStorage] (EncryptedSharedPreferences) and then read
+ * back on every SDK request via [io.rekast.sdk.network.interfaces.CredentialProvider]. Expired
+ * tokens are refreshed automatically by [io.rekast.sdk.app.di.TokenAuthenticator] on 401 — no
+ * manual re-bootstrap is needed after first launch.
+ *
+ * Each step uses a cold [kotlinx.coroutines.flow.Flow] from [io.rekast.sdk.repository.DefaultRepository].
+ * Flows emit [io.rekast.sdk.repository.data.NetworkResult.Loading] first, then a terminal
+ * [io.rekast.sdk.repository.data.NetworkResult.Success] or [io.rekast.sdk.repository.data.NetworkResult.Error].
  */
 @HiltViewModel
 open class AppMainViewModel @Inject constructor(
     private val defaultRepository: DefaultRepository,
-    @param:ApplicationContext private val context: Context,
+    private val credentialStorage: CredentialStorage,
     private val settings: Settings,
     private val dispatchers: DispatcherProvider,
     private val sampleConfig: SampleConfig
 ) : ViewModel() {
 
     /**
-     * Sets the Basic Authentication credentials.
+     * Checks whether the API user exists and, if not, creates it — then advances to [createApiKey].
      *
-     * @param apiUserId The API user ID.
-     * @param apiKey The API key.
-     */
-    fun setBasicAuth(apiUserId: String, apiKey: String) {
-        val basicAuthCredentials = BasicAuthCredentials(apiUserId, apiKey)
-        viewModelScope.launch {
-            defaultRepository.setUpBasicAuth(basicAuthCredentials)
-        }
-    }
-
-    /**
-     * Checks the user status and creates an API user if necessary.
+     * Uses [kotlinx.coroutines.flow.flatMapLatest] to flatten the check → create sequence into a
+     * single flow without nesting `.collect` calls:
+     * - `checkApiUser` Success → passes through; the outer `.collect` calls [createApiKey].
+     * - `checkApiUser` Error → switches the active inner flow to `createApiUser`; the outer
+     *   `.collect` calls [createApiKey] once that succeeds.
+     * - `Loading` from either call → passed through to the outer collect and ignored (no UI state
+     *   is managed by this ViewModel).
      *
-     * This method checks if the API user exists and creates a new one if it does not.
+     * The bootstrap sequence does not repeat: if `createApiUser` also fails, the error is logged
+     * and the chain stops. The user will remain uncredentialled until [checkUser] is called again.
      */
+    @OptIn(ExperimentalCoroutinesApi::class)
     fun checkUser() {
         val productType = Utils.getProductSubscriptionKeys(ProductType.COLLECTION, sampleConfig)
         viewModelScope.launch(dispatchers.io()) {
-            defaultRepository.checkApiUser(sampleConfig.apiVersionV1, productType).collect { apiUser ->
-                when (apiUser) {
-                    is NetworkResult.Success -> {
-                        createApiKey()
-                    }
+            defaultRepository.checkApiUser(sampleConfig.apiVersionV1, productType)
+                .flatMapLatest { result ->
+                    when (result) {
+                        is NetworkResult.Success -> flowOf(result)
 
-                    is NetworkResult.Error -> {
-                        Timber.e(apiUser.message)
-                        val providerCallBackHost = ProviderCallBackHost(providerCallbackHost = sampleConfig.providerCallbackHost)
-                        defaultRepository.createApiUser(providerCallBackHost, sampleConfig.apiVersionV1, sampleConfig.apiUserId, productType).collect { newApiUser ->
-                            when (newApiUser) {
-                                is NetworkResult.Success -> {
-                                    checkUser()
-                                }
-
-                                is NetworkResult.Error -> {
-                                    Timber.e("New Api user was not created %s", newApiUser.message)
-                                }
-
-                                else -> {
-                                    Timber.e("An error occurred")
-                                }
-                            }
+                        is NetworkResult.Error -> {
+                            Timber.e(result.message)
+                            val callbackHost = ProviderCallBackHost(providerCallbackHost = sampleConfig.providerCallbackHost)
+                            defaultRepository.createApiUser(callbackHost, sampleConfig.apiVersionV1, sampleConfig.apiUserId, productType)
                         }
-                    }
 
-                    else -> {
-                        Timber.e("An error occurred")
+                        is NetworkResult.Loading -> flowOf(result)
                     }
                 }
-            }
+                .collect { result ->
+                    when (result) {
+                        is NetworkResult.Success -> createApiKey()
+                        is NetworkResult.Error -> Timber.e("API user creation failed: %s", result.message)
+                        is NetworkResult.Loading -> {}
+                    }
+                }
         }
     }
 
     /**
-     * Creates an API key for the user.
-     *
-     * This method retrieves the API key for the user and sets up basic authentication.
+     * Fetches and stores the API key if one is not already saved.
      */
     private fun createApiKey() {
         val productType = Utils.getProductSubscriptionKeys(ProductType.REMITTANCE, sampleConfig)
         viewModelScope.launch(dispatchers.io()) {
-            val apiUserKey = Utils.getApiKey(context)
-            if (apiUserKey.isNotBlank()) {
-                setBasicAuth(apiUserId = sampleConfig.apiUserId, apiKey = apiUserKey)
+            val existingKey = credentialStorage.getApiKey()
+            if (existingKey.isNotBlank()) {
                 getAccessToken()
-            } else {
-                defaultRepository.createApiKey(apiVersion = sampleConfig.apiVersionV1, productSubscriptionKey = productType).collect { apiKey ->
-                    when (apiKey) {
-                        is NetworkResult.Success -> {
-                            try {
-                                val newApiKey = apiKey.response?.apiKey.orEmpty()
-                                Utils.saveApiKey(context = context, apiKey = newApiKey)
-                                setBasicAuth(apiUserId = sampleConfig.apiUserId, apiKey = newApiKey)
-                                Timber.d("Api Key fetched and saved successfully")
-                                getAccessToken()
-                            } catch (exception: Exception) {
-                                Timber.e("An Error occurred %s", exception.message)
-                            }
-                        }
+                return@launch
+            }
 
-                        is NetworkResult.Error -> {
-                            Timber.e("Api Key creation failed %s", apiKey.message)
-                        }
-
-                        else -> {
-                            Timber.e("Api Key creation failed")
+            defaultRepository.createApiKey(apiVersion = sampleConfig.apiVersionV1, productSubscriptionKey = productType).collect { result ->
+                when (result) {
+                    is NetworkResult.Success -> {
+                        try {
+                            val newKey = result.response?.apiKey.orEmpty()
+                            credentialStorage.saveApiKey(newKey)
+                            Timber.d("API key saved")
+                            getAccessToken()
+                        } catch (e: Exception) {
+                            Timber.e(e, "Failed to save API key")
                         }
                     }
+
+                    is NetworkResult.Error -> {
+                        Timber.e("API key creation failed: %s", result.message)
+                    }
+
+                    is NetworkResult.Loading -> {}
                 }
             }
         }
     }
 
     /**
-     * Retrieves the access token for the user.
-     *
-     * This method checks if the access token is available and retrieves it if not.
+     * Fetches and stores the access token if one is not already valid.
+     * The [io.rekast.sdk.app.di.TokenAuthenticator] handles subsequent refreshes automatically.
      */
     private fun getAccessToken() {
         val productType = Utils.getProductSubscriptionKeys(ProductType.REMITTANCE, sampleConfig)
         viewModelScope.launch(dispatchers.io()) {
-            val apiUserKey = context.let { Utils.getApiKey(it) }
-            val accessToken = context.let { Utils.getAccessToken(it) }
+            val apiKey = credentialStorage.getApiKey()
+            val accessToken = credentialStorage.getAccessToken()
 
-            if (apiUserKey.isNotBlank() && accessToken.isBlank()) {
-                defaultRepository.getAccessToken(productSubscriptionKey = productType, productType = ProductType.REMITTANCE.productType).collect { accessToken ->
-                    when (accessToken) {
+            if (apiKey.isNotBlank() && accessToken.isBlank()) {
+                defaultRepository.getAccessToken(productSubscriptionKey = productType, productType = ProductType.REMITTANCE.productType).collect { result ->
+                    when (result) {
                         is NetworkResult.Success -> {
                             try {
-                                Utils.saveAccessToken(context, accessToken.response)
-                                this@AppMainViewModel.setBasicAuth("", "")
-                                Timber.d("Access token created and saved successfully")
+                                credentialStorage.saveAccessToken(result.response)
+                                Timber.d("Access token saved")
                                 getOauthAccessToken()
-                            } catch (exception: Exception) {
-                                Timber.e("An Error occurred %s", exception.message)
+                            } catch (e: Exception) {
+                                Timber.e(e, "Failed to save access token")
                             }
                         }
 
                         is NetworkResult.Error -> {
-                            Timber.e("Access token creation failed %s", accessToken.message)
+                            Timber.e("Access token fetch failed: %s", result.message)
                         }
 
-                        else -> {
-                            Timber.e("Access token creation failed")
-                        }
+                        is NetworkResult.Loading -> {}
                     }
                 }
             } else {
-                this@AppMainViewModel.setBasicAuth("", "")
-                Timber.d("A valid access token was found")
+                Timber.d("Valid access token already stored")
                 getOauthAccessToken()
             }
         }
     }
 
     /**
-     * Retrieves the Oauth access token for the user.
-     *
-     * This method checks if the access token is available and retrieves it if not.
+     * Fetches and stores the OAuth2 access token if one is not already valid.
      */
     private fun getOauthAccessToken() {
-        val productType = Utils.getProductSubscriptionKeys(ProductType.COLLECTION, sampleConfig)
+        val productType = Utils.getProductSubscriptionKeys(ProductType.REMITTANCE, sampleConfig)
         viewModelScope.launch(dispatchers.io()) {
-            val userAccessToken = Utils.getAccessToken(context)
-            val userOauthAccessToken = Utils.getOauthAccessToken(context)
+            val accessToken = credentialStorage.getAccessToken()
+            val oauthToken = credentialStorage.getOauthAccessToken()
 
-            if (userAccessToken.isNotBlank() && userOauthAccessToken.isBlank()) {
-                defaultRepository.getOauthAccessToken(productType = ProductType.COLLECTION.productType, productSubscriptionKey = productType, environment = sampleConfig.environment).collect { oauthAccessToken ->
-                    when (oauthAccessToken) {
+            if (accessToken.isNotBlank() && oauthToken.isBlank()) {
+                defaultRepository.getOauthAccessToken(
+                    productType = ProductType.REMITTANCE.productType,
+                    productSubscriptionKey = productType,
+                    environment = sampleConfig.environment
+                ).collect { result ->
+                    when (result) {
                         is NetworkResult.Success -> {
                             try {
-                                Utils.saveOauth2AccessToken(context, oauthAccessToken.response)
-                                Timber.d("Oauth2 Access token created and saved successfully")
-                            } catch (exception: Exception) {
-                                Timber.e("An Error occurred %s", exception.message)
+                                credentialStorage.saveOauthAccessToken(result.response)
+                                Timber.d("OAuth2 token saved")
+                            } catch (e: Exception) {
+                                Timber.e(e, "Failed to save OAuth2 token")
                             }
                         }
 
                         is NetworkResult.Error -> {
-                            Timber.e("Oauth2 Access token creation failed %s", oauthAccessToken.message)
+                            Timber.e("OAuth2 token fetch failed: %s", result.message)
                         }
 
-                        else -> {
-                            Timber.e("Oauth2 Access token creation failed")
-                        }
+                        is NetworkResult.Loading -> {}
                     }
                 }
             } else {
-                Timber.d("A valid Oauth2 access token was found")
+                Timber.d("Valid OAuth2 token already stored")
             }
         }
     }
-
-    /*
-    private fun getUserInfoWithConsent() {
-        val accessToken = Utils.getAccessToken(this)
-        if (StringUtils.isNotBlank(accessToken)) {
-            momoAPI.getUserInfoWithConsent(
-                Settings().getProductSubscriptionKeys(ProductType.REMITTANCE),
-                accessToken,
-                BuildConfig.MOMO_API_VERSION_V1,
-                Constants.ProductTypes.REMITTANCE,
-            ) { momoAPIResult ->
-                when (momoAPIResult) {
-                    is MomoResponse.Success -> {
-                        val getUserInfoWithoutConsent = momoAPIResult.value
-                        Timber.d(getUserInfoWithoutConsent.toString())
-                    }
-                    is MomoResponse.Failure -> {
-                        val momoAPIException = momoAPIResult.APIException
-                        toast(momoAPIException?.message ?: "An error occurred!")
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * Requests a refund for a transaction.
-     *
-     * @param requestToPayUuid The UUID of the request to pay.
-     */
-    fun refund(requestToPayUuid: String) {
-        val accessToken = context?.let { Utils.getAccessToken(it) }
-        val transactionUuid = Settings().generateUUID()
-        if (StringUtils.isNotBlank(accessToken) && StringUtils.isNotBlank(requestToPayUuid)) {
-            val creditTransaction = createRefundTransaction(requestToPayUuid)
-            accessToken?.let {
-                defaultRepository.refund(
-                    it,
-                    creditTransaction,
-                    BuildConfig.MOMO_API_VERSION_V2,
-                    Settings().getProductSubscriptionKeys(ProductType.DISBURSEMENTS),
-                    transactionUuid
-                ) { momoAPIResult ->
-                    when (momoAPIResult) {
-                        is MomoResponse.Success -> {
-                            getRefundStatus(transactionUuid)
-                        }
-                        is MomoResponse.Failure -> {
-                            val momoAPIException = momoAPIResult.momoException
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * Retrieves the status of a refund transaction.
-     *
-     * @param referenceId The reference ID of the transaction.
-     */
-    private fun getRefundStatus(referenceId: String) {
-        val accessToken = context?.let { Utils.getAccessToken(it) }
-        if (StringUtils.isNotBlank(accessToken)) {
-            accessToken?.let {
-                defaultRepository.getRefundStatus(
-                    referenceId,
-                    BuildConfig.MOMO_API_VERSION_V1,
-                    Settings().getProductSubscriptionKeys(ProductType.DISBURSEMENTS),
-                    it
-                ) { momoAPIResult ->
-                    when (momoAPIResult) {
-                        is MomoResponse.Success -> {
-                            val completeTransfer =
-                                Gson().fromJson(momoAPIResult.value!!.source().readUtf8(), MomoTransaction::class.java)
-                            Timber.d(completeTransfer.toString())
-                        }
-                        is MomoResponse.Failure -> {
-                            val momoAPIException = momoAPIResult.momoException
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * Creates a refund transaction.
-     *
-     * @param requestToPayUuid The UUID of the request to pay.
-     * @return A MomoTransaction object representing the refund transaction.
-     */
-    private fun createRefundTransaction(requestToPayUuid: String): MomoTransaction {
-        return MomoTransaction(
-            amount = "30",
-            currency = "EUR",
-            financialTransactionId = null,
-            externalId = Settings().generateUUID(),
-            payee = null,
-            payer = null,
-            payerMessage = "Testing",
-            payeeNote = "The Good Company",
-            status = null,
-            reason = null,
-            referenceIdToRefund = requestToPayUuid
-        )
-    }*/
 }
