@@ -34,11 +34,15 @@ import androidx.lifecycle.MutableLiveData
 import io.rekast.sdk.model.BasicUserInfo
 import io.rekast.sdk.sample.R
 
+/**
+ * Renders basic user information fields — name, birth date, gender, updated-at, locale, and sub —
+ * in a vertically stacked layout for the main screen.
+ *
+ * @param modifier Modifier applied to the root [Column].
+ * @param basicUserInfo LiveData holding the [BasicUserInfo] to display; individual fields are hidden when null.
+ */
 @Composable
-fun BasicUserInfoComponent(
-    modifier: Modifier = Modifier,
-    basicUserInfo: MutableLiveData<BasicUserInfo?>
-) {
+fun BasicUserInfoComponent(modifier: Modifier = Modifier, basicUserInfo: MutableLiveData<BasicUserInfo?>) {
     Column(
         modifier = modifier.fillMaxSize()
     ) {

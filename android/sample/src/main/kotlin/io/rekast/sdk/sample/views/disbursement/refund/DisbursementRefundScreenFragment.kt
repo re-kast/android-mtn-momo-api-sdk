@@ -34,6 +34,9 @@ import io.rekast.sdk.sample.views.AppMainActivity
 import io.rekast.sdk.sample.views.AppMainViewModel
 import kotlin.getValue
 
+/**
+ * Fragment that hosts the Disbursement Refund screen, rendering [DisbursementScreen] via Jetpack Compose.
+ */
 @ExperimentalMaterialApi
 @AndroidEntryPoint
 class DisbursementRefundScreenFragment : Fragment() {
@@ -41,24 +44,18 @@ class DisbursementRefundScreenFragment : Fragment() {
     private val disbursementRefundScreenViewModel by viewModels<DisbursementRefundScreenViewModel>()
     private val appMainViewModel by activityViewModels<AppMainViewModel>()
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        return ComposeView(requireContext()).apply {
-            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
-            setContent {
-                AppTheme {
-                    val showProgressBar by disbursementRefundScreenViewModel.showProgressBar.observeAsState(false)
-                    DisbursementScreen(
-                        navController = findNavController(),
-                        snackStateFlow = disbursementRefundScreenViewModel.snackBarStateFlow,
-                        showProgressBar = showProgressBar,
-                        disbursementRefundScreenViewModel = disbursementRefundScreenViewModel,
-                        momoTransaction = disbursementRefundScreenViewModel.momoTransaction
-                    )
-                }
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View = ComposeView(requireContext()).apply {
+        setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+        setContent {
+            AppTheme {
+                val showProgressBar by disbursementRefundScreenViewModel.showProgressBar.observeAsState(false)
+                DisbursementScreen(
+                    navController = findNavController(),
+                    snackStateFlow = disbursementRefundScreenViewModel.snackBarStateFlow,
+                    showProgressBar = showProgressBar,
+                    disbursementRefundScreenViewModel = disbursementRefundScreenViewModel,
+                    momoTransaction = disbursementRefundScreenViewModel.momoTransaction
+                )
             }
         }
     }

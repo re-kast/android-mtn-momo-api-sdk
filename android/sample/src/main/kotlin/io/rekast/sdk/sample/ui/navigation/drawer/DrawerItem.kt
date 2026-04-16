@@ -31,14 +31,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import io.rekast.sdk.sample.R
 import io.rekast.sdk.sample.ui.navigation.navigation.NavigationDrawerItem
 
+/**
+ * Renders a single navigation drawer row with an icon and title, highlighted when selected.
+ *
+ * @param item The [NavigationDrawerItem] describing the route, icon, and title to render.
+ * @param selected Whether this item corresponds to the currently active destination.
+ * @param onItemClick Callback invoked with the clicked [NavigationDrawerItem] when the row is tapped.
+ */
 @Composable
 fun DrawerItem(item: NavigationDrawerItem, selected: Boolean, onItemClick: (NavigationDrawerItem) -> Unit) {
     val background = if (selected) R.color.accent_secondary else android.R.color.transparent

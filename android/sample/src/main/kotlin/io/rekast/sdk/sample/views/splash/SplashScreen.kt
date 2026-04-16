@@ -34,10 +34,13 @@ import io.rekast.sdk.sample.R
 import io.rekast.sdk.sample.utils.annotation.PreviewWithBackgroundExcludeGenerated
 import kotlinx.coroutines.delay
 
+/**
+ * Renders the splash screen showing the application name centered on a full-screen background.
+ *
+ * @param modifier Modifier applied to the root [Box].
+ */
 @Composable
-fun SplashScreen(
-    modifier: Modifier = Modifier
-) = Box(
+fun SplashScreen(modifier: Modifier = Modifier) = Box(
     modifier = modifier.fillMaxSize()
 ) {
     LaunchedEffect(Unit) {

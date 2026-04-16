@@ -27,10 +27,13 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import io.rekast.sdk.sample.R
 
+/**
+ * Renders a centered circular progress indicator that fills the available screen space.
+ *
+ * @param modifier Modifier applied to the wrapping [Column].
+ */
 @Composable
-fun CircularProgressBarComponent(
-    modifier: Modifier = Modifier
-) {
+fun CircularProgressBarComponent(modifier: Modifier = Modifier) {
     Column(
         modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,

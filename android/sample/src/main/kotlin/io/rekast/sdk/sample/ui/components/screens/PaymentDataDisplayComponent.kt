@@ -35,12 +35,17 @@ import io.rekast.sdk.model.MomoTransaction
 import io.rekast.sdk.sample.R
 import io.rekast.sdk.sample.utils.annotation.PreviewWithBackgroundExcludeGenerated
 
+/**
+ * Renders a read-only summary of a completed MOMO transaction, including amount, currency,
+ * financial transaction ID, external ID, payer/payee, message, note, status, reason, and
+ * reference ID to refund when present.
+ *
+ * @param modifier Modifier applied to the root [Column].
+ * @param title Section header text displayed above the transaction details.
+ * @param momoTransaction LiveData holding the [MomoTransaction] to display; individual fields are hidden when null.
+ */
 @Composable
-fun PaymentDataDisplayComponent(
-    modifier: Modifier = Modifier,
-    title: String,
-    momoTransaction: MutableLiveData<MomoTransaction?>
-) {
+fun PaymentDataDisplayComponent(modifier: Modifier = Modifier, title: String, momoTransaction: MutableLiveData<MomoTransaction?>) {
     Column(
         modifier = modifier
             .fillMaxSize()

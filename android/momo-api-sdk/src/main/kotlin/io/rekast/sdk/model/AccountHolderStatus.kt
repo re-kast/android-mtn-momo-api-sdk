@@ -18,7 +18,10 @@ package io.rekast.sdk.model
 import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.Serializable
 
+/**
+ * Represents the active/inactive status of an account holder in the MTN MOMO system.
+ *
+ * @property result `true` if the account holder is active; `false` otherwise.
+ */
 @Serializable
-data class AccountHolderStatus(
-    @SerializedName("result") var result: Boolean
-)
+data class AccountHolderStatus(@SerializedName("result") var result: Boolean)

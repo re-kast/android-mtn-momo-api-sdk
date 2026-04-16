@@ -26,17 +26,20 @@ import retrofit2.http.POST
 import retrofit2.http.Path
 
 /**
- * This is the retrofit interface to handle the various calls to the CollectionService API. This interface defines the
- * method, the request and response from the API.
+ * Retrofit service interface for the MTN MOMO Collection product API.
+ *
+ * Extends [CommonService] with collection-specific operations: request-to-pay and request-to-withdraw.
  */
 sealed interface CollectionService : CommonService {
     /**
-     * Makes a request to pay a specific user
-     * @param[momoTransaction] -- This is the Transfer Payload [MomoTransaction]
-     * @param[apiVersion] -- The app Version (v1_0 or v2_0)
-     * @param[productSubscriptionKey] -- The Product subscription Key (Ocp-Apim-Subscription-Key)
-     * @param[environment] -- The API environment (X-Target-Environment)
-     * @return[Unit] -- Returns the Transfer Status
+     * Initiates a request-to-pay, prompting the specified payer to approve a payment.
+     *
+     * @param momoTransaction The transaction payload containing amount, currency, and party details.
+     * @param apiVersion The API version to target (e.g., v1_0 or v2_0).
+     * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Collection product.
+     * @param environment The target environment (e.g., sandbox or production).
+     * @param uuid A UUID V4 used as the X-Reference-Id to uniquely identify this request.
+     * @return A [Response] with an empty body; HTTP 202 indicates the request was accepted.
      */
     @POST(MomoConstants.EndPoints.REQUEST_TO_PAY)
     suspend fun requestToPay(
@@ -48,13 +51,13 @@ sealed interface CollectionService : CommonService {
     ): Response<Unit>
 
     /**
-     * Makes a request to check the status of the payment request
-     * @param[referenceId] -- The Transfer Reference ID. This is a UUID V4.
-     * This is the ID used here [requestToPay]
-     * @param[apiVersion] -- The app Version (v1_0 or v2_0)
-     * @param[productSubscriptionKey] -- The Product subscription Key (Ocp-Apim-Subscription-Key)
-     * @param[environment] -- The API environment (X-Target-Environment)
-     * @return[ResponseBody] -- Returns the Transfer Status
+     * Retrieves the status of a previously initiated request-to-pay transaction.
+     *
+     * @param referenceId The UUID V4 reference ID used when calling [requestToPay].
+     * @param apiVersion The API version to target (e.g., v1_0 or v2_0).
+     * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Collection product.
+     * @param environment The target environment (e.g., sandbox or production).
+     * @return A [Response] whose body contains the transaction status as a [ResponseBody].
      */
     @GET(MomoConstants.EndPoints.REQUEST_TO_PAY_STATUS)
     suspend fun requestToPayTransactionStatus(
@@ -65,12 +68,14 @@ sealed interface CollectionService : CommonService {
     ): Response<ResponseBody>
 
     /**
-     * Makes a request to withdraw from a specific user
-     * @param[momoTransaction] -- This is the Transfer Payload [MomoTransaction]
-     * @param[apiVersion] -- The app Version (v1_0 or v2_0)
-     * @param[productSubscriptionKey] -- The Product subscription Key (Ocp-Apim-Subscription-Key)
-     * @param[environment] -- The API environment (X-Target-Environment)
-     * @return[Unit] -- Returns the Transfer Status
+     * Initiates a request-to-withdraw, prompting the specified payer to approve a withdrawal.
+     *
+     * @param momoTransaction The transaction payload containing amount, currency, and party details.
+     * @param apiVersion The API version to target (e.g., v1_0 or v2_0).
+     * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Collection product.
+     * @param environment The target environment (e.g., sandbox or production).
+     * @param uuid A UUID V4 used as the X-Reference-Id to uniquely identify this request.
+     * @return A [Response] with an empty body; HTTP 202 indicates the request was accepted.
      */
     @POST(MomoConstants.EndPoints.REQUEST_TO_WITHDRAW)
     suspend fun requestToWithdraw(
@@ -82,13 +87,13 @@ sealed interface CollectionService : CommonService {
     ): Response<Unit>
 
     /**
-     * Makes a request to check the status fo the withdrawal
-     * @param[referenceId] -- The Transfer Reference ID. This is a UUID V4.
-     * This is the ID used here [requestToWithdraw]
-     * @param[apiVersion] -- The app Version (v1_0 or v2_0)
-     * @param[productSubscriptionKey] -- The Product subscription Key (Ocp-Apim-Subscription-Key)
-     * @param[environment] -- The API environment (X-Target-Environment)
-     * @return[ResponseBody] -- Returns the Transfer Status
+     * Retrieves the status of a previously initiated request-to-withdraw transaction.
+     *
+     * @param referenceId The UUID V4 reference ID used when calling [requestToWithdraw].
+     * @param apiVersion The API version to target (e.g., v1_0 or v2_0).
+     * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Collection product.
+     * @param environment The target environment (e.g., sandbox or production).
+     * @return A [Response] whose body contains the withdrawal status as a [ResponseBody].
      */
     @GET(MomoConstants.EndPoints.REQUEST_TO_WITHDRAW_STATUS)
     suspend fun requestToWithdrawTransactionStatus(

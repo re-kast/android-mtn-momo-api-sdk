@@ -18,8 +18,11 @@ package io.rekast.sdk.model
 import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.Serializable
 
+/**
+ * Represents the account balance returned by the MTN MOMO API.
+ *
+ * @property availableBalance The amount currently available in the account.
+ * @property currency The ISO currency code for the balance (e.g., EUR, UGX).
+ */
 @Serializable
-data class AccountBalance(
-    @SerializedName("availableBalance") var availableBalance: String,
-    @SerializedName("currency") var currency: String
-)
+data class AccountBalance(@SerializedName("availableBalance") var availableBalance: String, @SerializedName("currency") var currency: String)

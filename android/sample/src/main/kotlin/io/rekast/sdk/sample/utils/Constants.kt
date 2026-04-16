@@ -19,16 +19,22 @@ package io.rekast.sdk.sample.utils
  * Contains constant values used throughout the MTN MOMO SDK sample application.
  */
 object Constants {
+    /** Navigation drawer title strings for each screen destination. */
     object NavigationTitle {
         const val HOME = "Home"
         const val REMITTANCE = "Remittance"
-        const val COLLECTION_Service_REQUEST_TO_PAY = "CollectionService | Request To Pay"
-        const val COLLECTION_Service_REQUEST_TO_WITHDRAW = "CollectionService | Request To Withdraw"
+        const val COLLECTION_SERVICE_REQUEST_TO_PAY = "CollectionService | Request To Pay"
+        const val COLLECTION_SERVICE_REQUEST_TO_WITHDRAW = "CollectionService | Request To Withdraw"
         const val DISBURSEMENT_DEPOSIT = "Disbursement | Deposit"
         const val DISBURSEMENT_REFUND = "Disbursement | Refund"
     }
 
+    /** Default currency used for sandbox API transactions. */
     const val SANDBOX_CURRENCY = "EUR"
+
+    /** Default length for randomly generated alphanumeric external ID strings. */
     const val STRING_LENGTH = 12
+
+    /** Reusable empty string constant to avoid repeated string literals. */
     const val EMPTY_STRING = ""
 }

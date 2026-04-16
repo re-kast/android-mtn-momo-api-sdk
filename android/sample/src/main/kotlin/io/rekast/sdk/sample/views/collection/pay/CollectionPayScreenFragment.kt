@@ -34,6 +34,9 @@ import io.rekast.sdk.sample.views.AppMainActivity
 import io.rekast.sdk.sample.views.AppMainViewModel
 import kotlin.getValue
 
+/**
+ * Fragment that hosts the Collection Request-to-Pay screen, rendering [CollectionScreen] via Jetpack Compose.
+ */
 @ExperimentalMaterialApi
 @AndroidEntryPoint
 class CollectionPayScreenFragment : Fragment() {
@@ -41,24 +44,18 @@ class CollectionPayScreenFragment : Fragment() {
     private val collectionPayScreenViewModel by viewModels<CollectionPayScreenViewModel>()
     private val appMainViewModel by activityViewModels<AppMainViewModel>()
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        return ComposeView(requireContext()).apply {
-            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
-            setContent {
-                AppTheme {
-                    val showProgressBar by collectionPayScreenViewModel.showProgressBar.observeAsState(false)
-                    CollectionScreen(
-                        navController = findNavController(),
-                        snackStateFlow = collectionPayScreenViewModel.snackBarStateFlow,
-                        showProgressBar = showProgressBar,
-                        collectionPayScreenViewModel = collectionPayScreenViewModel,
-                        momoTransaction = collectionPayScreenViewModel.momoTransaction
-                    )
-                }
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View = ComposeView(requireContext()).apply {
+        setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+        setContent {
+            AppTheme {
+                val showProgressBar by collectionPayScreenViewModel.showProgressBar.observeAsState(false)
+                CollectionScreen(
+                    navController = findNavController(),
+                    snackStateFlow = collectionPayScreenViewModel.snackBarStateFlow,
+                    showProgressBar = showProgressBar,
+                    collectionPayScreenViewModel = collectionPayScreenViewModel,
+                    momoTransaction = collectionPayScreenViewModel.momoTransaction
+                )
             }
         }
     }

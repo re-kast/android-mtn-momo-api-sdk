@@ -41,17 +41,17 @@ class Settings @Inject constructor() {
     /**
      * Connection timeout duration in milliseconds.
      */
-    val CONNECT_TIMEOUT: Long = 60 * 1000
+    val connectTimeout: Long = 60 * 1000
 
     /**
      * Connection read timeout duration in milliseconds.
      */
-    val READ_TIMEOUT: Long = 60 * 1000
+    val readTimeout: Long = 60 * 1000
 
     /**
      * Connection write timeout duration in milliseconds.
      */
-    val WRITE_TIMEOUT: Long = 60 * 1000
+    val writeTimeout: Long = 60 * 1000
 
     /**
      * Formats the phone number based on the provided country code.
@@ -90,10 +90,7 @@ class Settings @Inject constructor() {
      * @param notificationMessageMaxLength The maximum allowed length for the notification message.
      * @return True if the message length is within the limit, false otherwise.
      */
-    fun checkNotificationMessageLength(
-        notificationMessage: String?,
-        notificationMessageMaxLength: Long = MomoConstants.NOTIFICATION_MESSAGE_LENGTH
-    ): Boolean {
+    fun checkNotificationMessageLength(notificationMessage: String?, notificationMessageMaxLength: Long = MomoConstants.NOTIFICATION_MESSAGE_LENGTH): Boolean {
         if (StringUtils.isNotBlank(notificationMessage)) {
             return notificationMessage!!.length <= notificationMessageMaxLength
         }

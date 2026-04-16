@@ -15,13 +15,23 @@
  */
 package io.rekast.sdk.model
 
+import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.Serializable
+
 /**
- * Data class for Payment MomoResponse.
+ * Represents the result returned after initiating a payment request.
+ *
+ * @property merchantRequestID The merchant-assigned request identifier for the payment.
+ * @property checkoutRequestID The checkout request identifier assigned by the payment gateway.
+ * @property responseCode The response code indicating the outcome of the payment request.
+ * @property responseDescription A human-readable description of the response code.
+ * @property customerMessage A message intended to be displayed to the customer.
  */
+@Serializable
 data class PaymentResult(
-    var merchantRequestID: String,
-    var checkoutRequestID: String,
-    var responseCode: String,
-    var responseDescription: String,
-    var customerMessage: String
+    @SerializedName("MerchantRequestID") var merchantRequestID: String,
+    @SerializedName("CheckoutRequestID") var checkoutRequestID: String,
+    @SerializedName("ResponseCode") var responseCode: String,
+    @SerializedName("ResponseDescription") var responseDescription: String,
+    @SerializedName("CustomerMessage") var customerMessage: String
 )

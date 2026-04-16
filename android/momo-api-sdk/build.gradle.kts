@@ -89,6 +89,7 @@ dokka {
     dokkaSourceSets {
         register("main") {
             sourceRoots.from(file("src/main/kotlin"))
+            displayName.set("Android")
         }
     }
     pluginsConfiguration.html {

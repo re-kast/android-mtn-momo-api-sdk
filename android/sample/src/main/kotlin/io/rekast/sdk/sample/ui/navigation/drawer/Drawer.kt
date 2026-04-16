@@ -48,6 +48,14 @@ import io.rekast.sdk.sample.ui.navigation.navigation.NavigationDrawerItem
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
+/**
+ * Renders the navigation drawer content with a header, a list of [NavigationDrawerItem] entries,
+ * and a copyright footer; navigates to the selected item's route and closes the drawer on click.
+ *
+ * @param scope [CoroutineScope] used to launch the drawer close animation.
+ * @param scaffoldState [ScaffoldState] providing access to the drawer state.
+ * @param navController [NavController] used to navigate when a drawer item is selected.
+ */
 @Composable
 fun Drawer(scope: CoroutineScope, scaffoldState: ScaffoldState, navController: NavController) {
     val items = listOf(

@@ -27,12 +27,14 @@ import org.apache.commons.lang3.StringUtils
 
 private const val API_KEY = "apiKey"
 
+/** SharedPreferences keys used for storing and retrieving the basic [AccessToken]. */
 object AccessTokenConstants {
     const val ACCESS_TOKEN = "accessToken"
     const val EXPIRY_DATE = "expiryDate"
     const val TOKEN_TYPE = "tokenType"
 }
 
+/** SharedPreferences keys used for storing and retrieving the OAuth 2.0 [Oauth2AccessToken]. */
 object Oauth2AccessTokenConstants {
     const val ACCESS_TOKEN = "oauthAccessToken"
     const val EXPIRY_DATE = "oauthExpiryDate"
@@ -83,7 +85,9 @@ object Utils {
     fun saveAccessToken(context: Context, accessToken: AccessToken?) {
         val tokenExpiry = if (StringUtils.isNotBlank(accessToken!!.expiresIn)) {
             accessToken.expiresIn.toIntOrNull()
-        } else { 1 }
+        } else {
+            1
+        }
 
         val mSettings = context.getSharedPreferences(BuildConfig.APPLICATION_ID, MODE_PRIVATE)
         val editor = mSettings.edit()
@@ -94,6 +98,12 @@ object Utils {
         editor.apply()
     }
 
+    /**
+     * Saves the provided OAuth 2.0 access token in shared preferences along with its expiry dates.
+     *
+     * @param context The context used to access shared preferences.
+     * @param oauth2AccessToken The OAuth 2.0 access token to be saved.
+     */
     fun saveOauth2AccessToken(context: Context, oauth2AccessToken: Oauth2AccessToken?) {
         val accessTokenExpiry = if (StringUtils.isNotBlank(oauth2AccessToken!!.expiresIn)) {
             oauth2AccessToken.expiresIn.toIntOrNull()
@@ -135,6 +145,12 @@ object Utils {
         }
     }
 
+    /**
+     * Retrieves the saved OAuth 2.0 access token from shared preferences.
+     *
+     * @param context The context used to access shared preferences.
+     * @return The saved OAuth 2.0 access token as a String, or an empty string if expired or not found.
+     */
     fun getOauthAccessToken(context: Context): String {
         val mSettings = context.getSharedPreferences(BuildConfig.APPLICATION_ID, MODE_PRIVATE)
         val expiryTime = mSettings.getLong(Oauth2AccessTokenConstants.EXPIRY_DATE, 0)

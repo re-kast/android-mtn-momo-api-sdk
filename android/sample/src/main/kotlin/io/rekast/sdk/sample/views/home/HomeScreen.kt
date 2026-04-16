@@ -52,6 +52,18 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 
+/**
+ * Renders the Home screen displaying basic user info, account holder status, and account balance,
+ * or a progress indicator while data is loading.
+ *
+ * @param modifier Modifier applied to the main box container.
+ * @param navController [NavController] used to navigate between destinations via the drawer.
+ * @param snackStateFlow Flow emitting [SnackBarComponentConfiguration] messages to display.
+ * @param showProgressBar Whether to display a loading indicator instead of the data panels; defaults to false.
+ * @param basicUserInfo LiveData holding the [BasicUserInfo] to render.
+ * @param accountHolderStatus LiveData holding the [AccountHolderStatus] to render.
+ * @param accountBalance LiveData holding the [AccountBalance] to render.
+ */
 @Composable
 fun MainScreen(
     modifier: Modifier = Modifier,

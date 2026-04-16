@@ -49,6 +49,32 @@ import androidx.compose.ui.unit.sp
 import io.rekast.sdk.sample.R
 import io.rekast.sdk.sample.ui.components.general.textFieldDefaultsComponent
 
+/**
+ * Renders a scrollable payment data capture form with conditionally shown fields for financial ID,
+ * reference ID to refund, and delivery note, along with a submit button.
+ *
+ * @param modifier Modifier applied to the inner [Column].
+ * @param title Section header text displayed above the form fields.
+ * @param submitButtonText Label for the submit button.
+ * @param phoneNumber Current value of the phone number field.
+ * @param financialId Current value of the financial ID field.
+ * @param showFinancialId Whether to display the financial ID field; defaults to true.
+ * @param referenceIdToRefund Current value of the reference ID to refund field.
+ * @param showReferenceIdToRefund Whether to display the reference ID to refund field; defaults to true.
+ * @param amount Current value of the amount field.
+ * @param paymentMessage Current value of the payer message field.
+ * @param paymentNote Current value of the payer note field.
+ * @param deliveryNote Current value of the delivery note field.
+ * @param showDeliveryTextField Whether to display the delivery note field; defaults to true.
+ * @param onRequestPayButtonClicked Callback invoked when the submit button is clicked.
+ * @param onPhoneNumberUpdated Callback invoked when the phone number field value changes.
+ * @param onFinancialIdUpdated Callback invoked when the financial ID field value changes.
+ * @param onReferenceIdToRefundUpdated Callback invoked when the reference ID to refund field value changes.
+ * @param onAmountUpdated Callback invoked when the amount field value changes.
+ * @param onPayerMessageUpdated Callback invoked when the payment message field value changes.
+ * @param onPayerNoteUpdated Callback invoked when the payment note field value changes.
+ * @param onDeliveryNoteUpdated Callback invoked when the delivery note field value changes.
+ */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun PaymentDataScreenComponent(
@@ -84,7 +110,7 @@ fun PaymentDataScreenComponent(
     val deliveryNoteFocusRequester = remember { FocusRequester() }
     val referenceIdToRefundFocusRequester = remember { FocusRequester() }
 
-    LazyColumn() {
+    LazyColumn {
         item {
             Column(
                 modifier = modifier

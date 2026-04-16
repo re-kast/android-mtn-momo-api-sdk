@@ -15,6 +15,12 @@
  */
 package io.rekast.sdk.sample.utils.annotation
 
+/**
+ * Marks a function, class, or annotation class to be excluded from Jacoco code coverage reports.
+ *
+ * Apply this annotation to generated, preview, or otherwise untestable code that should not
+ * affect coverage metrics.
+ */
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.CLASS, AnnotationTarget.ANNOTATION_CLASS)
 annotation class ExcludeFromJacocoGeneratedReport

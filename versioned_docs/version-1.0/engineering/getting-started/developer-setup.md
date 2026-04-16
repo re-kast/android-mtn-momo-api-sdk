@@ -10,7 +10,7 @@ sidebar_label: Developer Setup
 
 Before you begin setting up your development environment, ensure that you have the following prerequisites installed:
 
-- **Android Studio Arctic Fox** or later: This is the official Integrated Development Environment (IDE) for Android development, providing all the necessary tools to build, test, and debug Android applications. Make sure to keep it updated to leverage the latest features and improvements.
+- **Android Studio Ladybug (2024.2.1) or later**: This is the official Integrated Development Environment (IDE) for Android development, providing all the necessary tools to build, test, and debug Android applications. Make sure to keep it updated to leverage the latest features and improvements.
 
 - **OpenJDK 17**: Ensure that you have OpenJDK 17 installed and configured in Android Studio. This version is required for compiling and running the project. You can download OpenJDK from the [Adoptium](https://adoptium.net/) or [OpenJDK](https://openjdk.java.net/install/) websites.
 
@@ -55,6 +55,7 @@ Follow these steps to set up the project for development:
    # Local properties for the MTN MOMO API SDK
    
    MOMO_BASE_URL="" ## Use https://sandbox.momodeveloper.mtn.com for sandbox and https://momodeveloper.mtn.com for production
+   MOMO_PROVIDER_CALBACK_HOST="" ## The provider callback host, use 'localhost' for sandbox
    MOMO_COLLECTION_PRIMARY_KEY="" ## The collection endpoint/product subscription primary key
    MOMO_COLLECTION_SECONDARY_KEY="" ## The collection endpoint/product subscription secondary key
    MOMO_REMITTANCE_PRIMARY_KEY="" ## The remittance endpoint/product subscription primary key
@@ -87,7 +88,7 @@ The MTN MOMO SDK is based on the **MVVM (Model-View-ViewModel) Android applicati
 
 ## Project Structure
 
-The project currently consists of an application module (`sample`) and two Android library modules (`momo-api-sdk`). This modular structure allows for better organization of code and easier maintenance.
+The project currently consists of an application module (`sample`) and one Android library module (`momo-api-sdk`). This modular structure allows for better organization of code and easier maintenance.
 
 ## References
 

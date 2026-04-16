@@ -17,6 +17,10 @@ package io.rekast.sdk.sample.utils.annotation
 
 import androidx.compose.ui.tooling.preview.Preview
 
+/**
+ * Composite annotation that combines [@Preview][Preview] with [@ExcludeFromJacocoGeneratedReport]
+ * so that Compose preview functions are excluded from Jacoco coverage reports.
+ */
 @Preview
 @ExcludeFromJacocoGeneratedReport
 annotation class PreviewExcludeGenerated

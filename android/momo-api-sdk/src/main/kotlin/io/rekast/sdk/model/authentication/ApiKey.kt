@@ -25,6 +25,4 @@ import kotlinx.serialization.Serializable
  * @property apiKey The API key as a String.
  */
 @Serializable
-data class ApiKey(
-    @SerializedName("apiKey") val apiKey: String? = null
-)
+data class ApiKey(@SerializedName("apiKey") val apiKey: String? = null)

@@ -15,6 +15,12 @@
  */
 package io.rekast.sdk.utils
 
+/**
+ * Central repository of constants used throughout the MTN MOMO SDK.
+ *
+ * Contains timestamp formats, message length limits, and nested objects grouping
+ * HTTP header names, token type prefixes, URL path parameters, and API endpoint templates.
+ */
 object MomoConstants {
     /**
      * The format used for timestamps in the SDK.
@@ -38,7 +44,7 @@ object MomoConstants {
         /**
          * The header key for the Momo callback URL.
          */
-        const val X_Momo_CALLBACK_URL = "X-MomoCallback-Url"
+        const val X_MOMO_CALLBACK_URL = "X-MomoCallback-Url"
 
         /**
          * The header key for the reference ID.

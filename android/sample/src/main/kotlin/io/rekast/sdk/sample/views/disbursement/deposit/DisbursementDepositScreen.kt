@@ -48,6 +48,16 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 
+/**
+ * Renders the Disbursement Deposit screen, showing a payment capture form when no transaction
+ * result is available, or a transaction summary once a [MomoTransaction] has been returned.
+ *
+ * @param navController [NavController] used to navigate between destinations via the drawer.
+ * @param snackStateFlow Flow emitting [SnackBarComponentConfiguration] messages to display.
+ * @param showProgressBar Whether to display a loading indicator instead of the form; defaults to false.
+ * @param disbursementDepositScreenViewModel ViewModel providing form state and callbacks; may be null in previews.
+ * @param momoTransaction LiveData holding the completed [MomoTransaction]; null triggers the capture form.
+ */
 @Composable
 fun DisbursementScreen(
     navController: NavController?,
@@ -88,8 +98,8 @@ fun DisbursementScreen(
                     val phoneNumber by disbursementDepositScreenViewModel.phoneNumber.observeAsState(Constants.EMPTY_STRING)
                     val financialId by disbursementDepositScreenViewModel.financialId.observeAsState(Constants.EMPTY_STRING)
                     val amount by disbursementDepositScreenViewModel.amount.observeAsState(Constants.EMPTY_STRING)
-                    val paymentMessage by disbursementDepositScreenViewModel.paymentMessage.observeAsState(Constants.EMPTY_STRING)
-                    val paymentNote by disbursementDepositScreenViewModel.paymentNote.observeAsState(Constants.EMPTY_STRING)
+                    val paymentMessage by disbursementDepositScreenViewModel.payerMessage.observeAsState(Constants.EMPTY_STRING)
+                    val paymentNote by disbursementDepositScreenViewModel.payerNote.observeAsState(Constants.EMPTY_STRING)
                     val deliveryNote by disbursementDepositScreenViewModel.deliveryNote.observeAsState(Constants.EMPTY_STRING)
                     val referenceIdToRefund by disbursementDepositScreenViewModel.referenceIdToRefund.observeAsState(Constants.EMPTY_STRING)
 

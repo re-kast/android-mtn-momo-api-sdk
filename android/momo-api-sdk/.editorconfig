@@ -16,6 +16,8 @@ ij_kotlin_imports_layout = *
 ij_kotlin_packages_to_use_import_on_demand = java.util.*,kotlinx.android.synthetic.**
 ktlint_code_style = intellij_idea
 ktlint_standard_no-wildcard-imports = disabled
+# Compose @Composable functions must use PascalCase — allow it here
+ktlint_function_naming_ignore_when_annotated_with = Composable
 
 [*.{yml,yaml}]
 indent_size = 2

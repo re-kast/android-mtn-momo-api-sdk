@@ -31,9 +31,7 @@ import timber.log.Timber
  *
  * @param accessTokenCredentials The credentials containing the access token.
  */
-class AccessTokenInterceptor @Inject constructor(
-    private var accessTokenCredentials: AccessTokenCredentials
-) : Interceptor {
+class AccessTokenInterceptor @Inject constructor(private var accessTokenCredentials: AccessTokenCredentials) : Interceptor {
 
     /**
      * Intercepts the request and adds the Bearer Token header.

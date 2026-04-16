@@ -91,10 +91,7 @@ sealed interface AuthenticationService {
      * @return A [Response] containing the obtained [AccessToken].
      */
     @POST(MomoConstants.EndPoints.GET_ACCESS_TOKEN)
-    suspend fun getAccessToken(
-        @Path(MomoConstants.EndpointPaths.PRODUCT_TYPE) productType: String,
-        @Header(MomoConstants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String
-    ): Response<AccessToken>
+    suspend fun getAccessToken(@Path(MomoConstants.EndpointPaths.PRODUCT_TYPE) productType: String, @Header(MomoConstants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String): Response<AccessToken>
 
     /**
      * Obtains an OAuth2 access token for the specified product type.

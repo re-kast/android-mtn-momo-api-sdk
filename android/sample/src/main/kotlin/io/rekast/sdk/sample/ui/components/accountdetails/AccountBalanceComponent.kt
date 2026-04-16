@@ -33,11 +33,14 @@ import io.rekast.sdk.model.AccountBalance
 import io.rekast.sdk.sample.R
 import io.rekast.sdk.sample.ui.components.general.SectionHeader
 
+/**
+ * Renders a section displaying the account balance details, including available balance and currency.
+ *
+ * @param modifier Modifier applied to the root [Column].
+ * @param accountBalance LiveData holding the [AccountBalance] to display; renders nothing for null values.
+ */
 @Composable
-fun AccountBalanceComponent(
-    modifier: Modifier = Modifier,
-    accountBalance: MutableLiveData<AccountBalance?>
-) {
+fun AccountBalanceComponent(modifier: Modifier = Modifier, accountBalance: MutableLiveData<AccountBalance?>) {
     Column(
         modifier = modifier.fillMaxWidth()
     ) {
