@@ -42,9 +42,14 @@ jobs:
         run: |
           PREV_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
           if [ -n "$PREV_TAG" ]; then
-            LOG=$(git log --pretty=format:"- %s (%h)" "${PREV_TAG}..HEAD")
+            TOTAL=$(git rev-list --count "${PREV_TAG}..HEAD")
+            LOG=$(git log --pretty=format:"- %s (%h)" "${PREV_TAG}..HEAD" --max-count=10)
+            if [ "$TOTAL" -gt 10 ]; then
+              COMPARE_URL="https://github.com/${{ github.repository }}/compare/${PREV_TAG}...${{ github.ref_name }}"
+              LOG="${LOG}"$'\n\n'"[View all ${TOTAL} changes](${COMPARE_URL})"
+            fi
           else
-            LOG=$(git log --pretty=format:"- %s (%h)" --max-count=20)
+            LOG=$(git log --pretty=format:"- %s (%h)" --max-count=10)
           fi
           {
             echo "LOG<<ENDOFLOG"
