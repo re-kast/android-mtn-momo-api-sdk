@@ -67,6 +67,9 @@
     <string name="payment_note_display">Payment note</string>
     <string name="delivery_note_display">Delivery note</string>
 
+    <!--Accessibility-->
+    <string name="cd_open_navigation_drawer">Open navigation drawer</string>
+
     <!--Navigation Titles-->
     <string name="home">Home</string>
     <string name="remittance">Remittance</string>

@@ -48,6 +48,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.rekast.sdk.sample.R
 import io.rekast.sdk.sample.ui.components.general.textFieldDefaultsComponent
+import io.rekast.sdk.sample.ui.components.general.textShapeDefaultComponent
+import io.rekast.sdk.sample.utils.annotation.PreviewWithBackgroundExcludeGenerated
 
 /**
  * Renders a scrollable payment data capture form with conditionally shown fields for financial ID,
@@ -115,9 +117,9 @@ fun PaymentDataScreenComponent(
             Column(
                 modifier = modifier
                     .fillMaxSize()
-                    .padding(10.dp)
+                    .padding(25.dp)
             ) {
-                Column(modifier = modifier.padding(end = 20.dp)) {
+                Column(modifier = modifier.padding(end = 10.dp)) {
                     Text(
                         text = title,
                         style = TextStyle(
@@ -149,6 +151,7 @@ fun PaymentDataScreenComponent(
                         )
                     },
                     colors = textFieldDefaultsComponent(),
+                    shape = textShapeDefaultComponent(),
                     modifier = modifier
                         .fillMaxWidth()
                         .padding(vertical = 10.dp)
@@ -181,6 +184,7 @@ fun PaymentDataScreenComponent(
                             )
                         },
                         colors = textFieldDefaultsComponent(),
+                        shape = textShapeDefaultComponent(),
                         modifier = modifier
                             .fillMaxWidth()
                             .padding(vertical = 10.dp)
@@ -214,6 +218,7 @@ fun PaymentDataScreenComponent(
                             )
                         },
                         colors = textFieldDefaultsComponent(),
+                        shape = textShapeDefaultComponent(),
                         modifier = modifier
                             .fillMaxWidth()
                             .padding(vertical = 10.dp)
@@ -246,6 +251,7 @@ fun PaymentDataScreenComponent(
                         )
                     },
                     colors = textFieldDefaultsComponent(),
+                    shape = textShapeDefaultComponent(),
                     modifier = modifier
                         .fillMaxWidth()
                         .padding(vertical = 10.dp)
@@ -278,6 +284,7 @@ fun PaymentDataScreenComponent(
                         )
                     },
                     colors = textFieldDefaultsComponent(),
+                    shape = textShapeDefaultComponent(),
                     modifier = modifier
                         .fillMaxWidth()
                         .padding(vertical = 10.dp)
@@ -309,6 +316,7 @@ fun PaymentDataScreenComponent(
                         )
                     },
                     colors = textFieldDefaultsComponent(),
+                    shape = textShapeDefaultComponent(),
                     modifier = modifier
                         .fillMaxWidth()
                         .height(150.dp)
@@ -347,6 +355,7 @@ fun PaymentDataScreenComponent(
                             )
                         },
                         colors = textFieldDefaultsComponent(),
+                        shape = textShapeDefaultComponent(),
                         modifier = modifier
                             .fillMaxWidth()
                             .height(200.dp)
@@ -391,4 +400,32 @@ fun PaymentDataScreenComponent(
             }
         }
     }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@PreviewWithBackgroundExcludeGenerated
+@Composable
+fun PaymentDataScreenComponentPreview() {
+    PaymentDataScreenComponent(
+        title = "Request to Pay",
+        submitButtonText = "Pay Now",
+        phoneNumber = "256770000000",
+        financialId = "",
+        showFinancialId = false,
+        referenceIdToRefund = "",
+        showReferenceIdToRefund = false,
+        amount = "1000",
+        paymentMessage = "Goods payment",
+        paymentNote = "Monthly subscription",
+        deliveryNote = "",
+        showDeliveryTextField = false,
+        onRequestPayButtonClicked = {},
+        onPhoneNumberUpdated = {},
+        onFinancialIdUpdated = {},
+        onReferenceIdToRefundUpdated = {},
+        onAmountUpdated = {},
+        onPayerMessageUpdated = {},
+        onPayerNoteUpdated = {},
+        onDeliveryNoteUpdated = {}
+    )
 }

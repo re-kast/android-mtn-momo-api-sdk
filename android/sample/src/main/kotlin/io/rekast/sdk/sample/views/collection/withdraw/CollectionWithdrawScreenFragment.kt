@@ -20,6 +20,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.platform.ComposeView
@@ -52,11 +53,12 @@ class CollectionWithdrawScreenFragment : Fragment() {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
                 AppTheme {
-                    val showProgressBar by collectionWithdrawScreenViewModel.showProgressBar.observeAsState(false)
+                    val isBootstrapComplete by mainViewModel.isBootstrapComplete.collectAsState()
+                    val vmShowProgressBar by collectionWithdrawScreenViewModel.showProgressBar.observeAsState(false)
                     CollectionScreen(
                         navController = navController,
                         snackStateFlow = collectionWithdrawScreenViewModel.snackBarStateFlow,
-                        showProgressBar = showProgressBar,
+                        showProgressBar = !isBootstrapComplete || vmShowProgressBar,
                         collectionWithdrawScreenViewModel = collectionWithdrawScreenViewModel,
                         momoTransaction = collectionWithdrawScreenViewModel.momoTransaction
                     )

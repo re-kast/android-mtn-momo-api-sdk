@@ -46,7 +46,8 @@ object AppModule {
         ApiConfig(
             baseUrl = BuildConfig.MOMO_BASE_URL,
             apiUserId = BuildConfig.MOMO_API_USER_ID,
-            environment = BuildConfig.MOMO_ENVIRONMENT
+            environment = BuildConfig.MOMO_ENVIRONMENT,
+            apiVersion = BuildConfig.MOMO_API_VERSION_V1
         )
 
     /**

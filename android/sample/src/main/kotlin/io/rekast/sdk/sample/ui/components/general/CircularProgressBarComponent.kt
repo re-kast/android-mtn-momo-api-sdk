@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import io.rekast.sdk.sample.R
+import io.rekast.sdk.sample.utils.annotation.PreviewWithBackgroundExcludeGenerated
 
 /**
  * Renders a centered circular progress indicator that fills the available screen space.
@@ -45,4 +46,10 @@ fun CircularProgressBarComponent(modifier: Modifier = Modifier) {
             color = colorResource(id = R.color.accent_primary)
         )
     }
+}
+
+@PreviewWithBackgroundExcludeGenerated
+@Composable
+fun CircularProgressBarComponentPreview() {
+    CircularProgressBarComponent()
 }

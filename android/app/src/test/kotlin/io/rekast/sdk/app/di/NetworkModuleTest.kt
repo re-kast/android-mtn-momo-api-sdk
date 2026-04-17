@@ -16,6 +16,7 @@
 package io.rekast.sdk.app.di
 
 import io.mockk.mockk
+import io.rekast.sdk.app.network.TokenAuthenticator
 import io.rekast.sdk.network.service.AuthenticationService
 import io.rekast.sdk.network.service.products.CollectionService
 import io.rekast.sdk.network.service.products.DisbursementsService
