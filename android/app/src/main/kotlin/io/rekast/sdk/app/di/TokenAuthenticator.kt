@@ -51,7 +51,6 @@ class TokenAuthenticator(
     private val authService: AuthenticationService,
     private val config: ApiConfig
 ) {
-
     /**
      * Called by OkHttp whenever a response with HTTP 401 is received.
      *
@@ -132,8 +131,11 @@ class TokenAuthenticator(
      * @param subscriptionKey The `Ocp-Apim-Subscription-Key` header value from the original request.
      * @return The decoded [AccessToken] on success, or `null` if the request fails.
      */
-    private fun refreshToken(productType: String, subscriptionKey: String): AccessToken? {
-        return try {
+    private fun refreshToken(
+        productType: String,
+        subscriptionKey: String
+    ): AccessToken? =
+        try {
             val response = runBlocking { authService.getAccessToken(productType, subscriptionKey) }
             if (response.isSuccessful) {
                 response.body()
@@ -145,7 +147,6 @@ class TokenAuthenticator(
             Timber.e(e, "TokenAuthenticator: exception during token refresh")
             null
         }
-    }
 
     /**
      * Calls the MTN MoMo OAuth2 token endpoint via [authService] to obtain a new [Oauth2AccessToken].
@@ -158,11 +159,15 @@ class TokenAuthenticator(
      * @param subscriptionKey The `Ocp-Apim-Subscription-Key` header value from the original request.
      * @return The decoded [Oauth2AccessToken] on success, or `null` if the request fails.
      */
-    private fun refreshOauthToken(productType: String, subscriptionKey: String): Oauth2AccessToken? {
-        return try {
-            val response = runBlocking {
-                authService.getOauth2AccessToken(productType, subscriptionKey, config.environment)
-            }
+    private fun refreshOauthToken(
+        productType: String,
+        subscriptionKey: String
+    ): Oauth2AccessToken? =
+        try {
+            val response =
+                runBlocking {
+                    authService.getOauth2AccessToken(productType, subscriptionKey, config.environment)
+                }
             if (response.isSuccessful) {
                 response.body()
             } else {
@@ -173,7 +178,6 @@ class TokenAuthenticator(
             Timber.e(e, "TokenAuthenticator: exception during OAuth2 token refresh")
             null
         }
-    }
 
     /**
      * Counts how many prior 401 responses exist in the response chain.

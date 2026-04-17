@@ -64,35 +64,32 @@ class NetworkResultTest {
         assertNull(result.message)
     }
 
-    /** Verifies Success is recognized as both NetworkResult and NetworkResult.Success. */
+    /** Verifies Success is a subtype of NetworkResult by confirming smart-cast to the sealed parent works. */
     @Test
     fun `Success is an instance of NetworkResult`() {
-        val result = NetworkResult.Success(42)
-        assertTrue(result is NetworkResult<*>)
+        val result: NetworkResult<Int> = NetworkResult.Success(42)
         assertTrue(result is NetworkResult.Success<*>)
     }
 
-    /** Verifies Error is recognized as both NetworkResult and NetworkResult.Error. */
+    /** Verifies Error is a subtype of NetworkResult by confirming smart-cast to the sealed parent works. */
     @Test
     fun `Error is an instance of NetworkResult`() {
-        val result = NetworkResult.Error<Int>("error")
-        assertTrue(result is NetworkResult<*>)
+        val result: NetworkResult<Int> = NetworkResult.Error("error")
         assertTrue(result is NetworkResult.Error<*>)
     }
 
-    /** Verifies Loading is recognized as both NetworkResult and NetworkResult.Loading. */
+    /** Verifies Loading is a subtype of NetworkResult by confirming smart-cast to the sealed parent works. */
     @Test
     fun `Loading is an instance of NetworkResult`() {
-        val result = NetworkResult.Loading<Int>()
-        assertTrue(result is NetworkResult<*>)
+        val result: NetworkResult<Int> = NetworkResult.Loading()
         assertTrue(result is NetworkResult.Loading<*>)
     }
 
-    /** Verifies Success with a null response is still a valid Success instance. */
+    /** Verifies Success accepts a null response and stores it correctly. */
     @Test
-    fun `Success with null response is still Success`() {
+    fun `Success with null response stores null`() {
         val result = NetworkResult.Success<String?>(null)
-        assertTrue(result is NetworkResult.Success)
         assertNull(result.response)
+        assertNull(result.message)
     }
 }

@@ -48,11 +48,12 @@ import retrofit2.Response as RetrofitResponse
 class TokenAuthenticatorTest {
     private val mockStorage: CredentialStorage = mockk(relaxed = true)
     private val mockAuthService: AuthenticationService = mockk()
-    private val config = ApiConfig(
-        baseUrl = "https://sandbox.momodeveloper.mtn.com/",
-        apiUserId = "test-user-id",
-        environment = "sandbox"
-    )
+    private val config =
+        ApiConfig(
+            baseUrl = "https://sandbox.momodeveloper.mtn.com/",
+            apiUserId = "test-user-id",
+            environment = "sandbox"
+        )
 
     private lateinit var authenticator: TokenAuthenticator
 

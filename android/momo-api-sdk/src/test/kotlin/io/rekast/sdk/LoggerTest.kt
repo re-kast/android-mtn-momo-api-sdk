@@ -16,132 +16,154 @@
 package io.rekast.sdk
 
 import org.junit.After
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
-import java.io.ByteArrayOutputStream
-import java.io.PrintStream
+import timber.log.Timber
 
 /**
- * Unit tests for the JVM `actual` implementation of [Logger].
+ * Unit tests for the Android `actual` implementation of [Logger].
  *
- * Captures stdout to verify that each log level produces the correct output format
- * (`{LEVEL}/{tag}: {message}`). The Android `actual` is tested indirectly via the
- * instrumented test suite since it requires a running Android runtime.
+ * The `src/test/` source set maps to `androidHostTest`, which links against `androidMain` actuals.
+ * [Logger] on Android delegates to [Timber], so tests plant a [CapturingTree] before each test
+ * to intercept log calls and assert that the correct tag, message, and optional throwable are
+ * forwarded to Timber.
+ *
+ * `isReturnDefaultValues = true` is set in the module's `withHostTestBuilder` configuration,
+ * which allows Android framework APIs (including those Timber uses internally) to return safe
+ * defaults instead of throwing in the host JVM environment.
  */
 class LoggerTest {
 
-    private val originalOut = System.out
-    private lateinit var captured: ByteArrayOutputStream
+    private val tree = CapturingTree()
 
     /**
-     * Redirects [System.out] to an in-memory buffer before each test so that
-     * [Logger] output can be inspected without writing to the real console.
+     * Plants the [CapturingTree] so that all [Timber] calls during a test are recorded
+     * rather than discarded.
      */
     @Before
-    fun redirectStdout() {
-        captured = ByteArrayOutputStream()
-        System.setOut(PrintStream(captured))
+    fun setUp() {
+        Timber.plant(tree)
     }
 
     /**
-     * Restores [System.out] to its original stream after each test to prevent
-     * stdout suppression from leaking into other test classes.
+     * Uproots the [CapturingTree] after each test to prevent log entries from one test
+     * leaking into the next.
      */
     @After
-    fun restoreStdout() {
-        System.setOut(originalOut)
+    fun tearDown() {
+        Timber.uproot(tree)
     }
 
-    /** Returns the captured stdout content trimmed of leading/trailing whitespace. */
-    private fun output() = captured.toString().trim()
-
-    // ---- d() ----
-
     /**
-     * Verifies that [Logger.d] writes a line prefixed with `D/` to stdout.
+     * Verifies that [Logger.d] forwards the tag and message to Timber as a debug log entry.
      */
     @Test
-    fun `d() writes D-prefixed line to stdout`() {
+    fun `d() forwards tag and message to Timber`() {
         Logger.d("MyTag", "debug message")
-        assertTrue(output().contains("D/MyTag: debug message"))
+        assertTrue(tree.contains("MyTag", "debug message"))
     }
 
-    // ---- i() ----
-
     /**
-     * Verifies that [Logger.i] writes a line prefixed with `I/` to stdout.
+     * Verifies that [Logger.i] forwards the tag and message to Timber as an info log entry.
      */
     @Test
-    fun `i() writes I-prefixed line to stdout`() {
+    fun `i() forwards tag and message to Timber`() {
         Logger.i("MyTag", "info message")
-        assertTrue(output().contains("I/MyTag: info message"))
+        assertTrue(tree.contains("MyTag", "info message"))
     }
 
-    // ---- w() ----
-
     /**
-     * Verifies that [Logger.w] writes a line prefixed with `W/` to stdout.
+     * Verifies that [Logger.w] forwards the tag and message to Timber as a warning log entry.
      */
     @Test
-    fun `w() writes W-prefixed line to stdout`() {
+    fun `w() forwards tag and message to Timber`() {
         Logger.w("MyTag", "warning message")
-        assertTrue(output().contains("W/MyTag: warning message"))
+        assertTrue(tree.contains("MyTag", "warning message"))
     }
 
-    // ---- e() ----
-
     /**
-     * Verifies that [Logger.e] without a throwable writes a line prefixed with `E/` to stdout.
+     * Verifies that [Logger.e] without a throwable forwards only the tag and message, with no
+     * throwable attached to the Timber log entry.
      */
     @Test
-    fun `e() without throwable writes E-prefixed line to stdout`() {
+    fun `e() without throwable forwards tag and message with no throwable`() {
         Logger.e("MyTag", "error message")
-        assertTrue(output().contains("E/MyTag: error message"))
+        assertTrue(tree.contains("MyTag", "error message"))
+        assertNull(tree.lastThrowable)
     }
 
     /**
-     * Verifies that [Logger.e] with a non-null throwable writes the `E/`-prefixed message and
-     * includes the exception class name in the stack trace output.
+     * Verifies that [Logger.e] with a non-null throwable attaches the throwable to the Timber
+     * log entry. Timber 5.x appends the throwable's stack trace to the formatted message before
+     * calling [Timber.Tree.log], so only the throwable reference is asserted here.
      */
     @Test
-    fun `e() with throwable writes E-prefixed line and stack trace`() {
+    fun `e() with throwable forwards tag, message, and throwable to Timber`() {
         val ex = RuntimeException("boom")
         Logger.e("MyTag", "error with exception", ex)
-        val out = output()
-        assertTrue(out.contains("E/MyTag: error with exception"))
-        assertTrue(out.contains("RuntimeException"))
+        assertEquals(1, tree.size)
+        assertEquals(ex, tree.lastThrowable)
     }
 
     /**
-     * Verifies that [Logger.e] with a `null` throwable does not throw and still writes
-     * the `E/`-prefixed message to stdout.
+     * Verifies that [Logger.e] with a `null` throwable does not attach a throwable to the
+     * Timber log entry.
      */
     @Test
-    fun `e() with null throwable does not throw`() {
+    fun `e() with null throwable records no throwable`() {
         Logger.e("MyTag", "error message", null)
-        assertTrue(output().contains("E/MyTag: error message"))
+        assertTrue(tree.contains("MyTag", "error message"))
+        assertNull(tree.lastThrowable)
     }
 
     // ---- tag and message content ----
 
     /**
-     * Verifies that the exact tag and message strings supplied by the caller appear in the output,
+     * Verifies that the exact tag and message strings are forwarded unchanged to Timber,
      * confirming no truncation or transformation occurs.
      */
     @Test
-    fun `log output includes the exact tag and message supplied`() {
+    fun `log preserves exact tag and message`() {
         Logger.d("TokenAuthenticator", "token refreshed successfully")
-        assertTrue(output().contains("D/TokenAuthenticator: token refreshed successfully"))
+        assertTrue(tree.contains("TokenAuthenticator", "token refreshed successfully"))
     }
 
     /**
-     * Verifies that [Logger.d] handles empty tag and message strings without throwing,
-     * producing a `D/: ` line in stdout.
+     * Verifies that [Logger.d] with empty tag and message strings does not throw.
+     * Timber 5.x silently drops empty messages, so no log entry is recorded.
      */
     @Test
     fun `log handles empty tag and message`() {
         Logger.d("", "")
-        assertTrue(output().contains("D/: "))
+        assertEquals(0, tree.size)
+    }
+}
+
+/**
+ * A [Timber.Tree] implementation that records every log call so that tests can assert on
+ * the tag, message, and optional throwable passed to Timber.
+ */
+private class CapturingTree : Timber.Tree() {
+
+    private data class Entry(val tag: String?, val message: String, val throwable: Throwable?)
+
+    private val entries = mutableListOf<Entry>()
+
+    /** The number of log entries recorded so far. */
+    val size: Int get() = entries.size
+
+    /** The throwable attached to the most recent log entry, or `null` if none was supplied. */
+    val lastThrowable: Throwable? get() = entries.lastOrNull()?.throwable
+
+    /**
+     * Returns `true` if any recorded entry matches the given [tag] and [message] exactly.
+     */
+    fun contains(tag: String, message: String): Boolean = entries.any { it.tag == tag && it.message == message }
+
+    override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
+        entries.add(Entry(tag, message, t))
     }
 }

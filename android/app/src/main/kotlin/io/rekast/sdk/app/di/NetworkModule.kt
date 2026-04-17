@@ -81,15 +81,21 @@ object NetworkModule {
         storage: CredentialStorage,
         json: Json
     ): AuthenticationService {
-        val credentialProvider = object : CredentialProvider {
-            override fun getApiUserId(): String = config.apiUserId
-            override fun getApiKey(): String = storage.getApiKey()
-            override fun getAccessToken(): String = ""
-        }
-        val client = OkHttpClient.Builder()
-            .addInterceptor(BasicAuthenticationInterceptor(credentialProvider))
-            .build()
-        return Retrofit.Builder()
+        val credentialProvider =
+            object : CredentialProvider {
+                override fun getApiUserId(): String = config.apiUserId
+
+                override fun getApiKey(): String = storage.getApiKey()
+
+                override fun getAccessToken(): String = ""
+            }
+        val client =
+            OkHttpClient
+                .Builder()
+                .addInterceptor(BasicAuthenticationInterceptor(credentialProvider))
+                .build()
+        return Retrofit
+            .Builder()
             .baseUrl(config.baseUrl)
             .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
             .client(client)
