@@ -19,7 +19,7 @@ import io.mockk.mockk
 import io.rekast.sdk.network.service.AuthenticationService
 import io.rekast.sdk.network.service.products.CollectionService
 import io.rekast.sdk.network.service.products.DisbursementsService
-import io.rekast.sdk.utils.MomoApiConfig
+import io.rekast.sdk.utils.ApiConfig
 import okhttp3.logging.HttpLoggingInterceptor
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
@@ -42,14 +42,14 @@ import retrofit2.Retrofit
  */
 class NetworkModuleTest {
     private val httpsConfig =
-        MomoApiConfig(
+        ApiConfig(
             baseUrl = "https://sandbox.momodeveloper.mtn.com/",
             apiUserId = "user-id",
             environment = "sandbox"
         )
 
     private val httpConfig =
-        MomoApiConfig(
+        ApiConfig(
             baseUrl = "http://10.0.2.2:8080/",
             apiUserId = "user-id",
             environment = "sandbox"
@@ -110,7 +110,7 @@ class NetworkModuleTest {
 
     /**
      * Verifies that the [Retrofit] instance returned by [NetworkModule.provideRetrofit] has its
-     * base URL set to the value from [MomoApiConfig.baseUrl].
+     * base URL set to the value from [ApiConfig.baseUrl].
      */
     @Test
     fun `provideRetrofit sets base URL from config`() {
@@ -177,7 +177,7 @@ class NetworkModuleTest {
     // because they are not themselves the root of a PermittedSubclasses declaration.
 
     /** Builds a [Retrofit] instance using [NetworkModule] helpers for the given [config]. */
-    private fun buildRetrofit(config: MomoApiConfig): Retrofit {
+    private fun buildRetrofit(config: ApiConfig): Retrofit {
         val json = NetworkModule.provideJson()
         val client =
             NetworkModule.provideOkHttpClient(

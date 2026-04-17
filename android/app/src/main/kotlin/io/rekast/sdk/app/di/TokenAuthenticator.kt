@@ -16,18 +16,16 @@
 package io.rekast.sdk.app.di
 
 import io.rekast.sdk.model.authentication.AccessToken
+import io.rekast.sdk.model.authentication.Oauth2AccessToken
+import io.rekast.sdk.network.service.AuthenticationService
 import io.rekast.sdk.sample.utils.CredentialStorage
-import io.rekast.sdk.utils.MomoApiConfig
-import io.rekast.sdk.utils.MomoConstants
-import kotlinx.serialization.json.Json
-import okhttp3.OkHttpClient
+import io.rekast.sdk.utils.ApiConfig
+import io.rekast.sdk.utils.Constants
+import kotlinx.coroutines.runBlocking
 import okhttp3.Request
-import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
 import okhttp3.Route
 import timber.log.Timber
-import kotlin.io.encoding.Base64
-import kotlin.io.encoding.ExperimentalEncodingApi
 
 /**
  * OkHttp [okhttp3.Authenticator] that automatically refreshes the Bearer access token
@@ -36,24 +34,23 @@ import kotlin.io.encoding.ExperimentalEncodingApi
  * On a 401 the authenticator:
  * 1. Verifies the failed request was using Bearer auth (skips Basic-Auth or unauthenticated requests).
  * 2. Guards against infinite retry loops (max 1 retry per request).
- * 3. Calls the MTN MoMo token endpoint using a **separate, minimal [OkHttpClient]** (no
- *    authenticator attached) so there is no circular dependency with the main client.
- * 4. Saves the fresh token to [CredentialStorage].
- * 5. Returns the original request without modification — the [io.rekast.sdk.network.interceptor.auth.AccessTokenInterceptor]
+ * 3. Calls the MTN MoMo token endpoint via a **dedicated [AuthenticationService]** backed by
+ *    a Basic-Auth-only OkHttpClient with no authenticator, avoiding circular dependency.
+ * 4. Saves the refreshed Bearer token to [CredentialStorage].
+ * 5. If the OAuth2 access token is also expired, refreshes it via [AuthenticationService.getOauth2AccessToken]
+ *    and saves it to [CredentialStorage].
+ * 6. Returns the original request without modification — the [io.rekast.sdk.network.interceptor.auth.AccessTokenInterceptor]
  *    will read the new token from storage and attach the correct header on the retry pass.
  *
- * @param storage Encrypted credential store; used to read the API key and save the refreshed token.
- * @param config SDK configuration supplying the base URL and API user ID.
+ * @param storage Encrypted credential store; used to read the API key and save refreshed tokens.
+ * @param authService Token-refresh-only [AuthenticationService] backed by a Basic-Auth-only client.
+ * @param config SDK configuration; supplies the target environment for OAuth2 token refresh calls.
  */
 class TokenAuthenticator(
     private val storage: CredentialStorage,
-    private val config: MomoApiConfig
+    private val authService: AuthenticationService,
+    private val config: ApiConfig
 ) {
-    /** Separate client used only for token-refresh calls — no Authenticator, no Bearer interceptor. */
-    private val authClient: OkHttpClient by lazy { OkHttpClient.Builder().build() }
-
-    /** JSON decoder configured to tolerate unknown fields returned by the token endpoint. */
-    private val json: Json = Json { ignoreUnknownKeys = true }
 
     /**
      * Called by OkHttp whenever a response with HTTP 401 is received.
@@ -68,7 +65,10 @@ class TokenAuthenticator(
      * - More than one prior response exists for this request (retry limit reached).
      * - The API key is unavailable (cannot form a Basic Auth token-exchange request).
      * - The product type or subscription key cannot be extracted from the original request.
-     * - The token endpoint itself returns a non-2xx response.
+     * - The Bearer token endpoint itself returns a non-2xx response.
+     *
+     * OAuth2 token refresh failure is non-fatal — the original request is still retried with the
+     * refreshed Bearer token even if the OAuth2 refresh fails.
      *
      * @param route The route for the failed request (unused but required by the interface).
      * @param response The 401 response received from the server.
@@ -79,8 +79,8 @@ class TokenAuthenticator(
         response: Response
     ): Request? {
         // Only handle responses to Bearer-authenticated requests.
-        val authHeader = response.request.header(MomoConstants.Headers.AUTHORIZATION) ?: return null
-        if (!authHeader.startsWith(MomoConstants.TokenTypes.BEARER)) return null
+        val authHeader = response.request.header(Constants.Headers.AUTHORIZATION) ?: return null
+        if (!authHeader.startsWith(Constants.TokenTypes.BEARER)) return null
 
         // Stop after the first retry to avoid infinite 401 loops.
         if (retryCount(response) >= 1) return null
@@ -101,15 +101,20 @@ class TokenAuthenticator(
         }
 
         // The subscription key used by the original request must be forwarded to the token endpoint.
-        val subscriptionKey = response.request.header(MomoConstants.Headers.OCP_APIM_SUBSCRIPTION_KEY)
+        val subscriptionKey = response.request.header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY)
         if (subscriptionKey.isNullOrBlank()) {
             Timber.w("TokenAuthenticator: subscription key header missing from original request")
             return null
         }
 
-        val newToken = refreshToken(productType, subscriptionKey, apiKey) ?: return null
-
+        val newToken = refreshToken(productType, subscriptionKey) ?: return null
         storage.saveAccessToken(newToken)
+
+        if (storage.getOauthAccessToken().isBlank()) {
+            val newOauthToken = refreshOauthToken(productType, subscriptionKey)
+            storage.saveOauthAccessToken(newOauthToken)
+        }
+
         Timber.d("TokenAuthenticator: token refreshed successfully")
 
         // Return the original request unchanged — the AccessTokenInterceptor will re-attach
@@ -118,48 +123,54 @@ class TokenAuthenticator(
     }
 
     /**
-     * Calls the MTN MoMo token endpoint using Basic Authentication to obtain a new [AccessToken].
+     * Calls the MTN MoMo token endpoint via [authService] to obtain a new [AccessToken].
      *
-     * Uses [authClient] (a minimal, authenticator-free [OkHttpClient]) to avoid a circular
-     * dependency with the main client. The request is authenticated with the API user ID and
-     * [apiKey] encoded as a Base64 Basic Auth credential.
+     * [authService] is backed by a minimal, authenticator-free [okhttp3.OkHttpClient] that
+     * attaches Basic Auth automatically, avoiding any circular dependency with the main client.
      *
      * @param productType The first path segment of the original request URL (e.g. "collection").
      * @param subscriptionKey The `Ocp-Apim-Subscription-Key` header value from the original request.
-     * @param apiKey The API key used to form the Basic Auth credential.
-     * @return The decoded [AccessToken] on success, or `null` if the request fails or the body
-     *         cannot be parsed.
+     * @return The decoded [AccessToken] on success, or `null` if the request fails.
      */
-    @OptIn(ExperimentalEncodingApi::class)
-    private fun refreshToken(
-        productType: String,
-        subscriptionKey: String,
-        apiKey: String
-    ): AccessToken? {
+    private fun refreshToken(productType: String, subscriptionKey: String): AccessToken? {
         return try {
-            val credentials = "${config.apiUserId}:$apiKey"
-            val encoded = Base64.Default.encode(credentials.toByteArray())
-
-            val tokenUrl = "${config.baseUrl.trimEnd('/')}/$productType/token/"
-            val refreshRequest =
-                Request
-                    .Builder()
-                    .url(tokenUrl)
-                    .post("".toRequestBody(null))
-                    .header(MomoConstants.Headers.AUTHORIZATION, "${MomoConstants.TokenTypes.BASIC} $encoded")
-                    .header(MomoConstants.Headers.OCP_APIM_SUBSCRIPTION_KEY, subscriptionKey)
-                    .build()
-
-            val refreshResponse = authClient.newCall(refreshRequest).execute()
-            if (!refreshResponse.isSuccessful) {
-                Timber.e("TokenAuthenticator: token refresh failed with HTTP ${refreshResponse.code}")
-                return null
+            val response = runBlocking { authService.getAccessToken(productType, subscriptionKey) }
+            if (response.isSuccessful) {
+                response.body()
+            } else {
+                Timber.e("TokenAuthenticator: token refresh failed with HTTP ${response.code()}")
+                null
             }
-
-            val body = refreshResponse.body.string() ?: return null
-            json.decodeFromString<AccessToken>(body)
         } catch (e: Exception) {
             Timber.e(e, "TokenAuthenticator: exception during token refresh")
+            null
+        }
+    }
+
+    /**
+     * Calls the MTN MoMo OAuth2 token endpoint via [authService] to obtain a new [Oauth2AccessToken].
+     *
+     * Only called when [CredentialStorage.getOauthAccessToken] returns blank (i.e. the stored
+     * OAuth2 token is missing or expired). A failure here is non-fatal — the caller continues with
+     * the refreshed Bearer token regardless.
+     *
+     * @param productType The first path segment of the original request URL (e.g. "collection").
+     * @param subscriptionKey The `Ocp-Apim-Subscription-Key` header value from the original request.
+     * @return The decoded [Oauth2AccessToken] on success, or `null` if the request fails.
+     */
+    private fun refreshOauthToken(productType: String, subscriptionKey: String): Oauth2AccessToken? {
+        return try {
+            val response = runBlocking {
+                authService.getOauth2AccessToken(productType, subscriptionKey, config.environment)
+            }
+            if (response.isSuccessful) {
+                response.body()
+            } else {
+                Timber.e("TokenAuthenticator: OAuth2 token refresh failed with HTTP ${response.code()}")
+                null
+            }
+        } catch (e: Exception) {
+            Timber.e(e, "TokenAuthenticator: exception during OAuth2 token refresh")
             null
         }
     }

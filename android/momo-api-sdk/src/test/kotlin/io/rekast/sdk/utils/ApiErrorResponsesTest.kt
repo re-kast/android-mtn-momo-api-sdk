@@ -20,26 +20,26 @@ import org.junit.Assert.assertNotNull
 import org.junit.Test
 
 /**
- * Unit tests for [MomoAPIErrorResponses].
+ * Unit tests for [ApiErrorResponses].
  *
  * Verifies that every enum constant is present and addressable by name, and that the enum
  * contains exactly the expected number of error codes so that accidental additions or removals
  * are caught at test time.
  */
-class MomoAPIErrorResponsesTest {
+class ApiErrorResponsesTest {
 
     /**
-     * Verifies that [MomoAPIErrorResponses] contains exactly 27 error constants — one for each
+     * Verifies that [ApiErrorResponses] contains exactly 27 error constants — one for each
      * documented MTN MOMO API error code. A count mismatch means a constant was added or removed
      * without updating this test.
      */
     @Test
     fun `entries contains exactly 27 error codes`() {
-        assertEquals(27, MomoAPIErrorResponses.entries.size)
+        assertEquals(27, ApiErrorResponses.entries.size)
     }
 
     /**
-     * Verifies that [MomoAPIErrorResponses.valueOf] resolves each constant by its declared name,
+     * Verifies that [ApiErrorResponses.valueOf] resolves each constant by its declared name,
      * ensuring no constant has been renamed or removed.
      */
     @Test
@@ -75,31 +75,31 @@ class MomoAPIErrorResponsesTest {
         )
 
         for (name in expectedNames) {
-            val constant = MomoAPIErrorResponses.valueOf(name)
+            val constant = ApiErrorResponses.valueOf(name)
             assertNotNull("Expected $name to exist", constant)
             assertEquals(name, constant.name)
         }
     }
 
     /**
-     * Spot-checks a selection of [MomoAPIErrorResponses] constants that are directly referenced
+     * Spot-checks a selection of [ApiErrorResponses] constants that are directly referenced
      * in the SDK's error handling logic to confirm their ordinal positions have not shifted.
      */
     @Test
     fun `spot-check ordinals of key error codes`() {
-        assertEquals(0, MomoAPIErrorResponses.PAYER_NOT_FOUND.ordinal)
-        assertEquals(6, MomoAPIErrorResponses.INVALID_CURRENCY.ordinal)
-        assertEquals(26, MomoAPIErrorResponses.COULD_NOT_PERFORM_TRANSACTION.ordinal)
+        assertEquals(0, ApiErrorResponses.PAYER_NOT_FOUND.ordinal)
+        assertEquals(6, ApiErrorResponses.INVALID_CURRENCY.ordinal)
+        assertEquals(26, ApiErrorResponses.COULD_NOT_PERFORM_TRANSACTION.ordinal)
     }
 
     /**
-     * Verifies that [MomoAPIErrorResponses.entries] returns all 27 constants and that each entry
-     * round-trips correctly through [MomoAPIErrorResponses.valueOf].
+     * Verifies that [ApiErrorResponses.entries] returns all 27 constants and that each entry
+     * round-trips correctly through [ApiErrorResponses.valueOf].
      */
     @Test
     fun `all entries round-trip through valueOf`() {
-        for (entry in MomoAPIErrorResponses.entries) {
-            assertEquals(entry, MomoAPIErrorResponses.valueOf(entry.name))
+        for (entry in ApiErrorResponses.entries) {
+            assertEquals(entry, ApiErrorResponses.valueOf(entry.name))
         }
     }
 }

@@ -16,19 +16,20 @@
 package io.rekast.sdk
 
 /**
- * JVM-specific implementation of the platform-agnostic [Logger].
+ * JVM `actual` implementation of [Logger].
  *
- * Writes log output to standard output using the format `D/<tag>: <message>`,
- * suitable for server-side or desktop JVM use cases where Timber is unavailable.
+ * Writes to standard output in the format `{LEVEL}/{tag}: {message}`.
+ * For error logs, any supplied [Throwable] stack trace is printed via [Throwable.printStackTrace].
  */
 actual object Logger {
-    /**
-     * Prints a debug message to standard output.
-     *
-     * @param tag Log tag, typically the calling class name.
-     * @param message Human-readable message to log.
-     */
-    actual fun d(tag: String, message: String) {
-        println("D/$tag: $message")
+    actual fun d(tag: String, message: String) = println("D/$tag: $message")
+
+    actual fun i(tag: String, message: String) = println("I/$tag: $message")
+
+    actual fun w(tag: String, message: String) = println("W/$tag: $message")
+
+    actual fun e(tag: String, message: String, throwable: Throwable?) {
+        println("E/$tag: $message")
+        throwable?.printStackTrace()
     }
 }

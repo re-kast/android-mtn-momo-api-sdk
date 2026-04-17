@@ -16,7 +16,7 @@
 package io.rekast.sdk.sample.views
 
 /**
- * Placeholder test class for [AppMainActivity].
+ * Placeholder test class for [MainActivity].
  *
  * UI-level behaviour (navigation, Hilt component wiring, screen rendering) is
  * covered by instrumented tests under `androidTest/`. Add host-side unit tests

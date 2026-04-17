@@ -30,7 +30,7 @@ import io.rekast.sdk.network.service.products.CollectionService
 import io.rekast.sdk.network.service.products.DisbursementsService
 import io.rekast.sdk.repository.data.DataResponse
 import io.rekast.sdk.repository.data.NetworkResult
-import io.rekast.sdk.utils.MomoApiConfig
+import io.rekast.sdk.utils.ApiConfig
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.Dispatchers
@@ -51,7 +51,7 @@ import retrofit2.Response
  * @property collection The service for collection-related API calls.
  */
 @Singleton
-class DefaultRepository @Inject constructor(private val defaultSource: DefaultSource, private val disbursementsService: DisbursementsService, private val collection: CollectionService, private val config: MomoApiConfig) :
+class DefaultRepository @Inject constructor(private val defaultSource: DefaultSource, private val disbursementsService: DisbursementsService, private val collection: CollectionService, private val config: ApiConfig) :
     DataResponse() {
 
     /**

@@ -31,9 +31,9 @@ import io.rekast.sdk.sample.R
  */
 @AndroidEntryPoint
 @ExperimentalMaterialApi
-open class AppMainActivity : AppCompatActivity() {
+open class MainActivity : AppCompatActivity() {
     lateinit var navHostFragment: NavHostFragment
-    private val appMainViewModel by viewModels<AppMainViewModel>()
+    private val mainViewModel by viewModels<MainViewModel>()
 
     /**
      * Called when the activity is created.
@@ -64,6 +64,6 @@ open class AppMainActivity : AppCompatActivity() {
      */
     override fun onResume() {
         super.onResume()
-        appMainViewModel.checkUser()
+        mainViewModel.checkUser()
     }
 }

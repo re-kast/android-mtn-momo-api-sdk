@@ -16,7 +16,7 @@
 package io.rekast.sdk.network.service.products
 
 import io.rekast.sdk.model.MomoTransaction
-import io.rekast.sdk.utils.MomoConstants
+import io.rekast.sdk.utils.Constants
 import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.Body
@@ -41,13 +41,13 @@ sealed interface CollectionService : CommonService {
      * @param uuid A UUID V4 used as the X-Reference-Id to uniquely identify this request.
      * @return A [Response] with an empty body; HTTP 202 indicates the request was accepted.
      */
-    @POST(MomoConstants.EndPoints.REQUEST_TO_PAY)
+    @POST(Constants.EndPoints.REQUEST_TO_PAY)
     suspend fun requestToPay(
         @Body momoTransaction: MomoTransaction,
-        @Path(MomoConstants.EndpointPaths.API_VERSION) apiVersion: String,
-        @Header(MomoConstants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
-        @Header(MomoConstants.Headers.X_TARGET_ENVIRONMENT) environment: String,
-        @Header(MomoConstants.Headers.X_REFERENCE_ID) uuid: String
+        @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
+        @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
+        @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String,
+        @Header(Constants.Headers.X_REFERENCE_ID) uuid: String
     ): Response<Unit>
 
     /**
@@ -59,12 +59,12 @@ sealed interface CollectionService : CommonService {
      * @param environment The target environment (e.g., sandbox or production).
      * @return A [Response] whose body contains the transaction status as a [ResponseBody].
      */
-    @GET(MomoConstants.EndPoints.REQUEST_TO_PAY_STATUS)
+    @GET(Constants.EndPoints.REQUEST_TO_PAY_STATUS)
     suspend fun requestToPayTransactionStatus(
-        @Path(MomoConstants.EndpointPaths.REFERENCE_ID) referenceId: String,
-        @Path(MomoConstants.EndpointPaths.API_VERSION) apiVersion: String,
-        @Header(MomoConstants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
-        @Header(MomoConstants.Headers.X_TARGET_ENVIRONMENT) environment: String
+        @Path(Constants.EndpointPaths.REFERENCE_ID) referenceId: String,
+        @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
+        @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
+        @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String
     ): Response<ResponseBody>
 
     /**
@@ -77,13 +77,13 @@ sealed interface CollectionService : CommonService {
      * @param uuid A UUID V4 used as the X-Reference-Id to uniquely identify this request.
      * @return A [Response] with an empty body; HTTP 202 indicates the request was accepted.
      */
-    @POST(MomoConstants.EndPoints.REQUEST_TO_WITHDRAW)
+    @POST(Constants.EndPoints.REQUEST_TO_WITHDRAW)
     suspend fun requestToWithdraw(
         @Body momoTransaction: MomoTransaction,
-        @Path(MomoConstants.EndpointPaths.API_VERSION) apiVersion: String,
-        @Header(MomoConstants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
-        @Header(MomoConstants.Headers.X_TARGET_ENVIRONMENT) environment: String,
-        @Header(MomoConstants.Headers.X_REFERENCE_ID) uuid: String
+        @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
+        @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
+        @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String,
+        @Header(Constants.Headers.X_REFERENCE_ID) uuid: String
     ): Response<Unit>
 
     /**
@@ -95,11 +95,11 @@ sealed interface CollectionService : CommonService {
      * @param environment The target environment (e.g., sandbox or production).
      * @return A [Response] whose body contains the withdrawal status as a [ResponseBody].
      */
-    @GET(MomoConstants.EndPoints.REQUEST_TO_WITHDRAW_STATUS)
+    @GET(Constants.EndPoints.REQUEST_TO_WITHDRAW_STATUS)
     suspend fun requestToWithdrawTransactionStatus(
-        @Path(MomoConstants.EndpointPaths.REFERENCE_ID) referenceId: String,
-        @Path(MomoConstants.EndpointPaths.API_VERSION) apiVersion: String,
-        @Header(MomoConstants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
-        @Header(MomoConstants.Headers.X_TARGET_ENVIRONMENT) environment: String
+        @Path(Constants.EndpointPaths.REFERENCE_ID) referenceId: String,
+        @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
+        @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
+        @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String
     ): Response<ResponseBody>
 }

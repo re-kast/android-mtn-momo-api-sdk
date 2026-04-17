@@ -15,7 +15,6 @@
  */
 package io.rekast.sdk.sample.views
 
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -54,7 +53,7 @@ import timber.log.Timber
  * [io.rekast.sdk.repository.data.NetworkResult.Success] or [io.rekast.sdk.repository.data.NetworkResult.Error].
  */
 @HiltViewModel
-open class AppMainViewModel @Inject constructor(
+open class MainViewModel @Inject constructor(
     private val defaultRepository: DefaultRepository,
     private val credentialStorage: CredentialStorage,
     private val settings: Settings,

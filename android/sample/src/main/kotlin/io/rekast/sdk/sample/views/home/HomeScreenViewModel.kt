@@ -62,7 +62,7 @@ import timber.log.Timber
  *
  * All API calls are guarded by a check on [CredentialStorage.getAccessToken]: if no valid
  * token is present the request is skipped and a snackbar is shown instead. In normal operation
- * the access token is provisioned by [io.rekast.sdk.sample.views.AppMainViewModel] on first
+ * the access token is provisioned by [io.rekast.sdk.sample.views.MainViewModel] on first
  * launch and refreshed automatically by `TokenAuthenticator` on 401.
  */
 @HiltViewModel

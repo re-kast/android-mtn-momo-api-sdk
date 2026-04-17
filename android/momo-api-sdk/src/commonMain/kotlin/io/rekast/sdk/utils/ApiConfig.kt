@@ -26,4 +26,4 @@ package io.rekast.sdk.utils
  * @property apiUserId The API user ID provisioned in the MoMo developer portal.
  * @property environment The deployment environment identifier (e.g. `sandbox` or `mtncongo`).
  */
-data class MomoApiConfig(val baseUrl: String, val apiUserId: String, val environment: String)
+data class ApiConfig(val baseUrl: String, val apiUserId: String, val environment: String)

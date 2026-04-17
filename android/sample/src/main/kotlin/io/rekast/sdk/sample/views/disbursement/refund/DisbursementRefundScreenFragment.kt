@@ -30,7 +30,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import io.rekast.sdk.sample.ui.theme.AppTheme
-import io.rekast.sdk.sample.views.AppMainViewModel
+import io.rekast.sdk.sample.views.MainViewModel
 import kotlin.getValue
 
 /**
@@ -40,7 +40,7 @@ import kotlin.getValue
 @AndroidEntryPoint
 class DisbursementRefundScreenFragment : Fragment() {
     private val disbursementRefundScreenViewModel by viewModels<DisbursementRefundScreenViewModel>()
-    private val appMainViewModel by activityViewModels<AppMainViewModel>()
+    private val mainViewModel by activityViewModels<MainViewModel>()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val navController = findNavController()

@@ -21,7 +21,7 @@ package io.rekast.sdk.utils
  * Contains timestamp formats, message length limits, and nested objects grouping
  * HTTP header names, token type prefixes, URL path parameters, and API endpoint templates.
  */
-object MomoConstants {
+object Constants {
     /**
      * The format used for timestamps in the SDK.
      */

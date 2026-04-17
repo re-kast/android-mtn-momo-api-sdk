@@ -21,11 +21,11 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import io.rekast.sdk.app.BuildConfig
 import io.rekast.sdk.sample.utils.SampleConfig
-import io.rekast.sdk.utils.MomoApiConfig
+import io.rekast.sdk.utils.ApiConfig
 import javax.inject.Singleton
 
 /**
- * Application-level Hilt module that provides the [MomoApiConfig] consumed by the SDK.
+ * Application-level Hilt module that provides the [ApiConfig] consumed by the SDK.
  *
  * Lives in the :app module (not :sample) because com.android.kotlin.multiplatform.library's
  * compile JAR does not include KSP-generated Java factory classes; moving @Module providers
@@ -38,12 +38,12 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object AppModule {
     /**
-     * Provides the [MomoApiConfig] used by the SDK to configure the base URL, API user, and environment.
+     * Provides the [ApiConfig] used by the SDK to configure the base URL, API user, and environment.
      */
     @Provides
     @Singleton
-    fun provideMomoApiConfig(): MomoApiConfig =
-        MomoApiConfig(
+    fun provideMomoApiConfig(): ApiConfig =
+        ApiConfig(
             baseUrl = BuildConfig.MOMO_BASE_URL,
             apiUserId = BuildConfig.MOMO_API_USER_ID,
             environment = BuildConfig.MOMO_ENVIRONMENT

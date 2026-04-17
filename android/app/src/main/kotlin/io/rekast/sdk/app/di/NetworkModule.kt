@@ -29,7 +29,7 @@ import io.rekast.sdk.network.service.products.CommonService
 import io.rekast.sdk.network.service.products.DisbursementsService
 import io.rekast.sdk.sample.utils.CredentialStorage
 import io.rekast.sdk.sample.utils.SampleConfig
-import io.rekast.sdk.utils.MomoApiConfig
+import io.rekast.sdk.utils.ApiConfig
 import io.rekast.sdk.utils.Settings
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
@@ -38,6 +38,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.kotlinx.serialization.asConverterFactory
 import java.util.concurrent.TimeUnit
+import javax.inject.Named
 import javax.inject.Singleton
 
 /**
@@ -64,6 +65,39 @@ object NetworkModule {
     ): CredentialProvider = CredentialProvider(storage, sampleConfig)
 
     /**
+     * Provides a dedicated [AuthenticationService] backed by a minimal [OkHttpClient] that only
+     * attaches Basic Auth. Used exclusively by [TokenAuthenticator] to avoid a circular dependency
+     * with the main client (which has the authenticator wired in).
+     *
+     * The anonymous [CredentialProvider] always returns the raw API key and never returns a Bearer
+     * token, ensuring the Basic Auth header is always attached on token-refresh requests even when
+     * an (expired) token is still present in [CredentialStorage].
+     */
+    @Provides
+    @Singleton
+    @Named("tokenRefresh")
+    fun provideTokenRefreshAuthenticationService(
+        config: ApiConfig,
+        storage: CredentialStorage,
+        json: Json
+    ): AuthenticationService {
+        val credentialProvider = object : CredentialProvider {
+            override fun getApiUserId(): String = config.apiUserId
+            override fun getApiKey(): String = storage.getApiKey()
+            override fun getAccessToken(): String = ""
+        }
+        val client = OkHttpClient.Builder()
+            .addInterceptor(BasicAuthenticationInterceptor(credentialProvider))
+            .build()
+        return Retrofit.Builder()
+            .baseUrl(config.baseUrl)
+            .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
+            .client(client)
+            .build()
+            .create(AuthenticationService::class.java)
+    }
+
+    /**
      * Provides the [TokenAuthenticator] that refreshes the Bearer access token whenever
      * a 401 is received from a protected endpoint.
      */
@@ -71,8 +105,9 @@ object NetworkModule {
     @Singleton
     fun provideTokenAuthenticator(
         storage: CredentialStorage,
-        config: MomoApiConfig
-    ): TokenAuthenticator = TokenAuthenticator(storage, config)
+        @Named("tokenRefresh") authService: AuthenticationService,
+        config: ApiConfig
+    ): TokenAuthenticator = TokenAuthenticator(storage, authService, config)
 
     @Provides
     @Singleton
@@ -95,7 +130,7 @@ object NetworkModule {
         httpLoggingInterceptor: HttpLoggingInterceptor,
         credentialProvider: CredentialProvider,
         tokenAuthenticator: TokenAuthenticator,
-        config: MomoApiConfig
+        config: ApiConfig
     ): OkHttpClient {
         val builder =
             if (config.baseUrl.startsWith("https")) {
@@ -121,7 +156,7 @@ object NetworkModule {
     fun provideRetrofit(
         okHttpClient: OkHttpClient,
         json: Json,
-        config: MomoApiConfig
+        config: ApiConfig
     ): Retrofit =
         Retrofit
             .Builder()

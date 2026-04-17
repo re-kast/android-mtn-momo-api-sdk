@@ -16,12 +16,36 @@
 package io.rekast.sdk
 
 /**
- * Platform-agnostic logging abstraction.
+ * Platform-agnostic logging abstraction for the MTN MOMO SDK.
  *
- * Each platform provides its own `actual` implementation:
- * - **Android**: delegates to [timber.log.Timber]
- * - **JVM**: writes to standard output
+ * Use this in `commonMain` code instead of importing platform-specific logging libraries.
+ * Each platform supplies its own `actual` implementation:
+ * - **Android** (`androidMain`): delegates to [timber.log.Timber], which must be planted in
+ *   your `Application.onCreate` (e.g. `Timber.plant(Timber.DebugTree())`).
+ * - **JVM** (`jvmMain`): writes to standard output in the format `{LEVEL}/{tag}: {message}`.
+ *
+ * Usage in `commonMain`:
+ * ```kotlin
+ * Logger.d("MyClass", "debug message")
+ * Logger.i("MyClass", "info message")
+ * Logger.w("MyClass", "warning message")
+ * Logger.e("MyClass", "error message", throwable)
+ * ```
  */
 expect object Logger {
+    /** Logs a debug-level message. */
     fun d(tag: String, message: String)
+
+    /** Logs an info-level message. */
+    fun i(tag: String, message: String)
+
+    /** Logs a warning-level message. */
+    fun w(tag: String, message: String)
+
+    /**
+     * Logs an error-level message.
+     *
+     * @param throwable Optional exception to log alongside the message.
+     */
+    fun e(tag: String, message: String, throwable: Throwable? = null)
 }

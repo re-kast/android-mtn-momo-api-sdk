@@ -20,7 +20,7 @@ package io.rekast.sdk.utils
  *
  * Each constant corresponds to a specific error that can occur during API interactions.
  */
-enum class MomoAPIErrorResponses {
+enum class ApiErrorResponses {
     /**
      * Indicates that the payer was not found.
      */

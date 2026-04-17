@@ -31,7 +31,7 @@ import io.rekast.sdk.model.authentication.Oauth2AccessToken
 import io.rekast.sdk.network.service.products.CollectionService
 import io.rekast.sdk.network.service.products.DisbursementsService
 import io.rekast.sdk.repository.data.NetworkResult
-import io.rekast.sdk.utils.MomoApiConfig
+import io.rekast.sdk.utils.ApiConfig
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.toList
@@ -77,7 +77,7 @@ class DefaultRepositoryTest {
     private val disbursementsService: DisbursementsService = retrofit.create(DisbursementsService::class.java)
     private val collection: CollectionService = retrofit.create(CollectionService::class.java)
 
-    private val config = MomoApiConfig(
+    private val config = ApiConfig(
         baseUrl = "https://sandbox.momodeveloper.mtn.com/",
         apiUserId = "test-user-id",
         environment = "sandbox"

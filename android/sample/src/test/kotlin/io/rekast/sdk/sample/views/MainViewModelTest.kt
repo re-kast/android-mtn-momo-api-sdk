@@ -42,13 +42,13 @@ import org.junit.Before
 import org.junit.Test
 
 /**
- * Unit tests for [AppMainViewModel].
+ * Unit tests for [MainViewModel].
  *
  * Credentials are injected via a [CredentialStorage] mock, so there is no
  * dependency on SharedPreferences or any Android runtime.
  */
 @OptIn(ExperimentalCoroutinesApi::class)
-class AppMainViewModelTest {
+class MainViewModelTest {
 
     private val testDispatcher = UnconfinedTestDispatcher()
     private val testDispatcherProvider = object : DispatcherProvider {
@@ -71,7 +71,7 @@ class AppMainViewModelTest {
         disbursementsSecondaryKey = "disbursements-secondary-key"
     )
 
-    private lateinit var viewModel: AppMainViewModel
+    private lateinit var viewModel: MainViewModel
 
     @Before
     fun setUp() {
@@ -80,7 +80,7 @@ class AppMainViewModelTest {
         every { mockStorage.getApiKey() } returns ""
         every { mockStorage.getAccessToken() } returns ""
         every { mockStorage.getOauthAccessToken() } returns ""
-        viewModel = AppMainViewModel(mockRepository, mockStorage, mockSettings, testDispatcherProvider, mockSampleConfig)
+        viewModel = MainViewModel(mockRepository, mockStorage, mockSettings, testDispatcherProvider, mockSampleConfig)
     }
 
     @After
@@ -134,7 +134,7 @@ class AppMainViewModelTest {
     }
 
     /**
-     * Verifies that [AppMainViewModel.checkUser] triggers [DefaultRepository.createApiKey] when
+     * Verifies that [MainViewModel.checkUser] triggers [DefaultRepository.createApiKey] when
      * [checkApiUser] returns success but no API key is yet stored in [CredentialStorage].
      */
     @Test
@@ -153,7 +153,7 @@ class AppMainViewModelTest {
     }
 
     /**
-     * Verifies that [AppMainViewModel.checkUser] skips [DefaultRepository.createApiKey] and
+     * Verifies that [MainViewModel.checkUser] skips [DefaultRepository.createApiKey] and
      * proceeds directly to fetching the access token when an API key is already stored.
      */
     @Test

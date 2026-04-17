@@ -137,14 +137,14 @@ class SettingsTest {
     /** Verifies a message whose length equals the constant limit is still accepted. */
     @Test
     fun `checkNotificationMessageLength returns true for message exactly at limit`() {
-        val maxMessage = "a".repeat(MomoConstants.NOTIFICATION_MESSAGE_LENGTH.toInt())
+        val maxMessage = "a".repeat(Constants.NOTIFICATION_MESSAGE_LENGTH.toInt())
         assertTrue(settings.checkNotificationMessageLength(maxMessage))
     }
 
     /** Verifies a message one character over the constant limit is rejected. */
     @Test
     fun `checkNotificationMessageLength returns false for message exceeding limit`() {
-        val longMessage = "a".repeat(MomoConstants.NOTIFICATION_MESSAGE_LENGTH.toInt() + 1)
+        val longMessage = "a".repeat(Constants.NOTIFICATION_MESSAGE_LENGTH.toInt() + 1)
         assertFalse(settings.checkNotificationMessageLength(longMessage))
     }
 
