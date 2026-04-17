@@ -1,11 +1,11 @@
 ---
 sidebar_position: 1
-sidebar_label: Library Usage
+sidebar_label: Library Setup
 ---
 
-# Library Usage
+# Library Setup
 
-The MTN MOMO API SDK documentation is built using [Docusaurus](https://docusaurus.io/), a modern static website generator that simplifies the creation of documentation websites. The documentation files are organized in a structured manner within the [versioned_docs folder](https://github.com/re-kast/android-mtn-momo-api-sdk/tree/feature/issue_27/versioned_docs), with the current version being `1.0`. You can find all relevant documentation in the `version-1.0` folder.
+This page covers the documentation site infrastructure — how it is built, continuously deployed, and how to preview changes locally. The site is generated with [Docusaurus](https://docusaurus.io/) and published automatically via GitHub Actions on every push to `develop`. Documentation source lives in the [`versioned_docs/`](https://github.com/re-kast/android-mtn-momo-api-sdk/tree/develop/versioned_docs) directory; the current version is `1.0`.
 
 ---
 

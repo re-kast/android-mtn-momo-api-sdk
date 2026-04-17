@@ -5,7 +5,7 @@ sidebar_label: Code Contributions
 
 # Code Contributions 
 
-Contributions to the MTM Momo Android SDK are not only welcome but encouraged! We believe that collaboration is key to improving our project and making it more robust. If you have ideas, improvements, or bug fixes, please feel free to submit a Pull Request (PR). However, for significant changes, we recommend opening an issue first to discuss your proposed modifications. This helps ensure that your contributions align with the project's goals and standards.
+Contributions to the MTN MoMo Android SDK are not only welcome but encouraged! We believe that collaboration is key to improving our project and making it more robust. If you have ideas, improvements, or bug fixes, please feel free to submit a Pull Request (PR). However, for significant changes, we recommend opening an issue first to discuss your proposed modifications. This helps ensure that your contributions align with the project's goals and standards.
 
 ---
 
@@ -45,6 +45,6 @@ Once you submit a Pull Request, it will undergo a review process. For a PR to be
 
 :::tip[Happy coding!]
 
-We hope you enjoy updating and using this library! Your contributions are invaluable to the success of the MTM Momo Android SDK, and we look forward to seeing your improvements!
+We hope you enjoy updating and using this library! Your contributions are invaluable to the success of the MTN MoMo Android SDK, and we look forward to seeing your improvements!
 
 :::

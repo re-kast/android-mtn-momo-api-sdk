@@ -159,6 +159,32 @@ MOMO_API_VERSION_V1="" ## The API version for v1 endpoints, use 'v1_0' for sandb
 MOMO_API_VERSION_V2="" ## The API version for v2 endpoints, use 'v2_0' for sandbox and 'v2' for production
 ```
 
+## Library Usage
+
+The SDK exposes all operations through `DefaultRepository`. Every method returns a `Flow<NetworkResult<T>>` — collect it inside a coroutine scope and handle the three states:
+
+```kotlin
+defaultRepository.someApi(...).collect { result ->
+    when (result) {
+        is NetworkResult.Loading -> { /* show progress */ }
+        is NetworkResult.Success -> { /* use result.response */ }
+        is NetworkResult.Error   -> { /* handle result.message */ }
+    }
+}
+```
+
+The available API groups are:
+
+| Group | Description |
+|---|---|
+| **Authentication** | Provision API user, API key, Bearer token, and OAuth2 token via the CIBA flow |
+| **Collection** | Request to Pay, Request to Withdraw, invoices, pre-approvals, and delivery notifications |
+| **Disbursements** | Transfers, deposits, refunds, cash transfers, and delivery notifications |
+| **Remittance** | Cross-border transfers and transfer status |
+| **Account** | Account balance, basic user info, user info with consent, and account holder validation |
+
+For full code examples and parameter descriptions for every API, see the [Library Usage](https://mtn-momo-sdk.rekast.io/Documentation/api-reference) section of the documentation.
+
 ## License
 
 This project is licensed under the Apache License, Version 2.0. For more details, please refer to the [LICENSE](LICENSE) file.
