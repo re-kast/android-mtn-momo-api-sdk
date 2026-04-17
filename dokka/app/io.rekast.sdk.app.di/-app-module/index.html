@@ -18,7 +18,6 @@
         }
       }
     </script>
-<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async></script>
 <script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async></script>
 <link href="../../../styles/style.css" rel="Stylesheet">
 <link href="../../../styles/main.css" rel="Stylesheet">
@@ -96,24 +95,24 @@
   <div class="breadcrumbs"><a href="../../index.html">app</a><span class="delimiter">/</span><a href="../index.html">io.rekast.sdk.app.di</a><span class="delimiter">/</span><span class="current">AppModule</span></div>
   <div class="cover ">
     <h1 class="cover"><span>App</span><wbr><span><span>Module</span></span></h1>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":app/main"><div class="symbol monospace"><span class="token keyword">object </span><a href="index.html">AppModule</a></div><p class="paragraph">Application-level Hilt module that provides the MomoApiConfig consumed by the SDK.</p><p class="paragraph">Lives in the :app module (not :sample) because com.android.kotlin.multiplatform.library's compile JAR does not include KSP-generated Java factory classes; moving @Module providers here ensures hiltJavaCompileDebug can find them on the classpath.</p><p class="paragraph">Credentials are read from BuildConfig which is populated by the Gradle Secrets plugin from <code class="lang-kotlin">local.properties</code> or CI environment variables.</p></div></div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":app/main"><div class="symbol monospace"><span class="token keyword">object </span><a href="index.html">AppModule</a></div><p class="paragraph">Application-level Hilt module that provides the ApiConfig consumed by the SDK.</p><p class="paragraph">Lives in the :app module (not :sample) because com.android.kotlin.multiplatform.library's compile JAR does not include KSP-generated Java factory classes; moving @Module providers here ensures hiltJavaCompileDebug can find them on the classpath.</p><p class="paragraph">Credentials are read from BuildConfig which is populated by the Gradle Secrets plugin from <code class="lang-kotlin">local.properties</code> or CI environment variables.</p></div></div>
   </div>
   <div class="tabbedcontent">
     <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
     <div class="tabs-section-body">
       <div data-togglable="FUNCTION">
         <h2 class="tableheader">Functions</h2>
-        <div class="table"><a data-name="-1068304969%2FFunctions%2F-155751313" anchor-label="provideMomoApiConfig" id="-1068304969%2FFunctions%2F-155751313" data-filterable-set=":app/main"></a>
+        <div class="table"><a data-name="-1162737453%2FFunctions%2F-155751313" anchor-label="provideApiConfig" id="-1162737453%2FFunctions%2F-155751313" data-filterable-set=":app/main"></a>
           <div class="table-row table-row_content" data-filterable-current=":app/main" data-filterable-set=":app/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="provide-momo-api-config.html"><span>provide</span><wbr><span>Momo</span><wbr><span>Api</span><wbr><span><span>Config</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1068304969%2FFunctions%2F-155751313"></span>
+                  <div><a href="provide-api-config.html"><span>provide</span><wbr><span>Api</span><wbr><span><span>Config</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1162737453%2FFunctions%2F-155751313"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":app/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="provide-momo-api-config.html"><span class="token function">provideMomoApiConfig</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span>ERROR CLASS: Symbol not found for MomoApiConfig</div><div class="brief "><p class="paragraph">Provides the MomoApiConfig used by the SDK to configure the base URL, API user, and environment.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":app/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="provide-api-config.html"><span class="token function">provideApiConfig</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span>ERROR CLASS: Symbol not found for ApiConfig</div><div class="brief "><p class="paragraph">Provides the ApiConfig that the SDK uses to configure the base URL, API user ID, and target environment.</p></div></div></div>
                 </div>
               </div>
             </div>

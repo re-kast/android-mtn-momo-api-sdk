@@ -18,7 +18,6 @@
         }
       }
     </script>
-<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async></script>
 <script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async></script>
 <link href="../../../styles/style.css" rel="Stylesheet">
 <link href="../../../styles/main.css" rel="Stylesheet">
@@ -45,7 +44,7 @@
         </div>
         <div class="navigation-controls">
         <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
-                <button class="platform-tag platform-selector common-like" data-active="" aria-pressed="true" data-filter=":momo-api-sdk/commonMain">Common</button>
+                <button class="platform-tag platform-selector jvm-like" data-active="" aria-pressed="true" data-filter=":momo-api-sdk/commonMain">Common</button>
             <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
                 <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox" data-role="dropdown-toggle" aria-controls="platform-tags-listbox" aria-haspopup="listbox" aria-expanded="false" aria-label="Toggle source sets"></button>
                 <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox" aria-label="Target filter">
@@ -54,7 +53,7 @@
                             <i class="ui-kit-icon ui-kit-icon_cross"></i>
                         </button>
                     </div>
-                        <li role="option" class="dropdown--option platform-selector-option common-like" tabindex="0">
+                        <li role="option" class="dropdown--option platform-selector-option jvm-like" tabindex="0">
                             <label class="checkbox">
                                 <input type="checkbox" class="checkbox--input" id=":momo-api-sdk/commonMain" data-filter=":momo-api-sdk/commonMain">
                                 <span class="checkbox--icon"></span>
@@ -92,28 +91,32 @@
         </nav>
         <div id="resizer" class="resizer" data-item-type="BAR"></div>
         <div id="main" data-item-type="SECTION" role="main">
-<div class="main-content" data-page-type="classlike" id="content" pageids="momo-api-sdk::io.rekast.sdk.model/MomoTransaction///PointingToDeclaration//-1023915287">
+<div class="main-content" data-page-type="classlike" id="content" pageids="momo-api-sdk::io.rekast.sdk.model/MomoTransaction///PointingToDeclaration//-1458242499">
   <div class="breadcrumbs"><a href="../../index.html">momo-api-sdk</a><span class="delimiter">/</span><a href="../index.html">io.rekast.sdk.model</a><span class="delimiter">/</span><span class="current">MomoTransaction</span></div>
   <div class="cover ">
     <h1 class="cover"><span>Momo</span><wbr><span><span>Transaction</span></span></h1>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":momo-api-sdk/commonMain"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><span data-unresolved-link="kotlinx.serialization/Serializable///PointingToDeclaration/"><span class="token annotation builtin">Serializable</span></span></div></div><span class="token keyword">data </span><span class="token keyword">class </span><a href="index.html">MomoTransaction</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">var </span>amount<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>currency<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>financialTransactionId<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span><span class="token string">""</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>externalId<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>payee<span class="token operator">: </span><a href="../-account-holder/index.html">AccountHolder</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>payer<span class="token operator">: </span><a href="../-account-holder/index.html">AccountHolder</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>payerMessage<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>payeeNote<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>status<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span><span class="token string">""</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>reason<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span><span class="token string">""</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>referenceIdToRefund<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span><span class="token string">""</span></span></span><span class="token punctuation">)</span></div><p class="paragraph">Represents a MTN MOMO transaction used for payments, withdrawals, deposits, transfers, and refunds.</p></div></div>
+    <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+      <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":momo-api-sdk/commonMain" data-filterable-set=":momo-api-sdk/commonMain" data-active="" data-toggle=":momo-api-sdk/commonMain">Common</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":momo-api-sdk/commonMain"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">class </span><a href="index.html">MomoTransaction</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">var </span>amount<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>currency<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>financialTransactionId<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span><span class="token string">""</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>externalId<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>payee<span class="token operator">: </span><a href="../-account-holder/index.html">AccountHolder</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>payer<span class="token operator">: </span><a href="../-account-holder/index.html">AccountHolder</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>payerMessage<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>payeeNote<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>status<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span><span class="token string">""</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>reason<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span><span class="token string">""</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>referenceIdToRefund<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span><span class="token string">""</span></span></span><span class="token punctuation">)</span></div><p class="paragraph">Represents a MTN MOMO transaction used for payments, withdrawals, deposits, transfers, and refunds.</p></div>    </div>
   </div>
   <div class="tabbedcontent">
     <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
     <div class="tabs-section-body">
       <div data-togglable="CONSTRUCTOR">
         <h2 class="tableheader">Constructors</h2>
-        <div class="table"><a data-name="-1650770804%2FConstructors%2F-1023915287" anchor-label="MomoTransaction" id="-1650770804%2FConstructors%2F-1023915287" data-filterable-set=":momo-api-sdk/commonMain"></a>
+        <div class="table"><a data-name="-1650770804%2FConstructors%2F-1458242499" anchor-label="MomoTransaction" id="-1650770804%2FConstructors%2F-1458242499" data-filterable-set=":momo-api-sdk/commonMain"></a>
           <div class="table-row table-row_content" data-togglable="CONSTRUCTOR" data-filterable-current=":momo-api-sdk/commonMain" data-filterable-set=":momo-api-sdk/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-momo-transaction.html"><span>Momo</span><wbr><span><span>Transaction</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1650770804%2FConstructors%2F-1023915287"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1650770804%2FConstructors%2F-1458242499"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":momo-api-sdk/commonMain"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">amount<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">currency<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">financialTransactionId<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span><span class="token string">""</span><span class="token punctuation">, </span></span><span class="parameter ">externalId<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">payee<span class="token operator">: </span><a href="../-account-holder/index.html">AccountHolder</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">payer<span class="token operator">: </span><a href="../-account-holder/index.html">AccountHolder</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">payerMessage<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">payeeNote<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">status<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span><span class="token string">""</span><span class="token punctuation">, </span></span><span class="parameter ">reason<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span><span class="token string">""</span><span class="token punctuation">, </span></span><span class="parameter ">referenceIdToRefund<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span><span class="token string">""</span></span></span><span class="token punctuation">)</span></div></div></div>
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":momo-api-sdk/commonMain" data-filterable-set=":momo-api-sdk/commonMain" data-active="" data-toggle=":momo-api-sdk/commonMain">Common</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":momo-api-sdk/commonMain"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">amount<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">currency<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">financialTransactionId<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span><span class="token string">""</span><span class="token punctuation">, </span></span><span class="parameter ">externalId<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">payee<span class="token operator">: </span><a href="../-account-holder/index.html">AccountHolder</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">payer<span class="token operator">: </span><a href="../-account-holder/index.html">AccountHolder</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">payerMessage<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">payeeNote<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">status<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span><span class="token string">""</span><span class="token punctuation">, </span></span><span class="parameter ">reason<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span><span class="token string">""</span><span class="token punctuation">, </span></span><span class="parameter ">referenceIdToRefund<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span><span class="token string">""</span></span></span><span class="token punctuation">)</span></div></div>                  </div>
                 </div>
               </div>
             </div>
@@ -122,167 +125,189 @@
       </div>
       <div data-togglable="PROPERTY">
         <h2 class="tableheader">Properties</h2>
-        <div class="table"><a data-name="-938198566%2FProperties%2F-1023915287" anchor-label="amount" id="-938198566%2FProperties%2F-1023915287" data-filterable-set=":momo-api-sdk/commonMain"></a>
+        <div class="table"><a data-name="-938198566%2FProperties%2F-1458242499" anchor-label="amount" id="-938198566%2FProperties%2F-1458242499" data-filterable-set=":momo-api-sdk/commonMain"></a>
           <div class="table-row table-row_content" data-filterable-current=":momo-api-sdk/commonMain" data-filterable-set=":momo-api-sdk/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="amount.html"><span><span>amount</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-938198566%2FProperties%2F-1023915287"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-938198566%2FProperties%2F-1458242499"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":momo-api-sdk/commonMain"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><span data-unresolved-link="kotlinx.serialization/SerialName///PointingToDeclaration/"><span class="token annotation builtin">SerialName</span></span><span class="token punctuation">(</span><span>value<span class="token operator"> = </span><span class="breakable-word"><span class="token string">"amount"</span></span></span><wbr><span class="token punctuation">)</span></div></div><span class="token keyword">var </span><a href="amount.html">amount</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div><div class="brief "><p class="paragraph">The transaction amount as a string.</p></div></div></div>
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":momo-api-sdk/commonMain" data-filterable-set=":momo-api-sdk/commonMain" data-active="" data-toggle=":momo-api-sdk/commonMain">Common</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":momo-api-sdk/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="amount.html">amount</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div><div class="brief "><p class="paragraph">The transaction amount as a string.</p></div></div>                  </div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="-1769372927%2FProperties%2F-1023915287" anchor-label="currency" id="-1769372927%2FProperties%2F-1023915287" data-filterable-set=":momo-api-sdk/commonMain"></a>
+<a data-name="-1769372927%2FProperties%2F-1458242499" anchor-label="currency" id="-1769372927%2FProperties%2F-1458242499" data-filterable-set=":momo-api-sdk/commonMain"></a>
           <div class="table-row table-row_content" data-filterable-current=":momo-api-sdk/commonMain" data-filterable-set=":momo-api-sdk/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="currency.html"><span><span>currency</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1769372927%2FProperties%2F-1023915287"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1769372927%2FProperties%2F-1458242499"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":momo-api-sdk/commonMain"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><span data-unresolved-link="kotlinx.serialization/SerialName///PointingToDeclaration/"><span class="token annotation builtin">SerialName</span></span><span class="token punctuation">(</span><span>value<span class="token operator"> = </span><span class="breakable-word"><span class="token string">"currency"</span></span></span><wbr><span class="token punctuation">)</span></div></div><span class="token keyword">var </span><a href="currency.html">currency</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div><div class="brief "><p class="paragraph">The ISO currency code for the transaction (e.g., EUR, UGX).</p></div></div></div>
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":momo-api-sdk/commonMain" data-filterable-set=":momo-api-sdk/commonMain" data-active="" data-toggle=":momo-api-sdk/commonMain">Common</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":momo-api-sdk/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="currency.html">currency</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div><div class="brief "><p class="paragraph">The ISO currency code for the transaction (e.g., EUR, UGX).</p></div></div>                  </div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="1534265644%2FProperties%2F-1023915287" anchor-label="externalId" id="1534265644%2FProperties%2F-1023915287" data-filterable-set=":momo-api-sdk/commonMain"></a>
+<a data-name="1534265644%2FProperties%2F-1458242499" anchor-label="externalId" id="1534265644%2FProperties%2F-1458242499" data-filterable-set=":momo-api-sdk/commonMain"></a>
           <div class="table-row table-row_content" data-filterable-current=":momo-api-sdk/commonMain" data-filterable-set=":momo-api-sdk/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="external-id.html"><span>external</span><wbr><span><span>Id</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1534265644%2FProperties%2F-1023915287"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1534265644%2FProperties%2F-1458242499"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":momo-api-sdk/commonMain"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><span data-unresolved-link="kotlinx.serialization/SerialName///PointingToDeclaration/"><span class="token annotation builtin">SerialName</span></span><span class="token punctuation">(</span><span>value<span class="token operator"> = </span><span class="breakable-word"><span class="token string">"externalId"</span></span></span><wbr><span class="token punctuation">)</span></div></div><span class="token keyword">var </span><a href="external-id.html">externalId</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div><div class="brief "><p class="paragraph">A caller-assigned external reference ID for correlating the transaction on the integrator side.</p></div></div></div>
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":momo-api-sdk/commonMain" data-filterable-set=":momo-api-sdk/commonMain" data-active="" data-toggle=":momo-api-sdk/commonMain">Common</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":momo-api-sdk/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="external-id.html">externalId</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div><div class="brief "><p class="paragraph">A caller-assigned external reference ID for correlating the transaction on the integrator side.</p></div></div>                  </div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="-85288798%2FProperties%2F-1023915287" anchor-label="financialTransactionId" id="-85288798%2FProperties%2F-1023915287" data-filterable-set=":momo-api-sdk/commonMain"></a>
+<a data-name="-85288798%2FProperties%2F-1458242499" anchor-label="financialTransactionId" id="-85288798%2FProperties%2F-1458242499" data-filterable-set=":momo-api-sdk/commonMain"></a>
           <div class="table-row table-row_content" data-filterable-current=":momo-api-sdk/commonMain" data-filterable-set=":momo-api-sdk/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="financial-transaction-id.html"><span>financial</span><wbr><span>Transaction</span><wbr><span><span>Id</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-85288798%2FProperties%2F-1023915287"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-85288798%2FProperties%2F-1458242499"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":momo-api-sdk/commonMain"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><span data-unresolved-link="kotlinx.serialization/SerialName///PointingToDeclaration/"><span class="token annotation builtin">SerialName</span></span><span class="token punctuation">(</span><span>value<span class="token operator"> = </span><span class="breakable-word"><span class="token string">"financialTransactionId"</span></span></span><wbr><span class="token punctuation">)</span></div></div><span class="token keyword">var </span><a href="financial-transaction-id.html">financialTransactionId</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">The unique financial transaction ID assigned by the MTN MOMO system, populated after the transaction completes.</p></div></div></div>
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":momo-api-sdk/commonMain" data-filterable-set=":momo-api-sdk/commonMain" data-active="" data-toggle=":momo-api-sdk/commonMain">Common</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":momo-api-sdk/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="financial-transaction-id.html">financialTransactionId</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">The unique financial transaction ID assigned by the MTN MOMO system, populated after the transaction completes.</p></div></div>                  </div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="297999200%2FProperties%2F-1023915287" anchor-label="payee" id="297999200%2FProperties%2F-1023915287" data-filterable-set=":momo-api-sdk/commonMain"></a>
+<a data-name="297999200%2FProperties%2F-1458242499" anchor-label="payee" id="297999200%2FProperties%2F-1458242499" data-filterable-set=":momo-api-sdk/commonMain"></a>
           <div class="table-row table-row_content" data-filterable-current=":momo-api-sdk/commonMain" data-filterable-set=":momo-api-sdk/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="payee.html"><span><span>payee</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="297999200%2FProperties%2F-1023915287"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="297999200%2FProperties%2F-1458242499"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":momo-api-sdk/commonMain"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><span data-unresolved-link="kotlinx.serialization/SerialName///PointingToDeclaration/"><span class="token annotation builtin">SerialName</span></span><span class="token punctuation">(</span><span>value<span class="token operator"> = </span><span class="breakable-word"><span class="token string">"payee"</span></span></span><wbr><span class="token punctuation">)</span></div></div><span class="token keyword">var </span><a href="payee.html">payee</a><span class="token operator">: </span><a href="../-account-holder/index.html">AccountHolder</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">The account holder receiving the funds; populated for disbursement and transfer operations.</p></div></div></div>
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":momo-api-sdk/commonMain" data-filterable-set=":momo-api-sdk/commonMain" data-active="" data-toggle=":momo-api-sdk/commonMain">Common</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":momo-api-sdk/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="payee.html">payee</a><span class="token operator">: </span><a href="../-account-holder/index.html">AccountHolder</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">The account holder receiving the funds; populated for disbursement and transfer operations.</p></div></div>                  </div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="1855702542%2FProperties%2F-1023915287" anchor-label="payeeNote" id="1855702542%2FProperties%2F-1023915287" data-filterable-set=":momo-api-sdk/commonMain"></a>
+<a data-name="1855702542%2FProperties%2F-1458242499" anchor-label="payeeNote" id="1855702542%2FProperties%2F-1458242499" data-filterable-set=":momo-api-sdk/commonMain"></a>
           <div class="table-row table-row_content" data-filterable-current=":momo-api-sdk/commonMain" data-filterable-set=":momo-api-sdk/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="payee-note.html"><span>payee</span><wbr><span><span>Note</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1855702542%2FProperties%2F-1023915287"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1855702542%2FProperties%2F-1458242499"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":momo-api-sdk/commonMain"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><span data-unresolved-link="kotlinx.serialization/SerialName///PointingToDeclaration/"><span class="token annotation builtin">SerialName</span></span><span class="token punctuation">(</span><span>value<span class="token operator"> = </span><span class="breakable-word"><span class="token string">"payeeNote"</span></span></span><wbr><span class="token punctuation">)</span></div></div><span class="token keyword">var </span><a href="payee-note.html">payeeNote</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div><div class="brief "><p class="paragraph">A note visible to the payee describing the purpose of the transaction.</p></div></div></div>
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":momo-api-sdk/commonMain" data-filterable-set=":momo-api-sdk/commonMain" data-active="" data-toggle=":momo-api-sdk/commonMain">Common</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":momo-api-sdk/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="payee-note.html">payeeNote</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div><div class="brief "><p class="paragraph">A note visible to the payee describing the purpose of the transaction.</p></div></div>                  </div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="701256691%2FProperties%2F-1023915287" anchor-label="payer" id="701256691%2FProperties%2F-1023915287" data-filterable-set=":momo-api-sdk/commonMain"></a>
+<a data-name="701256691%2FProperties%2F-1458242499" anchor-label="payer" id="701256691%2FProperties%2F-1458242499" data-filterable-set=":momo-api-sdk/commonMain"></a>
           <div class="table-row table-row_content" data-filterable-current=":momo-api-sdk/commonMain" data-filterable-set=":momo-api-sdk/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="payer.html"><span><span>payer</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="701256691%2FProperties%2F-1023915287"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="701256691%2FProperties%2F-1458242499"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":momo-api-sdk/commonMain"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><span data-unresolved-link="kotlinx.serialization/SerialName///PointingToDeclaration/"><span class="token annotation builtin">SerialName</span></span><span class="token punctuation">(</span><span>value<span class="token operator"> = </span><span class="breakable-word"><span class="token string">"payer"</span></span></span><wbr><span class="token punctuation">)</span></div></div><span class="token keyword">var </span><a href="payer.html">payer</a><span class="token operator">: </span><a href="../-account-holder/index.html">AccountHolder</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">The account holder sending the funds; populated for collection operations.</p></div></div></div>
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":momo-api-sdk/commonMain" data-filterable-set=":momo-api-sdk/commonMain" data-active="" data-toggle=":momo-api-sdk/commonMain">Common</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":momo-api-sdk/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="payer.html">payer</a><span class="token operator">: </span><a href="../-account-holder/index.html">AccountHolder</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">The account holder sending the funds; populated for collection operations.</p></div></div>                  </div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="1411036352%2FProperties%2F-1023915287" anchor-label="payerMessage" id="1411036352%2FProperties%2F-1023915287" data-filterable-set=":momo-api-sdk/commonMain"></a>
+<a data-name="1411036352%2FProperties%2F-1458242499" anchor-label="payerMessage" id="1411036352%2FProperties%2F-1458242499" data-filterable-set=":momo-api-sdk/commonMain"></a>
           <div class="table-row table-row_content" data-filterable-current=":momo-api-sdk/commonMain" data-filterable-set=":momo-api-sdk/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="payer-message.html"><span>payer</span><wbr><span><span>Message</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1411036352%2FProperties%2F-1023915287"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1411036352%2FProperties%2F-1458242499"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":momo-api-sdk/commonMain"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><span data-unresolved-link="kotlinx.serialization/SerialName///PointingToDeclaration/"><span class="token annotation builtin">SerialName</span></span><span class="token punctuation">(</span><span>value<span class="token operator"> = </span><span class="breakable-word"><span class="token string">"payerMessage"</span></span></span><wbr><span class="token punctuation">)</span></div></div><span class="token keyword">var </span><a href="payer-message.html">payerMessage</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div><div class="brief "><p class="paragraph">A message visible to the payer describing the purpose of the transaction.</p></div></div></div>
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":momo-api-sdk/commonMain" data-filterable-set=":momo-api-sdk/commonMain" data-active="" data-toggle=":momo-api-sdk/commonMain">Common</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":momo-api-sdk/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="payer-message.html">payerMessage</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div><div class="brief "><p class="paragraph">A message visible to the payer describing the purpose of the transaction.</p></div></div>                  </div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="811383150%2FProperties%2F-1023915287" anchor-label="reason" id="811383150%2FProperties%2F-1023915287" data-filterable-set=":momo-api-sdk/commonMain"></a>
+<a data-name="811383150%2FProperties%2F-1458242499" anchor-label="reason" id="811383150%2FProperties%2F-1458242499" data-filterable-set=":momo-api-sdk/commonMain"></a>
           <div class="table-row table-row_content" data-filterable-current=":momo-api-sdk/commonMain" data-filterable-set=":momo-api-sdk/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="reason.html"><span><span>reason</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="811383150%2FProperties%2F-1023915287"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="811383150%2FProperties%2F-1458242499"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":momo-api-sdk/commonMain"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><span data-unresolved-link="kotlinx.serialization/SerialName///PointingToDeclaration/"><span class="token annotation builtin">SerialName</span></span><span class="token punctuation">(</span><span>value<span class="token operator"> = </span><span class="breakable-word"><span class="token string">"reason"</span></span></span><wbr><span class="token punctuation">)</span></div></div><span class="token keyword">var </span><a href="reason.html">reason</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">The failure reason when the transaction status is FAILED.</p></div></div></div>
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":momo-api-sdk/commonMain" data-filterable-set=":momo-api-sdk/commonMain" data-active="" data-toggle=":momo-api-sdk/commonMain">Common</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":momo-api-sdk/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="reason.html">reason</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">The failure reason when the transaction status is FAILED.</p></div></div>                  </div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="-2115447089%2FProperties%2F-1023915287" anchor-label="referenceIdToRefund" id="-2115447089%2FProperties%2F-1023915287" data-filterable-set=":momo-api-sdk/commonMain"></a>
+<a data-name="-2115447089%2FProperties%2F-1458242499" anchor-label="referenceIdToRefund" id="-2115447089%2FProperties%2F-1458242499" data-filterable-set=":momo-api-sdk/commonMain"></a>
           <div class="table-row table-row_content" data-filterable-current=":momo-api-sdk/commonMain" data-filterable-set=":momo-api-sdk/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="reference-id-to-refund.html"><span>reference</span><wbr><span>Id</span><wbr><span>To</span><wbr><span><span>Refund</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2115447089%2FProperties%2F-1023915287"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2115447089%2FProperties%2F-1458242499"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":momo-api-sdk/commonMain"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><span data-unresolved-link="kotlinx.serialization/SerialName///PointingToDeclaration/"><span class="token annotation builtin">SerialName</span></span><span class="token punctuation">(</span><span>value<span class="token operator"> = </span><span class="breakable-word"><span class="token string">"referenceIdToRefund"</span></span></span><wbr><span class="token punctuation">)</span></div></div><span class="token keyword">var </span><a href="reference-id-to-refund.html">referenceIdToRefund</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">The reference ID of the original transaction to refund; used only in refund operations.</p></div></div></div>
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":momo-api-sdk/commonMain" data-filterable-set=":momo-api-sdk/commonMain" data-active="" data-toggle=":momo-api-sdk/commonMain">Common</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":momo-api-sdk/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="reference-id-to-refund.html">referenceIdToRefund</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">The reference ID of the original transaction to refund; used only in refund operations.</p></div></div>                  </div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="-1587963008%2FProperties%2F-1023915287" anchor-label="status" id="-1587963008%2FProperties%2F-1023915287" data-filterable-set=":momo-api-sdk/commonMain"></a>
+<a data-name="-1587963008%2FProperties%2F-1458242499" anchor-label="status" id="-1587963008%2FProperties%2F-1458242499" data-filterable-set=":momo-api-sdk/commonMain"></a>
           <div class="table-row table-row_content" data-filterable-current=":momo-api-sdk/commonMain" data-filterable-set=":momo-api-sdk/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="status.html"><span><span>status</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1587963008%2FProperties%2F-1023915287"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1587963008%2FProperties%2F-1458242499"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":momo-api-sdk/commonMain"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><span data-unresolved-link="kotlinx.serialization/SerialName///PointingToDeclaration/"><span class="token annotation builtin">SerialName</span></span><span class="token punctuation">(</span><span>value<span class="token operator"> = </span><span class="breakable-word"><span class="token string">"status"</span></span></span><wbr><span class="token punctuation">)</span></div></div><span class="token keyword">var </span><a href="status.html">status</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">The current status of the transaction (see <a href="../../io.rekast.sdk.utils/-transaction-status/index.html">io.rekast.sdk.utils.TransactionStatus</a>).</p></div></div></div>
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":momo-api-sdk/commonMain" data-filterable-set=":momo-api-sdk/commonMain" data-active="" data-toggle=":momo-api-sdk/commonMain">Common</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":momo-api-sdk/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="status.html">status</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">The current status of the transaction (see <a href="../../io.rekast.sdk.utils/-transaction-status/index.html">io.rekast.sdk.utils.TransactionStatus</a>).</p></div></div>                  </div>
                 </div>
               </div>
             </div>

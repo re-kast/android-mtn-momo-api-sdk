@@ -18,7 +18,6 @@
         }
       }
     </script>
-<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async></script>
 <script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async></script>
 <link href="../../../styles/style.css" rel="Stylesheet">
 <link href="../../../styles/main.css" rel="Stylesheet">
@@ -45,7 +44,7 @@
         </div>
         <div class="navigation-controls">
         <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
-                <button class="platform-tag platform-selector common-like" data-active="" aria-pressed="true" data-filter=":momo-api-sdk/commonMain">Common</button>
+                <button class="platform-tag platform-selector jvm-like" data-active="" aria-pressed="true" data-filter=":momo-api-sdk/commonMain">Common</button>
             <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
                 <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox" data-role="dropdown-toggle" aria-controls="platform-tags-listbox" aria-haspopup="listbox" aria-expanded="false" aria-label="Toggle source sets"></button>
                 <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox" aria-label="Target filter">
@@ -54,7 +53,7 @@
                             <i class="ui-kit-icon ui-kit-icon_cross"></i>
                         </button>
                     </div>
-                        <li role="option" class="dropdown--option platform-selector-option common-like" tabindex="0">
+                        <li role="option" class="dropdown--option platform-selector-option jvm-like" tabindex="0">
                             <label class="checkbox">
                                 <input type="checkbox" class="checkbox--input" id=":momo-api-sdk/commonMain" data-filter=":momo-api-sdk/commonMain">
                                 <span class="checkbox--icon"></span>
@@ -92,58 +91,66 @@
         </nav>
         <div id="resizer" class="resizer" data-item-type="BAR"></div>
         <div id="main" data-item-type="SECTION" role="main">
-<div class="main-content" data-page-type="classlike" id="content" pageids="momo-api-sdk::io.rekast.sdk.network.interfaces/CredentialProvider///PointingToDeclaration//-1023915287">
+<div class="main-content" data-page-type="classlike" id="content" pageids="momo-api-sdk::io.rekast.sdk.network.interfaces/CredentialProvider///PointingToDeclaration//-1458242499">
   <div class="breadcrumbs"><a href="../../index.html">momo-api-sdk</a><span class="delimiter">/</span><a href="../index.html">io.rekast.sdk.network.interfaces</a><span class="delimiter">/</span><span class="current">CredentialProvider</span></div>
   <div class="cover ">
     <h1 class="cover"><span>Credential</span><wbr><span><span>Provider</span></span></h1>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":momo-api-sdk/commonMain"><div class="symbol monospace"><span class="token keyword">interface </span><a href="index.html">CredentialProvider</a></div><p class="paragraph">Supplies runtime credentials to the SDK's authentication interceptors.</p><p class="paragraph">The SDK never stores or manages credentials itself. Implement this interface in your application and provide it via DI so that the interceptors can retrieve the current API user ID, API key, and access token on every request.</p><p class="paragraph">Implementations are responsible for storage (e.g. SharedPreferences, DataStore) and for any expiry logic.</p></div></div>
+    <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+      <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":momo-api-sdk/commonMain" data-filterable-set=":momo-api-sdk/commonMain" data-active="" data-toggle=":momo-api-sdk/commonMain">Common</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":momo-api-sdk/commonMain"><div class="symbol monospace"><span class="token keyword">interface </span><a href="index.html">CredentialProvider</a></div><p class="paragraph">Supplies runtime credentials to the SDK's authentication interceptors.</p><p class="paragraph">The SDK never stores or manages credentials itself. Implement this interface in your application and provide it via DI so that the interceptors can retrieve the current API user ID, API key, and access token on every request.</p><p class="paragraph">Implementations are responsible for storage (e.g. SharedPreferences, DataStore) and for any expiry logic.</p></div>    </div>
   </div>
   <div class="tabbedcontent">
     <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
     <div class="tabs-section-body">
       <div data-togglable="FUNCTION">
         <h2 class="tableheader">Functions</h2>
-        <div class="table"><a data-name="-1955778692%2FFunctions%2F-1023915287" anchor-label="getAccessToken" id="-1955778692%2FFunctions%2F-1023915287" data-filterable-set=":momo-api-sdk/commonMain"></a>
+        <div class="table"><a data-name="-1955778692%2FFunctions%2F-1458242499" anchor-label="getAccessToken" id="-1955778692%2FFunctions%2F-1458242499" data-filterable-set=":momo-api-sdk/commonMain"></a>
           <div class="table-row table-row_content" data-filterable-current=":momo-api-sdk/commonMain" data-filterable-set=":momo-api-sdk/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="get-access-token.html"><span>get</span><wbr><span>Access</span><wbr><span><span>Token</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1955778692%2FFunctions%2F-1023915287"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1955778692%2FFunctions%2F-1458242499"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":momo-api-sdk/commonMain"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">fun </span><a href="get-access-token.html"><span class="token function">getAccessToken</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div><div class="brief "><p class="paragraph">Returns the current Bearer access token, or an empty string if not available or expired.</p></div></div></div>
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":momo-api-sdk/commonMain" data-filterable-set=":momo-api-sdk/commonMain" data-active="" data-toggle=":momo-api-sdk/commonMain">Common</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":momo-api-sdk/commonMain"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">fun </span><a href="get-access-token.html"><span class="token function">getAccessToken</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div><div class="brief "><p class="paragraph">Returns the current Bearer access token, or an empty string if not available or expired.</p></div></div>                  </div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="-1993313308%2FFunctions%2F-1023915287" anchor-label="getApiKey" id="-1993313308%2FFunctions%2F-1023915287" data-filterable-set=":momo-api-sdk/commonMain"></a>
+<a data-name="-1993313308%2FFunctions%2F-1458242499" anchor-label="getApiKey" id="-1993313308%2FFunctions%2F-1458242499" data-filterable-set=":momo-api-sdk/commonMain"></a>
           <div class="table-row table-row_content" data-filterable-current=":momo-api-sdk/commonMain" data-filterable-set=":momo-api-sdk/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="get-api-key.html"><span>get</span><wbr><span>Api</span><wbr><span><span>Key</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1993313308%2FFunctions%2F-1023915287"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1993313308%2FFunctions%2F-1458242499"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":momo-api-sdk/commonMain"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">fun </span><a href="get-api-key.html"><span class="token function">getApiKey</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div><div class="brief "><p class="paragraph">Returns the API key used for Basic Authentication, or an empty string if not available.</p></div></div></div>
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":momo-api-sdk/commonMain" data-filterable-set=":momo-api-sdk/commonMain" data-active="" data-toggle=":momo-api-sdk/commonMain">Common</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":momo-api-sdk/commonMain"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">fun </span><a href="get-api-key.html"><span class="token function">getApiKey</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div><div class="brief "><p class="paragraph">Returns the API key used for Basic Authentication, or an empty string if not available.</p></div></div>                  </div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="679571665%2FFunctions%2F-1023915287" anchor-label="getApiUserId" id="679571665%2FFunctions%2F-1023915287" data-filterable-set=":momo-api-sdk/commonMain"></a>
+<a data-name="679571665%2FFunctions%2F-1458242499" anchor-label="getApiUserId" id="679571665%2FFunctions%2F-1458242499" data-filterable-set=":momo-api-sdk/commonMain"></a>
           <div class="table-row table-row_content" data-filterable-current=":momo-api-sdk/commonMain" data-filterable-set=":momo-api-sdk/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="get-api-user-id.html"><span>get</span><wbr><span>Api</span><wbr><span>User</span><wbr><span><span>Id</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="679571665%2FFunctions%2F-1023915287"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="679571665%2FFunctions%2F-1458242499"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":momo-api-sdk/commonMain"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">fun </span><a href="get-api-user-id.html"><span class="token function">getApiUserId</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div><div class="brief "><p class="paragraph">Returns the API user ID, or an empty string if not available.</p></div></div></div>
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":momo-api-sdk/commonMain" data-filterable-set=":momo-api-sdk/commonMain" data-active="" data-toggle=":momo-api-sdk/commonMain">Common</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":momo-api-sdk/commonMain"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">fun </span><a href="get-api-user-id.html"><span class="token function">getApiUserId</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div><div class="brief "><p class="paragraph">Returns the API user ID, or an empty string if not available.</p></div></div>                  </div>
                 </div>
               </div>
             </div>
