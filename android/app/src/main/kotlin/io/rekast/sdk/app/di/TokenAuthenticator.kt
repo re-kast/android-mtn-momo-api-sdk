@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2024, Benjamin Mwalimu
+ * Copyright 2023-2026, Benjamin Mwalimu
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -111,7 +111,7 @@ class TokenAuthenticator(
 
         if (storage.getOauthAccessToken().isBlank()) {
             val newOauthToken = refreshOauthToken(productType, subscriptionKey)
-            storage.saveOauthAccessToken(newOauthToken)
+            if (newOauthToken != null) storage.saveOauthAccessToken(newOauthToken)
         }
 
         Timber.d("TokenAuthenticator: token refreshed successfully")

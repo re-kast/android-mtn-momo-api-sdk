@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2024, Benjamin Mwalimu
+ * Copyright 2023-2026, Benjamin Mwalimu
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,6 +43,10 @@ import io.rekast.sdk.sample.views.MainViewModel
 class SplashScreenActivity : AppCompatActivity() {
     private val mainViewModel by viewModels<MainViewModel>()
 
+    /**
+     * Displays [SplashScreen], triggers [MainViewModel.checkUser] to pre-warm credentials,
+     * then launches [MainActivity] after a 3-second delay.
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         applyWindowInsetListener()

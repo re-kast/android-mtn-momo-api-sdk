@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2024, Benjamin Mwalimu
+ * Copyright 2026, Benjamin Mwalimu
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -119,6 +119,14 @@ dokka {
         create("main") {
             displayName.set("Sample")
             sourceRoots.from(file("src/main/kotlin"))
+            externalDocumentationLinks.register("kotlinx.coroutines") {
+                url("https://kotlinlang.org/api/kotlinx.coroutines/")
+                packageListUrl("https://kotlinlang.org/api/kotlinx.coroutines/package-list")
+            }
+            externalDocumentationLinks.register("android") {
+                url("https://developer.android.com/reference/kotlin/")
+                packageListUrl("https://developer.android.com/reference/kotlin/package-list")
+            }
         }
     }
     pluginsConfiguration.html {
@@ -168,7 +176,7 @@ kover {
                     "**/DefaultDispatcherProvider",
                     "**/DefaultDispatcherProvider*",
                     // ViewModel emitSnackBarState lambdas (fire-and-forget SharedFlow emit)
-                    "**/*\$emitSnackBarState\$*",
+                    "**/*\$emitSnackBarState\$*"
                 )
                 packages("io.rekast.sdk.sample.ui")
             }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2024, Benjamin Mwalimu
+ * Copyright 2023-2026, Benjamin Mwalimu
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,6 +66,18 @@ dokka {
         create("main") {
             displayName.set("App")
             sourceRoots.from(file("src/main/kotlin"))
+            externalDocumentationLinks.register("kotlinx.coroutines") {
+                url("https://kotlinlang.org/api/kotlinx.coroutines/")
+                packageListUrl("https://kotlinlang.org/api/kotlinx.coroutines/package-list")
+            }
+            externalDocumentationLinks.register("okhttp") {
+                url("https://square.github.io/okhttp/4.x/okhttp/")
+                packageListUrl("https://square.github.io/okhttp/4.x/okhttp/package-list")
+            }
+            externalDocumentationLinks.register("android") {
+                url("https://developer.android.com/reference/kotlin/")
+                packageListUrl("https://developer.android.com/reference/kotlin/package-list")
+            }
         }
     }
     pluginsConfiguration.html {
@@ -99,7 +111,7 @@ kover {
                     "**/MomoApplication",
                     // DispatchersModule is a Hilt module providing coroutine dispatchers;
                     // its single line is not independently testable.
-                    "**/DispatchersModule",
+                    "**/DispatchersModule"
                 )
             }
         }

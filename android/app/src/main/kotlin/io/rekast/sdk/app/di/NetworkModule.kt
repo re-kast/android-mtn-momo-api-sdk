@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2024, Benjamin Mwalimu
+ * Copyright 2023-2026, Benjamin Mwalimu
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -115,10 +115,12 @@ object NetworkModule {
         config: ApiConfig
     ): TokenAuthenticator = TokenAuthenticator(storage, authService, config)
 
+    /** Provides the HTTP logging interceptor configured to log full request and response bodies. */
     @Provides
     @Singleton
     fun providesHttpLoggingInterceptor(): HttpLoggingInterceptor = HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
 
+    /** Provides the [Json] instance used by the Retrofit converter factory; unknown keys are ignored. */
     @Provides
     @Singleton
     fun provideJson(): Json = Json { ignoreUnknownKeys = true }
@@ -157,6 +159,7 @@ object NetworkModule {
             .build()
     }
 
+    /** Provides the shared [Retrofit] instance used by all product-specific service factories. */
     @Provides
     @Singleton
     fun provideRetrofit(
@@ -171,18 +174,22 @@ object NetworkModule {
             .client(okHttpClient)
             .build()
 
+    /** Provides the [AuthenticationService] Retrofit service for token and API-user endpoints. */
     @Provides
     @Singleton
     fun getAuthentication(retrofit: Retrofit): AuthenticationService = retrofit.create(AuthenticationService::class.java)
 
+    /** Provides the [CollectionService] Retrofit service for Collection product endpoints. */
     @Provides
     @Singleton
     fun getCollection(retrofit: Retrofit): CollectionService = retrofit.create(CollectionService::class.java)
 
+    /** Provides the [DisbursementsService] Retrofit service for Disbursement product endpoints. */
     @Provides
     @Singleton
     fun getDisbursement(retrofit: Retrofit): DisbursementsService = retrofit.create(DisbursementsService::class.java)
 
+    /** Provides the [CommonService] Retrofit service for cross-product endpoints (balance, account status, etc.). */
     @Provides
     @Singleton
     fun getCommonService(retrofit: Retrofit): CommonService = retrofit.create(CommonService::class.java)

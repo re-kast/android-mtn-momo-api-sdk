@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2024, Benjamin Mwalimu
+ * Copyright 2023-2026, Benjamin Mwalimu
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,6 +43,10 @@ import kotlin.getValue
 class HomeScreenFragment : Fragment() {
     private val homeScreenViewModel by viewModels<HomeScreenViewModel>()
 
+    /**
+     * Inflates the Home screen Compose hierarchy, wiring up [MainScreen]
+     * with its ViewModel, NavController, and snackbar state.
+     */
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val navController = findNavController()
         return ComposeView(requireContext()).apply {
@@ -63,6 +67,7 @@ class HomeScreenFragment : Fragment() {
         }
     }
 
+    /** Triggers a data refresh on every resume — user info, account status, balance, and OAuth2 consent. */
     override fun onResume() {
         super.onResume()
         homeScreenViewModel.getBasicUserInfo()
