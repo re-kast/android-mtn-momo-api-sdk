@@ -60,7 +60,7 @@ The SDK uses a **pull-based credential model** — it never stores credentials i
 │  (EncryptedSharedPrefs) ◄── (reads from storage)            │
 │          ▲                          │                       │
 │          │                          ▼                       │
-│  AppMainViewModel           SDK Interceptors                │
+│  MainViewModel           SDK Interceptors                │
 │  (writes credentials)       BasicAuthInterceptor            │
 │                             AccessTokenInterceptor          │
 │                                     │                       │
@@ -117,7 +117,7 @@ fun provideCredentialProvider(
 
 ### Credential Bootstrap
 
-On first launch, `AppMainViewModel` runs a one-time sequence to provision credentials:
+On first launch, `MainViewModel` runs a one-time sequence to provision credentials:
 
 1. **Check API user** — if the user does not exist, create it.
 2. **Create API key** — stored to `CredentialStorage`; skipped if a key already exists.
@@ -146,7 +146,7 @@ To configure your local environment for the MTN MOMO API SDK, create a `local.pr
 # Local properties for the MTN MOMO API SDK
 
 MOMO_BASE_URL="" ## Use https://sandbox.momodeveloper.mtn.com for sandbox and https://momodeveloper.mtn.com for production
-MOMO_PROVIDER_CALBACK_HOST="" ## The provider callback host, use 'localhost' for sandbox
+MOMO_PROVIDER_CALLBACK_HOST="" ## The provider callback host, use 'localhost' for sandbox
 MOMO_COLLECTION_PRIMARY_KEY="" ## The collection endpoint/product subscription primary key
 MOMO_COLLECTION_SECONDARY_KEY="" ## The collection endpoint/product subscription secondary key
 MOMO_REMITTANCE_PRIMARY_KEY="" ## The remittance endpoint/product subscription primary key

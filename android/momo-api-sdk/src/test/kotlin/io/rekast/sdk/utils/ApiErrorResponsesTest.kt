@@ -16,7 +16,6 @@
 package io.rekast.sdk.utils
 
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotNull
 import org.junit.Test
 
 /**
@@ -75,9 +74,7 @@ class ApiErrorResponsesTest {
         )
 
         for (name in expectedNames) {
-            val constant = ApiErrorResponses.valueOf(name)
-            assertNotNull("Expected $name to exist", constant)
-            assertEquals(name, constant.name)
+            assertEquals(name, ApiErrorResponses.valueOf(name).name)
         }
     }
 

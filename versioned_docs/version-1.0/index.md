@@ -70,7 +70,7 @@ The SDK uses a **pull-based credential model** — it never stores credentials i
 │  (EncryptedSharedPrefs) ◄── (reads from storage)            │
 │          ▲                          │                       │
 │          │                          ▼                       │
-│  AppMainViewModel           SDK Interceptors                │
+│  MainViewModel           SDK Interceptors                │
 │  (writes credentials)       BasicAuthInterceptor            │
 │                             AccessTokenInterceptor          │
 │                                     │                       │
@@ -127,7 +127,7 @@ fun provideCredentialProvider(
 
 ### Credential Bootstrap
 
-On first launch, `AppMainViewModel` runs a one-time sequence to provision credentials:
+On first launch, `MainViewModel` runs a one-time sequence to provision credentials:
 
 1. **Check API user** — if the user does not exist, create it.
 2. **Create API key** — stored to `CredentialStorage`; skipped if a key already exists.
@@ -156,13 +156,13 @@ To configure your local environment for the MTN MOMO API SDK, create a `local.pr
 # Local properties for the MTN MOMO API SDK
 
 MOMO_BASE_URL="" ## Use https://sandbox.momodeveloper.mtn.com for sandbox and https://momodeveloper.mtn.com for production
-MOMO_PROVIDER_CALBACK_HOST="" ## The provider callback host, use 'localhost' for sandbox
+MOMO_PROVIDER_CALLBACK_HOST="" ## The provider callback host, use 'localhost' for sandbox
 MOMO_COLLECTION_PRIMARY_KEY="" ## The collection endpoint/product subscription primary key
 MOMO_COLLECTION_SECONDARY_KEY="" ## The collection endpoint/product subscription secondary key
 MOMO_REMITTANCE_PRIMARY_KEY="" ## The remittance endpoint/product subscription primary key
 MOMO_REMITTANCE_SECONDARY_KEY="" ## The remittance endpoint/product subscription secondary key
-MOMO_DISBURSEMENTS_PRIMARY_KEY="" ## The disbursements endpoint/product subscription primary key
-MOMO_DISBURSEMENTS_SECONDARY_KEY="" ## The disbursements endpoint/product subscription secondary key
+MOMO_DISBURSEMENTS_PRIMARY_KEY="" ## The disbursement endpoint/product subscription primary key
+MOMO_DISBURSEMENTS_SECONDARY_KEY="" ## The disbursement endpoint/product subscription secondary key
 MOMO_API_USER_ID="" ## The sandbox API user ID. You can use a [UUID generator](https://www.uuidgenerator.net/version4) to create one
 MOMO_ENVIRONMENT="" ## API environment, use 'sandbox' for testing and 'production' for live operations
 MOMO_API_VERSION_V1="" ## The API version for v1 endpoints, use 'v1_0' for sandbox and 'v1' for production
@@ -170,7 +170,7 @@ MOMO_API_VERSION_V2="" ## The API version for v2 endpoints, use 'v2_0' for sandb
 ```
 
 :::danger
-**Important Note**: Ensure that all entries in the `local.properties` file are filled out correctly. The application will fail to compile if any required entries are missing. Double-check your configuration to avoid compilation errors. Read more about how to find the diffrent keys [**here**](./engineering/getting-started/developer-setup)
+**Important Note**: Ensure that all entries in the `local.properties` file are filled out correctly. The application will fail to compile if any required entries are missing. Double-check your configuration to avoid compilation errors. Read more about how to find the different keys [**here**](./engineering/getting-started/developer-setup)
 :::
 
 ## License

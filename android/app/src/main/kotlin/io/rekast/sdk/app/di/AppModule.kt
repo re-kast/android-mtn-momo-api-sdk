@@ -38,11 +38,11 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object AppModule {
     /**
-     * Provides the [ApiConfig] used by the SDK to configure the base URL, API user, and environment.
+     * Provides the [ApiConfig] that the SDK uses to configure the base URL, API user ID, and target environment.
      */
     @Provides
     @Singleton
-    fun provideMomoApiConfig(): ApiConfig =
+    fun provideApiConfig(): ApiConfig =
         ApiConfig(
             baseUrl = BuildConfig.MOMO_BASE_URL,
             apiUserId = BuildConfig.MOMO_API_USER_ID,
@@ -60,7 +60,7 @@ object AppModule {
             apiVersionV1 = BuildConfig.MOMO_API_VERSION_V1,
             apiVersionV2 = BuildConfig.MOMO_API_VERSION_V2,
             environment = BuildConfig.MOMO_ENVIRONMENT,
-            providerCallbackHost = BuildConfig.MOMO_PROVIDER_CALBACK_HOST,
+            providerCallbackHost = BuildConfig.MOMO_PROVIDER_CALLBACK_HOST,
             apiUserId = BuildConfig.MOMO_API_USER_ID,
             collectionPrimaryKey = BuildConfig.MOMO_COLLECTION_PRIMARY_KEY,
             collectionSecondaryKey = BuildConfig.MOMO_COLLECTION_SECONDARY_KEY,
