@@ -34,21 +34,33 @@ class LoggerTest {
     private val originalOut = System.out
     private lateinit var captured: ByteArrayOutputStream
 
+    /**
+     * Redirects [System.out] to an in-memory buffer before each test so that
+     * [Logger] output can be inspected without writing to the real console.
+     */
     @Before
     fun redirectStdout() {
         captured = ByteArrayOutputStream()
         System.setOut(PrintStream(captured))
     }
 
+    /**
+     * Restores [System.out] to its original stream after each test to prevent
+     * stdout suppression from leaking into other test classes.
+     */
     @After
     fun restoreStdout() {
         System.setOut(originalOut)
     }
 
+    /** Returns the captured stdout content trimmed of leading/trailing whitespace. */
     private fun output() = captured.toString().trim()
 
     // ---- d() ----
 
+    /**
+     * Verifies that [Logger.d] writes a line prefixed with `D/` to stdout.
+     */
     @Test
     fun `d() writes D-prefixed line to stdout`() {
         Logger.d("MyTag", "debug message")
@@ -57,6 +69,9 @@ class LoggerTest {
 
     // ---- i() ----
 
+    /**
+     * Verifies that [Logger.i] writes a line prefixed with `I/` to stdout.
+     */
     @Test
     fun `i() writes I-prefixed line to stdout`() {
         Logger.i("MyTag", "info message")
@@ -65,6 +80,9 @@ class LoggerTest {
 
     // ---- w() ----
 
+    /**
+     * Verifies that [Logger.w] writes a line prefixed with `W/` to stdout.
+     */
     @Test
     fun `w() writes W-prefixed line to stdout`() {
         Logger.w("MyTag", "warning message")
@@ -73,12 +91,19 @@ class LoggerTest {
 
     // ---- e() ----
 
+    /**
+     * Verifies that [Logger.e] without a throwable writes a line prefixed with `E/` to stdout.
+     */
     @Test
     fun `e() without throwable writes E-prefixed line to stdout`() {
         Logger.e("MyTag", "error message")
         assertTrue(output().contains("E/MyTag: error message"))
     }
 
+    /**
+     * Verifies that [Logger.e] with a non-null throwable writes the `E/`-prefixed message and
+     * includes the exception class name in the stack trace output.
+     */
     @Test
     fun `e() with throwable writes E-prefixed line and stack trace`() {
         val ex = RuntimeException("boom")
@@ -88,6 +113,10 @@ class LoggerTest {
         assertTrue(out.contains("RuntimeException"))
     }
 
+    /**
+     * Verifies that [Logger.e] with a `null` throwable does not throw and still writes
+     * the `E/`-prefixed message to stdout.
+     */
     @Test
     fun `e() with null throwable does not throw`() {
         Logger.e("MyTag", "error message", null)
@@ -96,12 +125,20 @@ class LoggerTest {
 
     // ---- tag and message content ----
 
+    /**
+     * Verifies that the exact tag and message strings supplied by the caller appear in the output,
+     * confirming no truncation or transformation occurs.
+     */
     @Test
     fun `log output includes the exact tag and message supplied`() {
         Logger.d("TokenAuthenticator", "token refreshed successfully")
         assertTrue(output().contains("D/TokenAuthenticator: token refreshed successfully"))
     }
 
+    /**
+     * Verifies that [Logger.d] handles empty tag and message strings without throwing,
+     * producing a `D/: ` line in stdout.
+     */
     @Test
     fun `log handles empty tag and message`() {
         Logger.d("", "")
