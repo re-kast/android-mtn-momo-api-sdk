@@ -28,6 +28,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.MutableLiveData
@@ -140,4 +141,12 @@ fun BasicUserInfoComponent(modifier: Modifier = Modifier, basicUserInfo: Mutable
             }
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun BasicUserInfoComponentPreview() {
+    BasicUserInfoComponent(
+        basicUserInfo = MutableLiveData(null)
+    )
 }

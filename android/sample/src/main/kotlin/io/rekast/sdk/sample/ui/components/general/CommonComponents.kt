@@ -29,7 +29,9 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import io.rekast.sdk.sample.R
+import io.rekast.sdk.sample.utils.annotation.PreviewWithBackgroundExcludeGenerated
 
 /**
  * Renders a bold section title followed by a full-width horizontal divider.
@@ -61,4 +63,10 @@ fun SectionHeader(@StringRes titleResId: Int, modifier: Modifier = Modifier) {
                 )
         )
     }
+}
+
+@PreviewWithBackgroundExcludeGenerated
+@Composable
+fun SectionHeaderPreview() {
+    SectionHeader(titleResId = R.string.basic_user_info_title)
 }

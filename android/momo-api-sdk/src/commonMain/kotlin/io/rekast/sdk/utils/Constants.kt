@@ -242,5 +242,61 @@ object Constants {
          * Endpoint for checking the status of a refund.
          */
         const val REFUND_STATUS = "/disbursement/{apiVersion}/refund/{referenceId}"
+
+        /**
+         * Endpoint for initiating a backchannel authorization request.
+         */
+        const val BC_AUTHORIZE = "/{productType}/{apiVersion}/bc-authorize"
+
+        /**
+         * Endpoint for initiating a Remittance cash transfer (V2) with extended KYC fields.
+         */
+        const val CASH_TRANSFER = "/remittance/{apiVersion}/cashtransfer"
+
+        /**
+         * Endpoint for retrieving the status of a Remittance cash transfer by reference ID.
+         */
+        const val CASH_TRANSFER_STATUS = "/remittance/{apiVersion}/cashtransfer/{referenceId}"
+
+        /**
+         * Endpoint for creating a Collection invoice.
+         */
+        const val INVOICE = "/collection/{apiVersion}/invoice"
+
+        /**
+         * Endpoint for retrieving or cancelling a Collection invoice by reference ID.
+         * Used with GET to retrieve status and DELETE to cancel.
+         */
+        const val INVOICE_STATUS = "/collection/{apiVersion}/invoice/{referenceId}"
+
+        /**
+         * Endpoint for creating a Collection pre-approval authorisation.
+         */
+        const val PRE_APPROVAL = "/collection/{apiVersion}/preapproval"
+
+        /**
+         * Endpoint for retrieving the status of a Collection pre-approval by reference ID.
+         * Used with GET to retrieve status and DELETE to cancel.
+         */
+        const val PRE_APPROVAL_STATUS = "/collection/{apiVersion}/preapproval/{referenceId}"
+
+        /**
+         * Endpoint for sending a delivery notification for a request-to-withdraw transaction.
+         */
+        const val REQUEST_TO_WITHDRAW_DELIVERY_NOTIFICATION = "/collection/{apiVersion}/requesttowithdraw/{referenceId}/deliverynotification"
+    }
+
+    /**
+     * Contains form field constants used in form-encoded API requests.
+     */
+    object FormFields {
+        const val LOGIN_HINT = "login_hint"
+        const val SCOPE = "scope"
+        const val ACCESS_TYPE = "access_type"
+        const val GRANT_TYPE = "grant_type"
+        const val CIBA_GRANT_TYPE = "urn:openid:params:grant-type:ciba"
+        const val BACK_CHANNEL_AUTHORIZATION_REQUEST_ID = "auth_req_id"
+        const val CIBA_SCOPE = "profile openid"
+        const val CIBA_ACCESS_TYPE = "online"
     }
 }

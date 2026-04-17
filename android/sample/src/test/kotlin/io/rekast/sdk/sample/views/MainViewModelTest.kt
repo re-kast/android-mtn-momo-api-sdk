@@ -221,17 +221,18 @@ class MainViewModelTest {
         every { mockStorage.getApiKey() } returns "stored-api-key"
         every { mockStorage.getAccessToken() } returns "valid-token"
         every { mockStorage.getOauthAccessToken() } returns ""
+        every { mockStorage.getBackChannelAuthorizationRequestId() } returns "stored-auth-req-id"
         coEvery { mockRepository.checkApiUser(any(), any()) } returns flowOf(
             NetworkResult.Success(ApiUser(targetEnvironment = "sandbox"))
         )
-        coEvery { mockRepository.getOauthAccessToken(any(), any(), any()) } returns flowOf(
+        coEvery { mockRepository.getOauthAccessToken(any(), any(), any(), any()) } returns flowOf(
             NetworkResult.Error("Failed")
         )
 
         viewModel.checkUser()
 
         coVerify(exactly = 0) { mockRepository.getAccessToken(any(), any()) }
-        coVerify { mockRepository.getOauthAccessToken(any(), any(), any()) }
+        coVerify { mockRepository.getOauthAccessToken(any(), any(), any(), any()) }
     }
 
     /**
@@ -243,16 +244,17 @@ class MainViewModelTest {
         every { mockStorage.getApiKey() } returns "stored-api-key"
         every { mockStorage.getAccessToken() } returns "valid-token"
         every { mockStorage.getOauthAccessToken() } returns ""
+        every { mockStorage.getBackChannelAuthorizationRequestId() } returns "stored-auth-req-id"
         coEvery { mockRepository.checkApiUser(any(), any()) } returns flowOf(
             NetworkResult.Success(ApiUser(targetEnvironment = "sandbox"))
         )
-        coEvery { mockRepository.getOauthAccessToken(any(), any(), any()) } returns flowOf(
+        coEvery { mockRepository.getOauthAccessToken(any(), any(), any(), any()) } returns flowOf(
             NetworkResult.Error("Failed")
         )
 
         viewModel.checkUser()
 
-        coVerify { mockRepository.getOauthAccessToken(any(), any(), any()) }
+        coVerify { mockRepository.getOauthAccessToken(any(), any(), any(), any()) }
     }
 
     /**
@@ -270,7 +272,7 @@ class MainViewModelTest {
 
         viewModel.checkUser()
 
-        coVerify(exactly = 0) { mockRepository.getOauthAccessToken(any(), any(), any()) }
+        coVerify(exactly = 0) { mockRepository.getOauthAccessToken(any(), any(), any(), any()) }
     }
 
     /**
@@ -290,10 +292,11 @@ class MainViewModelTest {
         every { mockStorage.getApiKey() } returns "stored-api-key"
         every { mockStorage.getAccessToken() } returns "valid-token"
         every { mockStorage.getOauthAccessToken() } returns ""
+        every { mockStorage.getBackChannelAuthorizationRequestId() } returns "stored-auth-req-id"
         coEvery { mockRepository.checkApiUser(any(), any()) } returns flowOf(
             NetworkResult.Success(ApiUser(targetEnvironment = "sandbox"))
         )
-        coEvery { mockRepository.getOauthAccessToken(any(), any(), any()) } returns flowOf(
+        coEvery { mockRepository.getOauthAccessToken(any(), any(), any(), any()) } returns flowOf(
             NetworkResult.Success(oauthToken)
         )
 
@@ -313,19 +316,20 @@ class MainViewModelTest {
         every { mockStorage.getApiKey() } returns "stored-api-key"
         every { mockStorage.getAccessToken() } returnsMany listOf("", "new-token", "new-token")
         every { mockStorage.getOauthAccessToken() } returns ""
+        every { mockStorage.getBackChannelAuthorizationRequestId() } returns "stored-auth-req-id"
         coEvery { mockRepository.checkApiUser(any(), any()) } returns flowOf(
             NetworkResult.Success(ApiUser(targetEnvironment = "sandbox"))
         )
         coEvery { mockRepository.getAccessToken(any(), any()) } returns flowOf(
             NetworkResult.Success(accessToken)
         )
-        coEvery { mockRepository.getOauthAccessToken(any(), any(), any()) } returns flowOf(
+        coEvery { mockRepository.getOauthAccessToken(any(), any(), any(), any()) } returns flowOf(
             NetworkResult.Error("Failed")
         )
 
         viewModel.checkUser()
 
         coVerify { mockStorage.saveAccessToken(accessToken) }
-        coVerify { mockRepository.getOauthAccessToken(any(), any(), any()) }
+        coVerify { mockRepository.getOauthAccessToken(any(), any(), any(), any()) }
     }
 }

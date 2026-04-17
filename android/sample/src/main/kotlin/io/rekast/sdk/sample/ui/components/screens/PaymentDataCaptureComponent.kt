@@ -48,6 +48,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.rekast.sdk.sample.R
 import io.rekast.sdk.sample.ui.components.general.textFieldDefaultsComponent
+import io.rekast.sdk.sample.utils.annotation.PreviewWithBackgroundExcludeGenerated
 
 /**
  * Renders a scrollable payment data capture form with conditionally shown fields for financial ID,
@@ -391,4 +392,32 @@ fun PaymentDataScreenComponent(
             }
         }
     }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@PreviewWithBackgroundExcludeGenerated
+@Composable
+fun PaymentDataScreenComponentPreview() {
+    PaymentDataScreenComponent(
+        title = "Request to Pay",
+        submitButtonText = "Pay Now",
+        phoneNumber = "256770000000",
+        financialId = "",
+        showFinancialId = false,
+        referenceIdToRefund = "",
+        showReferenceIdToRefund = false,
+        amount = "1000",
+        paymentMessage = "Goods payment",
+        paymentNote = "Monthly subscription",
+        deliveryNote = "",
+        showDeliveryTextField = false,
+        onRequestPayButtonClicked = {},
+        onPhoneNumberUpdated = {},
+        onFinancialIdUpdated = {},
+        onReferenceIdToRefundUpdated = {},
+        onAmountUpdated = {},
+        onPayerMessageUpdated = {},
+        onPayerNoteUpdated = {},
+        onDeliveryNoteUpdated = {}
+    )
 }

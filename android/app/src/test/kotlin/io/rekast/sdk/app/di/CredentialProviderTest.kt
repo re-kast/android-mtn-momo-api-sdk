@@ -17,6 +17,7 @@ package io.rekast.sdk.app.di
 
 import io.mockk.every
 import io.mockk.mockk
+import io.rekast.sdk.app.network.CredentialProvider
 import io.rekast.sdk.sample.utils.CredentialStorage
 import io.rekast.sdk.sample.utils.SampleConfig
 import org.junit.Assert.assertEquals

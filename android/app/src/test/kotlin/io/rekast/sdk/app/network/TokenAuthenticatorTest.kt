@@ -13,12 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.rekast.sdk.app.di
+package io.rekast.sdk.app.network
 
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import io.rekast.sdk.model.BackChannelAuthorize
 import io.rekast.sdk.model.authentication.AccessToken
 import io.rekast.sdk.model.authentication.Oauth2AccessToken
 import io.rekast.sdk.network.service.AuthenticationService
@@ -98,7 +100,7 @@ class TokenAuthenticatorTest {
     }
 
     private fun stubOauthTokenSuccess(token: String = "new-oauth-token") {
-        coEvery { mockAuthService.getOauth2AccessToken(any(), any(), any()) } returns
+        coEvery { mockAuthService.getOauth2AccessToken(any(), any(), any(), any(), any()) } returns
             RetrofitResponse.success(
                 Oauth2AccessToken(
                     accessToken = token,
@@ -109,6 +111,11 @@ class TokenAuthenticatorTest {
                     refreshTokenExpiredIn = 86400
                 )
             )
+    }
+
+    private fun stubBcAuthorizeSuccess(authReqId: String = "bc-req-id-123") {
+        coEvery { mockAuthService.bcAuthorize(any(), any(), any(), any(), any(), any(), any()) } returns
+            RetrofitResponse.success(BackChannelAuthorize(authReqId = authReqId, interval = 5, expiresIn = 300))
     }
 
     /**
@@ -213,13 +220,15 @@ class TokenAuthenticatorTest {
     }
 
     /**
-     * Verifies that when the OAuth2 token is expired, [TokenAuthenticator.authenticate] refreshes
-     * both the Bearer token and the OAuth2 token and saves both to [CredentialStorage].
+     * Verifies that when the OAuth2 token is expired and the `auth_req_id` is already stored,
+     * [TokenAuthenticator.authenticate] refreshes both the Bearer token and the OAuth2 token
+     * directly — without calling bc-authorize again.
      */
     @Test
-    fun `authenticate refreshes and saves OAuth2 token when it is expired`() {
+    fun `authenticate refreshes OAuth2 token using stored authReqId when OAuth2 token is expired`() {
         every { mockStorage.getApiKey() } returns "test-api-key"
         every { mockStorage.getOauthAccessToken() } returns ""
+        every { mockStorage.getBackChannelAuthorizationRequestId() } returns "stored-auth-req-id"
         stubAccessTokenSuccess()
         stubOauthTokenSuccess("new-oauth-token")
 
@@ -232,6 +241,74 @@ class TokenAuthenticatorTest {
                 withArg { token -> assertEquals("new-oauth-token", token.accessToken) }
             )
         }
+        coVerify(exactly = 0) { mockAuthService.bcAuthorize(any(), any(), any(), any(), any(), any(), any()) }
+    }
+
+    /**
+     * Verifies that when the OAuth2 token is expired, the `auth_req_id` is blank, but a login
+     * hint is stored, [TokenAuthenticator.authenticate] calls bc-authorize to get a new
+     * `auth_req_id` and then exchanges it for an OAuth2 token.
+     */
+    @Test
+    fun `authenticate calls bc-authorize then refreshes OAuth2 when authReqId is blank but loginHint is present`() {
+        every { mockStorage.getApiKey() } returns "test-api-key"
+        every { mockStorage.getOauthAccessToken() } returns ""
+        every { mockStorage.getBackChannelAuthorizationRequestId() } returns ""
+        every { mockStorage.getLoginHint() } returns "MSISDN:256770000000"
+        stubAccessTokenSuccess()
+        stubBcAuthorizeSuccess("bc-req-id-123")
+        stubOauthTokenSuccess("new-oauth-token")
+
+        val result = authenticator.authenticate(null, buildUnauthorizedResponse(collectionUrl()))
+
+        assertNotNull(result)
+        verify(exactly = 1) { mockStorage.saveAccessToken(any()) }
+        verify(exactly = 1) { mockStorage.saveBackChannelAuthorizationRequestId("bc-req-id-123", 300) }
+        verify(exactly = 1) {
+            mockStorage.saveOauthAccessToken(
+                withArg { token -> assertEquals("new-oauth-token", token.accessToken) }
+            )
+        }
+    }
+
+    /**
+     * Verifies that when the OAuth2 token is expired and both the `auth_req_id` and the login
+     * hint are blank, [TokenAuthenticator.authenticate] skips the OAuth2 refresh entirely and
+     * still returns the original request for retry with the refreshed Bearer token.
+     */
+    @Test
+    fun `authenticate skips OAuth2 refresh when authReqId and loginHint are both blank`() {
+        every { mockStorage.getApiKey() } returns "test-api-key"
+        every { mockStorage.getOauthAccessToken() } returns ""
+        every { mockStorage.getBackChannelAuthorizationRequestId() } returns ""
+        every { mockStorage.getLoginHint() } returns ""
+        stubAccessTokenSuccess()
+
+        val result = authenticator.authenticate(null, buildUnauthorizedResponse(collectionUrl()))
+
+        assertNotNull("Should return the original request even without OAuth2 refresh", result)
+        verify(exactly = 0) { mockStorage.saveOauthAccessToken(any()) }
+    }
+
+    /**
+     * Verifies that a bc-authorize failure is non-fatal: the original request is still returned
+     * for retry (with the refreshed Bearer token) even when bc-authorize returns non-2xx.
+     */
+    @Test
+    fun `authenticate returns original request when bc-authorize fails`() {
+        every { mockStorage.getApiKey() } returns "test-api-key"
+        every { mockStorage.getOauthAccessToken() } returns ""
+        every { mockStorage.getBackChannelAuthorizationRequestId() } returns ""
+        every { mockStorage.getLoginHint() } returns "MSISDN:256770000000"
+        stubAccessTokenSuccess()
+        coEvery { mockAuthService.bcAuthorize(any(), any(), any(), any(), any(), any(), any()) } returns
+            RetrofitResponse.error(500, "".toResponseBody(null))
+
+        val result = authenticator.authenticate(null, buildUnauthorizedResponse(collectionUrl()))
+
+        assertNotNull("Should still return request for retry even if bc-authorize fails", result)
+        verify(exactly = 1) { mockStorage.saveAccessToken(any()) }
+        verify(exactly = 0) { mockStorage.saveOauthAccessToken(any()) }
     }
 
     /**
@@ -257,8 +334,9 @@ class TokenAuthenticatorTest {
     fun `authenticate returns original request even when OAuth2 refresh fails`() {
         every { mockStorage.getApiKey() } returns "test-api-key"
         every { mockStorage.getOauthAccessToken() } returns ""
+        every { mockStorage.getBackChannelAuthorizationRequestId() } returns "stored-auth-req-id"
         stubAccessTokenSuccess()
-        coEvery { mockAuthService.getOauth2AccessToken(any(), any(), any()) } returns
+        coEvery { mockAuthService.getOauth2AccessToken(any(), any(), any(), any(), any()) } returns
             RetrofitResponse.error(500, "".toResponseBody(null))
 
         val result = authenticator.authenticate(null, buildUnauthorizedResponse(collectionUrl()))

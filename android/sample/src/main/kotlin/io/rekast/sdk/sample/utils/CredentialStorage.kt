@@ -42,6 +42,9 @@ private const val KEY_OAUTH_ACCESS_TOKEN_TYPE = "oauthAccessTokenType"
 private const val KEY_OAUTH_SCOPE = "oauthScope"
 private const val KEY_OAUTH_REFRESH_TOKEN = "oauthRefreshToken"
 private const val KEY_OAUTH_REFRESH_TOKEN_EXPIRY = "oauthRefreshTokenExpiry"
+private const val KEY_BACK_CHANNEL_AUTHORIZATION_REQUEST_ID = "backChannelAuthorizationRequestId"
+private const val KEY_BACK_CHANNEL_AUTHORIZATION_REQUEST_ID_EXPIRY = "backChannelAuthorizationRequestIdExpiry"
+private const val KEY_LOGIN_HINT = "loginHint"
 
 /**
  * Secure credential storage backed by [EncryptedSharedPreferences].
@@ -160,6 +163,41 @@ class CredentialStorage @Inject constructor(@param:ApplicationContext private va
         val expiry = prefs.getLong(KEY_OAUTH_ACCESS_TOKEN_EXPIRY, 0L)
         return if (isExpired(expiry)) "" else prefs.getString(KEY_OAUTH_ACCESS_TOKEN, "").orEmpty()
     }
+
+    /**
+     * Persists the `auth_req_id` from a backchannel authorization response along with its expiry.
+     *
+     * @param authReqId The authorization request ID returned by the bc-authorize endpoint.
+     * @param expiresIn Seconds until the `auth_req_id` expires (from [io.rekast.sdk.model.BackChannelAuthorize.expiresIn]).
+     */
+    fun saveBackChannelAuthorizationRequestId(authReqId: String, expiresIn: Int) {
+        prefs.edit {
+            putString(KEY_BACK_CHANNEL_AUTHORIZATION_REQUEST_ID, authReqId)
+            putLong(KEY_BACK_CHANNEL_AUTHORIZATION_REQUEST_ID_EXPIRY, expiryInSeconds(expiresIn))
+        }
+    }
+
+    /**
+     * Returns the stored `auth_req_id`, or an empty string if it has expired or was never set.
+     */
+    fun getBackChannelAuthorizationRequestId(): String {
+        val expiry = prefs.getLong(KEY_BACK_CHANNEL_AUTHORIZATION_REQUEST_ID_EXPIRY, 0L)
+        return if (isExpired(expiry)) "" else prefs.getString(KEY_BACK_CHANNEL_AUTHORIZATION_REQUEST_ID, "").orEmpty()
+    }
+
+    /**
+     * Persists the login hint (MSISDN) used in backchannel authorization requests.
+     *
+     * @param loginHint The account identifier, typically in the format `MSISDN:{phoneNumber}`.
+     */
+    fun saveLoginHint(loginHint: String) {
+        prefs.edit { putString(KEY_LOGIN_HINT, loginHint) }
+    }
+
+    /**
+     * Returns the stored login hint, or an empty string if it was never set.
+     */
+    fun getLoginHint(): String = prefs.getString(KEY_LOGIN_HINT, "").orEmpty()
 
     /**
      * Returns the absolute epoch-millisecond timestamp that is [seconds] from now.

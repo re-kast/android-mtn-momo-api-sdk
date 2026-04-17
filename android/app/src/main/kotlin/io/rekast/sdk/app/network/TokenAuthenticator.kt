@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.rekast.sdk.app.di
+package io.rekast.sdk.app.network
 
 import io.rekast.sdk.model.authentication.AccessToken
 import io.rekast.sdk.model.authentication.Oauth2AccessToken
@@ -110,8 +110,19 @@ class TokenAuthenticator(
         storage.saveAccessToken(newToken)
 
         if (storage.getOauthAccessToken().isBlank()) {
-            val newOauthToken = refreshOauthToken(productType, subscriptionKey)
-            if (newOauthToken != null) storage.saveOauthAccessToken(newOauthToken)
+            var authReqId = storage.getBackChannelAuthorizationRequestId()
+            if (authReqId.isBlank()) {
+                val loginHint = storage.getLoginHint()
+                if (loginHint.isNotBlank()) {
+                    authReqId = refreshBackChannelAuthorization(productType, subscriptionKey, loginHint) ?: ""
+                } else {
+                    Timber.w("TokenAuthenticator: login hint missing, cannot refresh bc-authorize")
+                }
+            }
+            if (authReqId.isNotBlank()) {
+                val newOauthToken = refreshOauthToken(productType, subscriptionKey, authReqId)
+                if (newOauthToken != null) storage.saveOauthAccessToken(newOauthToken)
+            }
         }
 
         Timber.d("TokenAuthenticator: token refreshed successfully")
@@ -149,6 +160,43 @@ class TokenAuthenticator(
         }
 
     /**
+     * Calls the bc-authorize endpoint to obtain a fresh `auth_req_id`, then persists it.
+     *
+     * @param productType The product type extracted from the original request URL.
+     * @param subscriptionKey The `Ocp-Apim-Subscription-Key` from the original request.
+     * @param loginHint The stored MSISDN login hint.
+     * @return The new `auth_req_id` on success, or `null` if the request fails.
+     */
+    private fun refreshBackChannelAuthorization(
+        productType: String,
+        subscriptionKey: String,
+        loginHint: String
+    ): String? =
+        try {
+            val response =
+                runBlocking {
+                    authService.bcAuthorize(
+                        productType = productType,
+                        apiVersion = config.environment,
+                        loginHint = loginHint,
+                        scope = Constants.FormFields.CIBA_SCOPE,
+                        accessType = Constants.FormFields.CIBA_ACCESS_TYPE,
+                        productSubscriptionKey = subscriptionKey,
+                        environment = config.environment
+                    )
+                }
+            if (response.isSuccessful) {
+                response.body()?.also { storage.saveBackChannelAuthorizationRequestId(it.authReqId, it.expiresIn) }?.authReqId
+            } else {
+                Timber.e("TokenAuthenticator: bc-authorize failed with HTTP ${response.code()}")
+                null
+            }
+        } catch (e: Exception) {
+            Timber.e(e, "TokenAuthenticator: exception during bc-authorize")
+            null
+        }
+
+    /**
      * Calls the MTN MoMo OAuth2 token endpoint via [authService] to obtain a new [Oauth2AccessToken].
      *
      * Only called when [CredentialStorage.getOauthAccessToken] returns blank (i.e. the stored
@@ -157,16 +205,18 @@ class TokenAuthenticator(
      *
      * @param productType The first path segment of the original request URL (e.g. "collection").
      * @param subscriptionKey The `Ocp-Apim-Subscription-Key` header value from the original request.
+     * @param authReqId The `auth_req_id` from a prior bc-authorize response.
      * @return The decoded [Oauth2AccessToken] on success, or `null` if the request fails.
      */
     private fun refreshOauthToken(
         productType: String,
-        subscriptionKey: String
+        subscriptionKey: String,
+        authReqId: String
     ): Oauth2AccessToken? =
         try {
             val response =
                 runBlocking {
-                    authService.getOauth2AccessToken(productType, subscriptionKey, config.environment)
+                    authService.getOauth2AccessToken(productType, subscriptionKey, config.environment, authReqId = authReqId)
                 }
             if (response.isSuccessful) {
                 response.body()

@@ -17,9 +17,14 @@ package io.rekast.sdk.repository
 
 import io.rekast.sdk.model.AccountBalance
 import io.rekast.sdk.model.AccountHolder
+import io.rekast.sdk.model.BackChannelAuthorize
 import io.rekast.sdk.model.BasicUserInfo
+import io.rekast.sdk.model.BcAuthorizeRequest
+import io.rekast.sdk.model.CashTransfer
+import io.rekast.sdk.model.Invoice
 import io.rekast.sdk.model.MomoNotification
 import io.rekast.sdk.model.MomoTransaction
+import io.rekast.sdk.model.PreApproval
 import io.rekast.sdk.model.ProviderCallBackHost
 import io.rekast.sdk.model.UserInfoWithConsent
 import io.rekast.sdk.model.authentication.AccessToken
@@ -119,8 +124,9 @@ class DefaultRepository @Inject constructor(private val defaultSource: DefaultSo
      * @param environment The target environment (e.g., sandbox or production).
      * @return A [Flow] emitting a [NetworkResult] containing the obtained [Oauth2AccessToken].
      */
-    fun getOauthAccessToken(productType: String, productSubscriptionKey: String, environment: String): Flow<NetworkResult<Oauth2AccessToken>> =
-        executeApiCall { defaultSource.getOauth2AccessToken(productType = productType, productSubscriptionKey = productSubscriptionKey, environment = environment) }
+    fun getOauthAccessToken(productType: String, productSubscriptionKey: String, environment: String, backChannelAuthorizationRequestId: String): Flow<NetworkResult<Oauth2AccessToken>> = executeApiCall {
+        defaultSource.getOauth2AccessToken(productType = productType, productSubscriptionKey = productSubscriptionKey, environment = environment, backChannelAuthorizationRequestId = backChannelAuthorizationRequestId)
+    }
 
     /**
      * Retrieves the basic user information for a specified MTN MOMO user.
@@ -347,4 +353,204 @@ class DefaultRepository @Inject constructor(private val defaultSource: DefaultSo
      */
     suspend fun getRefundStatus(referenceId: String, apiVersion: String, productSubscriptionKey: String, accessToken: String): Response<ResponseBody> =
         disbursementsService.getRefundStatus(referenceId, apiVersion, productSubscriptionKey, config.environment)
+
+    /**
+     * Initiates a backchannel (CIBA) authorization request.
+     *
+     * @param productType The type of product initiating the authorization (e.g., collection).
+     * @param apiVersion The version of the API (e.g., v1_0).
+     * @param bcAuthorizeRequest The authorization request parameters.
+     * @param productSubscriptionKey The subscription key for the product.
+     * @param environment The target environment (e.g., sandbox or production).
+     * @return A [Flow] emitting a [NetworkResult] containing the [BackChannelAuthorize] with the authorization request details.
+     */
+    fun bcAuthorize(productType: String, apiVersion: String, bcAuthorizeRequest: BcAuthorizeRequest, productSubscriptionKey: String, environment: String): Flow<NetworkResult<BackChannelAuthorize>> = executeApiCall {
+        defaultSource.bcAuthorize(
+            productType = productType,
+            apiVersion = apiVersion,
+            bcAuthorizeRequest = bcAuthorizeRequest,
+            productSubscriptionKey = productSubscriptionKey,
+            environment = environment
+        )
+    }
+
+    /**
+     * Creates a Collection invoice, prompting the intended payer to approve payment from their wallet.
+     *
+     * Poll [getInvoiceStatus] with the same [uuid] as the reference ID to check whether the invoice
+     * has been paid. The invoice expires after the duration specified in [Invoice.validityDuration].
+     *
+     * @param apiVersion The version of the API to use.
+     * @param invoice The invoice payload containing amount, currency, and optional payer details.
+     * @param uuid A UUID V4 used as the X-Reference-Id; reuse this same ID when calling [getInvoiceStatus].
+     * @param productSubscriptionKey The subscription key for the Collection product.
+     * @param environment The target environment (e.g., sandbox or production).
+     * @return A [Flow] emitting a [NetworkResult] with an empty [Unit] body on success (HTTP 202).
+     */
+    fun createInvoice(apiVersion: String, invoice: Invoice, uuid: String, productSubscriptionKey: String, environment: String): Flow<NetworkResult<Unit>> = executeApiCall {
+        defaultSource.createInvoice(
+            invoice = invoice,
+            apiVersion = apiVersion,
+            productSubscriptionKey = productSubscriptionKey,
+            environment = environment,
+            uuid = uuid
+        )
+    }
+
+    /**
+     * Retrieves the current status of a previously created Collection invoice.
+     *
+     * @param apiVersion The version of the API to use.
+     * @param referenceId The UUID V4 reference ID used when calling [createInvoice].
+     * @param productSubscriptionKey The subscription key for the Collection product.
+     * @param environment The target environment (e.g., sandbox or production).
+     * @return A [Flow] emitting a [NetworkResult] whose body contains the invoice status as a [ResponseBody].
+     */
+    fun getInvoiceStatus(apiVersion: String, referenceId: String, productSubscriptionKey: String, environment: String): Flow<NetworkResult<ResponseBody>> = executeApiCall {
+        defaultSource.getInvoiceStatus(
+            referenceId = referenceId,
+            apiVersion = apiVersion,
+            productSubscriptionKey = productSubscriptionKey,
+            environment = environment
+        )
+    }
+
+    /**
+     * Cancels a pending Collection invoice before it is paid or expires.
+     *
+     * @param apiVersion The version of the API to use.
+     * @param referenceId The UUID V4 reference ID used when calling [createInvoice].
+     * @param productSubscriptionKey The subscription key for the Collection product.
+     * @param environment The target environment (e.g., sandbox or production).
+     * @return A [Flow] emitting a [NetworkResult] with an empty [Unit] body on success.
+     */
+    fun cancelInvoice(apiVersion: String, referenceId: String, productSubscriptionKey: String, environment: String): Flow<NetworkResult<Unit>> = executeApiCall {
+        defaultSource.cancelInvoice(
+            referenceId = referenceId,
+            apiVersion = apiVersion,
+            productSubscriptionKey = productSubscriptionKey,
+            environment = environment
+        )
+    }
+
+    /**
+     * Creates a Collection pre-approval, authorising the merchant to debit the payer's wallet
+     * without requiring per-transaction consent until the pre-approval expires.
+     *
+     * @param apiVersion The version of the API to use.
+     * @param preApproval The pre-approval payload containing the payer, currency, and validity duration.
+     * @param uuid A UUID V4 used as the X-Reference-Id; reuse this same ID when calling [getPreApprovalStatus].
+     * @param productSubscriptionKey The subscription key for the Collection product.
+     * @param environment The target environment (e.g., sandbox or production).
+     * @return A [Flow] emitting a [NetworkResult] with an empty [Unit] body on success (HTTP 202).
+     */
+    fun createPreApproval(apiVersion: String, preApproval: PreApproval, uuid: String, productSubscriptionKey: String, environment: String): Flow<NetworkResult<Unit>> = executeApiCall {
+        defaultSource.createPreApproval(
+            preApproval = preApproval,
+            apiVersion = apiVersion,
+            productSubscriptionKey = productSubscriptionKey,
+            environment = environment,
+            uuid = uuid
+        )
+    }
+
+    /**
+     * Retrieves the current status of a previously created Collection pre-approval.
+     *
+     * @param apiVersion The version of the API to use.
+     * @param referenceId The UUID V4 reference ID used when calling [createPreApproval].
+     * @param productSubscriptionKey The subscription key for the Collection product.
+     * @param environment The target environment (e.g., sandbox or production).
+     * @return A [Flow] emitting a [NetworkResult] whose body contains the pre-approval status as a [ResponseBody].
+     */
+    fun getPreApprovalStatus(apiVersion: String, referenceId: String, productSubscriptionKey: String, environment: String): Flow<NetworkResult<ResponseBody>> = executeApiCall {
+        defaultSource.getPreApprovalStatus(
+            referenceId = referenceId,
+            apiVersion = apiVersion,
+            productSubscriptionKey = productSubscriptionKey,
+            environment = environment
+        )
+    }
+
+    /**
+     * Initiates a Remittance cash transfer using the V2 endpoint with optional KYC fields about
+     * the sending party. This replaces the legacy V1 transfer for cross-border remittance use cases
+     * where the sender is not a registered MTN mobile money subscriber.
+     *
+     * Poll [getCashTransferStatus] with the same [uuid] as the reference ID to check the outcome.
+     *
+     * @param apiVersion The API version to target; use `v2_0` for this endpoint.
+     * @param cashTransfer The cash transfer payload including recipient, amounts, and optional KYC fields.
+     * @param uuid A UUID V4 used as the X-Reference-Id; reuse this same ID when calling [getCashTransferStatus].
+     * @param productSubscriptionKey The subscription key for the Remittance product.
+     * @param environment The target environment (e.g., sandbox or production).
+     * @return A [Flow] emitting a [NetworkResult] with an empty [Unit] body on success (HTTP 202).
+     */
+    fun cashTransfer(apiVersion: String, cashTransfer: CashTransfer, uuid: String, productSubscriptionKey: String, environment: String): Flow<NetworkResult<Unit>> = executeApiCall {
+        defaultSource.cashTransfer(
+            cashTransfer = cashTransfer,
+            apiVersion = apiVersion,
+            productSubscriptionKey = productSubscriptionKey,
+            environment = environment,
+            uuid = uuid
+        )
+    }
+
+    /**
+     * Retrieves the status of a previously initiated Remittance cash transfer.
+     *
+     * @param apiVersion The API version to target; use `v2_0` for this endpoint.
+     * @param referenceId The UUID V4 reference ID used when calling [cashTransfer].
+     * @param productSubscriptionKey The subscription key for the Remittance product.
+     * @param environment The target environment (e.g., sandbox or production).
+     * @return A [Flow] emitting a [NetworkResult] whose body contains the cash transfer status as a [ResponseBody].
+     */
+    fun getCashTransferStatus(apiVersion: String, referenceId: String, productSubscriptionKey: String, environment: String): Flow<NetworkResult<ResponseBody>> = executeApiCall {
+        defaultSource.getCashTransferStatus(
+            referenceId = referenceId,
+            apiVersion = apiVersion,
+            productSubscriptionKey = productSubscriptionKey,
+            environment = environment
+        )
+    }
+
+    /**
+     * Cancels an active Collection pre-approval, immediately revoking the merchant's ability
+     * to debit the payer's wallet without per-transaction consent.
+     *
+     * @param apiVersion The version of the API to use.
+     * @param referenceId The UUID V4 reference ID used when calling [createPreApproval].
+     * @param productSubscriptionKey The subscription key for the Collection product.
+     * @param environment The target environment (e.g., sandbox or production).
+     * @return A [Flow] emitting a [NetworkResult] with an empty [Unit] body on success.
+     */
+    fun cancelPreApproval(apiVersion: String, referenceId: String, productSubscriptionKey: String, environment: String): Flow<NetworkResult<Unit>> = executeApiCall {
+        defaultSource.cancelPreApproval(
+            referenceId = referenceId,
+            apiVersion = apiVersion,
+            productSubscriptionKey = productSubscriptionKey,
+            environment = environment
+        )
+    }
+
+    /**
+     * Sends a delivery notification to the payer for an existing request-to-withdraw transaction.
+     *
+     * @param apiVersion The version of the API to use.
+     * @param referenceId The UUID V4 reference ID of the original request-to-withdraw transaction.
+     * @param momoNotification The notification payload containing the message to deliver.
+     * @param productSubscriptionKey The subscription key for the Collection product.
+     * @param environment The target environment (e.g., sandbox or production).
+     * @return A [Flow] emitting a [NetworkResult] with the raw result as a [ResponseBody].
+     */
+    fun requestToWithdrawDeliveryNotification(apiVersion: String, referenceId: String, momoNotification: MomoNotification, productSubscriptionKey: String, environment: String): Flow<NetworkResult<ResponseBody>> =
+        executeApiCall {
+            defaultSource.requestToWithdrawDeliveryNotification(
+                apiVersion = apiVersion,
+                referenceId = referenceId,
+                momoNotification = momoNotification,
+                productSubscriptionKey = productSubscriptionKey,
+                environment = environment
+            )
+        }
 }

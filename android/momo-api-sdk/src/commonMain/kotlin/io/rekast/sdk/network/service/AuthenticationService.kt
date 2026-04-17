@@ -15,6 +15,7 @@
  */
 package io.rekast.sdk.network.service
 
+import io.rekast.sdk.model.BackChannelAuthorize
 import io.rekast.sdk.model.ProviderCallBackHost
 import io.rekast.sdk.model.authentication.AccessToken
 import io.rekast.sdk.model.authentication.ApiKey
@@ -23,6 +24,8 @@ import io.rekast.sdk.model.authentication.Oauth2AccessToken
 import io.rekast.sdk.utils.Constants
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.Field
+import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
@@ -101,10 +104,40 @@ interface AuthenticationService {
      * @param environment The target environment (e.g., production, sandbox).
      * @return A [Response] containing the obtained [Oauth2AccessToken].
      */
+    @FormUrlEncoded
     @POST(Constants.EndPoints.GET_OAUTH2_ACCESS_TOKEN)
     suspend fun getOauth2AccessToken(
         @Path(Constants.EndpointPaths.PRODUCT_TYPE) productType: String,
         @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
-        @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String
+        @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String,
+        @Field(Constants.FormFields.GRANT_TYPE) grantType: String = Constants.FormFields.CIBA_GRANT_TYPE,
+        @Field(Constants.FormFields.BACK_CHANNEL_AUTHORIZATION_REQUEST_ID) authReqId: String
     ): Response<Oauth2AccessToken>
+
+    /**
+     * Initiates a backchannel authorization (CIBA) request for the specified product type.
+     *
+     * The response contains an [AccountAuthorize] with an `auth_req_id` that must be used
+     * to poll for the access token once the user has approved the request on their device.
+     *
+     * @param productType The type of product initiating the authorization (e.g., collection).
+     * @param apiVersion The version of the API (e.g., v1_0).
+     * @param loginHint The account identifier hint, typically in the format `MSISDN:{phoneNumber}`.
+     * @param scope The OAuth2 scope being requested (e.g., `profile openid`).
+     * @param accessType The access type for the token (`online` or `offline`). Defaults to `online`.
+     * @param productSubscriptionKey The subscription key for the product.
+     * @param environment The target environment (e.g., sandbox or production).
+     * @return A [Response] containing the [AccountAuthorize] with the authorization request details.
+     */
+    @FormUrlEncoded
+    @POST(Constants.EndPoints.BC_AUTHORIZE)
+    suspend fun bcAuthorize(
+        @Path(Constants.EndpointPaths.PRODUCT_TYPE) productType: String,
+        @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
+        @Field(Constants.FormFields.LOGIN_HINT) loginHint: String,
+        @Field(Constants.FormFields.SCOPE) scope: String,
+        @Field(Constants.FormFields.ACCESS_TYPE) accessType: String,
+        @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
+        @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String
+    ): Response<BackChannelAuthorize>
 }
