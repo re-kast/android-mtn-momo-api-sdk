@@ -177,7 +177,7 @@ class TokenAuthenticator(
                 runBlocking {
                     authService.bcAuthorize(
                         productType = productType,
-                        apiVersion = config.environment,
+                        apiVersion = config.apiVersion,
                         loginHint = loginHint,
                         scope = Constants.FormFields.CIBA_SCOPE,
                         accessType = Constants.FormFields.CIBA_ACCESS_TYPE,

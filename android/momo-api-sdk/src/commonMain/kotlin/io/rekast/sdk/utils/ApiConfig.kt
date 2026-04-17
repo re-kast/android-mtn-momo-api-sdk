@@ -25,5 +25,6 @@ package io.rekast.sdk.utils
  * @property baseUrl The base URL for the MTN MoMo API (e.g. `https://sandbox.momodeveloper.mtn.com/`).
  * @property apiUserId The API user ID provisioned in the MoMo developer portal.
  * @property environment The deployment environment identifier (e.g. `sandbox` or `mtncongo`).
+ * @property apiVersion The MTN MoMo API version string used in URL path segments (e.g. `v1_0`).
  */
-data class ApiConfig(val baseUrl: String, val apiUserId: String, val environment: String)
+data class ApiConfig(val baseUrl: String, val apiUserId: String, val environment: String, val apiVersion: String = "v1_0")

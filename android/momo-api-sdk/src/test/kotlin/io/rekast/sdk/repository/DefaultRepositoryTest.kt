@@ -333,6 +333,19 @@ class DefaultRepositoryTest {
     }
 
     /**
+     * Verifies that [DefaultRepository.getOauthAccessToken] emits [NetworkResult.Error] immediately
+     * when [backChannelAuthorizationRequestId] is blank, without touching the network.
+     */
+    @Test
+    fun `getOauthAccessToken emits Error immediately when authReqId is blank`() = runTest {
+        val results = repository.getOauthAccessToken("remittance", "sub-key", "sandbox", "").toList()
+
+        assertTrue(results.size == 1)
+        assertTrue(results.first() is NetworkResult.Error)
+        coVerify(exactly = 0) { defaultSource.getOauth2AccessToken(any(), any(), any(), any()) }
+    }
+
+    /**
      * Verifies that [DefaultRepository.getBasicUserInfo] emits [NetworkResult.Loading] then
      * [NetworkResult.Success] containing the [BasicUserInfo].
      */

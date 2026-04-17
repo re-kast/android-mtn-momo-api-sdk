@@ -119,13 +119,27 @@ class DefaultRepository @Inject constructor(private val defaultSource: DefaultSo
     /**
      * Obtains an OAuth2 access token for use with consent-based API endpoints.
      *
+     * Always uses the CIBA grant (`grant_type=urn:openid:params:grant-type:ciba`), which requires
+     * a valid `auth_req_id` from a prior [bcAuthorize] call. Passing a blank
+     * [backChannelAuthorizationRequestId] is a programming error: the method emits
+     * [NetworkResult.Error] immediately rather than forwarding an invalid request to the server.
+     *
      * @param productType The type of product for which to obtain the OAuth2 access token.
      * @param productSubscriptionKey The subscription key for the product.
      * @param environment The target environment (e.g., sandbox or production).
-     * @return A [Flow] emitting a [NetworkResult] containing the obtained [Oauth2AccessToken].
+     * @param backChannelAuthorizationRequestId The `auth_req_id` returned by a prior [bcAuthorize]
+     *   call. Must not be blank.
+     * @return A [Flow] emitting [NetworkResult.Error] immediately if [backChannelAuthorizationRequestId]
+     *   is blank, otherwise emitting [NetworkResult.Loading] then a terminal [NetworkResult.Success]
+     *   or [NetworkResult.Error] from the network call.
      */
-    fun getOauthAccessToken(productType: String, productSubscriptionKey: String, environment: String, backChannelAuthorizationRequestId: String = ""): Flow<NetworkResult<Oauth2AccessToken>> = executeApiCall {
-        defaultSource.getOauth2AccessToken(productType = productType, productSubscriptionKey = productSubscriptionKey, environment = environment, backChannelAuthorizationRequestId = backChannelAuthorizationRequestId)
+    fun getOauthAccessToken(productType: String, productSubscriptionKey: String, environment: String, backChannelAuthorizationRequestId: String): Flow<NetworkResult<Oauth2AccessToken>> {
+        if (backChannelAuthorizationRequestId.isBlank()) {
+            return flow { emit(NetworkResult.Error("backChannelAuthorizationRequestId must not be blank — call bcAuthorize() first")) }
+        }
+        return executeApiCall {
+            defaultSource.getOauth2AccessToken(productType = productType, productSubscriptionKey = productSubscriptionKey, environment = environment, backChannelAuthorizationRequestId = backChannelAuthorizationRequestId)
+        }
     }
 
     /**
