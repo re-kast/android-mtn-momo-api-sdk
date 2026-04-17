@@ -19,7 +19,9 @@ import androidx.compose.material.Snackbar
 import androidx.compose.material.SnackbarHost
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import io.rekast.sdk.sample.utils.annotation.PreviewExcludeGenerated
 import io.rekast.sdk.sample.utils.parseColor
 
 /**
@@ -44,5 +46,16 @@ fun SnackBarComponent(modifier: Modifier = Modifier, snackBarHostState: Snackbar
                 modifier = modifier
             )
         }
+    )
+}
+
+@PreviewExcludeGenerated
+@Composable
+fun SnackBarComponentPreview() {
+    SnackBarComponent(
+        snackBarHostState = remember { SnackbarHostState() },
+        backgroundColorHex = "#EB9779",
+        actionColorHex = "#FFFFFF",
+        contentColorHex = "#FFFFFF"
     )
 }

@@ -16,11 +16,17 @@
 package io.rekast.sdk.repository
 
 import io.rekast.sdk.model.AccountHolder
+import io.rekast.sdk.model.BcAuthorizeRequest
+import io.rekast.sdk.model.CashTransfer
+import io.rekast.sdk.model.Invoice
 import io.rekast.sdk.model.MomoNotification
 import io.rekast.sdk.model.MomoTransaction
+import io.rekast.sdk.model.PreApproval
 import io.rekast.sdk.model.ProviderCallBackHost
 import io.rekast.sdk.network.service.AuthenticationService
+import io.rekast.sdk.network.service.products.CollectionService
 import io.rekast.sdk.network.service.products.CommonService
+import io.rekast.sdk.network.service.products.RemittanceService
 import javax.inject.Inject
 
 /**
@@ -33,8 +39,15 @@ import javax.inject.Inject
  *
  * @property authenticationService The service for handling authentication-related API calls.
  * @property commonService The service for handling common API calls.
+ * @property collectionService The service for Collection-product-specific API calls (invoice, pre-approval).
+ * @property remittanceService The service for Remittance-product-specific API calls (cash transfer V2).
  */
-class DefaultSource @Inject constructor(private val authenticationService: AuthenticationService, private val commonService: CommonService) {
+class DefaultSource @Inject constructor(
+    private val authenticationService: AuthenticationService,
+    private val commonService: CommonService,
+    private val collectionService: CollectionService,
+    private val remittanceService: RemittanceService
+) {
 
     /**
      * Creates a new API user.
@@ -104,10 +117,11 @@ class DefaultSource @Inject constructor(private val authenticationService: Authe
      * @param environment The API environment (e.g., production, sandbox).
      * @return A [Response] containing the obtained [io.rekast.sdk.model.authentication.Oauth2AccessToken].
      */
-    suspend fun getOauth2AccessToken(productType: String, productSubscriptionKey: String, environment: String) = authenticationService.getOauth2AccessToken(
+    suspend fun getOauth2AccessToken(productType: String, productSubscriptionKey: String, environment: String, backChannelAuthorizationRequestId: String) = authenticationService.getOauth2AccessToken(
         productType = productType,
         productSubscriptionKey = productSubscriptionKey,
-        environment = environment
+        environment = environment,
+        authReqId = backChannelAuthorizationRequestId
     )
 
     /**
@@ -249,6 +263,181 @@ class DefaultSource @Inject constructor(private val authenticationService: Authe
     suspend fun requestToPayDeliveryNotification(productType: String, apiVersion: String, referenceId: String, momoNotification: MomoNotification, productSubscriptionKey: String, environment: String) =
         commonService.requestToPayDeliveryNotification(
             productType = productType,
+            apiVersion = apiVersion,
+            referenceId = referenceId,
+            momoNotification = momoNotification,
+            notificationMessage = momoNotification.notificationMessage,
+            productSubscriptionKey = productSubscriptionKey,
+            environment = environment
+        )
+
+    /**
+     * Initiates a backchannel (CIBA) authorization request.
+     *
+     * @param productType The type of product initiating the authorization (e.g., collection).
+     * @param apiVersion The version of the API (e.g., v1_0).
+     * @param bcAuthorizeRequest The authorization request parameters.
+     * @param productSubscriptionKey The subscription key for the product.
+     * @param environment The target environment (e.g., sandbox or production).
+     * @return A [Response] containing the [io.rekast.sdk.model.BackChannelAuthorize] with the authorization request details.
+     */
+    suspend fun bcAuthorize(productType: String, apiVersion: String, bcAuthorizeRequest: BcAuthorizeRequest, productSubscriptionKey: String, environment: String) = authenticationService.bcAuthorize(
+        productType = productType,
+        apiVersion = apiVersion,
+        loginHint = bcAuthorizeRequest.loginHint,
+        scope = bcAuthorizeRequest.scope,
+        accessType = bcAuthorizeRequest.accessType,
+        productSubscriptionKey = productSubscriptionKey,
+        environment = environment
+    )
+
+    /**
+     * Creates a Collection invoice.
+     *
+     * @param invoice The invoice payload containing amount, currency, and optional payer details.
+     * @param apiVersion The version of the API to use.
+     * @param productSubscriptionKey The subscription key for the Collection product.
+     * @param environment The API environment (e.g., sandbox or production).
+     * @param uuid A UUID V4 used as the X-Reference-Id; poll [getInvoiceStatus] with the same ID.
+     * @return A [Response] with an empty body; HTTP 202 indicates the invoice was accepted.
+     */
+    suspend fun createInvoice(invoice: Invoice, apiVersion: String, productSubscriptionKey: String, environment: String, uuid: String) = collectionService.createInvoice(
+        invoice = invoice,
+        apiVersion = apiVersion,
+        productSubscriptionKey = productSubscriptionKey,
+        environment = environment,
+        uuid = uuid
+    )
+
+    /**
+     * Retrieves the status of a previously created Collection invoice.
+     *
+     * @param referenceId The UUID V4 reference ID used when calling [createInvoice].
+     * @param apiVersion The version of the API to use.
+     * @param productSubscriptionKey The subscription key for the Collection product.
+     * @param environment The API environment (e.g., sandbox or production).
+     * @return A [Response] whose body contains the invoice status details.
+     */
+    suspend fun getInvoiceStatus(referenceId: String, apiVersion: String, productSubscriptionKey: String, environment: String) = collectionService.getInvoiceStatus(
+        referenceId = referenceId,
+        apiVersion = apiVersion,
+        productSubscriptionKey = productSubscriptionKey,
+        environment = environment
+    )
+
+    /**
+     * Cancels a pending Collection invoice.
+     *
+     * @param referenceId The UUID V4 reference ID used when calling [createInvoice].
+     * @param apiVersion The version of the API to use.
+     * @param productSubscriptionKey The subscription key for the Collection product.
+     * @param environment The API environment (e.g., sandbox or production).
+     * @return A [Response] with an empty body; HTTP 200 indicates successful cancellation.
+     */
+    suspend fun cancelInvoice(referenceId: String, apiVersion: String, productSubscriptionKey: String, environment: String) = collectionService.cancelInvoice(
+        referenceId = referenceId,
+        apiVersion = apiVersion,
+        productSubscriptionKey = productSubscriptionKey,
+        environment = environment
+    )
+
+    /**
+     * Creates a Collection pre-approval, authorising the merchant to charge the payer's wallet
+     * without per-transaction prompts until the pre-approval expires.
+     *
+     * @param preApproval The pre-approval payload containing the payer, currency, and validity.
+     * @param apiVersion The version of the API to use.
+     * @param productSubscriptionKey The subscription key for the Collection product.
+     * @param environment The API environment (e.g., sandbox or production).
+     * @param uuid A UUID V4 used as the X-Reference-Id; poll [getPreApprovalStatus] with the same ID.
+     * @return A [Response] with an empty body; HTTP 202 indicates the pre-approval was accepted.
+     */
+    suspend fun createPreApproval(preApproval: PreApproval, apiVersion: String, productSubscriptionKey: String, environment: String, uuid: String) = collectionService.createPreApproval(
+        preApproval = preApproval,
+        apiVersion = apiVersion,
+        productSubscriptionKey = productSubscriptionKey,
+        environment = environment,
+        uuid = uuid
+    )
+
+    /**
+     * Retrieves the status of a previously created Collection pre-approval.
+     *
+     * @param referenceId The UUID V4 reference ID used when calling [createPreApproval].
+     * @param apiVersion The version of the API to use.
+     * @param productSubscriptionKey The subscription key for the Collection product.
+     * @param environment The API environment (e.g., sandbox or production).
+     * @return A [Response] whose body contains the pre-approval status details.
+     */
+    suspend fun getPreApprovalStatus(referenceId: String, apiVersion: String, productSubscriptionKey: String, environment: String) = collectionService.getPreApprovalStatus(
+        referenceId = referenceId,
+        apiVersion = apiVersion,
+        productSubscriptionKey = productSubscriptionKey,
+        environment = environment
+    )
+
+    /**
+     * Initiates a Remittance cash transfer using the V2 endpoint with optional KYC fields.
+     *
+     * @param cashTransfer The cash transfer payload including recipient and optional payer KYC details.
+     * @param apiVersion The version of the API to use (e.g., v2_0).
+     * @param productSubscriptionKey The subscription key for the Remittance product.
+     * @param environment The API environment (e.g., sandbox or production).
+     * @param uuid A UUID V4 used as the X-Reference-Id; poll [getCashTransferStatus] with the same ID.
+     * @return A [Response] with an empty body; HTTP 202 indicates the transfer was accepted.
+     */
+    suspend fun cashTransfer(cashTransfer: CashTransfer, apiVersion: String, productSubscriptionKey: String, environment: String, uuid: String) = remittanceService.cashTransfer(
+        cashTransfer = cashTransfer,
+        apiVersion = apiVersion,
+        productSubscriptionKey = productSubscriptionKey,
+        environment = environment,
+        uuid = uuid
+    )
+
+    /**
+     * Retrieves the status of a previously initiated Remittance cash transfer.
+     *
+     * @param referenceId The UUID V4 reference ID used when calling [cashTransfer].
+     * @param apiVersion The version of the API to use (e.g., v2_0).
+     * @param productSubscriptionKey The subscription key for the Remittance product.
+     * @param environment The API environment (e.g., sandbox or production).
+     * @return A [Response] whose body contains the cash transfer status details.
+     */
+    suspend fun getCashTransferStatus(referenceId: String, apiVersion: String, productSubscriptionKey: String, environment: String) = remittanceService.getCashTransferStatus(
+        referenceId = referenceId,
+        apiVersion = apiVersion,
+        productSubscriptionKey = productSubscriptionKey,
+        environment = environment
+    )
+
+    /**
+     * Cancels an active Collection pre-approval.
+     *
+     * @param referenceId The UUID V4 reference ID used when calling [createPreApproval].
+     * @param apiVersion The version of the API to use.
+     * @param productSubscriptionKey The subscription key for the Collection product.
+     * @param environment The API environment (e.g., sandbox or production).
+     * @return A [Response] with an empty body; HTTP 200 indicates successful cancellation.
+     */
+    suspend fun cancelPreApproval(referenceId: String, apiVersion: String, productSubscriptionKey: String, environment: String) = collectionService.cancelPreApproval(
+        referenceId = referenceId,
+        apiVersion = apiVersion,
+        productSubscriptionKey = productSubscriptionKey,
+        environment = environment
+    )
+
+    /**
+     * Sends a delivery notification for a request-to-withdraw transaction.
+     *
+     * @param apiVersion The version of the API to use.
+     * @param referenceId The UUID V4 reference ID used when calling requestToWithdraw.
+     * @param momoNotification The notification payload containing the message to deliver.
+     * @param productSubscriptionKey The subscription key for the Collection product.
+     * @param environment The API environment (e.g., sandbox or production).
+     * @return A [Response] whose body contains the delivery result.
+     */
+    suspend fun requestToWithdrawDeliveryNotification(apiVersion: String, referenceId: String, momoNotification: MomoNotification, productSubscriptionKey: String, environment: String) =
+        collectionService.requestToWithdrawDeliveryNotification(
             apiVersion = apiVersion,
             referenceId = referenceId,
             momoNotification = momoNotification,

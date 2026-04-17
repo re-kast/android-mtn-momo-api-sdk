@@ -236,4 +236,173 @@ class ModelsDeserializationTest {
         assertEquals("Success", result.responseDescription)
         assertEquals("Payment accepted", result.customerMessage)
     }
+
+    /** Verifies that required [Invoice] fields and optional fields are mapped correctly. */
+    @Test
+    fun `Invoice required fields are mapped correctly from JSON`() {
+        val raw = """
+            {
+              "externalId": "inv-001",
+              "amount": "500",
+              "currency": "EUR",
+              "validityDuration": "3600",
+              "payerMessage": "Invoice for order #42",
+              "payeeNote": "Order payment",
+              "description": "Monthly subscription",
+              "intendedPayer": {
+                "partyIdType": "MSISDN",
+                "partyId": "256700000000"
+              }
+            }
+        """.trimIndent()
+        val result = json.decodeFromString<Invoice>(raw)
+        assertNotNull(result)
+        assertEquals("inv-001", result.externalId)
+        assertEquals("500", result.amount)
+        assertEquals("EUR", result.currency)
+        assertEquals("3600", result.validityDuration)
+        assertEquals("Invoice for order #42", result.payerMessage)
+        assertEquals("Monthly subscription", result.description)
+        assertNotNull(result.intendedPayer)
+        assertEquals("256700000000", result.intendedPayer?.partyId)
+    }
+
+    /** Verifies that [Invoice] optional fields default to null when absent. */
+    @Test
+    fun `Invoice optional fields default to null when absent`() {
+        val raw = """{ "externalId": "inv-002", "amount": "100", "currency": "UGX" }"""
+        val result = json.decodeFromString<Invoice>(raw)
+        assertNotNull(result)
+        assertNull(result.validityDuration)
+        assertNull(result.intendedPayer)
+        assertNull(result.payerMessage)
+        assertNull(result.payeeNote)
+        assertNull(result.description)
+    }
+
+    /** Verifies that [PreApproval] required and optional fields are mapped correctly from JSON. */
+    @Test
+    fun `PreApproval fields are mapped correctly from JSON`() {
+        val raw = """
+            {
+              "payer": { "partyIdType": "MSISDN", "partyId": "256700000001" },
+              "payerCurrency": "EUR",
+              "payerMessage": "Pre-approval for subscription",
+              "validityTime": 7200
+            }
+        """.trimIndent()
+        val result = json.decodeFromString<PreApproval>(raw)
+        assertNotNull(result)
+        assertEquals("MSISDN", result.payer.partyIdType)
+        assertEquals("256700000001", result.payer.partyId)
+        assertEquals("EUR", result.payerCurrency)
+        assertEquals("Pre-approval for subscription", result.payerMessage)
+        assertEquals(7200, result.validityTime)
+    }
+
+    /** Verifies that [PreApproval.payerMessage] defaults to null when absent. */
+    @Test
+    fun `PreApproval payerMessage defaults to null when absent`() {
+        val raw = """
+            {
+              "payer": { "partyIdType": "MSISDN", "partyId": "256700000002" },
+              "payerCurrency": "UGX",
+              "validityTime": 3600
+            }
+        """.trimIndent()
+        val result = json.decodeFromString<PreApproval>(raw)
+        assertNull(result.payerMessage)
+    }
+
+    /** Verifies that required [CashTransfer] fields are mapped correctly from JSON. */
+    @Test
+    fun `CashTransfer required fields are mapped correctly from JSON`() {
+        val raw = """
+            {
+              "amount": "1000",
+              "currency": "EUR",
+              "externalId": "ct-001",
+              "payee": { "partyIdType": "MSISDN", "partyId": "256700000003" },
+              "payerMessage": "Remittance transfer",
+              "payeeNote": "Funds received"
+            }
+        """.trimIndent()
+        val result = json.decodeFromString<CashTransfer>(raw)
+        assertNotNull(result)
+        assertEquals("1000", result.amount)
+        assertEquals("EUR", result.currency)
+        assertEquals("ct-001", result.externalId)
+        assertEquals("MSISDN", result.payee.partyIdType)
+        assertEquals("256700000003", result.payee.partyId)
+        assertEquals("Remittance transfer", result.payerMessage)
+    }
+
+    /** Verifies that optional [CashTransfer] KYC fields are mapped correctly when present. */
+    @Test
+    fun `CashTransfer optional KYC fields are mapped when present`() {
+        val raw = """
+            {
+              "amount": "500",
+              "currency": "XOF",
+              "externalId": "ct-002",
+              "payee": { "partyIdType": "MSISDN", "partyId": "221700000001" },
+              "payerMessage": "Transfer",
+              "payeeNote": "Received",
+              "payerFirstName": "John",
+              "payerSurName": "Doe",
+              "payerLanguageCode": "en",
+              "payerEmail": "john.doe@example.com",
+              "originatingCountry": "GH",
+              "originalAmount": "450",
+              "originalCurrency": "GHS"
+            }
+        """.trimIndent()
+        val result = json.decodeFromString<CashTransfer>(raw)
+        assertNotNull(result)
+        assertEquals("John", result.payerFirstName)
+        assertEquals("Doe", result.payerSurName)
+        assertEquals("en", result.payerLanguageCode)
+        assertEquals("john.doe@example.com", result.payerEmail)
+        assertEquals("GH", result.originatingCountry)
+        assertEquals("450", result.originalAmount)
+        assertEquals("GHS", result.originalCurrency)
+    }
+
+    /** Verifies that optional [CashTransfer] KYC fields default to null when absent. */
+    @Test
+    fun `CashTransfer optional fields default to null when absent`() {
+        val raw = """
+            {
+              "amount": "100",
+              "currency": "EUR",
+              "externalId": "ct-003",
+              "payee": { "partyIdType": "MSISDN", "partyId": "256700000004" },
+              "payerMessage": "Transfer",
+              "payeeNote": "Note"
+            }
+        """.trimIndent()
+        val result = json.decodeFromString<CashTransfer>(raw)
+        assertNull(result.payerIdentificationType)
+        assertNull(result.payerIdentificationNumber)
+        assertNull(result.payerFirstName)
+        assertNull(result.payerEmail)
+        assertNull(result.originatingCountry)
+    }
+
+    /** Verifies that [BackChannelAuthorize] fields are mapped correctly from the CIBA response keys. */
+    @Test
+    fun `BackChannelAuthorize fields are mapped correctly from JSON`() {
+        val raw = """
+            {
+              "auth_req_id": "auth-req-abc123",
+              "interval": 5,
+              "expires_in": 120
+            }
+        """.trimIndent()
+        val result = json.decodeFromString<BackChannelAuthorize>(raw)
+        assertNotNull(result)
+        assertEquals("auth-req-abc123", result.authReqId)
+        assertEquals(5, result.interval)
+        assertEquals(120, result.expiresIn)
+    }
 }

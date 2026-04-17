@@ -15,9 +15,12 @@
  */
 package io.rekast.sdk.sample.ui.navigation.topbar
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.material.DrawerValue
 import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
@@ -27,18 +30,22 @@ import androidx.compose.material.rememberDrawerState
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import io.rekast.sdk.sample.R
-import io.rekast.sdk.sample.utils.Constants
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 /**
  * Renders the application top app bar with a hamburger menu icon that opens the navigation drawer.
+ *
+ * The entire navigation icon area (full TopAppBar height, square aspect ratio) is tappable — not
+ * just the 24 dp icon itself — so the drawer is easy to open with a thumb or imprecise tap.
  *
  * @param scope [CoroutineScope] used to launch the drawer open animation.
  * @param scaffoldState [ScaffoldState] providing access to the drawer state.
@@ -49,12 +56,21 @@ fun TopBar(scope: CoroutineScope, scaffoldState: ScaffoldState, title: Int) {
     TopAppBar(
         title = { Text(text = stringResource(title), fontSize = 20.sp) },
         navigationIcon = {
-            IconButton(onClick = {
-                scope.launch {
-                    scaffoldState.drawerState.open()
-                }
-            }) {
-                Icon(Icons.Filled.Menu, Constants.EMPTY_STRING)
+            val openDrawerLabel = stringResource(R.string.cd_open_navigation_drawer)
+            Box(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .aspectRatio(1f)
+                    .clickable(
+                        onClickLabel = openDrawerLabel,
+                        onClick = { scope.launch { scaffoldState.drawerState.open() } }
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Menu,
+                    contentDescription = openDrawerLabel
+                )
             }
         },
         backgroundColor = colorResource(id = R.color.accent_secondary),

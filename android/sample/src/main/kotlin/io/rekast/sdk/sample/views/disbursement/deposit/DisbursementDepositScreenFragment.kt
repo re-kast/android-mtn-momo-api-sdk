@@ -20,6 +20,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.platform.ComposeView
@@ -52,11 +53,12 @@ class DisbursementDepositScreenFragment : Fragment() {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
                 AppTheme {
-                    val showProgressBar by disbursementDepositScreenViewModel.showProgressBar.observeAsState(false)
+                    val isBootstrapComplete by mainViewModel.isBootstrapComplete.collectAsState()
+                    val vmShowProgressBar by disbursementDepositScreenViewModel.showProgressBar.observeAsState(false)
                     DisbursementScreen(
                         navController = navController,
                         snackStateFlow = disbursementDepositScreenViewModel.snackBarStateFlow,
-                        showProgressBar = showProgressBar,
+                        showProgressBar = !isBootstrapComplete || vmShowProgressBar,
                         disbursementDepositScreenViewModel = disbursementDepositScreenViewModel,
                         momoTransaction = disbursementDepositScreenViewModel.momoTransaction
                     )

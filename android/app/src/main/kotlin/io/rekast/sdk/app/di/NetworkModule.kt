@@ -19,6 +19,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import io.rekast.sdk.app.network.TokenAuthenticator
 import io.rekast.sdk.network.interceptor.UnsafeOkHttpClient
 import io.rekast.sdk.network.interceptor.auth.AccessTokenInterceptor
 import io.rekast.sdk.network.interceptor.auth.BasicAuthenticationInterceptor
@@ -27,6 +28,7 @@ import io.rekast.sdk.network.service.AuthenticationService
 import io.rekast.sdk.network.service.products.CollectionService
 import io.rekast.sdk.network.service.products.CommonService
 import io.rekast.sdk.network.service.products.DisbursementsService
+import io.rekast.sdk.network.service.products.RemittanceService
 import io.rekast.sdk.sample.utils.CredentialStorage
 import io.rekast.sdk.sample.utils.SampleConfig
 import io.rekast.sdk.utils.ApiConfig
@@ -40,6 +42,7 @@ import retrofit2.converter.kotlinx.serialization.asConverterFactory
 import java.util.concurrent.TimeUnit
 import javax.inject.Named
 import javax.inject.Singleton
+import io.rekast.sdk.app.network.CredentialProvider as AppCredentialProvider
 
 /**
  * Provides network-related dependencies using Dagger Hilt.
@@ -62,7 +65,7 @@ object NetworkModule {
     fun provideMomoCredentialProvider(
         storage: CredentialStorage,
         sampleConfig: SampleConfig
-    ): CredentialProvider = CredentialProvider(storage, sampleConfig)
+    ): CredentialProvider = AppCredentialProvider(storage, sampleConfig)
 
     /**
      * Provides a dedicated [AuthenticationService] backed by a minimal [OkHttpClient] that only
@@ -193,4 +196,9 @@ object NetworkModule {
     @Provides
     @Singleton
     fun getCommonService(retrofit: Retrofit): CommonService = retrofit.create(CommonService::class.java)
+
+    /** Provides the [RemittanceService] Retrofit service for Remittance product endpoints (cash transfer V2). */
+    @Provides
+    @Singleton
+    fun getRemittance(retrofit: Retrofit): RemittanceService = retrofit.create(RemittanceService::class.java)
 }
