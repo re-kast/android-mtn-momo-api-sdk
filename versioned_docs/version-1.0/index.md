@@ -173,6 +173,32 @@ MOMO_API_VERSION_V2="" ## The API version for v2 endpoints, use 'v2_0' for sandb
 **Important Note**: Ensure that all entries in the `local.properties` file are filled out correctly. The application will fail to compile if any required entries are missing. Double-check your configuration to avoid compilation errors. Read more about how to find the different keys [**here**](./engineering/getting-started/developer-setup)
 :::
 
+## Library Usage
+
+The SDK exposes all operations through `DefaultRepository`. Every method returns a `Flow<NetworkResult<T>>` — collect it inside a coroutine scope and handle the three states:
+
+```kotlin
+defaultRepository.someApi(...).collect { result ->
+    when (result) {
+        is NetworkResult.Loading -> { /* show progress */ }
+        is NetworkResult.Success -> { /* use result.response */ }
+        is NetworkResult.Error   -> { /* handle result.message */ }
+    }
+}
+```
+
+The available API groups are:
+
+| Group | Description |
+|---|---|
+| [**Authentication**](./Documentation/api-reference/authentication) | Provision API user, API key, Bearer token, and OAuth2 token via the CIBA flow |
+| [**Collection**](./Documentation/api-reference/collection) | Request to Pay, Request to Withdraw, invoices, pre-approvals, and delivery notifications |
+| [**Disbursements**](./Documentation/api-reference/disbursements) | Transfers, deposits, refunds, cash transfers, and delivery notifications |
+| [**Remittance**](./Documentation/api-reference/remittance) | Cross-border transfers and transfer status |
+| [**Account**](./Documentation/api-reference/account) | Account balance, basic user info, user info with consent, and account holder validation |
+
+Each page contains a working Kotlin code snippet followed by a parameter table. See the [Library Usage](./Documentation/api-reference) section in the sidebar for the full reference.
+
 ## License
 
 This project is licensed under the Apache License, Version 2.0. For more details, please refer to the [LICENSE](LICENSE) file.

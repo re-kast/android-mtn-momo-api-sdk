@@ -5,7 +5,7 @@ sidebar_label: Code Testing
 
 # Code Testing
 
-The MTM Momo Android SDK is designed with a robust testing framework that includes automated style checks, code coverage assessments, unit tests, and user interface/integration tests. These tests are crucial for maintaining code quality and ensuring that new changes do not introduce bugs. All tests are executed through GitHub Actions whenever a pull request is submitted. It is essential that all tests pass successfully for a pull request to be merged without requiring an admin override, thereby maintaining the integrity of the codebase.
+The MTN MoMo Android SDK is designed with a robust testing framework that includes automated style checks, code coverage assessments, unit tests, and user interface/integration tests. These tests are crucial for maintaining code quality and ensuring that new changes do not introduce bugs. All tests are executed through GitHub Actions whenever a pull request is submitted. It is essential that all tests pass successfully for a pull request to be merged without requiring an admin override, thereby maintaining the integrity of the codebase.
 
 ---
 
