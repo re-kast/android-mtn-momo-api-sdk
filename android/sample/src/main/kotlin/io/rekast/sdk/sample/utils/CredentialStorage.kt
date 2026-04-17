@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2024, Benjamin Mwalimu
+ * Copyright 2023-2026, Benjamin Mwalimu
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,7 +54,7 @@ private const val KEY_OAUTH_REFRESH_TOKEN_EXPIRY = "oauthRefreshTokenExpiry"
  * [io.rekast.sdk.network.interfaces.CredentialProvider].
  */
 @Singleton
-class CredentialStorage @Inject constructor(@ApplicationContext private val context: Context) {
+class CredentialStorage @Inject constructor(@param:ApplicationContext private val context: Context) {
 
     init {
         // EncryptedSharedPreferences.create() + MasterKey.Builder.build() are @WorkerThread

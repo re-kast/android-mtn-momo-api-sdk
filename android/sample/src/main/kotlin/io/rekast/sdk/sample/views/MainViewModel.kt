@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2024, Benjamin Mwalimu
+ * Copyright 2023-2026, Benjamin Mwalimu
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
  */
 package io.rekast.sdk.sample.views
 
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -54,7 +53,7 @@ import timber.log.Timber
  * [io.rekast.sdk.repository.data.NetworkResult.Success] or [io.rekast.sdk.repository.data.NetworkResult.Error].
  */
 @HiltViewModel
-open class AppMainViewModel @Inject constructor(
+open class MainViewModel @Inject constructor(
     private val defaultRepository: DefaultRepository,
     private val credentialStorage: CredentialStorage,
     private val settings: Settings,

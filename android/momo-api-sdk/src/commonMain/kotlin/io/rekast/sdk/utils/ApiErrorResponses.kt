@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2024, Benjamin Mwalimu
+ * Copyright 2023-2026, Benjamin Mwalimu
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ package io.rekast.sdk.utils
  *
  * Each constant corresponds to a specific error that can occur during API interactions.
  */
-enum class MomoAPIErrorResponses {
+enum class ApiErrorResponses {
     /**
      * Indicates that the payer was not found.
      */

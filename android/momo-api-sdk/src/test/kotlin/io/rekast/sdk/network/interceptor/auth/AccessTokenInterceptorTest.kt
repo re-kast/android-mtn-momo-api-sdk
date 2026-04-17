@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2024, Benjamin Mwalimu
+ * Copyright 2023-2026, Benjamin Mwalimu
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
 import io.rekast.sdk.network.interfaces.CredentialProvider
-import io.rekast.sdk.utils.MomoConstants
+import io.rekast.sdk.utils.Constants
 import okhttp3.Interceptor
 import okhttp3.Protocol
 import okhttp3.Request
@@ -67,8 +67,8 @@ class AccessTokenInterceptorTest {
         interceptor.intercept(mockChain)
 
         assertEquals(
-            "${MomoConstants.TokenTypes.BEARER} test-token-123",
-            capturedRequest.captured.header(MomoConstants.Headers.AUTHORIZATION)
+            "${Constants.TokenTypes.BEARER} test-token-123",
+            capturedRequest.captured.header(Constants.Headers.AUTHORIZATION)
         )
     }
 
@@ -84,7 +84,7 @@ class AccessTokenInterceptorTest {
 
         interceptor.intercept(mockChain)
 
-        assertNull(capturedRequest.captured.header(MomoConstants.Headers.AUTHORIZATION))
+        assertNull(capturedRequest.captured.header(Constants.Headers.AUTHORIZATION))
     }
 
     /** Verifies the interceptor returns the response produced by the chain unchanged. */

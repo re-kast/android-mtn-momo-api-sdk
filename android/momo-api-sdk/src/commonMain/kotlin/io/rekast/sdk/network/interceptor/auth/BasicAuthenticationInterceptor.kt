@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2024, Benjamin Mwalimu
+ * Copyright 2023-2026, Benjamin Mwalimu
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@ package io.rekast.sdk.network.interceptor.auth
 
 import io.rekast.sdk.Logger
 import io.rekast.sdk.network.interfaces.CredentialProvider
-import io.rekast.sdk.utils.MomoConstants
+import io.rekast.sdk.utils.Constants
 import java.io.IOException
 import javax.inject.Inject
 import kotlin.io.encoding.Base64
@@ -61,8 +61,8 @@ class BasicAuthenticationInterceptor @Inject constructor(private val credentialP
 
             return chain.proceed(
                 request.header(
-                    MomoConstants.Headers.AUTHORIZATION,
-                    "${MomoConstants.TokenTypes.BASIC} $encoded"
+                    Constants.Headers.AUTHORIZATION,
+                    "${Constants.TokenTypes.BASIC} $encoded"
                 ).build()
             )
         }

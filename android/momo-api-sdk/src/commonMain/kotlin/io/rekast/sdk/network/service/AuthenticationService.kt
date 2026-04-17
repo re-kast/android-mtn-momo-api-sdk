@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2024, Benjamin Mwalimu
+ * Copyright 2023-2026, Benjamin Mwalimu
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import io.rekast.sdk.model.authentication.AccessToken
 import io.rekast.sdk.model.authentication.ApiKey
 import io.rekast.sdk.model.authentication.ApiUser
 import io.rekast.sdk.model.authentication.Oauth2AccessToken
-import io.rekast.sdk.utils.MomoConstants
+import io.rekast.sdk.utils.Constants
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -34,7 +34,7 @@ import retrofit2.http.Path
  * It includes methods for creating API users, retrieving API user details, generating API keys,
  * and obtaining access tokens. Each method corresponds to a specific endpoint in the MTN MOMO API.
  */
-sealed interface AuthenticationService {
+interface AuthenticationService {
 
     /**
      * Creates a new API user.
@@ -45,12 +45,12 @@ sealed interface AuthenticationService {
      * @param productSubscriptionKey The subscription key for the product.
      * @return A [Response] containing the created [ApiUser].
      */
-    @POST(MomoConstants.EndPoints.CREATE_API_USER)
+    @POST(Constants.EndPoints.CREATE_API_USER)
     suspend fun createApiUser(
         @Body providerCallBackHost: ProviderCallBackHost,
-        @Path(MomoConstants.EndpointPaths.API_VERSION) apiVersion: String,
-        @Header(MomoConstants.Headers.X_REFERENCE_ID) uuid: String,
-        @Header(MomoConstants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String
+        @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
+        @Header(Constants.Headers.X_REFERENCE_ID) uuid: String,
+        @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String
     ): Response<ApiUser>
 
     /**
@@ -61,11 +61,11 @@ sealed interface AuthenticationService {
      * @param productSubscriptionKey The subscription key for the product.
      * @return A [Response] containing the requested [ApiUser].
      */
-    @GET(MomoConstants.EndPoints.GET_API_USER)
+    @GET(Constants.EndPoints.GET_API_USER)
     suspend fun getApiUser(
-        @Path(MomoConstants.EndpointPaths.API_VERSION) apiVersion: String,
-        @Path(MomoConstants.EndpointPaths.X_REFERENCE_ID) apiUser: String,
-        @Header(MomoConstants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String
+        @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
+        @Path(Constants.EndpointPaths.X_REFERENCE_ID) apiUser: String,
+        @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String
     ): Response<ApiUser>
 
     /**
@@ -76,11 +76,11 @@ sealed interface AuthenticationService {
      * @param productSubscriptionKey The subscription key for the product.
      * @return A [Response] containing the generated [ApiKey].
      */
-    @POST(MomoConstants.EndPoints.CREATE_API_KEY)
+    @POST(Constants.EndPoints.CREATE_API_KEY)
     suspend fun createApiKey(
-        @Path(MomoConstants.EndpointPaths.API_VERSION) apiVersion: String,
-        @Path(MomoConstants.EndpointPaths.X_REFERENCE_ID) apiUser: String,
-        @Header(MomoConstants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String
+        @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
+        @Path(Constants.EndpointPaths.X_REFERENCE_ID) apiUser: String,
+        @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String
     ): Response<ApiKey>
 
     /**
@@ -90,8 +90,8 @@ sealed interface AuthenticationService {
      * @param productSubscriptionKey The subscription key for the product.
      * @return A [Response] containing the obtained [AccessToken].
      */
-    @POST(MomoConstants.EndPoints.GET_ACCESS_TOKEN)
-    suspend fun getAccessToken(@Path(MomoConstants.EndpointPaths.PRODUCT_TYPE) productType: String, @Header(MomoConstants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String): Response<AccessToken>
+    @POST(Constants.EndPoints.GET_ACCESS_TOKEN)
+    suspend fun getAccessToken(@Path(Constants.EndpointPaths.PRODUCT_TYPE) productType: String, @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String): Response<AccessToken>
 
     /**
      * Obtains an OAuth2 access token for the specified product type.
@@ -101,10 +101,10 @@ sealed interface AuthenticationService {
      * @param environment The target environment (e.g., production, sandbox).
      * @return A [Response] containing the obtained [Oauth2AccessToken].
      */
-    @POST(MomoConstants.EndPoints.GET_OAUTH2_ACCESS_TOKEN)
+    @POST(Constants.EndPoints.GET_OAUTH2_ACCESS_TOKEN)
     suspend fun getOauth2AccessToken(
-        @Path(MomoConstants.EndpointPaths.PRODUCT_TYPE) productType: String,
-        @Header(MomoConstants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
-        @Header(MomoConstants.Headers.X_TARGET_ENVIRONMENT) environment: String
+        @Path(Constants.EndpointPaths.PRODUCT_TYPE) productType: String,
+        @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
+        @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String
     ): Response<Oauth2AccessToken>
 }

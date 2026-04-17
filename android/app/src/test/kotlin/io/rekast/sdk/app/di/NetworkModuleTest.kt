@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2024, Benjamin Mwalimu
+ * Copyright 2023-2026, Benjamin Mwalimu
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ import io.mockk.mockk
 import io.rekast.sdk.network.service.AuthenticationService
 import io.rekast.sdk.network.service.products.CollectionService
 import io.rekast.sdk.network.service.products.DisbursementsService
-import io.rekast.sdk.utils.MomoApiConfig
+import io.rekast.sdk.utils.ApiConfig
 import okhttp3.logging.HttpLoggingInterceptor
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
@@ -42,14 +42,14 @@ import retrofit2.Retrofit
  */
 class NetworkModuleTest {
     private val httpsConfig =
-        MomoApiConfig(
+        ApiConfig(
             baseUrl = "https://sandbox.momodeveloper.mtn.com/",
             apiUserId = "user-id",
             environment = "sandbox"
         )
 
     private val httpConfig =
-        MomoApiConfig(
+        ApiConfig(
             baseUrl = "http://10.0.2.2:8080/",
             apiUserId = "user-id",
             environment = "sandbox"
@@ -86,7 +86,7 @@ class NetworkModuleTest {
             NetworkModule.provideOkHttpClient(
                 httpLoggingInterceptor = NetworkModule.providesHttpLoggingInterceptor(),
                 credentialProvider = mockk(relaxed = true),
-                tokenAuthenticator = TokenAuthenticator(mockk(relaxed = true), httpsConfig),
+                tokenAuthenticator = TokenAuthenticator(mockk(relaxed = true), mockk(relaxed = true), httpsConfig),
                 config = httpsConfig
             )
         assertNotNull(client)
@@ -102,7 +102,7 @@ class NetworkModuleTest {
             NetworkModule.provideOkHttpClient(
                 httpLoggingInterceptor = NetworkModule.providesHttpLoggingInterceptor(),
                 credentialProvider = mockk(relaxed = true),
-                tokenAuthenticator = TokenAuthenticator(mockk(relaxed = true), httpConfig),
+                tokenAuthenticator = TokenAuthenticator(mockk(relaxed = true), mockk(relaxed = true), httpConfig),
                 config = httpConfig
             )
         assertNotNull(client)
@@ -110,7 +110,7 @@ class NetworkModuleTest {
 
     /**
      * Verifies that the [Retrofit] instance returned by [NetworkModule.provideRetrofit] has its
-     * base URL set to the value from [MomoApiConfig.baseUrl].
+     * base URL set to the value from [ApiConfig.baseUrl].
      */
     @Test
     fun `provideRetrofit sets base URL from config`() {
@@ -119,7 +119,7 @@ class NetworkModuleTest {
             NetworkModule.provideOkHttpClient(
                 httpLoggingInterceptor = NetworkModule.providesHttpLoggingInterceptor(),
                 credentialProvider = mockk(relaxed = true),
-                tokenAuthenticator = TokenAuthenticator(mockk(relaxed = true), httpsConfig),
+                tokenAuthenticator = TokenAuthenticator(mockk(relaxed = true), mockk(relaxed = true), httpsConfig),
                 config = httpsConfig
             )
         val retrofit: Retrofit = NetworkModule.provideRetrofit(client, json, httpsConfig)
@@ -135,7 +135,7 @@ class NetworkModuleTest {
             NetworkModule.provideOkHttpClient(
                 httpLoggingInterceptor = NetworkModule.providesHttpLoggingInterceptor(),
                 credentialProvider = mockk(relaxed = true),
-                tokenAuthenticator = TokenAuthenticator(mockk(relaxed = true), httpsConfig),
+                tokenAuthenticator = TokenAuthenticator(mockk(relaxed = true), mockk(relaxed = true), httpsConfig),
                 config = httpsConfig
             )
         assertNotNull(NetworkModule.provideRetrofit(client, json, httpsConfig))
@@ -177,13 +177,13 @@ class NetworkModuleTest {
     // because they are not themselves the root of a PermittedSubclasses declaration.
 
     /** Builds a [Retrofit] instance using [NetworkModule] helpers for the given [config]. */
-    private fun buildRetrofit(config: MomoApiConfig): Retrofit {
+    private fun buildRetrofit(config: ApiConfig): Retrofit {
         val json = NetworkModule.provideJson()
         val client =
             NetworkModule.provideOkHttpClient(
                 httpLoggingInterceptor = NetworkModule.providesHttpLoggingInterceptor(),
                 credentialProvider = mockk(relaxed = true),
-                tokenAuthenticator = TokenAuthenticator(mockk(relaxed = true), config),
+                tokenAuthenticator = TokenAuthenticator(mockk(relaxed = true), mockk(relaxed = true), config),
                 config = config
             )
         return NetworkModule.provideRetrofit(client, json, config)

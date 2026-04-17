@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2024, Benjamin Mwalimu
+ * Copyright 2023-2026, Benjamin Mwalimu
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ package io.rekast.sdk.utils
  * Contains timestamp formats, message length limits, and nested objects grouping
  * HTTP header names, token type prefixes, URL path parameters, and API endpoint templates.
  */
-object MomoConstants {
+object Constants {
     /**
      * The format used for timestamps in the SDK.
      */

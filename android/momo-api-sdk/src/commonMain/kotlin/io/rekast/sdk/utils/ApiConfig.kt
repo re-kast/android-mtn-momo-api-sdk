@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2024, Benjamin Mwalimu
+ * Copyright 2023-2026, Benjamin Mwalimu
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package io.rekast.sdk.utils
 /**
  * Holds runtime configuration for the MTN MoMo SDK.
  *
- * Pass an instance of this class when initialising the SDK instead of relying
+ * Pass an instance of this class when initializing the SDK instead of relying
  * on Android-only [BuildConfig] fields, making the SDK usable on both Android
  * and plain-JVM targets.
  *
@@ -26,4 +26,4 @@ package io.rekast.sdk.utils
  * @property apiUserId The API user ID provisioned in the MoMo developer portal.
  * @property environment The deployment environment identifier (e.g. `sandbox` or `mtncongo`).
  */
-data class MomoApiConfig(val baseUrl: String, val apiUserId: String, val environment: String)
+data class ApiConfig(val baseUrl: String, val apiUserId: String, val environment: String)

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2024, Benjamin Mwalimu
+ * Copyright 2023-2026, Benjamin Mwalimu
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -62,7 +62,7 @@ import timber.log.Timber
  *
  * All API calls are guarded by a check on [CredentialStorage.getAccessToken]: if no valid
  * token is present the request is skipped and a snackbar is shown instead. In normal operation
- * the access token is provisioned by [io.rekast.sdk.sample.views.AppMainViewModel] on first
+ * the access token is provisioned by [io.rekast.sdk.sample.views.MainViewModel] on first
  * launch and refreshed automatically by `TokenAuthenticator` on 401.
  */
 @HiltViewModel

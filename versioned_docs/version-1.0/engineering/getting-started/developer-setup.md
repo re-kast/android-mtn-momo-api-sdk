@@ -55,7 +55,7 @@ Follow these steps to set up the project for development:
    # Local properties for the MTN MOMO API SDK
    
    MOMO_BASE_URL="" ## Use https://sandbox.momodeveloper.mtn.com for sandbox and https://momodeveloper.mtn.com for production
-   MOMO_PROVIDER_CALBACK_HOST="" ## The provider callback host, use 'localhost' for sandbox
+   MOMO_PROVIDER_CALLBACK_HOST="" ## The provider callback host, use 'localhost' for sandbox
    MOMO_COLLECTION_PRIMARY_KEY="" ## The collection endpoint/product subscription primary key
    MOMO_COLLECTION_SECONDARY_KEY="" ## The collection endpoint/product subscription secondary key
    MOMO_REMITTANCE_PRIMARY_KEY="" ## The remittance endpoint/product subscription primary key

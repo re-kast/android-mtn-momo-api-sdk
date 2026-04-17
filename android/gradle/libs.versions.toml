@@ -1,76 +1,53 @@
 [versions]
 androidXJUnit = "1.3.0"
-androidXJUnitTest = "1.3.0"
 androidXTestCore = "1.7.0"
-androidXTestMonitor = "1.8.0"
 appCompat = "1.7.1"
 application = "9.1.1"
 arch = "2.2.0"
-chucker = "4.3.1"
-commonsLang3 = "3.20.0"
 composeActivity = "1.13.0"
-composeBom = "2026.03.00"
-composeMaterial = "1.10.5"
+composeBom = "2026.03.01"
+composeMaterial = "1.10.6"
 composeMaterial3 = "1.4.0"
-composeUi = "1.10.5"
-composeUiTest = "1.10.5"
-constraintLayout = "2.2.1"
+composeUi = "1.10.6"
+composeUiTest = "1.10.6"
 coreKtx = "1.18.0"
-customView = "1.2.0"
 daggerHilt = "2.59.2"
-androidxHilt = "1.3.0"
-dokka = "2.1.0"
+dokka = "2.2.0"
 espresso = "3.7.0"
-foundation = "1.10.5"
-firebase = "34.11.0"
-flowLayout = "0.36.0"
+foundation = "1.10.6"
 gradleVersionsPlugin = "0.53.0"
-kover = "0.9.8"
+javaxInject = "1"
 junit = "4.13.2"
-kakao = "3.7.0"
 klint = "1.8.0"
-kotlinCompiler = "1.5.15"
 kotlinComposeVersion = "2.3.20"
-kotlinHilt = "1.3.0"
-ksp = "2.3.6"
 kotlinVersion = "2.3.20"
 kotlinxCoroutines = "1.10.2"
-kotlinxMetadataJvm = "0.9.0"
-kotlinxSerializationJson = "1.10.0"
-leakCanary = "2.14"
+kotlinxSerializationJson = "1.11.0"
+kover = "0.9.8"
+ksp = "2.3.6"
 library = "9.1.1"
 lifecycle = "2.10.0"
-liveDataTesting = "1.3.0"
 loggingInterceptor = "5.3.2"
-material = "1.14.0-alpha10"
+material = "1.13.0"
 materialIcon = "1.10.5"
-mockK = "1.14.9"
-mockWebServer ="5.3.2"
 mockito = "5.23.0"
 mockito-inline = "5.2.0"
 mockito-kotlin = "6.3.0"
+mockK = "1.14.9"
+mockWebServer = "5.3.2"
+monitor = "1.8.0"
 navigation = "2.9.7"
 okhttp = "5.3.2"
-poolingContainer = "1.1.0"
 retrofit = "3.0.0"
 roboelectric = "4.16.1"
 rules = "1.7.0"
 runner = "1.7.0"
-rxJava = "3.1.11"
 secrets = "2.0.1"
-securityCrypto = "1.1.0-alpha06"
+securityCrypto = "1.1.0"
 spotless = "8.4.0"
 timber = "5.0.1"
-truth = "1.4.5"
-
-workRuntimeKtx = "2.11.1"
-coroutines = "1.10.2"
-retrofit-coroutines = "0.9.2"
-monitor = "1.8.0"
 
 [libraries]
-agoda-kakao = { group = "io.github.kakaocup", name = "kakao", version.ref = "kakao" }
-apache-commons-lang3 = { group = "org.apache.commons", name = "commons-lang3", version.ref = "commonsLang3" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "composeActivity" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appCompat" }
 androidx-arch-core-testing = { group = "androidx.arch.core", name = "core-testing", version.ref = "arch" }
@@ -81,81 +58,53 @@ compose-material-icons-core = { group = "androidx.compose.material", name = "mat
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "composeMaterial3" }
 androidx-compose-material3-window = { group = "androidx.compose.material3", name = "material3-window-size-class", version.ref = "composeMaterial3" }
 androidx-compose-runtime-livedata = { group = "androidx.compose.runtime", name = "runtime-livedata", version.ref = "composeUi" }
-androidx-compose-runtime-rxjava = { group = "androidx.compose.runtime", name = "runtime-rxjava2", version.ref = "composeUi" }
 androidx-compose-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "composeUi" }
 androidx-compose-ui-test = { group = "androidx.compose.ui", name = "ui-test", version.ref = "composeUiTest" }
-androidx-compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4", version.ref = "composeUiTest" }
 androidx-compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest", version.ref = "composeUiTest" }
 androidx-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "composeUi" }
 androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview", version.ref = "composeUi" }
-androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintLayout" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
-androidx-customview = { group = "androidx.customview", name = "customview", version.ref = "customView" }
-androidx-customview-poolingcontainer = { group = "androidx.customview", name = "customview-poolingcontainer", version.ref = "poolingContainer" }
-androidx-hilt-compiler = { group = "androidx.hilt", name = "hilt-compiler", version.ref = "kotlinHilt" }
-androidx-hilt-work = { group = "androidx.hilt", name = "hilt-work", version.ref = "androidxHilt" } # Changed to androidxHilt
 androidx-lifecycle-lifecycle-compiler = { group = "androidx.lifecycle", name = "lifecycle-compiler", version.ref = "lifecycle" }
 androidx-lifecycle-livedata-ktx = { group = "androidx.lifecycle", name = "lifecycle-livedata-ktx", version.ref = "lifecycle" }
-androidx-lifecycle-process = { group = "androidx.lifecycle", name = "lifecycle-process", version.ref = "lifecycle" }
-androidx-lifecycle-reactivestreams-ktx = { group = "androidx.lifecycle", name = "lifecycle-reactivestreams-ktx", version.ref = "lifecycle" }
 androidx-lifecycle-runtime-compose = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycle" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle" }
 androidx-lifecycle-runtime-testing = { group = "androidx.lifecycle", name = "lifecycle-runtime-testing", version.ref = "lifecycle" }
-androidx-lifecycle-service = { group = "androidx.lifecycle", name = "lifecycle-service", version.ref = "lifecycle" }
 androidx-lifecycle-viewmodel-compose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycle" }
 androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycle" }
-androidx-lifecycle-viewmodel-savedstate = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-savedstate", version.ref = "lifecycle" }
-androidx-lifecycle-viewmodel-android = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-android", version.ref = "lifecycle" }
+androidx-monitor = { group = "androidx.test", name = "monitor", version.ref = "monitor" }
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation" }
-androidx-navigation-dynamic = { group = "androidx.navigation", name = "navigation-dynamic-features-fragment", version.ref = "navigation" }
 androidx-navigation-fragment = { group = "androidx.navigation", name = "navigation-fragment-ktx", version.ref = "navigation" }
 androidx-navigation-testing = { group = "androidx.navigation", name = "navigation-testing", version.ref = "navigation" }
-androidx-navigation-ui = { group = "androidx.navigation", name = "navigation-ui-ktx", version.ref = "navigation" }
+androidx-security-crypto = { group = "androidx.security", name = "security-crypto", version.ref = "securityCrypto" }
 androidx-test-core = { group = "androidx.test", name = "core", version.ref = "androidXTestCore" }
 androidx-test-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso" }
 androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidXJUnit" }
 androidx-test-rules = { group = "androidx.test", name = "rules", version.ref = "rules" }
 androidx-test-runner = { group = "androidx.test", name = "runner", version.ref = "runner" }
-chuckerteam-chucker = { group = "com.github.chuckerteam.chucker", name = "library", version.ref = "chucker" }
-chuckerteam-chucker-noop = { group = "com.github.chuckerteam.chucker", name = "library-no-op", version.ref = "chucker" }
-compose-compiler = { group = "androidx.compose.compiler", name ="compiler", version.ref = "kotlinCompiler" }
-google-accompanist-flowlayout = { group = "com.google.accompanist", name = "accompanist-flowlayout", version.ref = "flowLayout" }
 google-android-material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 google-dagger-hilt = { group = "com.google.dagger", name = "hilt-android", version.ref = "daggerHilt" }
 google-dagger-hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "daggerHilt" }
-google-firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebase" }
-google-firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics-ktx", version.ref = "firebase" }
-google-truth = { group = "com.google.truth", name = "truth", version.ref = "truth" }
 hilt-android-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "daggerHilt" }
 hilt-android-gradle-plugin = { group = "com.google.dagger", name = "hilt-android-gradle-plugin", version.ref = "daggerHilt" }
 jakewharton-timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "timber" }
-jraska-livedata-testing = { group = "com.jraska.livedata", name = "testing-ktx", version.ref = "liveDataTesting" }
+javax-inject = { module = "javax.inject:javax.inject", version.ref = "javaxInject" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 kotlin-gradle-plugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlinVersion" }
-kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlinVersion" }
+kotlinx-coroutines = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "kotlinxCoroutines" }
+kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinxCoroutines" }
-kotlinx-metadata-jvm = { group = "org.jetbrains.kotlinx", name = "kotlinx-metadata-jvm", version.ref = "kotlinxMetadataJvm" }
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
-mockk = { group = "io.mockk", name = "mockk", version.ref = "mockK" }
-mockk-android = { group = "io.mockk", name = "mockk-android", version.ref = "mockK" }
 mockito-core = { group = "org.mockito", name = "mockito-core", version.ref = "mockito" }
 mockito-inline = { group = "org.mockito", name = "mockito-inline", version.ref = "mockito-inline" }
 mockito-kotlin = { group = "org.mockito.kotlin", name = "mockito-kotlin", version.ref = "mockito-kotlin" }
+mockk = { group = "io.mockk", name = "mockk", version.ref = "mockK" }
 navigation-safe-args-gradle-plugin = { group = "androidx.navigation", name = "navigation-safe-args-gradle-plugin", version.ref = "navigation" }
 robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "roboelectric" }
-androidx-security-crypto = { group = "androidx.security", name = "security-crypto", version.ref = "securityCrypto" }
-squareup-leakcanary = { group = "com.squareup.leakcanary", name = "leakcanary-android", version.ref = "leakCanary" }
 squareup-okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
 squareup-okhttp-logging = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "loggingInterceptor" }
 squareup-okhttp-mockwebserver = { group = "com.squareup.okhttp3", name = "mockwebserver", version.ref = "mockWebServer" }
 squareup-retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
-squareup-retrofit-gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofit" }
 squareup-retrofit-serialization = { group = "com.squareup.retrofit2", name = "converter-kotlinx-serialization", version.ref = "retrofit" }
-work-runtime-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "workRuntimeKtx" }
-kotlinx-coroutines = { group = "org.jetbrains.kotlinx", name="kotlinx-coroutines-android", version.ref = "coroutines" }
-kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
-retrofit-coroutines = { group = "com.jakewharton.retrofit", name="retrofit2-kotlin-coroutines-adapter", version.ref = "retrofit-coroutines" }
-androidx-monitor = { group = "androidx.test", name = "monitor", version.ref = "monitor" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "application" }
@@ -165,11 +114,10 @@ compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "
 dagger-hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "daggerHilt" }
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlinVersion" }
-ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlinVersion" }
+kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 navigation-safeargs = { id = "androidx.navigation.safeargs.kotlin", version.ref = "navigation" }
 secrets = { id = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin", version.ref = "secrets" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
-kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
-
 versions = { id = "com.github.ben-manes.versions", version.ref = "gradleVersionsPlugin" }

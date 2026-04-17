@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2024, Benjamin Mwalimu
+ * Copyright 2023-2026, Benjamin Mwalimu
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import io.mockk.slot
 import io.mockk.unmockkStatic
 import io.mockk.verify
 import io.rekast.sdk.network.interfaces.CredentialProvider
-import io.rekast.sdk.utils.MomoConstants
+import io.rekast.sdk.utils.Constants
 import okhttp3.Interceptor
 import okhttp3.Protocol
 import okhttp3.Request
@@ -89,8 +89,8 @@ class BasicAuthenticationInterceptorTest {
 
         val expectedEncoded = java.util.Base64.getEncoder().encodeToString("user-123:key-abc".toByteArray())
         assertEquals(
-            "${MomoConstants.TokenTypes.BASIC} $expectedEncoded",
-            capturedRequest.captured.header(MomoConstants.Headers.AUTHORIZATION)
+            "${Constants.TokenTypes.BASIC} $expectedEncoded",
+            capturedRequest.captured.header(Constants.Headers.AUTHORIZATION)
         )
     }
 
@@ -106,7 +106,7 @@ class BasicAuthenticationInterceptorTest {
 
         interceptor.intercept(mockChain)
 
-        assertNull(capturedRequest.captured.header(MomoConstants.Headers.AUTHORIZATION))
+        assertNull(capturedRequest.captured.header(Constants.Headers.AUTHORIZATION))
     }
 
     /** Verifies the Authorization header is omitted when apiKey is an empty string. */
@@ -121,7 +121,7 @@ class BasicAuthenticationInterceptorTest {
 
         interceptor.intercept(mockChain)
 
-        assertNull(capturedRequest.captured.header(MomoConstants.Headers.AUTHORIZATION))
+        assertNull(capturedRequest.captured.header(Constants.Headers.AUTHORIZATION))
     }
 
     /** Verifies the Authorization header is omitted when both userId and apiKey are empty. */
@@ -136,7 +136,7 @@ class BasicAuthenticationInterceptorTest {
 
         interceptor.intercept(mockChain)
 
-        assertNull(capturedRequest.captured.header(MomoConstants.Headers.AUTHORIZATION))
+        assertNull(capturedRequest.captured.header(Constants.Headers.AUTHORIZATION))
     }
 
     /** Verifies the interceptor returns the response produced by the chain unchanged. */

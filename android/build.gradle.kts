@@ -1,3 +1,18 @@
+/*
+ * Copyright 2023-2026, Benjamin Mwalimu
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 import org.gradle.process.ExecOperations
 
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
@@ -48,10 +63,16 @@ allprojects {
 
             endWithNewline()
             licenseHeaderFile("${rootProject.projectDir}/license-header.txt")
+                .yearSeparator("-")
+                .updateYearWithLatest(true)
         }
         kotlinGradle {
             target("*.gradle.kts")
-            licenseHeaderFile("${rootProject.projectDir}/license-header.txt", "")
+            licenseHeaderFile(
+                "${rootProject.projectDir}/license-header.txt",
+                "^(import|@|plugins|pluginManagement|dependencyResolutionManagement|include|rootProject|buildscript|allprojects|subprojects|abstract|tasks)"
+            ).yearSeparator("-")
+                .updateYearWithLatest(true)
             ktlint()
         }
     }
@@ -89,20 +110,26 @@ tasks.register<Copy>("copyDocsToGhPages") {
     into(file("docs"))
 }
 
-abstract class DeployDocsTask @Inject constructor(private val execOps: ExecOperations) : DefaultTask() {
-    @TaskAction
-    fun deploy() {
-        execOps.exec { commandLine("git", "add", ".") }
-        val hasChanges = execOps.exec {
-            commandLine("git", "diff", "--cached", "--quiet")
-            isIgnoreExitValue = true
-        }.exitValue != 0
-        if (hasChanges) {
-            execOps.exec { commandLine("git", "commit", "-m", "Update documentation") }
-            execOps.exec { commandLine("git", "push") }
+abstract class DeployDocsTask
+    @Inject
+    constructor(
+        private val execOps: ExecOperations
+    ) : DefaultTask() {
+        @TaskAction
+        fun deploy() {
+            execOps.exec { commandLine("git", "add", ".") }
+            val hasChanges =
+                execOps
+                    .exec {
+                        commandLine("git", "diff", "--cached", "--quiet")
+                        isIgnoreExitValue = true
+                    }.exitValue != 0
+            if (hasChanges) {
+                execOps.exec { commandLine("git", "commit", "-m", "Update documentation") }
+                execOps.exec { commandLine("git", "push") }
+            }
         }
     }
-}
 
 tasks.register<DeployDocsTask>("deployDocs") {
     dependsOn("copyDocsToGhPages")

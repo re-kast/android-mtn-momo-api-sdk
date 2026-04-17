@@ -48,7 +48,7 @@ For further exploration, check out the documentation on [Kotlin Coroutines](http
 
 ### Additional Benefits
 
-- **Comprehensive Error Handling and Logging**: The SDK comes equipped with built-in error handling and logging tools, enabling developers to track and resolve issues effectively, ensuring smooth functionality in production environments.
+- **Comprehensive Error Handling and Logging**: The SDK ships a KMP-safe `Logger` abstraction (`d`, `i`, `w`, `e`) backed by [Timber](https://github.com/JakeWharton/timber) on Android and standard output on JVM. All SDK internals use `Logger` so log output flows through whichever backend the host platform provides.
   
 - **Secure API Communication**: Implements secure communication channels with proper authentication mechanisms, safeguarding all transactions and user data in compliance with industry standards.
 
@@ -67,10 +67,10 @@ The SDK uses a **pull-based credential model** — it never stores credentials i
 │                        Your App                             │
 │                                                             │
 │  CredentialStorage          CredentialProvider              │
-│  (EncryptedSharedPrefs) ◄── (reads from storage)           │
+│  (EncryptedSharedPrefs) ◄── (reads from storage)            │
 │          ▲                          │                       │
 │          │                          ▼                       │
-│  AppMainViewModel           SDK Interceptors                │
+│  MainViewModel           SDK Interceptors                │
 │  (writes credentials)       BasicAuthInterceptor            │
 │                             AccessTokenInterceptor          │
 │                                     │                       │
@@ -88,9 +88,10 @@ Credentials are stored using `EncryptedSharedPreferences` (AES-256-GCM via the A
 The `TokenAuthenticator` (an OkHttp `Authenticator`) fires automatically on every HTTP 401 response from a Bearer-protected endpoint:
 
 1. Verifies the failed request was using Bearer auth.
-2. Calls the MTN MoMo token endpoint using Basic Auth (API user ID + API key) on a separate, minimal `OkHttpClient` to avoid a circular dependency.
-3. Saves the refreshed token to `CredentialStorage`.
-4. Returns the original request so OkHttp re-runs the interceptors — `AccessTokenInterceptor` reads the new token from storage and attaches the correct `Authorization` header on the retry.
+2. Calls the MTN MoMo token endpoint via a dedicated `AuthenticationService` backed by a minimal, Basic-Auth-only `OkHttpClient` — this avoids a circular dependency with the main client.
+3. Saves the refreshed Bearer token to `CredentialStorage`.
+4. If the OAuth2 access token is also expired, refreshes it in the same pass and saves it to `CredentialStorage`. An OAuth2 refresh failure is non-fatal — the original request is still retried with the refreshed Bearer token.
+5. Returns the original request so OkHttp re-runs the interceptors — `AccessTokenInterceptor` reads the new token from storage and attaches the correct `Authorization` header on the retry.
 
 After at most **one retry**, the authenticator gives up and propagates the 401 to the caller.
 
@@ -126,7 +127,7 @@ fun provideCredentialProvider(
 
 ### Credential Bootstrap
 
-On first launch, `AppMainViewModel` runs a one-time sequence to provision credentials:
+On first launch, `MainViewModel` runs a one-time sequence to provision credentials:
 
 1. **Check API user** — if the user does not exist, create it.
 2. **Create API key** — stored to `CredentialStorage`; skipped if a key already exists.
@@ -155,13 +156,13 @@ To configure your local environment for the MTN MOMO API SDK, create a `local.pr
 # Local properties for the MTN MOMO API SDK
 
 MOMO_BASE_URL="" ## Use https://sandbox.momodeveloper.mtn.com for sandbox and https://momodeveloper.mtn.com for production
-MOMO_PROVIDER_CALBACK_HOST="" ## The provider callback host, use 'localhost' for sandbox
+MOMO_PROVIDER_CALLBACK_HOST="" ## The provider callback host, use 'localhost' for sandbox
 MOMO_COLLECTION_PRIMARY_KEY="" ## The collection endpoint/product subscription primary key
 MOMO_COLLECTION_SECONDARY_KEY="" ## The collection endpoint/product subscription secondary key
 MOMO_REMITTANCE_PRIMARY_KEY="" ## The remittance endpoint/product subscription primary key
 MOMO_REMITTANCE_SECONDARY_KEY="" ## The remittance endpoint/product subscription secondary key
-MOMO_DISBURSEMENTS_PRIMARY_KEY="" ## The disbursements endpoint/product subscription primary key
-MOMO_DISBURSEMENTS_SECONDARY_KEY="" ## The disbursements endpoint/product subscription secondary key
+MOMO_DISBURSEMENTS_PRIMARY_KEY="" ## The disbursement endpoint/product subscription primary key
+MOMO_DISBURSEMENTS_SECONDARY_KEY="" ## The disbursement endpoint/product subscription secondary key
 MOMO_API_USER_ID="" ## The sandbox API user ID. You can use a [UUID generator](https://www.uuidgenerator.net/version4) to create one
 MOMO_ENVIRONMENT="" ## API environment, use 'sandbox' for testing and 'production' for live operations
 MOMO_API_VERSION_V1="" ## The API version for v1 endpoints, use 'v1_0' for sandbox and 'v1' for production
@@ -169,7 +170,7 @@ MOMO_API_VERSION_V2="" ## The API version for v2 endpoints, use 'v2_0' for sandb
 ```
 
 :::danger
-**Important Note**: Ensure that all entries in the `local.properties` file are filled out correctly. The application will fail to compile if any required entries are missing. Double-check your configuration to avoid compilation errors. Read more about how to find the diffrent keys [**here**](./engineering/getting-started/developer-setup)
+**Important Note**: Ensure that all entries in the `local.properties` file are filled out correctly. The application will fail to compile if any required entries are missing. Double-check your configuration to avoid compilation errors. Read more about how to find the different keys [**here**](./engineering/getting-started/developer-setup)
 :::
 
 ## License

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2024, Benjamin Mwalimu
+ * Copyright 2023-2026, Benjamin Mwalimu
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ import io.rekast.sdk.network.service.products.CollectionService
 import io.rekast.sdk.network.service.products.DisbursementsService
 import io.rekast.sdk.repository.data.DataResponse
 import io.rekast.sdk.repository.data.NetworkResult
-import io.rekast.sdk.utils.MomoApiConfig
+import io.rekast.sdk.utils.ApiConfig
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.Dispatchers
@@ -51,7 +51,7 @@ import retrofit2.Response
  * @property collection The service for collection-related API calls.
  */
 @Singleton
-class DefaultRepository @Inject constructor(private val defaultSource: DefaultSource, private val disbursementsService: DisbursementsService, private val collection: CollectionService, private val config: MomoApiConfig) :
+class DefaultRepository @Inject constructor(private val defaultSource: DefaultSource, private val disbursementsService: DisbursementsService, private val collection: CollectionService, private val config: ApiConfig) :
     DataResponse() {
 
     /**

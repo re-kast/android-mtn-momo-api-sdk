@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2024, Benjamin Mwalimu
+ * Copyright 2023-2026, Benjamin Mwalimu
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,18 +25,21 @@ import io.rekast.sdk.sample.utils.Constants
  * and a human-readable [title] displayed in the drawer.
  */
 sealed class NavigationDrawerItem(var route: Int, var icon: Int, var title: String) {
+    /** Navigates to the Home screen showing user info, account status, and balance. */
     object Home : NavigationDrawerItem(
         R.id.homeScreenFragment,
         R.drawable.home,
         Constants.NavigationTitle.HOME
     )
 
+    /** Navigates to the Remittance Transfer screen. */
     object Remittance : NavigationDrawerItem(
         R.id.remittanceScreenFragment,
         R.drawable.currency_exchange,
         Constants.NavigationTitle.REMITTANCE
     )
 
+    /** Navigates to the Collection Request-to-Pay screen. */
     object CollectionRequestToPay :
         NavigationDrawerItem(
             R.id.collectionPayScreenFragment,
@@ -44,6 +47,7 @@ sealed class NavigationDrawerItem(var route: Int, var icon: Int, var title: Stri
             Constants.NavigationTitle.COLLECTION_SERVICE_REQUEST_TO_PAY
         )
 
+    /** Navigates to the Collection Request-to-Withdraw screen. */
     object CollectionRequestToWithdraw :
         NavigationDrawerItem(
             R.id.collectionWithDrawScreenFragment,
@@ -51,6 +55,7 @@ sealed class NavigationDrawerItem(var route: Int, var icon: Int, var title: Stri
             Constants.NavigationTitle.COLLECTION_SERVICE_REQUEST_TO_WITHDRAW
         )
 
+    /** Navigates to the Disbursement Deposit screen. */
     object DisbursementDeposit :
         NavigationDrawerItem(
             R.id.disbursementDepositScreenFragment,
@@ -58,6 +63,7 @@ sealed class NavigationDrawerItem(var route: Int, var icon: Int, var title: Stri
             Constants.NavigationTitle.DISBURSEMENT_DEPOSIT
         )
 
+    /** Navigates to the Disbursement Refund screen. */
     object DisbursementRefund :
         NavigationDrawerItem(
             R.id.disbursementRefundScreenFragment,

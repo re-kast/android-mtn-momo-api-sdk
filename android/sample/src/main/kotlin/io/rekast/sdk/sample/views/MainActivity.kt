@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2024, Benjamin Mwalimu
+ * Copyright 2023-2026, Benjamin Mwalimu
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,9 +31,9 @@ import io.rekast.sdk.sample.R
  */
 @AndroidEntryPoint
 @ExperimentalMaterialApi
-open class AppMainActivity : AppCompatActivity() {
+open class MainActivity : AppCompatActivity() {
     lateinit var navHostFragment: NavHostFragment
-    private val appMainViewModel by viewModels<AppMainViewModel>()
+    private val mainViewModel by viewModels<MainViewModel>()
 
     /**
      * Called when the activity is created.
@@ -64,6 +64,6 @@ open class AppMainActivity : AppCompatActivity() {
      */
     override fun onResume() {
         super.onResume()
-        appMainViewModel.checkUser()
+        mainViewModel.checkUser()
     }
 }

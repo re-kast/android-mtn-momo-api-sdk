@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2024, Benjamin Mwalimu
+ * Copyright 2023-2026, Benjamin Mwalimu
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,11 +21,11 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import io.rekast.sdk.app.BuildConfig
 import io.rekast.sdk.sample.utils.SampleConfig
-import io.rekast.sdk.utils.MomoApiConfig
+import io.rekast.sdk.utils.ApiConfig
 import javax.inject.Singleton
 
 /**
- * Application-level Hilt module that provides the [MomoApiConfig] consumed by the SDK.
+ * Application-level Hilt module that provides the [ApiConfig] consumed by the SDK.
  *
  * Lives in the :app module (not :sample) because com.android.kotlin.multiplatform.library's
  * compile JAR does not include KSP-generated Java factory classes; moving @Module providers
@@ -38,12 +38,12 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object AppModule {
     /**
-     * Provides the [MomoApiConfig] used by the SDK to configure the base URL, API user, and environment.
+     * Provides the [ApiConfig] that the SDK uses to configure the base URL, API user ID, and target environment.
      */
     @Provides
     @Singleton
-    fun provideMomoApiConfig(): MomoApiConfig =
-        MomoApiConfig(
+    fun provideApiConfig(): ApiConfig =
+        ApiConfig(
             baseUrl = BuildConfig.MOMO_BASE_URL,
             apiUserId = BuildConfig.MOMO_API_USER_ID,
             environment = BuildConfig.MOMO_ENVIRONMENT
@@ -60,7 +60,7 @@ object AppModule {
             apiVersionV1 = BuildConfig.MOMO_API_VERSION_V1,
             apiVersionV2 = BuildConfig.MOMO_API_VERSION_V2,
             environment = BuildConfig.MOMO_ENVIRONMENT,
-            providerCallbackHost = BuildConfig.MOMO_PROVIDER_CALBACK_HOST,
+            providerCallbackHost = BuildConfig.MOMO_PROVIDER_CALLBACK_HOST,
             apiUserId = BuildConfig.MOMO_API_USER_ID,
             collectionPrimaryKey = BuildConfig.MOMO_COLLECTION_PRIMARY_KEY,
             collectionSecondaryKey = BuildConfig.MOMO_COLLECTION_SECONDARY_KEY,
