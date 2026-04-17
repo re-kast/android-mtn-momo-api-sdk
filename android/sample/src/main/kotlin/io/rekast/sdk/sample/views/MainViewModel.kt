@@ -206,7 +206,7 @@ open class MainViewModel @Inject constructor(
                             try {
                                 credentialStorage.saveAccessToken(result.response)
                                 Timber.d("Access token saved")
-                                getOauthAccessToken()
+                                bcAuthorize()
                             } catch (e: Exception) {
                                 Timber.e(e, "Failed to save access token")
                                 _isBootstrapComplete.value = true
@@ -236,25 +236,30 @@ open class MainViewModel @Inject constructor(
      * prompt to the subscriber's phone. Once the user approves on-device, the `auth_req_id`
      * can be exchanged for an OAuth2 access token via [getOauthAccessToken].
      *
+     * Uses a hardcoded [io.rekast.sdk.model.BcAuthorizeRequest] with `loginHint = "ID:563667/MSISDN"`,
+     * `scope = "all_info"`, and `accessType = "offline"`.
+     *
      * On success, both [CredentialStorage.saveBackChannelAuthorizationRequestId] (with its expiry)
      * and [CredentialStorage.saveLoginHint] are written, then [getOauthAccessToken] is called
      * immediately to attempt the token exchange. If the MTN MoMo endpoint returns a non-2xx
-     * response the error is logged and [isBootstrapComplete] is set to `true` — the caller should
-     * retry [bcAuthorize] after correcting the login hint.
+     * response the error is logged and [isBootstrapComplete] is set to `true`.
      *
      * `io.rekast.sdk.app.network.TokenAuthenticator` also calls the bc-authorize endpoint directly
      * (bypassing this method) when it detects an expired `auth_req_id` on a 401 response, using
      * the login hint stored by this method.
-     *
-     * @param request The authorization request parameters including the user's MSISDN login hint.
      */
-    fun bcAuthorize(request: BcAuthorizeRequest) {
+    fun bcAuthorize() {
         val productType = Utils.getProductSubscriptionKeys(ProductType.REMITTANCE, sampleConfig)
+        val bcAuthorizeRequest = BcAuthorizeRequest(
+            loginHint = "ID:563667/MSISDN",
+            scope = "all_info",
+            accessType = "offline"
+        )
         viewModelScope.launch(dispatchers.io()) {
             defaultRepository.bcAuthorize(
                 productType = ProductType.REMITTANCE.productType,
                 apiVersion = sampleConfig.apiVersionV1,
-                bcAuthorizeRequest = request,
+                bcAuthorizeRequest = bcAuthorizeRequest,
                 productSubscriptionKey = productType,
                 environment = sampleConfig.environment
             ).collect { result ->
@@ -262,7 +267,7 @@ open class MainViewModel @Inject constructor(
                     is NetworkResult.Success -> {
                         result.response?.let { response ->
                             credentialStorage.saveBackChannelAuthorizationRequestId(response.authReqId, response.expiresIn)
-                            credentialStorage.saveLoginHint(request.loginHint)
+                            credentialStorage.saveLoginHint(bcAuthorizeRequest.loginHint)
                             Timber.d("BC authorize request ID saved")
                             getOauthAccessToken()
                         } ?: run { _isBootstrapComplete.value = true }
@@ -287,9 +292,9 @@ open class MainViewModel @Inject constructor(
      *    sets [isBootstrapComplete] to `true` immediately. The token was either just written by a
      *    previous call or has not yet expired.
      * 2. **`auth_req_id` missing** — [CredentialStorage.getBackChannelAuthorizationRequestId] is
-     *    blank; attempts to re-initiate CIBA using the stored login hint by calling [bcAuthorize].
-     *    If no login hint is stored either, logs a warning and sets [isBootstrapComplete] to `true`
-     *    — the caller must invoke [bcAuthorize] explicitly with a valid login hint first.
+     *    blank; calls [bcAuthorize] to re-initiate CIBA. [bcAuthorize] (or the inner
+     *    [getOauthAccessToken] it chains into) will set [isBootstrapComplete] to `true` when it
+     *    reaches its own terminal state.
      * 3. **`auth_req_id` present** — calls [DefaultRepository.getOauthAccessToken] to exchange
      *    the request ID for a token. On success, persists the token via
      *    [CredentialStorage.saveOauthAccessToken]. In all terminal cases (success or error),
@@ -312,15 +317,9 @@ open class MainViewModel @Inject constructor(
                 }
 
                 backChannelAuthorizationRequestId.isBlank() -> {
-                    val loginHint = credentialStorage.getLoginHint()
-                    if (loginHint.isNotBlank()) {
-                        // bcAuthorize (or the inner getOauthAccessToken it calls) will set
-                        // isBootstrapComplete = true when it reaches its own terminal state.
-                        bcAuthorize(BcAuthorizeRequest(loginHint = loginHint, scope = Constants.FormFields.CIBA_SCOPE, accessType = Constants.FormFields.CIBA_ACCESS_TYPE))
-                    } else {
-                        Timber.w("OAuth2 token fetch skipped: call bcAuthorize() with a login hint first")
-                        _isBootstrapComplete.value = true
-                    }
+                    // bcAuthorize (or the inner getOauthAccessToken it calls) will set
+                    // isBootstrapComplete = true when it reaches its own terminal state.
+                    bcAuthorize()
                 }
 
                 accessToken.isNotBlank() -> {

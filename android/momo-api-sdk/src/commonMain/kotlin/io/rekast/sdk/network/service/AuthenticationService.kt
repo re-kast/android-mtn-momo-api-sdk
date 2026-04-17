@@ -122,7 +122,7 @@ interface AuthenticationService {
      *
      * @param productType The type of product initiating the authorization (e.g., collection).
      * @param apiVersion The version of the API (e.g., v1_0).
-     * @param loginHint The account identifier hint, typically in the format `MSISDN:{phoneNumber}`.
+     * @param loginHint The account identifier hint in the format `ID:{msisdn}/MSISDN` (e.g. `ID:563667/MSISDN`).
      * @param scope The OAuth2 scope being requested (e.g., `profile openid`).
      * @param accessType The access type for the token (`online` or `offline`). Defaults to `online`.
      * @param productSubscriptionKey The subscription key for the product.

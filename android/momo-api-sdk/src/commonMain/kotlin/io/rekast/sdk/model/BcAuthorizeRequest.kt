@@ -18,7 +18,7 @@ package io.rekast.sdk.model
 /**
  * Request parameters for a backchannel (CIBA) authorization call.
  *
- * @property loginHint The account identifier hint, typically in the format `MSISDN:{phoneNumber}`.
+ * @property loginHint The account identifier hint in the format `ID:{msisdn}/MSISDN` (e.g. `ID:563667/MSISDN`).
  * @property scope The OAuth2 scope being requested (e.g., `profile openid`).
  * @property accessType The access type for the token (`online` or `offline`).
  */

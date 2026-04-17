@@ -18,19 +18,23 @@ package io.rekast.sdk.sample.ui.components.general
 import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import io.rekast.sdk.sample.R
 
 /**
- * Returns a [TextFieldColors] configuration using the application's primary and background colors
- * for focused, unfocused, and cursor states.
+ * Returns a [TextFieldColors] configuration for text fields throughout the sample application.
  *
- * @return [TextFieldColors] pre-configured with the app's color scheme.
+ * - Focused border/indicator: `accent_primary`
+ * - Unfocused border/indicator: `accent_secondary`
+ * - Focused container background: `white`
+ * - Unfocused container background: `whiteish`
+ * - Cursor: `accent_primary`
  */
 @Composable
 fun textFieldDefaultsComponent(): TextFieldColors = TextFieldDefaults.colors(
     focusedIndicatorColor = colorResource(id = R.color.accent_primary),
-    unfocusedIndicatorColor = colorResource(id = R.color.black),
+    unfocusedIndicatorColor = colorResource(id = R.color.accent_secondary),
     focusedContainerColor = colorResource(id = R.color.white),
     unfocusedContainerColor = colorResource(id = R.color.whiteish),
     cursorColor = colorResource(id = R.color.accent_primary)

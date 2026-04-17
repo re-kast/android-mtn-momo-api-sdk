@@ -49,9 +49,9 @@ fun PaymentDataDisplayComponent(modifier: Modifier = Modifier, title: String, mo
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(15.dp)
+            .padding(20.dp)
     ) {
-        Column(modifier = modifier.padding(end = 20.dp)) {
+        Column {
             Text(
                 text = title,
                 style = TextStyle(
@@ -62,15 +62,15 @@ fun PaymentDataDisplayComponent(modifier: Modifier = Modifier, title: String, mo
             )
             Divider(modifier = modifier.padding(top = 10.dp, bottom = 10.dp))
         }
-        Row(horizontalArrangement = Arrangement.SpaceEvenly) {
-            Column(modifier = modifier.padding(end = 20.dp)) {
+        Row(horizontalArrangement = Arrangement.SpaceEvenly, modifier = modifier.padding(top = 2.dp, bottom = 2.dp)) {
+            Column {
                 Text(
                     text = stringResource(id = R.string.display_amount),
                     color = colorResource(id = R.color.black),
                     fontWeight = FontWeight.Bold
                 )
             }
-            Column(modifier = modifier.padding(end = 10.dp)) {
+            Column {
                 momoTransaction.value?.amount?.let {
                     Text(
                         text = it,
@@ -81,15 +81,15 @@ fun PaymentDataDisplayComponent(modifier: Modifier = Modifier, title: String, mo
                 }
             }
         }
-        Row(horizontalArrangement = Arrangement.SpaceEvenly) {
-            Column(modifier = modifier.padding(end = 20.dp)) {
+        Row(horizontalArrangement = Arrangement.SpaceEvenly, modifier = modifier.padding(top = 2.dp, bottom = 2.dp)) {
+            Column {
                 Text(
                     text = stringResource(id = R.string.currency),
                     color = colorResource(id = R.color.black),
                     fontWeight = FontWeight.Bold
                 )
             }
-            Column(modifier = modifier.padding(end = 10.dp)) {
+            Column {
                 momoTransaction.value?.currency?.let {
                     Text(
                         text = it,
@@ -98,15 +98,15 @@ fun PaymentDataDisplayComponent(modifier: Modifier = Modifier, title: String, mo
                 }
             }
         }
-        Row(horizontalArrangement = Arrangement.SpaceEvenly) {
-            Column(modifier = modifier.padding(end = 20.dp)) {
+        Row(horizontalArrangement = Arrangement.SpaceEvenly, modifier = modifier.padding(top = 2.dp, bottom = 2.dp)) {
+            Column {
                 Text(
                     text = stringResource(id = R.string.financial_transaction_id),
                     color = colorResource(id = R.color.black),
                     fontWeight = FontWeight.Bold
                 )
             }
-            Column(modifier = modifier.padding(end = 10.dp)) {
+            Column {
                 momoTransaction.value?.financialTransactionId?.let {
                     Text(
                         text = it,
@@ -115,15 +115,15 @@ fun PaymentDataDisplayComponent(modifier: Modifier = Modifier, title: String, mo
                 }
             }
         }
-        Row(horizontalArrangement = Arrangement.SpaceEvenly) {
-            Column(modifier = modifier.padding(end = 20.dp)) {
+        Row(horizontalArrangement = Arrangement.SpaceEvenly, modifier = modifier.padding(top = 2.dp, bottom = 2.dp)) {
+            Column {
                 Text(
                     text = stringResource(id = R.string.external_id),
                     color = colorResource(id = R.color.black),
                     fontWeight = FontWeight.Bold
                 )
             }
-            Column(modifier = modifier.padding(end = 10.dp)) {
+            Column {
                 momoTransaction.value?.externalId?.let {
                     Text(
                         text = it,
@@ -132,8 +132,8 @@ fun PaymentDataDisplayComponent(modifier: Modifier = Modifier, title: String, mo
                 }
             }
         }
-        Row(horizontalArrangement = Arrangement.SpaceEvenly) {
-            Column(modifier = modifier.padding(end = 20.dp)) {
+        Row(horizontalArrangement = Arrangement.SpaceEvenly, modifier = modifier.padding(top = 2.dp, bottom = 2.dp)) {
+            Column {
                 val title = if (momoTransaction.value?.payee == null) {
                     stringResource(id = R.string.payer)
                 } else {
@@ -145,7 +145,7 @@ fun PaymentDataDisplayComponent(modifier: Modifier = Modifier, title: String, mo
                     fontWeight = FontWeight.Bold
                 )
             }
-            Column(modifier = modifier.padding(end = 10.dp)) {
+            Column {
                 if (momoTransaction.value?.payee == null) {
                     momoTransaction.value?.payer?.partyId?.let {
                         Text(
@@ -167,15 +167,15 @@ fun PaymentDataDisplayComponent(modifier: Modifier = Modifier, title: String, mo
                 }
             }
         }
-        Row(horizontalArrangement = Arrangement.SpaceEvenly) {
-            Column(modifier = modifier.padding(end = 20.dp)) {
+        Row(horizontalArrangement = Arrangement.SpaceEvenly, modifier = modifier.padding(top = 2.dp, bottom = 2.dp)) {
+            Column {
                 Text(
                     text = stringResource(id = R.string.payment_message_display),
                     color = colorResource(id = R.color.black),
                     fontWeight = FontWeight.Bold
                 )
             }
-            Column(modifier = modifier.padding(end = 10.dp)) {
+            Column {
                 momoTransaction.value?.payerMessage?.let {
                     Text(
                         text = it,
@@ -186,15 +186,15 @@ fun PaymentDataDisplayComponent(modifier: Modifier = Modifier, title: String, mo
                 }
             }
         }
-        Row(horizontalArrangement = Arrangement.SpaceEvenly) {
-            Column(modifier = modifier.padding(end = 20.dp)) {
+        Row(horizontalArrangement = Arrangement.SpaceEvenly, modifier = modifier.padding(top = 2.dp, bottom = 2.dp)) {
+            Column {
                 Text(
                     text = stringResource(id = R.string.payment_note_display),
                     color = colorResource(id = R.color.black),
                     fontWeight = FontWeight.Bold
                 )
             }
-            Column(modifier = modifier.padding(end = 10.dp)) {
+            Column {
                 momoTransaction.value?.payeeNote?.let {
                     Text(
                         text = it,
@@ -205,15 +205,15 @@ fun PaymentDataDisplayComponent(modifier: Modifier = Modifier, title: String, mo
                 }
             }
         }
-        Row(horizontalArrangement = Arrangement.SpaceEvenly) {
-            Column(modifier = modifier.padding(end = 20.dp)) {
+        Row(horizontalArrangement = Arrangement.SpaceEvenly, modifier = modifier.padding(top = 2.dp, bottom = 2.dp)) {
+            Column {
                 Text(
                     text = stringResource(id = R.string.status),
                     color = colorResource(id = R.color.black),
                     fontWeight = FontWeight.Bold
                 )
             }
-            Column(modifier = modifier.padding(end = 10.dp)) {
+            Column {
                 momoTransaction.value?.status?.let {
                     Text(
                         text = it,
@@ -224,16 +224,16 @@ fun PaymentDataDisplayComponent(modifier: Modifier = Modifier, title: String, mo
                 }
             }
         }
-        Row(horizontalArrangement = Arrangement.SpaceEvenly) {
+        Row(horizontalArrangement = Arrangement.SpaceEvenly, modifier = modifier.padding(top = 2.dp, bottom = 2.dp)) {
             if (momoTransaction.value?.reason != null) {
-                Column(modifier = modifier.padding(end = 20.dp)) {
+                Column {
                     Text(
                         text = stringResource(id = R.string.reason),
                         color = colorResource(id = R.color.black),
                         fontWeight = FontWeight.Bold
                     )
                 }
-                Column(modifier = modifier.padding(end = 10.dp)) {
+                Column {
                     momoTransaction.value?.reason?.let {
                         Text(
                             text = it,
@@ -245,16 +245,16 @@ fun PaymentDataDisplayComponent(modifier: Modifier = Modifier, title: String, mo
                 }
             }
         }
-        Row(horizontalArrangement = Arrangement.SpaceEvenly) {
+        Row(horizontalArrangement = Arrangement.SpaceEvenly, modifier = modifier.padding(top = 2.dp, bottom = 2.dp)) {
             if (momoTransaction.value?.referenceIdToRefund != null) {
-                Column(modifier = modifier.padding(end = 20.dp)) {
+                Column {
                     Text(
                         text = stringResource(id = R.string.reference_id_to_refund),
                         color = colorResource(id = R.color.black),
                         fontWeight = FontWeight.Bold
                     )
                 }
-                Column(modifier = modifier.padding(end = 10.dp)) {
+                Column {
                     momoTransaction.value?.referenceIdToRefund?.let {
                         Text(
                             text = it,
