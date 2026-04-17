@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2024, Benjamin Mwalimu
+ * Copyright 2023-2026, Benjamin Mwalimu
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -89,7 +89,7 @@ class Settings @Inject constructor() {
      * @param notificationMessageMaxLength The maximum allowed length for the notification message.
      * @return True if the message length is within the limit, false otherwise.
      */
-    fun checkNotificationMessageLength(notificationMessage: String?, notificationMessageMaxLength: Long = MomoConstants.NOTIFICATION_MESSAGE_LENGTH): Boolean {
+    fun checkNotificationMessageLength(notificationMessage: String?, notificationMessageMaxLength: Long = Constants.NOTIFICATION_MESSAGE_LENGTH): Boolean {
         if (!notificationMessage.isNullOrBlank()) {
             return notificationMessage.length <= notificationMessageMaxLength
         }

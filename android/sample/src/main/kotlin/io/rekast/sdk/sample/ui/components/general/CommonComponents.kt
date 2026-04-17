@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2024, Benjamin Mwalimu
+ * Copyright 2023-2026, Benjamin Mwalimu
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,7 +42,7 @@ fun SectionHeader(@StringRes titleResId: Int, modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(end = dimensionResource(id = R.dimen.spacing_large))
+            .padding(start = dimensionResource(id = R.dimen.spacing_large), top = dimensionResource(id = R.dimen.spacing_small), end = dimensionResource(id = R.dimen.spacing_large))
     ) {
         Text(
             text = stringResource(id = titleResId),

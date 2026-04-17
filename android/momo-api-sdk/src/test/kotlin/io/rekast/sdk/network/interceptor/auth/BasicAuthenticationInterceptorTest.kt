@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2024, Benjamin Mwalimu
+ * Copyright 2023-2026, Benjamin Mwalimu
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,8 +22,8 @@ import io.mockk.mockkStatic
 import io.mockk.slot
 import io.mockk.unmockkStatic
 import io.mockk.verify
-import io.rekast.sdk.model.authentication.credentials.BasicAuthCredentials
-import io.rekast.sdk.utils.MomoConstants
+import io.rekast.sdk.network.interfaces.CredentialProvider
+import io.rekast.sdk.utils.Constants
 import okhttp3.Interceptor
 import okhttp3.Protocol
 import okhttp3.Request
@@ -69,11 +69,16 @@ class BasicAuthenticationInterceptorTest {
         .message("OK")
         .build()
 
+    private fun provider(userId: String, apiKey: String): CredentialProvider = mockk {
+        every { getApiUserId() } returns userId
+        every { getApiKey() } returns apiKey
+        every { getAccessToken() } returns ""
+    }
+
     /** Verifies the Authorization header is `Basic <base64(userId:apiKey)>` when both fields are set. */
     @Test
     fun `adds Basic authorization header when both userId and apiKey are non-empty`() {
-        val credentials = BasicAuthCredentials("user-123", "key-abc")
-        val interceptor = BasicAuthenticationInterceptor(credentials)
+        val interceptor = BasicAuthenticationInterceptor(provider("user-123", "key-abc"))
         val request = Request.Builder().url("https://example.com").build()
         val capturedRequest = slot<Request>()
 
@@ -84,16 +89,15 @@ class BasicAuthenticationInterceptorTest {
 
         val expectedEncoded = java.util.Base64.getEncoder().encodeToString("user-123:key-abc".toByteArray())
         assertEquals(
-            "${MomoConstants.TokenTypes.BASIC} $expectedEncoded",
-            capturedRequest.captured.header(MomoConstants.Headers.AUTHORIZATION)
+            "${Constants.TokenTypes.BASIC} $expectedEncoded",
+            capturedRequest.captured.header(Constants.Headers.AUTHORIZATION)
         )
     }
 
     /** Verifies the Authorization header is omitted when userId is an empty string. */
     @Test
     fun `does not add authorization header when userId is empty`() {
-        val credentials = BasicAuthCredentials("", "key-abc")
-        val interceptor = BasicAuthenticationInterceptor(credentials)
+        val interceptor = BasicAuthenticationInterceptor(provider("", "key-abc"))
         val request = Request.Builder().url("https://example.com").build()
         val capturedRequest = slot<Request>()
 
@@ -102,14 +106,13 @@ class BasicAuthenticationInterceptorTest {
 
         interceptor.intercept(mockChain)
 
-        assertNull(capturedRequest.captured.header(MomoConstants.Headers.AUTHORIZATION))
+        assertNull(capturedRequest.captured.header(Constants.Headers.AUTHORIZATION))
     }
 
     /** Verifies the Authorization header is omitted when apiKey is an empty string. */
     @Test
     fun `does not add authorization header when apiKey is empty`() {
-        val credentials = BasicAuthCredentials("user-123", "")
-        val interceptor = BasicAuthenticationInterceptor(credentials)
+        val interceptor = BasicAuthenticationInterceptor(provider("user-123", ""))
         val request = Request.Builder().url("https://example.com").build()
         val capturedRequest = slot<Request>()
 
@@ -118,14 +121,13 @@ class BasicAuthenticationInterceptorTest {
 
         interceptor.intercept(mockChain)
 
-        assertNull(capturedRequest.captured.header(MomoConstants.Headers.AUTHORIZATION))
+        assertNull(capturedRequest.captured.header(Constants.Headers.AUTHORIZATION))
     }
 
     /** Verifies the Authorization header is omitted when both userId and apiKey are empty. */
     @Test
     fun `does not add authorization header when both are empty`() {
-        val credentials = BasicAuthCredentials("", "")
-        val interceptor = BasicAuthenticationInterceptor(credentials)
+        val interceptor = BasicAuthenticationInterceptor(provider("", ""))
         val request = Request.Builder().url("https://example.com").build()
         val capturedRequest = slot<Request>()
 
@@ -134,14 +136,13 @@ class BasicAuthenticationInterceptorTest {
 
         interceptor.intercept(mockChain)
 
-        assertNull(capturedRequest.captured.header(MomoConstants.Headers.AUTHORIZATION))
+        assertNull(capturedRequest.captured.header(Constants.Headers.AUTHORIZATION))
     }
 
     /** Verifies the interceptor returns the response produced by the chain unchanged. */
     @Test
     fun `returns response from chain`() {
-        val credentials = BasicAuthCredentials("user-123", "key-abc")
-        val interceptor = BasicAuthenticationInterceptor(credentials)
+        val interceptor = BasicAuthenticationInterceptor(provider("user-123", "key-abc"))
         val request = Request.Builder().url("https://example.com").build()
         val expected = mockResponse(request)
 

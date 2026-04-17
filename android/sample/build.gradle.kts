@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2024, Benjamin Mwalimu
+ * Copyright 2026, Benjamin Mwalimu
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,6 +50,7 @@ android {
 dependencies {
     implementation(platform(libs.androidx.compose.bom))
     implementation(project(":momo-api-sdk"))
+    implementation(libs.androidx.security.crypto)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines)
@@ -118,6 +119,14 @@ dokka {
         create("main") {
             displayName.set("Sample")
             sourceRoots.from(file("src/main/kotlin"))
+            externalDocumentationLinks.register("kotlinx.coroutines") {
+                url("https://kotlinlang.org/api/kotlinx.coroutines/")
+                packageListUrl("https://kotlinlang.org/api/kotlinx.coroutines/package-list")
+            }
+            externalDocumentationLinks.register("android") {
+                url("https://developer.android.com/reference/kotlin/")
+                packageListUrl("https://developer.android.com/reference/kotlin/package-list")
+            }
         }
     }
     pluginsConfiguration.html {
@@ -138,12 +147,38 @@ kover {
                 androidGeneratedClasses()
                 annotatedBy("*Generated*")
                 classes(
+                    // Standard Hilt-generated class patterns (slash-based, matching JVM class names)
                     "**/Hilt_*",
                     "**/*_HiltModules*",
                     "**/*_Provide*",
                     "**/*ComponentTreeDeps*",
                     "**/dagger/**",
+                    // Hilt-generated InstanceHolder inner classes
+                    "**/*Factory\$InstanceHolder",
+                    // Hilt aggregated dependency injectors (_io_* in hilt_aggregated_deps)
+                    "hilt_aggregated_deps/**",
+                    // Top-level Compose screen functions compile to *ScreenKt classes and their
+                    // inner lambdas; these are not unit-testable.
+                    "**/*ScreenKt",
+                    "**/*ScreenKt\$*",
+                    "**/*ActivityKt",
+                    "**/*ActivityKt\$*",
+                    "**/*ComposableSingletons*",
+                    // CredentialStorage uses EncryptedSharedPreferences (Android runtime only)
+                    "**/CredentialStorage",
+                    "**/CredentialStorage\$*",
+                    // AndroidExtensions uses android.* APIs not available in unit tests
+                    "**/AndroidExtensionsKt",
+                    "**/AndroidExtensionsKt\$*",
+                    // DispatcherProvider default implementations (interface defaults, not logic)
+                    "**/DispatcherProvider",
+                    "**/DispatcherProvider\$*",
+                    "**/DefaultDispatcherProvider",
+                    "**/DefaultDispatcherProvider*",
+                    // ViewModel emitSnackBarState lambdas (fire-and-forget SharedFlow emit)
+                    "**/*\$emitSnackBarState\$*"
                 )
+                packages("io.rekast.sdk.sample.ui")
             }
         }
     }

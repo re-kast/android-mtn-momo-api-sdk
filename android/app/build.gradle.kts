@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2024, Benjamin Mwalimu
+ * Copyright 2023-2026, Benjamin Mwalimu
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.dagger.hilt.android)
     alias(libs.plugins.secrets)
+    alias(libs.plugins.kover)
 }
 
 secrets {
@@ -65,6 +66,18 @@ dokka {
         create("main") {
             displayName.set("App")
             sourceRoots.from(file("src/main/kotlin"))
+            externalDocumentationLinks.register("kotlinx.coroutines") {
+                url("https://kotlinlang.org/api/kotlinx.coroutines/")
+                packageListUrl("https://kotlinlang.org/api/kotlinx.coroutines/package-list")
+            }
+            externalDocumentationLinks.register("okhttp") {
+                url("https://square.github.io/okhttp/4.x/okhttp/")
+                packageListUrl("https://square.github.io/okhttp/4.x/okhttp/package-list")
+            }
+            externalDocumentationLinks.register("android") {
+                url("https://developer.android.com/reference/kotlin/")
+                packageListUrl("https://developer.android.com/reference/kotlin/package-list")
+            }
         }
     }
     pluginsConfiguration.html {
@@ -78,7 +91,39 @@ tasks.matching { it.name.startsWith("dokkaGenerate") }.configureEach {
     dependsOn("kspDebugKotlin", "kspReleaseKotlin")
 }
 
+kover {
+    reports {
+        filters {
+            excludes {
+                androidGeneratedClasses()
+                annotatedBy("*Generated*")
+                classes(
+                    "**/Hilt_*",
+                    "**/*_HiltModules*",
+                    "**/*_Provide*",
+                    "**/*ComponentTreeDeps*",
+                    "**/dagger/**",
+                    // Hilt-generated InstanceHolder inner classes
+                    "**/*Factory\$InstanceHolder",
+                    // Hilt aggregated injectors
+                    "hilt_aggregated_deps/**",
+                    // MomoApplication is an Android Application class (not unit-testable)
+                    "**/MomoApplication",
+                    // DispatchersModule is a Hilt module providing coroutine dispatchers;
+                    // its single line is not independently testable.
+                    "**/DispatchersModule"
+                )
+            }
+        }
+    }
+}
+
 dependencies {
+    // Unit-test dependencies.
+    testImplementation(libs.junit)
+    testImplementation(libs.mockk)
+    testImplementation(libs.squareup.okhttp.mockwebserver)
+
     // The sample library provides all UI, ViewModels, and activities.
     implementation(project(":sample"))
 

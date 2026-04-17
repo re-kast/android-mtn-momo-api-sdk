@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2024, Benjamin Mwalimu
+ * Copyright 2023-2026, Benjamin Mwalimu
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,8 @@
 package io.rekast.sdk.network.interceptor.auth
 
 import io.rekast.sdk.Logger
-import io.rekast.sdk.model.authentication.credentials.BasicAuthCredentials
-import io.rekast.sdk.utils.MomoConstants
+import io.rekast.sdk.network.interfaces.CredentialProvider
+import io.rekast.sdk.utils.Constants
 import java.io.IOException
 import javax.inject.Inject
 import kotlin.io.encoding.Base64
@@ -31,9 +31,12 @@ import okhttp3.Response
  * This interceptor encodes the API user ID and API key in Base64 and adds them
  * to the request headers for endpoints that require Basic Authentication.
  *
- * @param basicAuthCredentials The credentials containing the API user ID and API key.
+ * Credentials are fetched from [CredentialProvider] on every request so that
+ * the SDK never holds credential state internally.
+ *
+ * @param credentialProvider Supplies the API user ID and API key at request time.
  */
-class BasicAuthenticationInterceptor @Inject constructor(private val basicAuthCredentials: BasicAuthCredentials) : Interceptor {
+class BasicAuthenticationInterceptor @Inject constructor(private val credentialProvider: CredentialProvider) : Interceptor {
 
     /**
      * Intercepts the request and adds the Basic Authentication header.
@@ -44,8 +47,8 @@ class BasicAuthenticationInterceptor @Inject constructor(private val basicAuthCr
      */
     @Throws(IOException::class)
     override fun intercept(chain: Interceptor.Chain): Response {
-        val apiUserId = basicAuthCredentials.apiUserId
-        val apiKey = basicAuthCredentials.apiKey
+        val apiUserId = credentialProvider.getApiUserId()
+        val apiKey = credentialProvider.getApiKey()
 
         val request = chain.request().newBuilder()
 
@@ -57,9 +60,9 @@ class BasicAuthenticationInterceptor @Inject constructor(private val basicAuthCr
             val encoded = Base64.Default.encode(keys.toByteArray())
 
             return chain.proceed(
-                request.addHeader(
-                    MomoConstants.Headers.AUTHORIZATION,
-                    "${MomoConstants.TokenTypes.BASIC} $encoded"
+                request.header(
+                    Constants.Headers.AUTHORIZATION,
+                    "${Constants.TokenTypes.BASIC} $encoded"
                 ).build()
             )
         }

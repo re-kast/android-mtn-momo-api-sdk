@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2024, Benjamin Mwalimu
+ * Copyright 2023-2026, Benjamin Mwalimu
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,8 +30,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import io.rekast.sdk.sample.ui.theme.AppTheme
-import io.rekast.sdk.sample.views.AppMainActivity
-import io.rekast.sdk.sample.views.AppMainViewModel
+import io.rekast.sdk.sample.views.MainViewModel
 import kotlin.getValue
 
 /**
@@ -40,28 +39,34 @@ import kotlin.getValue
 @ExperimentalMaterialApi
 @AndroidEntryPoint
 class DisbursementRefundScreenFragment : Fragment() {
-    private lateinit var activity: AppMainActivity
     private val disbursementRefundScreenViewModel by viewModels<DisbursementRefundScreenViewModel>()
-    private val appMainViewModel by activityViewModels<AppMainViewModel>()
+    private val mainViewModel by activityViewModels<MainViewModel>()
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View = ComposeView(requireContext()).apply {
-        setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
-        setContent {
-            AppTheme {
-                val showProgressBar by disbursementRefundScreenViewModel.showProgressBar.observeAsState(false)
-                DisbursementScreen(
-                    navController = findNavController(),
-                    snackStateFlow = disbursementRefundScreenViewModel.snackBarStateFlow,
-                    showProgressBar = showProgressBar,
-                    disbursementRefundScreenViewModel = disbursementRefundScreenViewModel,
-                    momoTransaction = disbursementRefundScreenViewModel.momoTransaction
-                )
+    /**
+     * Inflates the Disbursement Refund screen Compose hierarchy, wiring up [DisbursementScreen]
+     * with its ViewModel, NavController, and snackbar state.
+     */
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        val navController = findNavController()
+        return ComposeView(requireContext()).apply {
+            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+            setContent {
+                AppTheme {
+                    val showProgressBar by disbursementRefundScreenViewModel.showProgressBar.observeAsState(false)
+                    DisbursementScreen(
+                        navController = navController,
+                        snackStateFlow = disbursementRefundScreenViewModel.snackBarStateFlow,
+                        showProgressBar = showProgressBar,
+                        disbursementRefundScreenViewModel = disbursementRefundScreenViewModel,
+                        momoTransaction = disbursementRefundScreenViewModel.momoTransaction
+                    )
+                }
             }
         }
     }
 
+    /** Reserved for future per-resume lifecycle operations. */
     override fun onResume() {
         super.onResume()
-        activity = requireActivity() as AppMainActivity
     }
 }

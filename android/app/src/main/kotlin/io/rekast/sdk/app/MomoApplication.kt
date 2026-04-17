@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2024, Benjamin Mwalimu
+ * Copyright 2023-2026, Benjamin Mwalimu
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ import timber.log.Timber
  */
 @HiltAndroidApp
 class MomoApplication : Application() {
+    /** Initialises Hilt and plants a [Timber.DebugTree] in debug builds. */
     override fun onCreate() {
         super.onCreate()
         if (BuildConfig.DEBUG) {

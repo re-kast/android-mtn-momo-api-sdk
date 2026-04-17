@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2024, Benjamin Mwalimu
+ * Copyright 2023-2026, Benjamin Mwalimu
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,10 @@ plugins {
 
 kotlin {
     jvmToolchain(17)
+
+    compilerOptions {
+        freeCompilerArgs.add("-Xexpect-actual-classes")
+    }
 
     // With com.android.kotlin.multiplatform.library the Android target is configured
     // inside kotlin { android { } } — there is no separate top-level android {} block.
@@ -65,7 +69,7 @@ kotlin {
             // JSR-330 annotations used in commonMain (@Inject, @Singleton).
             // Hilt (androidMain) pulls this in transitively on Android; the explicit
             // declaration here makes it available for JVM target compilation too.
-            implementation("javax.inject:javax.inject:1")
+            implementation(libs.javax.inject)
         }
         androidMain.dependencies {
             implementation(libs.androidx.core.ktx)
@@ -82,6 +86,7 @@ kotlin {
                 implementation(libs.mockito.core)
                 implementation(libs.mockito.inline)
                 implementation(libs.mockito.kotlin)
+                implementation(libs.kotlinx.coroutines.test)
             }
         }
         named("androidDeviceTest") {
@@ -101,10 +106,22 @@ dokka {
         named("commonMain") {
             displayName.set("Common")
             sourceRoots.from(file("src/commonMain/kotlin"))
+            externalDocumentationLinks.register("kotlinx.coroutines") {
+                url("https://kotlinlang.org/api/kotlinx.coroutines/")
+                packageListUrl("https://kotlinlang.org/api/kotlinx.coroutines/package-list")
+            }
+            externalDocumentationLinks.register("okhttp") {
+                url("https://square.github.io/okhttp/4.x/okhttp/")
+                packageListUrl("https://square.github.io/okhttp/4.x/okhttp/package-list")
+            }
         }
         named("androidMain") {
             displayName.set("Android")
             sourceRoots.from(file("src/androidMain/kotlin"))
+            externalDocumentationLinks.register("android") {
+                url("https://developer.android.com/reference/kotlin/")
+                packageListUrl("https://developer.android.com/reference/kotlin/package-list")
+            }
         }
         named("jvmMain") {
             displayName.set("JVM")
@@ -129,8 +146,13 @@ kover {
                     "**/*_HiltModules*",
                     "**/*_Provide*",
                     "**/*ComponentTreeDeps*",
-                    "**/dagger/**",
+                    "**/dagger/**"
                 )
+                // DefaultSource is pure delegation to sealed Retrofit service interfaces.
+                // The sealed keyword prevents both MockK and JVM Proxy from creating
+                // test doubles, making unit testing impossible without a full Hilt graph.
+                // All meaningful logic is tested via DefaultRepository (which mocks DefaultSource).
+                classes("**/DefaultSource")
             }
         }
     }
@@ -222,7 +244,7 @@ afterEvaluate {
     }
 
     // Gradle 9.x strict dependency ordering fix for KMP + signing:
-    // each publication's publish task shares the javadoc .asc artifact produced
+    // each publication's publish task shares the Javadoc .asc artifact produced
     // by the other publications' sign tasks, so we must declare explicit ordering.
     tasks.withType<AbstractPublishToMaven>().configureEach {
         mustRunAfter(tasks.withType<Sign>())

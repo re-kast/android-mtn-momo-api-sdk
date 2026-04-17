@@ -38,13 +38,93 @@ For further exploration, check out the documentation on [Kotlin Coroutines](http
 
 ### Additional Benefits
 
-- **Comprehensive Error Handling and Logging**: The SDK comes equipped with built-in error handling and logging tools, enabling developers to track and resolve issues effectively, ensuring smooth functionality in production environments.
+- **Comprehensive Error Handling and Logging**: The SDK ships a KMP-safe `Logger` abstraction (`d`, `i`, `w`, `e`) backed by [Timber](https://github.com/JakeWharton/timber) on Android and standard output on JVM. All SDK internals use `Logger` so log output flows through whichever backend the host platform provides.
   
 - **Secure API Communication**: Implements secure communication channels with proper authentication mechanisms, safeguarding all transactions and user data in compliance with industry standards.
 
 This SDK empowers Android developers to integrate MTN MOMO services confidently, providing secure and efficient mobile payment solutions.
 
 For detailed instructions on integrating and configuring the MTN MOMO API SDK, please consult the official [MTN MOMO API documentation](https://momodeveloper.mtn.com/).
+
+## Authentication & Credential Management
+
+The SDK uses a **pull-based credential model** — it never stores credentials internally. Instead, it calls your app's `CredentialProvider` implementation on every request to retrieve the current API user ID, API key, and access token.
+
+### How It Works
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                        Your App                             │
+│                                                             │
+│  CredentialStorage          CredentialProvider              │
+│  (EncryptedSharedPrefs) ◄── (reads from storage)            │
+│          ▲                          │                       │
+│          │                          ▼                       │
+│  MainViewModel           SDK Interceptors                │
+│  (writes credentials)       BasicAuthInterceptor            │
+│                             AccessTokenInterceptor          │
+│                                     │                       │
+│                             TokenAuthenticator              │
+│                             (refreshes on 401)              │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Credential Storage
+
+Credentials are stored using `EncryptedSharedPreferences` (AES-256-GCM via the Android Keystore) through `CredentialStorage`. Tokens include expiry timestamps so that expired tokens are never returned — an expired token is treated the same as no token.
+
+### Automatic Token Refresh
+
+The `TokenAuthenticator` (an OkHttp `Authenticator`) fires automatically on every HTTP 401 response from a Bearer-protected endpoint:
+
+1. Verifies the failed request was using Bearer auth.
+2. Calls the MTN MoMo token endpoint via a dedicated `AuthenticationService` backed by a minimal, Basic-Auth-only `OkHttpClient` — this avoids a circular dependency with the main client.
+3. Saves the refreshed Bearer token to `CredentialStorage`.
+4. If the OAuth2 access token is also expired, refreshes it in the same pass and saves it to `CredentialStorage`. An OAuth2 refresh failure is non-fatal — the original request is still retried with the refreshed Bearer token.
+5. Returns the original request so OkHttp re-runs the interceptors — `AccessTokenInterceptor` reads the new token from storage and attaches the correct `Authorization` header on the retry.
+
+After at most **one retry**, the authenticator gives up and propagates the 401 to the caller.
+
+### Implementing `CredentialProvider`
+
+```kotlin
+class MyCredentialProvider(
+    private val storage: CredentialStorage,
+    private val config: SampleConfig
+) : CredentialProvider {
+
+    override fun getApiUserId(): String = config.apiUserId
+
+    // Return the API key only when no valid access token exists.
+    // This prevents Basic Auth from being sent on Bearer-protected requests.
+    override fun getApiKey(): String =
+        if (storage.getAccessToken().isBlank()) storage.getApiKey() else ""
+
+    override fun getAccessToken(): String = storage.getAccessToken()
+}
+```
+
+Register it in your Hilt module:
+
+```kotlin
+@Provides
+@Singleton
+fun provideCredentialProvider(
+    storage: CredentialStorage,
+    config: SampleConfig
+): CredentialProvider = MyCredentialProvider(storage, config)
+```
+
+### Credential Bootstrap
+
+On first launch, `MainViewModel` runs a one-time sequence to provision credentials:
+
+1. **Check API user** — if the user does not exist, create it.
+2. **Create API key** — stored to `CredentialStorage`; skipped if a key already exists.
+3. **Fetch access token** — stored with its expiry; skipped if a valid token is already present.
+4. **Fetch OAuth2 token** — stored with its expiry; skipped if a valid token is already present.
+
+Subsequent app launches skip any step where a valid, non-expired credential is already stored. Token expiry is checked automatically by `CredentialStorage` — no manual refresh calls are needed.
 
 ## Getting Started
 
@@ -66,7 +146,7 @@ To configure your local environment for the MTN MOMO API SDK, create a `local.pr
 # Local properties for the MTN MOMO API SDK
 
 MOMO_BASE_URL="" ## Use https://sandbox.momodeveloper.mtn.com for sandbox and https://momodeveloper.mtn.com for production
-MOMO_PROVIDER_CALBACK_HOST="" ## The provider callback host, use 'localhost' for sandbox
+MOMO_PROVIDER_CALLBACK_HOST="" ## The provider callback host, use 'localhost' for sandbox
 MOMO_COLLECTION_PRIMARY_KEY="" ## The collection endpoint/product subscription primary key
 MOMO_COLLECTION_SECONDARY_KEY="" ## The collection endpoint/product subscription secondary key
 MOMO_REMITTANCE_PRIMARY_KEY="" ## The remittance endpoint/product subscription primary key

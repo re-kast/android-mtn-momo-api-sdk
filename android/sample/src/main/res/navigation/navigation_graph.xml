@@ -33,7 +33,7 @@
         android:label="@string/collections_pay_screen">
         <action
             android:id="@+id/navigateToHome"
-            app:destination="@+id/homeFragment" />
+            app:destination="@+id/homeScreenFragment" />
         <action
             android:id="@+id/navigateToCollectionWithdraw"
             app:destination="@+id/collectionWithDrawScreenFragment" />
@@ -54,7 +54,7 @@
         android:label="@string/collections_withdraw_screen">
         <action
             android:id="@+id/navigateToHome"
-            app:destination="@+id/homeFragment" />
+            app:destination="@+id/homeScreenFragment" />
         <action
             android:id="@+id/navigateToCollectionPay"
             app:destination="@+id/collectionPayScreenFragment" />
@@ -75,7 +75,7 @@
         android:label="@string/disbursement_deposit_screen">
         <action
             android:id="@+id/navigateToHome"
-            app:destination="@+id/homeFragment" />
+            app:destination="@+id/homeScreenFragment" />
         <action
             android:id="@+id/navigateToCollectionPay"
             app:destination="@+id/collectionPayScreenFragment" />
@@ -96,7 +96,7 @@
         android:label="@string/disbursement_Refund_screen">
         <action
             android:id="@+id/navigateToHome"
-            app:destination="@+id/homeFragment" />
+            app:destination="@+id/homeScreenFragment" />
         <action
             android:id="@+id/navigateToCollectionPay"
             app:destination="@+id/collectionPayScreenFragment" />
@@ -118,7 +118,7 @@
 
         <action
             android:id="@+id/navigateToHome"
-            app:destination="@+id/homeFragment" />
+            app:destination="@+id/homeScreenFragment" />
         <action
             android:id="@+id/navigateToCollectionPay"
             app:destination="@+id/collectionPayScreenFragment" />

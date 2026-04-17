@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2024, Benjamin Mwalimu
+ * Copyright 2023-2026, Benjamin Mwalimu
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 package io.rekast.sdk.network.service.products
 
 import io.rekast.sdk.model.MomoTransaction
-import io.rekast.sdk.utils.MomoConstants
+import io.rekast.sdk.utils.Constants
 import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.Body
@@ -41,13 +41,13 @@ sealed interface DisbursementsService : CommonService {
      * @param uuid A UUID V4 used as the X-Reference-Id to uniquely identify this request.
      * @return A [Response] with an empty body; HTTP 202 indicates the request was accepted.
      */
-    @POST(MomoConstants.EndPoints.DEPOSIT)
+    @POST(Constants.EndPoints.DEPOSIT)
     suspend fun deposit(
         @Body momoTransaction: MomoTransaction,
-        @Path(MomoConstants.EndpointPaths.API_VERSION) apiVersion: String,
-        @Header(MomoConstants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
-        @Header(MomoConstants.Headers.X_TARGET_ENVIRONMENT) environment: String,
-        @Header(MomoConstants.Headers.X_REFERENCE_ID) uuid: String
+        @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
+        @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
+        @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String,
+        @Header(Constants.Headers.X_REFERENCE_ID) uuid: String
     ): Response<Unit>
 
     /**
@@ -59,12 +59,12 @@ sealed interface DisbursementsService : CommonService {
      * @param environment The target environment (e.g., sandbox or production).
      * @return A [Response] whose body contains the deposit status as a [ResponseBody].
      */
-    @GET(MomoConstants.EndPoints.DEPOSIT_STATUS)
+    @GET(Constants.EndPoints.DEPOSIT_STATUS)
     suspend fun getDepositStatus(
-        @Path(MomoConstants.EndpointPaths.REFERENCE_ID) referenceId: String,
-        @Path(MomoConstants.EndpointPaths.API_VERSION) apiVersion: String,
-        @Header(MomoConstants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
-        @Header(MomoConstants.Headers.X_TARGET_ENVIRONMENT) environment: String
+        @Path(Constants.EndpointPaths.REFERENCE_ID) referenceId: String,
+        @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
+        @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
+        @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String
     ): Response<ResponseBody>
 
     /**
@@ -77,13 +77,13 @@ sealed interface DisbursementsService : CommonService {
      * @param uuid A UUID V4 used as the X-Reference-Id to uniquely identify this request.
      * @return A [Response] with an empty body; HTTP 202 indicates the request was accepted.
      */
-    @POST(MomoConstants.EndPoints.REFUND)
+    @POST(Constants.EndPoints.REFUND)
     suspend fun refund(
         @Body momoTransaction: MomoTransaction,
-        @Path(MomoConstants.EndpointPaths.API_VERSION) apiVersion: String,
-        @Header(MomoConstants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
-        @Header(MomoConstants.Headers.X_TARGET_ENVIRONMENT) environment: String,
-        @Header(MomoConstants.Headers.X_REFERENCE_ID) uuid: String
+        @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
+        @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
+        @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String,
+        @Header(Constants.Headers.X_REFERENCE_ID) uuid: String
     ): Response<Unit>
 
     /**
@@ -95,11 +95,11 @@ sealed interface DisbursementsService : CommonService {
      * @param environment The target environment (e.g., sandbox or production).
      * @return A [Response] whose body contains the refund status as a [ResponseBody].
      */
-    @GET(MomoConstants.EndPoints.REFUND_STATUS)
+    @GET(Constants.EndPoints.REFUND_STATUS)
     suspend fun getRefundStatus(
-        @Path(MomoConstants.EndpointPaths.REFERENCE_ID) referenceId: String,
-        @Path(MomoConstants.EndpointPaths.API_VERSION) apiVersion: String,
-        @Header(MomoConstants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
-        @Header(MomoConstants.Headers.X_TARGET_ENVIRONMENT) environment: String
+        @Path(Constants.EndpointPaths.REFERENCE_ID) referenceId: String,
+        @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
+        @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
+        @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String
     ): Response<ResponseBody>
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2024, Benjamin Mwalimu
+ * Copyright 2023-2026, Benjamin Mwalimu
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,18 +19,17 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import io.rekast.sdk.model.authentication.credentials.AccessTokenCredentials
-import io.rekast.sdk.model.authentication.credentials.BasicAuthCredentials
 import io.rekast.sdk.network.interceptor.UnsafeOkHttpClient
 import io.rekast.sdk.network.interceptor.auth.AccessTokenInterceptor
 import io.rekast.sdk.network.interceptor.auth.BasicAuthenticationInterceptor
-import io.rekast.sdk.network.interfaces.auth.AuthInterface
-import io.rekast.sdk.network.interfaces.implementation.auth.AuthImplementation
+import io.rekast.sdk.network.interfaces.CredentialProvider
 import io.rekast.sdk.network.service.AuthenticationService
 import io.rekast.sdk.network.service.products.CollectionService
 import io.rekast.sdk.network.service.products.CommonService
 import io.rekast.sdk.network.service.products.DisbursementsService
-import io.rekast.sdk.utils.MomoApiConfig
+import io.rekast.sdk.sample.utils.CredentialStorage
+import io.rekast.sdk.sample.utils.SampleConfig
+import io.rekast.sdk.utils.ApiConfig
 import io.rekast.sdk.utils.Settings
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
@@ -39,77 +38,107 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.kotlinx.serialization.asConverterFactory
 import java.util.concurrent.TimeUnit
+import javax.inject.Named
 import javax.inject.Singleton
 
 /**
  * Provides network-related dependencies using Dagger Hilt.
  *
  * Lives in the :app module (not :sample) because com.android.kotlin.multiplatform.library's
- * compile JAR does not include KSP-generated Java factory classes; moving @Module providers
- * here ensures hiltJavaCompileDebug can find them on the classpath.
+ * compile JAR does not include KSP-generated Java factory classes.
  *
- * Supplies Retrofit, OkHttpClient, authentication credentials, and the various
- * API service instances consumed by the repository layer.
+ * Credential storage is handled by [CredentialStorage] (EncryptedSharedPreferences).
+ * Expired tokens are refreshed automatically by [TokenAuthenticator] on every 401 response.
  */
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
     /**
-     * Provides an empty [BasicAuthCredentials] placeholder; credentials are set at runtime
-     * via [io.rekast.sdk.network.interfaces.auth.AuthInterface].
+     * Provides the app's [CredentialProvider] that the SDK's interceptors call on every request.
+     * Reads credentials from [CredentialStorage] at request time — the SDK never stores credentials.
      */
     @Provides
     @Singleton
-    fun provideBasicAuthCredentials(): BasicAuthCredentials = BasicAuthCredentials("", "")
+    fun provideMomoCredentialProvider(
+        storage: CredentialStorage,
+        sampleConfig: SampleConfig
+    ): CredentialProvider = CredentialProvider(storage, sampleConfig)
 
     /**
-     * Provides an empty [AccessTokenCredentials] placeholder; the token is set at runtime
-     * after a successful token-exchange call.
+     * Provides a dedicated [AuthenticationService] backed by a minimal [OkHttpClient] that only
+     * attaches Basic Auth. Used exclusively by [TokenAuthenticator] to avoid a circular dependency
+     * with the main client (which has the authenticator wired in).
+     *
+     * The anonymous [CredentialProvider] always returns the raw API key and never returns a Bearer
+     * token, ensuring the Basic Auth header is always attached on token-refresh requests even when
+     * an (expired) token is still present in [CredentialStorage].
      */
     @Provides
     @Singleton
-    fun provideAccessTokenCredentials(): AccessTokenCredentials = AccessTokenCredentials("")
+    @Named("tokenRefresh")
+    fun provideTokenRefreshAuthenticationService(
+        config: ApiConfig,
+        storage: CredentialStorage,
+        json: Json
+    ): AuthenticationService {
+        val credentialProvider =
+            object : CredentialProvider {
+                override fun getApiUserId(): String = config.apiUserId
+
+                override fun getApiKey(): String = storage.getApiKey()
+
+                override fun getAccessToken(): String = ""
+            }
+        val client =
+            OkHttpClient
+                .Builder()
+                .addInterceptor(BasicAuthenticationInterceptor(credentialProvider))
+                .build()
+        return Retrofit
+            .Builder()
+            .baseUrl(config.baseUrl)
+            .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
+            .client(client)
+            .build()
+            .create(AuthenticationService::class.java)
+    }
 
     /**
-     * Provides the [AuthInterface] implementation that manages Basic-Auth and access-token
-     * credentials shared across the interceptors and repositories.
+     * Provides the [TokenAuthenticator] that refreshes the Bearer access token whenever
+     * a 401 is received from a protected endpoint.
      */
     @Provides
     @Singleton
-    fun provideApiAuthenticator(
-        basicAuthCredentials: BasicAuthCredentials,
-        accessTokenCredentials: AccessTokenCredentials
-    ): AuthInterface = AuthImplementation(basicAuthCredentials, accessTokenCredentials)
+    fun provideTokenAuthenticator(
+        storage: CredentialStorage,
+        @Named("tokenRefresh") authService: AuthenticationService,
+        config: ApiConfig
+    ): TokenAuthenticator = TokenAuthenticator(storage, authService, config)
 
-    /**
-     * Provides an [HttpLoggingInterceptor] configured to log full request/response bodies.
-     */
+    /** Provides the HTTP logging interceptor configured to log full request and response bodies. */
     @Provides
     @Singleton
     fun providesHttpLoggingInterceptor(): HttpLoggingInterceptor = HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
 
-    /**
-     * Provides a [Json] instance configured to ignore unknown keys so that API responses
-     * with extra fields do not cause deserialisation failures.
-     */
+    /** Provides the [Json] instance used by the Retrofit converter factory; unknown keys are ignored. */
     @Provides
     @Singleton
     fun provideJson(): Json = Json { ignoreUnknownKeys = true }
 
     /**
-     * Provides the singleton [OkHttpClient] wired with logging, Basic-Auth, and access-token
-     * interceptors and timeouts sourced from [Settings].
-     *
-     * Uses [UnsafeOkHttpClient] (no certificate validation) for non-HTTPS base URLs such as
-     * local test servers; standard [OkHttpClient.Builder] is used for HTTPS endpoints.
+     * Provides the singleton [OkHttpClient] wired with:
+     * - Logging interceptor
+     * - [BasicAuthenticationInterceptor] (adds Basic Auth when no access token is present)
+     * - [AccessTokenInterceptor] (adds Bearer token when one is available)
+     * - [TokenAuthenticator] (refreshes the token automatically on 401)
      */
     @Provides
     @Singleton
     fun provideOkHttpClient(
         httpLoggingInterceptor: HttpLoggingInterceptor,
-        basicAuthCredentials: BasicAuthCredentials,
-        accessTokenCredentials: AccessTokenCredentials,
-        config: MomoApiConfig
+        credentialProvider: CredentialProvider,
+        tokenAuthenticator: TokenAuthenticator,
+        config: ApiConfig
     ): OkHttpClient {
         val builder =
             if (config.baseUrl.startsWith("https")) {
@@ -118,8 +147,9 @@ object NetworkModule {
                 UnsafeOkHttpClient().unsafeOkHttpClient.addInterceptor(httpLoggingInterceptor)
             }
 
-        builder.addInterceptor(BasicAuthenticationInterceptor(basicAuthCredentials))
-        builder.addInterceptor(AccessTokenInterceptor(accessTokenCredentials))
+        builder.addInterceptor(BasicAuthenticationInterceptor(credentialProvider))
+        builder.addInterceptor(AccessTokenInterceptor(credentialProvider))
+        builder.authenticator { route, response -> tokenAuthenticator.authenticate(route, response) }
 
         val settings = Settings()
         return builder
@@ -129,16 +159,13 @@ object NetworkModule {
             .build()
     }
 
-    /**
-     * Provides the singleton [Retrofit] instance configured with the base URL from [MomoApiConfig],
-     * a kotlinx.serialization converter, and the shared [OkHttpClient].
-     */
+    /** Provides the shared [Retrofit] instance used by all product-specific service factories. */
     @Provides
     @Singleton
     fun provideRetrofit(
         okHttpClient: OkHttpClient,
         json: Json,
-        config: MomoApiConfig
+        config: ApiConfig
     ): Retrofit =
         Retrofit
             .Builder()
@@ -147,7 +174,7 @@ object NetworkModule {
             .client(okHttpClient)
             .build()
 
-    /** Provides the [AuthenticationService] Retrofit service for token and user-provisioning endpoints. */
+    /** Provides the [AuthenticationService] Retrofit service for token and API-user endpoints. */
     @Provides
     @Singleton
     fun getAuthentication(retrofit: Retrofit): AuthenticationService = retrofit.create(AuthenticationService::class.java)
@@ -157,12 +184,12 @@ object NetworkModule {
     @Singleton
     fun getCollection(retrofit: Retrofit): CollectionService = retrofit.create(CollectionService::class.java)
 
-    /** Provides the [DisbursementsService] Retrofit service for Disbursements product endpoints. */
+    /** Provides the [DisbursementsService] Retrofit service for Disbursement product endpoints. */
     @Provides
     @Singleton
     fun getDisbursement(retrofit: Retrofit): DisbursementsService = retrofit.create(DisbursementsService::class.java)
 
-    /** Provides the [CommonService] Retrofit service for cross-product common endpoints. */
+    /** Provides the [CommonService] Retrofit service for cross-product endpoints (balance, account status, etc.). */
     @Provides
     @Singleton
     fun getCommonService(retrofit: Retrofit): CommonService = retrofit.create(CommonService::class.java)

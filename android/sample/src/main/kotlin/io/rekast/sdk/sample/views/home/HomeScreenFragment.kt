@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2024, Benjamin Mwalimu
+ * Copyright 2023-2026, Benjamin Mwalimu
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,79 +26,53 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.viewModelScope
-import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
-import io.rekast.sdk.model.authentication.credentials.AccessTokenCredentials
-import io.rekast.sdk.repository.DefaultRepository
 import io.rekast.sdk.sample.ui.theme.AppTheme
-import io.rekast.sdk.sample.utils.DefaultDispatcherProvider
-import io.rekast.sdk.sample.utils.Utils
-import io.rekast.sdk.sample.views.AppMainActivity
-import javax.inject.Inject
 import kotlin.getValue
-import kotlinx.coroutines.launch
 
 /**
  * Fragment that hosts the Home screen, fetching user info, account status, and account balance on
  * resume and rendering [MainScreen] via Jetpack Compose.
+ *
+ * Credentials are no longer pushed into the SDK from here — the [io.rekast.sdk.network.interfaces.CredentialProvider]
+ * wired by the app's DI reads them from storage on every request automatically.
  */
 @ExperimentalMaterialApi
 @AndroidEntryPoint
 class HomeScreenFragment : Fragment() {
-    @Inject
-    lateinit var dispatcherProvider: DefaultDispatcherProvider
-
-    @Inject
-    lateinit var defaultRepository: DefaultRepository
-    private lateinit var activity: AppMainActivity
     private val homeScreenViewModel by viewModels<HomeScreenViewModel>()
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View = ComposeView(requireContext()).apply {
-        setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
-        setContent {
-            AppTheme {
-                val showProgressBar by homeScreenViewModel.showProgressBar.observeAsState(false)
-                MainScreen(
-                    navController = findNavController(),
-                    snackStateFlow = homeScreenViewModel.snackBarStateFlow,
-                    showProgressBar = showProgressBar,
-                    basicUserInfo = homeScreenViewModel.basicUserInfo,
-                    accountHolderStatus = homeScreenViewModel.accountHolderStatus,
-                    accountBalance = homeScreenViewModel.accountBalance
-                )
+    /**
+     * Inflates the Home screen Compose hierarchy, wiring up [MainScreen]
+     * with its ViewModel, NavController, and snackbar state.
+     */
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        val navController = findNavController()
+        return ComposeView(requireContext()).apply {
+            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+            setContent {
+                AppTheme {
+                    val showProgressBar by homeScreenViewModel.showProgressBar.observeAsState(false)
+                    MainScreen(
+                        navController = navController,
+                        snackStateFlow = homeScreenViewModel.snackBarStateFlow,
+                        showProgressBar = showProgressBar,
+                        basicUserInfo = homeScreenViewModel.basicUserInfo,
+                        accountHolderStatus = homeScreenViewModel.accountHolderStatus,
+                        accountBalance = homeScreenViewModel.accountBalance
+                    )
+                }
             }
         }
     }
 
+    /** Triggers a data refresh on every resume — user info, account status, balance, and OAuth2 consent. */
     override fun onResume() {
         super.onResume()
-        activity = requireActivity() as AppMainActivity
-
-        val accessToken = Utils.getAccessToken(activity.applicationContext)
-        setAccessToken(accessToken)
-        homeScreenViewModel.viewModelScope.launch(dispatcherProvider.io()) {
-            homeScreenViewModel.getBasicUserInfo()
-            homeScreenViewModel.validateAccountHolderStatus()
-            homeScreenViewModel.getAccountBalance()
-        }
-
-        val oauthAccessToken = Utils.getOauthAccessToken(activity.applicationContext)
-        setAccessToken(oauthAccessToken)
-        homeScreenViewModel.viewModelScope.launch(dispatcherProvider.io()) {
-            homeScreenViewModel.getUserInfoWithConsent()
-        }
-    }
-
-    /**
-     * Sets the Access Token credentials.
-     *
-     * @param accessToken The access token.
-     */
-    fun setAccessToken(accessToken: String) {
-        val accessTokenCredentials = AccessTokenCredentials(accessToken)
-        homeScreenViewModel.viewModelScope.launch {
-            defaultRepository.setUpAccessTokenAuth(accessTokenCredentials)
-        }
+        homeScreenViewModel.getBasicUserInfo()
+        homeScreenViewModel.validateAccountHolderStatus()
+        homeScreenViewModel.getAccountBalance()
+        homeScreenViewModel.getUserInfoWithConsent()
     }
 }
