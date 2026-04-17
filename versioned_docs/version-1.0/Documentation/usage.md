@@ -130,4 +130,4 @@ To preview the documentation locally before deployment, follow these steps:
 - **Node.js Documentation**: For details on Node.js and its features, check out the [Node.js documentation](https://nodejs.org/en/docs/).
 - **Yarn Documentation**: For more information on using Yarn as a package manager, visit the [Yarn documentation](https://classic.yarnpkg.com/en/docs/).
 
-By following this documentation, developers can effectively utilize the MTN MOMO API SDK and contribute to its ongoing development and documentation efforts. This ensures that the SDK remains accessible, well-documented, and easy to integrate into applications.
+By following this documentation, developers can effectively use the MTN MOMO API SDK and contribute to its ongoing development and documentation efforts. This ensures that the SDK remains accessible, well-documented, and easy to integrate into applications.

@@ -150,6 +150,6 @@ dokka {
 - **Dokka Documentation**: For more information on how to use Dokka, refer to the [official documentation](https://kotlinlang.org/docs/dokka/overview.html).
 - **Kotlin Documentation**: Learn more about Kotlin and its features by visiting the [Kotlin documentation](https://kotlinlang.org/docs/home.html).
 - **GitHub Actions Documentation**: For details on automating workflows with GitHub Actions, check out the [GitHub Actions documentation](https://docs.github.com/en/actions).
-- **Continuous Integration (CI) Best Practices**: For insights on best practices in CI, refer to [CI Best Practices](https://www.atlassian.com/continuous-delivery/continuous-integration-best-practices).
+- **Continuous Integration (CI) Best Practices**: For insights on the best practices in CI, refer to [CI Best Practices](https://www.atlassian.com/continuous-delivery/continuous-integration-best-practices).
 
 By following this documentation, developers can effectively generate and maintain code documentation for the MTN MOMO API SDK, ensuring that it remains accessible and useful for all users.

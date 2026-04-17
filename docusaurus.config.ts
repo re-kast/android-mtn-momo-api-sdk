@@ -56,12 +56,12 @@ const config: Config = {
             items: [
                 {
                     href: 'https://mtn-momo-sdk.rekast.io/dokka/',
-                    label: 'SDK & Sample Application KDocs',
+                    label: 'KDocs',
                     position: 'right',
                 },
                 {
                     type: 'docsVersionDropdown',
-                    label: 'SDK & Sample Application KDocs',
+                    label: 'KDocs',
                     position: 'right',
                 },
             ],
@@ -82,6 +82,7 @@ const config: Config = {
             searchPagePath: 'search'
         },
     } satisfies Preset.ThemeConfig,
+    
 };
 
 export default config;

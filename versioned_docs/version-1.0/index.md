@@ -70,7 +70,7 @@ The SDK uses a **pull-based credential model** — it never stores credentials i
 │  (EncryptedSharedPrefs) ◄── (reads from storage)            │
 │          ▲                          │                       │
 │          │                          ▼                       │
-│  MainViewModel           SDK Interceptors                │
+│  MainViewModel           SDK Interceptors                   │
 │  (writes credentials)       BasicAuthInterceptor            │
 │                             AccessTokenInterceptor          │
 │                                     │                       │
@@ -188,5 +188,5 @@ Project Repository: [https://github.com/re-kast/android-mtn-momo-api-sdk](https:
 ## Acknowledgments
 
 - **MTN** for providing the MOMO API infrastructure.
-- The **Android development community** for various open-source libraries utilized in this project.
+- The **Android development community** for various open-source libraries used in this project.
 - All **contributors** who have helped improve and maintain this SDK.

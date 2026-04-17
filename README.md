@@ -60,7 +60,7 @@ The SDK uses a **pull-based credential model** — it never stores credentials i
 │  (EncryptedSharedPrefs) ◄── (reads from storage)            │
 │          ▲                          │                       │
 │          │                          ▼                       │
-│  MainViewModel           SDK Interceptors                │
+│  MainViewModel           SDK Interceptors                   │
 │  (writes credentials)       BasicAuthInterceptor            │
 │                             AccessTokenInterceptor          │
 │                                     │                       │
