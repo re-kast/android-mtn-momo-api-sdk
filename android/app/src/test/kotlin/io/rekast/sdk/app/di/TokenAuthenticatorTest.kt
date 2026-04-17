@@ -206,7 +206,7 @@ class TokenAuthenticatorTest {
 
         verify(exactly = 1) {
             mockStorage.saveAccessToken(
-                withArg { token -> assertEquals("new-token", token?.accessToken) }
+                withArg { token -> assertEquals("new-token", token.accessToken) }
             )
         }
         verify(exactly = 0) { mockStorage.saveOauthAccessToken(any()) }
@@ -229,7 +229,7 @@ class TokenAuthenticatorTest {
         verify(exactly = 1) { mockStorage.saveAccessToken(any()) }
         verify(exactly = 1) {
             mockStorage.saveOauthAccessToken(
-                withArg { token -> assertEquals("new-oauth-token", token?.accessToken) }
+                withArg { token -> assertEquals("new-oauth-token", token.accessToken) }
             )
         }
     }
