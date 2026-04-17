@@ -38,7 +38,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import io.rekast.sdk.sample.R
-import io.rekast.sdk.sample.utils.Constants
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -57,14 +56,21 @@ fun TopBar(scope: CoroutineScope, scaffoldState: ScaffoldState, title: Int) {
     TopAppBar(
         title = { Text(text = stringResource(title), fontSize = 20.sp) },
         navigationIcon = {
+            val openDrawerLabel = stringResource(R.string.cd_open_navigation_drawer)
             Box(
                 modifier = Modifier
                     .fillMaxHeight()
                     .aspectRatio(1f)
-                    .clickable { scope.launch { scaffoldState.drawerState.open() } },
+                    .clickable(
+                        onClickLabel = openDrawerLabel,
+                        onClick = { scope.launch { scaffoldState.drawerState.open() } }
+                    ),
                 contentAlignment = Alignment.Center
             ) {
-                Icon(Icons.Filled.Menu, contentDescription = Constants.EMPTY_STRING)
+                Icon(
+                    imageVector = Icons.Filled.Menu,
+                    contentDescription = openDrawerLabel
+                )
             }
         },
         backgroundColor = colorResource(id = R.color.accent_secondary),

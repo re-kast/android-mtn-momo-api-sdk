@@ -117,7 +117,7 @@ interface AuthenticationService {
     /**
      * Initiates a backchannel authorization (CIBA) request for the specified product type.
      *
-     * The response contains an [AccountAuthorize] with an `auth_req_id` that must be used
+     * The response contains a [BackChannelAuthorize] with an `auth_req_id` that must be used
      * to poll for the access token once the user has approved the request on their device.
      *
      * @param productType The type of product initiating the authorization (e.g., collection).
@@ -127,7 +127,7 @@ interface AuthenticationService {
      * @param accessType The access type for the token (`online` or `offline`). Defaults to `online`.
      * @param productSubscriptionKey The subscription key for the product.
      * @param environment The target environment (e.g., sandbox or production).
-     * @return A [Response] containing the [AccountAuthorize] with the authorization request details.
+     * @return A [Response] containing the [BackChannelAuthorize] with the authorization request details.
      */
     @FormUrlEncoded
     @POST(Constants.EndPoints.BC_AUTHORIZE)

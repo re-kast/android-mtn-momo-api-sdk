@@ -335,13 +335,10 @@ open class MainViewModel @Inject constructor(
                                 try {
                                     credentialStorage.saveOauthAccessToken(result.response)
                                     Timber.d("OAuth2 token saved")
-                                    _isBootstrapComplete.value = true
                                 } catch (e: Exception) {
                                     Timber.e(e, "Failed to save OAuth2 token")
-                                    _isBootstrapComplete.value = true
-                                } finally {
-                                    _isBootstrapComplete.value = true
                                 }
+                                _isBootstrapComplete.value = true
                             }
 
                             is NetworkResult.Error -> {

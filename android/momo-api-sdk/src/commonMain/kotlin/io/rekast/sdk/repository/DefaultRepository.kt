@@ -124,7 +124,7 @@ class DefaultRepository @Inject constructor(private val defaultSource: DefaultSo
      * @param environment The target environment (e.g., sandbox or production).
      * @return A [Flow] emitting a [NetworkResult] containing the obtained [Oauth2AccessToken].
      */
-    fun getOauthAccessToken(productType: String, productSubscriptionKey: String, environment: String, backChannelAuthorizationRequestId: String): Flow<NetworkResult<Oauth2AccessToken>> = executeApiCall {
+    fun getOauthAccessToken(productType: String, productSubscriptionKey: String, environment: String, backChannelAuthorizationRequestId: String = ""): Flow<NetworkResult<Oauth2AccessToken>> = executeApiCall {
         defaultSource.getOauth2AccessToken(productType = productType, productSubscriptionKey = productSubscriptionKey, environment = environment, backChannelAuthorizationRequestId = backChannelAuthorizationRequestId)
     }
 
