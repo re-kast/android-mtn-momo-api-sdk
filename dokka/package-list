@@ -4,6 +4,7 @@ $dokka.linkExtension:html
 module:app
 io.rekast.sdk.app
 io.rekast.sdk.app.di
+io.rekast.sdk.app.network
 module:momo-api-sdk
 io.rekast.sdk
 io.rekast.sdk.model
