@@ -16,6 +16,7 @@
 package io.rekast.sdk.repository
 
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.mockk
 import io.rekast.sdk.model.AccountBalance
 import io.rekast.sdk.model.AccountHolder
