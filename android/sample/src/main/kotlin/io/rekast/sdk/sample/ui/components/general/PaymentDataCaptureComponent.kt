@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2024, Benjamin Mwalimu
+ * Copyright 2023-2026, Benjamin Mwalimu
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -97,7 +97,7 @@ fun PaymentDataScreenComponent(
             .fillMaxSize()
             .padding(dimensionResource(id = R.dimen.spacing_medium))
     ) {
-        Column(modifier = modifier.padding(end = dimensionResource(id = R.dimen.spacing_large))) {
+        Column(modifier = modifier.padding(start = dimensionResource(id = R.dimen.spacing_large))) {
             Text(
                 text = title,
                 style = TextStyle(

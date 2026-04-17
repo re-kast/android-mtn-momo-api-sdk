@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2024, Benjamin Mwalimu
+ * Copyright 2023-2026, Benjamin Mwalimu
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,13 +43,14 @@ val ProfileBackgroundColor = Color(0xFFF2F4F7)
 val MenuActionButtonTextColor = Color(0xFF28B8F9)
 val MenuItemColor = Color(0xFFBFBFBF)
 val SearchHeaderColor = Color(0xFFF2F4F7)
-private val PrimaryColor = Color(0xFF005084)
-private val PrimaryVariantColor = Color(0xFF003D66)
+private val PrimaryColor = Color(0xFF004F71)
+private val PrimaryVariantColor = Color(0xFF003A54)
+val AccentColor = Color(0xFFFFCB05)
 
-/** Material light color palette using the app's primary and danger colors. */
+/** Material light color palette using the app's primary and accent colors. */
 val LightColors =
-    lightColors(primary = PrimaryColor, primaryVariant = PrimaryVariantColor, error = DangerColor)
+    lightColors(primary = PrimaryColor, primaryVariant = PrimaryVariantColor, secondary = AccentColor, error = DangerColor)
 
-/** Material dark color palette using the app's primary and danger colors. */
+/** Material dark color palette using the app's primary and accent colors. */
 val DarkColors =
-    darkColors(primary = PrimaryColor, primaryVariant = PrimaryVariantColor, error = DangerColor)
+    darkColors(primary = PrimaryColor, primaryVariant = PrimaryVariantColor, secondary = AccentColor, error = DangerColor)

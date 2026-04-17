@@ -3,6 +3,7 @@ name: Publish Project Docs
 on:
   push:
     branches: [ develop ]
+  workflow_dispatch:
 
 jobs:
   build-and-deploy:
@@ -29,7 +30,7 @@ jobs:
         run: |
           cat <<'EOF' > local.properties
           MOMO_BASE_URL="https://sandbox.momodeveloper.mtn.com/"
-          MOMO_PROVIDER_CALBACK_HOST="localhost"
+          MOMO_PROVIDER_CALLBACK_HOST="localhost"
           MOMO_COLLECTION_PRIMARY_KEY="placeholder"
           MOMO_COLLECTION_SECONDARY_KEY="placeholder"
           MOMO_REMITTANCE_PRIMARY_KEY="placeholder"

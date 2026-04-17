@@ -27,7 +27,7 @@ To contribute to the project, please follow these steps:
 
 **Important Reminder**: If you make any changes to the SDK files, please remember to update the SDK version. You can do this [**here**](https://github.com/re-kast/android-mtn-momo-api-sdk/blob/a4f42bee8245c884586401ac210f46bac51f1953/android/momo-api-sdk/gradle.properties#L4). The current version is specified as follows:
 ```properties
-VERSION_NAME=0.0.2-SNAPSHOT
+VERSION_NAME=0.1.0-SNAPSHOT
 ```
 :::
 

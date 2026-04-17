@@ -1,45 +1,33 @@
+/*
+ * Copyright 2026, Benjamin Mwalimu
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 plugins {
-    alias(libs.plugins.android.application)
+    alias(libs.plugins.android.library)
     alias(libs.plugins.ksp)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.dagger.hilt.android)
     alias(libs.plugins.compose.compiler)
-    alias(libs.plugins.secrets)
-    alias(libs.plugins.spotless)
-    alias(libs.plugins.dokka)
-    alias(libs.plugins.versions)
     alias(libs.plugins.kover)
-}
-
-secrets {
-    ignoreList.add("sdk.*")
 }
 
 android {
     namespace = "io.rekast.sdk.sample"
     compileSdk = 37
 
-    buildFeatures {
-        compose = true
-        buildConfig = true
-    }
-
     defaultConfig {
-        applicationId = "io.rekast.sdk.sample"
         minSdk = 24
-        targetSdk = 37
-        versionCode = 1
-        versionName = "0.0.1"
-        vectorDrawables.useSupportLibrary = true
-        testInstrumentationRunner = "io.rekast.sdk.sample.runner.MockTestRunner"
-    }
-
-    testOptions {
-        animationsDisabled = true
-        unitTests.apply {
-            isReturnDefaultValues = true
-            isIncludeAndroidResources = false
-        }
     }
 
     compileOptions {
@@ -47,49 +35,34 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
-    buildTypes {
-        debug {
-            isDebuggable = true
-            versionNameSuffix = " - debug"
-            applicationIdSuffix = ".debug"
-        }
-        release {
-            isShrinkResources = false
-            isMinifyEnabled = false
+    buildFeatures {
+        compose = true
+    }
+
+    testOptions {
+        unitTests {
+            isReturnDefaultValues = true
+            isIncludeAndroidResources = false
         }
     }
 }
 
-composeCompiler {
-    reportsDestination = layout.buildDirectory.dir("compose_compiler")
-    stabilityConfigurationFiles.add(rootProject.layout.projectDirectory.file("stability_config.conf"))
-}
-
-kotlin {
-    jvmToolchain(17)
-}
-
 dependencies {
-    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
-    implementation(project(":momo-api-sdk"))
-
-    implementation(libs.androidx.core.ktx)
     implementation(platform(libs.androidx.compose.bom))
+    implementation(project(":momo-api-sdk"))
+    implementation(libs.androidx.security.crypto)
+    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.coroutines)
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.google.android.material)
+    implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.lifecycle.livedata.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.runtime.compose)
-    implementation(libs.androidx.lifecycle.viewmodel.savedstate)
-    implementation(libs.androidx.lifecycle.service)
-    implementation(libs.androidx.lifecycle.process)
-    implementation(libs.androidx.lifecycle.viewmodel.android)
-    ksp(libs.androidx.lifecycle.lifecycle.compiler)
-    implementation(libs.androidx.lifecycle.reactivestreams.ktx)
-    implementation(libs.work.runtime.ktx)
-
-    implementation(libs.androidx.appcompat)
-    implementation(libs.google.android.material)
     implementation(libs.androidx.compose.material)
     implementation(libs.compose.material.icons.core)
     implementation(libs.androidx.compose.material3)
@@ -97,45 +70,19 @@ dependencies {
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.ui.tooling)
-    implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.compose.runtime.livedata)
-    implementation(libs.androidx.compose.runtime.rxjava)
-    implementation(libs.androidx.customview)
-    implementation(libs.androidx.customview.poolingcontainer)
-    implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.compose.foundation)
-
-    implementation(libs.google.dagger.hilt)
-    implementation(libs.androidx.hilt.work)
-    ksp(libs.hilt.android.compiler)
-
-    implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.navigation.fragment)
-    implementation(libs.androidx.navigation.ui)
-    implementation(libs.androidx.navigation.dynamic)
-
-    implementation(libs.squareup.retrofit)
-    implementation(libs.squareup.retrofit.gson)
-    implementation(libs.squareup.okhttp)
-    implementation(libs.squareup.okhttp.logging)
-
+    implementation(libs.google.dagger.hilt)
     implementation(libs.jakewharton.timber)
-    implementation(libs.apache.commons.lang3)
+    // ViewModels read ResponseBody directly (SDK returns NetworkResult<ResponseBody>).
+    // okhttp3.ResponseBody is not transitively exposed from momo-api-sdk's implementation deps.
+    implementation(libs.squareup.okhttp)
 
-    implementation(libs.kotlinx.coroutines)
-    implementation(libs.retrofit.coroutines)
-
-    debugImplementation(libs.chuckerteam.chucker)
-
-    // Testing dependencies
-    androidTestImplementation(libs.androidx.test.espresso.core)
-    androidTestImplementation(libs.androidx.compose.ui.test)
-    androidTestImplementation(libs.androidx.test.runner)
-    androidTestImplementation(libs.androidx.test.rules)
-    androidTestImplementation(libs.androidx.test.ext.junit)
-    androidTestImplementation(libs.androidx.test.core)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
+    ksp(libs.hilt.android.compiler)
+    ksp(libs.androidx.lifecycle.lifecycle.compiler)
+    kspAndroidTest(libs.hilt.android.compiler)
 
     testImplementation(libs.junit)
     testImplementation(libs.mockito.core)
@@ -151,21 +98,35 @@ dependencies {
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.androidx.lifecycle.runtime.testing)
 
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(libs.androidx.test.espresso.core)
+    androidTestImplementation(libs.androidx.compose.ui.test)
+    androidTestImplementation(libs.androidx.test.runner)
+    androidTestImplementation(libs.androidx.test.rules)
+    androidTestImplementation(libs.androidx.test.ext.junit)
+    androidTestImplementation(libs.androidx.test.core)
+
     debugImplementation(libs.androidx.compose.ui.test.manifest)
-
-    // For Hilt testing
-    // androidTestImplementation(libs.google.dagger.hilt.android.testing)
-    kspAndroidTest(libs.hilt.android.compiler)
-    // testImplementation(libs.google.dagger.hilt.android.testing)
-    kspTest(libs.hilt.android.compiler)
-
-    releaseImplementation(libs.chuckerteam.chucker.noop)
 }
+
+composeCompiler {
+    reportsDestination = layout.buildDirectory.dir("compose_compiler")
+    stabilityConfigurationFiles.add(rootProject.layout.projectDirectory.file("stability_config.conf"))
+}
+
 dokka {
     dokkaSourceSets {
-        register("main") {
+        create("main") {
+            displayName.set("Sample")
             sourceRoots.from(file("src/main/kotlin"))
-            displayName.set("Android")
+            externalDocumentationLinks.register("kotlinx.coroutines") {
+                url("https://kotlinlang.org/api/kotlinx.coroutines/")
+                packageListUrl("https://kotlinlang.org/api/kotlinx.coroutines/package-list")
+            }
+            externalDocumentationLinks.register("android") {
+                url("https://developer.android.com/reference/kotlin/")
+                packageListUrl("https://developer.android.com/reference/kotlin/package-list")
+            }
         }
     }
     pluginsConfiguration.html {
@@ -186,12 +147,38 @@ kover {
                 androidGeneratedClasses()
                 annotatedBy("*Generated*")
                 classes(
+                    // Standard Hilt-generated class patterns (slash-based, matching JVM class names)
                     "**/Hilt_*",
                     "**/*_HiltModules*",
                     "**/*_Provide*",
                     "**/*ComponentTreeDeps*",
                     "**/dagger/**",
+                    // Hilt-generated InstanceHolder inner classes
+                    "**/*Factory\$InstanceHolder",
+                    // Hilt aggregated dependency injectors (_io_* in hilt_aggregated_deps)
+                    "hilt_aggregated_deps/**",
+                    // Top-level Compose screen functions compile to *ScreenKt classes and their
+                    // inner lambdas; these are not unit-testable.
+                    "**/*ScreenKt",
+                    "**/*ScreenKt\$*",
+                    "**/*ActivityKt",
+                    "**/*ActivityKt\$*",
+                    "**/*ComposableSingletons*",
+                    // CredentialStorage uses EncryptedSharedPreferences (Android runtime only)
+                    "**/CredentialStorage",
+                    "**/CredentialStorage\$*",
+                    // AndroidExtensions uses android.* APIs not available in unit tests
+                    "**/AndroidExtensionsKt",
+                    "**/AndroidExtensionsKt\$*",
+                    // DispatcherProvider default implementations (interface defaults, not logic)
+                    "**/DispatcherProvider",
+                    "**/DispatcherProvider\$*",
+                    "**/DefaultDispatcherProvider",
+                    "**/DefaultDispatcherProvider*",
+                    // ViewModel emitSnackBarState lambdas (fire-and-forget SharedFlow emit)
+                    "**/*\$emitSnackBarState\$*"
                 )
+                packages("io.rekast.sdk.sample.ui")
             }
         }
     }

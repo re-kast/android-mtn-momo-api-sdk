@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2024, Benjamin Mwalimu
+ * Copyright 2023-2026, Benjamin Mwalimu
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,4 +15,11 @@
  */
 package io.rekast.sdk.sample.views
 
+/**
+ * Placeholder test class for [MainActivity].
+ *
+ * UI-level behaviour (navigation, Hilt component wiring, screen rendering) is
+ * covered by instrumented tests under `androidTest/`. Add host-side unit tests
+ * for any logic extracted from the Activity here.
+ */
 class MainActivityTest

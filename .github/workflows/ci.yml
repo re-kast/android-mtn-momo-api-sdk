@@ -30,7 +30,7 @@ jobs:
         run: |
           cat <<'EOF' > local.properties
           MOMO_BASE_URL="https://sandbox.momodeveloper.mtn.com/"
-          MOMO_PROVIDER_CALBACK_HOST="localhost"
+          MOMO_PROVIDER_CALLBACK_HOST="localhost"
           MOMO_COLLECTION_PRIMARY_KEY="placeholder"
           MOMO_COLLECTION_SECONDARY_KEY="placeholder"
           MOMO_REMITTANCE_PRIMARY_KEY="placeholder"
@@ -74,7 +74,7 @@ jobs:
         run: |
           cat <<'EOF' > local.properties
           MOMO_BASE_URL="https://sandbox.momodeveloper.mtn.com/"
-          MOMO_PROVIDER_CALBACK_HOST="localhost"
+          MOMO_PROVIDER_CALLBACK_HOST="localhost"
           MOMO_COLLECTION_PRIMARY_KEY="placeholder"
           MOMO_COLLECTION_SECONDARY_KEY="placeholder"
           MOMO_REMITTANCE_PRIMARY_KEY="placeholder"
@@ -96,14 +96,14 @@ jobs:
         working-directory: android
 
       - name: Run unit tests and generate coverage reports
-        run: ./gradlew :momo-api-sdk:koverXmlReportDebug :sample:koverXmlReportDebug
+        run: ./gradlew :momo-api-sdk:testAndroidHostTest :momo-api-sdk:jvmTest :sample:testDebugUnitTest :app:testDebugUnitTest :momo-api-sdk:koverXmlReportAndroid :sample:koverXmlReportDebug :app:koverXmlReportDebug
         working-directory: android
 
       - name: Upload momo-api-sdk coverage to Codecov
         uses: codecov/codecov-action@v4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: android/momo-api-sdk/build/reports/kover/reportDebug.xml
+          files: android/momo-api-sdk/build/reports/kover/reportAndroid.xml
           flags: momo-api-sdk
           fail_ci_if_error: true
 
@@ -113,4 +113,12 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: android/sample/build/reports/kover/reportDebug.xml
           flags: sample
+          fail_ci_if_error: true
+
+      - name: Upload app coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: android/app/build/reports/kover/reportDebug.xml
+          flags: app
           fail_ci_if_error: true

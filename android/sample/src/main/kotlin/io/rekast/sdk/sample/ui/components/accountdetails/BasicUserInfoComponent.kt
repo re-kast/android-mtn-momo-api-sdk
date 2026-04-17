@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2024, Benjamin Mwalimu
+ * Copyright 2023-2026, Benjamin Mwalimu
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ import io.rekast.sdk.sample.R
 import io.rekast.sdk.sample.ui.components.general.SectionHeader
 
 /**
- * Renders a section displaying basic user information fields: name, birth date, gender,
+ * Rstarters a section displaying basic user information fields: name, birth date, gstarter,
  * updated-at date, locale, and sub identifier.
  *
  * @param modifier Modifier applied to the root [Column].
@@ -47,26 +47,26 @@ fun BasicUserInfoComponent(modifier: Modifier = Modifier, basicUserInfo: Mutable
     ) {
         SectionHeader(titleResId = R.string.basic_user_info_title)
         Row(horizontalArrangement = Arrangement.SpaceEvenly) {
-            Column(modifier = modifier.padding(end = dimensionResource(id = R.dimen.spacing_large))) {
+            Column(modifier = modifier.padding(start = dimensionResource(id = R.dimen.spacing_large), end = dimensionResource(id = R.dimen.spacing_large))) {
                 Text(
                     text = stringResource(id = R.string.name),
                     color = colorResource(id = R.color.black),
                     fontWeight = FontWeight.Bold
                 )
             }
-            Column(modifier = modifier.padding(end = dimensionResource(id = R.dimen.spacing_medium))) {
+            Column(modifier = modifier.padding(start = dimensionResource(id = R.dimen.spacing_medium), end = dimensionResource(id = R.dimen.spacing_medium))) {
                 basicUserInfo.value?.name?.let { Text(text = it, color = colorResource(id = R.color.black)) }
             }
         }
         Row(horizontalArrangement = Arrangement.SpaceEvenly) {
-            Column(modifier = modifier.padding(end = dimensionResource(id = R.dimen.spacing_large))) {
+            Column(modifier = modifier.padding(start = dimensionResource(id = R.dimen.spacing_large), end = dimensionResource(id = R.dimen.spacing_large))) {
                 Text(
                     text = stringResource(id = R.string.birth_date),
                     color = colorResource(id = R.color.black),
                     fontWeight = FontWeight.Bold
                 )
             }
-            Column(modifier = modifier.padding(end = dimensionResource(id = R.dimen.spacing_medium))) {
+            Column(modifier = modifier.padding(start = dimensionResource(id = R.dimen.spacing_medium), end = dimensionResource(id = R.dimen.spacing_medium))) {
                 basicUserInfo.value?.birthDate?.let {
                     Text(
                         text = it,
@@ -76,27 +76,27 @@ fun BasicUserInfoComponent(modifier: Modifier = Modifier, basicUserInfo: Mutable
             }
         }
         Row(horizontalArrangement = Arrangement.SpaceEvenly) {
-            Column(modifier = modifier.padding(end = dimensionResource(id = R.dimen.spacing_large))) {
+            Column(modifier = modifier.padding(start = dimensionResource(id = R.dimen.spacing_large), end = dimensionResource(id = R.dimen.spacing_large))) {
                 Text(
                     text = stringResource(id = R.string.gender),
                     color = colorResource(id = R.color.black),
                     fontWeight = FontWeight.Bold
                 )
             }
-            Column(modifier = modifier.padding(end = dimensionResource(id = R.dimen.spacing_medium))) {
+            Column(modifier = modifier.padding(start = dimensionResource(id = R.dimen.spacing_medium), end = dimensionResource(id = R.dimen.spacing_medium))) {
                 basicUserInfo.value?.gender?.let { Text(text = it, color = colorResource(id = R.color.black)) }
             }
         }
         Row(horizontalArrangement = Arrangement.SpaceEvenly) {
-            Column(modifier = modifier.padding(end = dimensionResource(id = R.dimen.spacing_large))) {
+            Column(modifier = modifier.padding(start = dimensionResource(id = R.dimen.spacing_large), end = dimensionResource(id = R.dimen.spacing_large))) {
                 Text(
                     text = stringResource(id = R.string.updated_at),
                     color = colorResource(id = R.color.black),
                     fontWeight = FontWeight.Bold
                 )
             }
-            Column(modifier = modifier.padding(end = dimensionResource(id = R.dimen.spacing_medium))) {
-                basicUserInfo.value?.updatedAt?.let {
+            Column(modifier = modifier.padding(start = dimensionResource(id = R.dimen.spacing_medium), end = dimensionResource(id = R.dimen.spacing_medium))) {
+                basicUserInfo.value?.displayUpdatedAt?.let {
                     Text(
                         text = it,
                         color = colorResource(id = R.color.black)
@@ -105,26 +105,26 @@ fun BasicUserInfoComponent(modifier: Modifier = Modifier, basicUserInfo: Mutable
             }
         }
         Row(horizontalArrangement = Arrangement.SpaceEvenly) {
-            Column(modifier = modifier.padding(end = dimensionResource(id = R.dimen.spacing_large))) {
+            Column(modifier = modifier.padding(start = dimensionResource(id = R.dimen.spacing_large), end = dimensionResource(id = R.dimen.spacing_large))) {
                 Text(
                     text = stringResource(id = R.string.locale),
                     color = colorResource(id = R.color.black),
                     fontWeight = FontWeight.Bold
                 )
             }
-            Column(modifier = modifier.padding(end = dimensionResource(id = R.dimen.spacing_medium))) {
+            Column(modifier = modifier.padding(start = dimensionResource(id = R.dimen.spacing_medium), end = dimensionResource(id = R.dimen.spacing_medium))) {
                 basicUserInfo.value?.locale?.let { Text(text = it, color = colorResource(id = R.color.black)) }
             }
         }
         Row(horizontalArrangement = Arrangement.SpaceEvenly) {
-            Column(modifier = modifier.padding(end = dimensionResource(id = R.dimen.spacing_large))) {
+            Column(modifier = modifier.padding(start = dimensionResource(id = R.dimen.spacing_large), end = dimensionResource(id = R.dimen.spacing_large))) {
                 Text(
                     text = stringResource(id = R.string.sub),
                     color = colorResource(id = R.color.black),
                     fontWeight = FontWeight.Bold
                 )
             }
-            Column(modifier = modifier.padding(end = dimensionResource(id = R.dimen.spacing_medium))) {
+            Column(modifier = modifier.padding(start = dimensionResource(id = R.dimen.spacing_medium), end = dimensionResource(id = R.dimen.spacing_medium))) {
                 basicUserInfo.value?.sub?.let { Text(text = it, color = colorResource(id = R.color.black)) }
             }
         }
