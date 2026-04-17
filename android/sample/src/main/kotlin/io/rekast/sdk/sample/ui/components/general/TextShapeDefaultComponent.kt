@@ -16,7 +16,6 @@
 package io.rekast.sdk.sample.ui.components.general
 
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.dp
 

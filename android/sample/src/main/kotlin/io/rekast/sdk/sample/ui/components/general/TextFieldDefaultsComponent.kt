@@ -18,7 +18,6 @@ package io.rekast.sdk.sample.ui.components.general
 import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import io.rekast.sdk.sample.R
 

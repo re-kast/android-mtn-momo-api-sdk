@@ -526,7 +526,7 @@ class DefaultRepositoryTest {
     @Test
     fun `bcAuthorize emits Loading then Success`() = runTest {
         val bcAuth = BackChannelAuthorize(authReqId = "auth-req-001", interval = 5, expiresIn = 120)
-        val request = BcAuthorizeRequest(loginHint = "MSISDN:256700000000", scope = "profile openid", accessType = "online")
+        val request = BcAuthorizeRequest(loginHint = "ID:256700000000/MSISDN", scope = "profile openid", accessType = "online")
         coEvery {
             defaultSource.bcAuthorize(any(), any(), any(), any(), any())
         } returns Response.success(bcAuth)
@@ -544,7 +544,7 @@ class DefaultRepositoryTest {
      */
     @Test
     fun `bcAuthorize emits Error on failure`() = runTest {
-        val request = BcAuthorizeRequest(loginHint = "MSISDN:256700000000", scope = "profile openid", accessType = "online")
+        val request = BcAuthorizeRequest(loginHint = "ID:256700000000/MSISDN", scope = "profile openid", accessType = "online")
         coEvery {
             defaultSource.bcAuthorize(any(), any(), any(), any(), any())
         } returns Response.error(403, "forbidden".toResponseBody("text/plain".toMediaType()))

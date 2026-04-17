@@ -254,7 +254,7 @@ class TokenAuthenticatorTest {
         every { mockStorage.getApiKey() } returns "test-api-key"
         every { mockStorage.getOauthAccessToken() } returns ""
         every { mockStorage.getBackChannelAuthorizationRequestId() } returns ""
-        every { mockStorage.getLoginHint() } returns "MSISDN:256770000000"
+        every { mockStorage.getLoginHint() } returns "ID:256770000000/MSISDN"
         stubAccessTokenSuccess()
         stubBcAuthorizeSuccess("bc-req-id-123")
         stubOauthTokenSuccess("new-oauth-token")
@@ -299,7 +299,7 @@ class TokenAuthenticatorTest {
         every { mockStorage.getApiKey() } returns "test-api-key"
         every { mockStorage.getOauthAccessToken() } returns ""
         every { mockStorage.getBackChannelAuthorizationRequestId() } returns ""
-        every { mockStorage.getLoginHint() } returns "MSISDN:256770000000"
+        every { mockStorage.getLoginHint() } returns "ID:256770000000/MSISDN"
         stubAccessTokenSuccess()
         coEvery { mockAuthService.bcAuthorize(any(), any(), any(), any(), any(), any(), any()) } returns
             RetrofitResponse.error(500, "".toResponseBody(null))

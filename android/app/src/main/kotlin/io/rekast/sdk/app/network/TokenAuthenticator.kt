@@ -164,7 +164,7 @@ class TokenAuthenticator(
      *
      * @param productType The product type extracted from the original request URL.
      * @param subscriptionKey The `Ocp-Apim-Subscription-Key` from the original request.
-     * @param loginHint The stored MSISDN login hint.
+     * @param loginHint The stored login hint in the format `ID:{msisdn}/MSISDN` (e.g. `ID:563667/MSISDN`).
      * @return The new `auth_req_id` on success, or `null` if the request fails.
      */
     private fun refreshBackChannelAuthorization(

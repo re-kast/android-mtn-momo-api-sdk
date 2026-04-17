@@ -186,9 +186,9 @@ class CredentialStorage @Inject constructor(@param:ApplicationContext private va
     }
 
     /**
-     * Persists the login hint (MSISDN) used in backchannel authorization requests.
+     * Persists the login hint used in backchannel (CIBA) authorization requests.
      *
-     * @param loginHint The account identifier, typically in the format `MSISDN:{phoneNumber}`.
+     * @param loginHint The account identifier in the format `ID:{msisdn}/MSISDN` (e.g. `ID:563667/MSISDN`).
      */
     fun saveLoginHint(loginHint: String) {
         prefs.edit { putString(KEY_LOGIN_HINT, loginHint) }

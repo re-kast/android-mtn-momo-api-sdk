@@ -26,7 +26,6 @@ import io.rekast.sdk.sample.utils.CredentialStorage
 import io.rekast.sdk.sample.utils.DispatcherProvider
 import io.rekast.sdk.sample.utils.SampleConfig
 import io.rekast.sdk.sample.utils.Utils
-import io.rekast.sdk.utils.Constants
 import io.rekast.sdk.utils.ProductType
 import io.rekast.sdk.utils.Settings
 import javax.inject.Inject
@@ -317,9 +316,8 @@ open class MainViewModel @Inject constructor(
                 }
 
                 backChannelAuthorizationRequestId.isBlank() -> {
-                    // bcAuthorize (or the inner getOauthAccessToken it calls) will set
-                    // isBootstrapComplete = true when it reaches its own terminal state.
-                    bcAuthorize()
+                    Timber.e("No auth_req_id available — bc-authorize must be called first")
+                    _isBootstrapComplete.value = true
                 }
 
                 accessToken.isNotBlank() -> {
