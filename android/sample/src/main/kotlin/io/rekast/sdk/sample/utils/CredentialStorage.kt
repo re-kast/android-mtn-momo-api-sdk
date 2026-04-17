@@ -54,7 +54,7 @@ private const val KEY_OAUTH_REFRESH_TOKEN_EXPIRY = "oauthRefreshTokenExpiry"
  * [io.rekast.sdk.network.interfaces.CredentialProvider].
  */
 @Singleton
-class CredentialStorage @Inject constructor(@ApplicationContext private val context: Context) {
+class CredentialStorage @Inject constructor(@param:ApplicationContext private val context: Context) {
 
     init {
         // EncryptedSharedPreferences.create() + MasterKey.Builder.build() are @WorkerThread

@@ -86,7 +86,7 @@ class NetworkModuleTest {
             NetworkModule.provideOkHttpClient(
                 httpLoggingInterceptor = NetworkModule.providesHttpLoggingInterceptor(),
                 credentialProvider = mockk(relaxed = true),
-                tokenAuthenticator = TokenAuthenticator(mockk(relaxed = true), httpsConfig),
+                tokenAuthenticator = TokenAuthenticator(mockk(relaxed = true), mockk(relaxed = true), httpsConfig),
                 config = httpsConfig
             )
         assertNotNull(client)
@@ -102,7 +102,7 @@ class NetworkModuleTest {
             NetworkModule.provideOkHttpClient(
                 httpLoggingInterceptor = NetworkModule.providesHttpLoggingInterceptor(),
                 credentialProvider = mockk(relaxed = true),
-                tokenAuthenticator = TokenAuthenticator(mockk(relaxed = true), httpConfig),
+                tokenAuthenticator = TokenAuthenticator(mockk(relaxed = true), mockk(relaxed = true), httpConfig),
                 config = httpConfig
             )
         assertNotNull(client)
@@ -119,7 +119,7 @@ class NetworkModuleTest {
             NetworkModule.provideOkHttpClient(
                 httpLoggingInterceptor = NetworkModule.providesHttpLoggingInterceptor(),
                 credentialProvider = mockk(relaxed = true),
-                tokenAuthenticator = TokenAuthenticator(mockk(relaxed = true), httpsConfig),
+                tokenAuthenticator = TokenAuthenticator(mockk(relaxed = true), mockk(relaxed = true), httpsConfig),
                 config = httpsConfig
             )
         val retrofit: Retrofit = NetworkModule.provideRetrofit(client, json, httpsConfig)
@@ -135,7 +135,7 @@ class NetworkModuleTest {
             NetworkModule.provideOkHttpClient(
                 httpLoggingInterceptor = NetworkModule.providesHttpLoggingInterceptor(),
                 credentialProvider = mockk(relaxed = true),
-                tokenAuthenticator = TokenAuthenticator(mockk(relaxed = true), httpsConfig),
+                tokenAuthenticator = TokenAuthenticator(mockk(relaxed = true), mockk(relaxed = true), httpsConfig),
                 config = httpsConfig
             )
         assertNotNull(NetworkModule.provideRetrofit(client, json, httpsConfig))
@@ -183,7 +183,7 @@ class NetworkModuleTest {
             NetworkModule.provideOkHttpClient(
                 httpLoggingInterceptor = NetworkModule.providesHttpLoggingInterceptor(),
                 credentialProvider = mockk(relaxed = true),
-                tokenAuthenticator = TokenAuthenticator(mockk(relaxed = true), config),
+                tokenAuthenticator = TokenAuthenticator(mockk(relaxed = true), mockk(relaxed = true), config),
                 config = config
             )
         return NetworkModule.provideRetrofit(client, json, config)

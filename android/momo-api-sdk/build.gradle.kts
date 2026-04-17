@@ -31,6 +31,10 @@ plugins {
 kotlin {
     jvmToolchain(17)
 
+    compilerOptions {
+        freeCompilerArgs.add("-Xexpect-actual-classes")
+    }
+
     // With com.android.kotlin.multiplatform.library the Android target is configured
     // inside kotlin { android { } } — there is no separate top-level android {} block.
     android {
