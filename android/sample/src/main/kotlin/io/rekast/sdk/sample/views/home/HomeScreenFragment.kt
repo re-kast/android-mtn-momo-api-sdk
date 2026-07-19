@@ -100,10 +100,7 @@ class HomeScreenFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 mainViewModel.isBootstrapComplete.first { it }
-                homeScreenViewModel.getBasicUserInfo()
-                homeScreenViewModel.validateAccountHolderStatus()
-                homeScreenViewModel.getAccountBalance()
-                homeScreenViewModel.getUserInfoWithConsent()
+                homeScreenViewModel.loadHomeData()
             }
         }
     }

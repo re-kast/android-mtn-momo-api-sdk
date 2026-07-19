@@ -48,7 +48,7 @@ For detailed instructions on integrating and configuring the MTN MOMO API SDK, p
 
 ## Authentication & Credential Management
 
-The SDK uses a **pull-based credential model** — it never stores credentials internally. Instead, it calls your app's `CredentialProvider` implementation on every request to retrieve the current API user ID, API key, and access token.
+The SDK uses a **pull-based credential model** — it never stores credentials internally. Instead, it calls your app's `CredentialProvider` implementation on every request to retrieve the current API user ID, API key, Bearer access token, and OAuth2 consent token.
 
 ### How It Works
 
@@ -75,15 +75,24 @@ Credentials are stored using `EncryptedSharedPreferences` (AES-256-GCM via the A
 
 ### Automatic Token Refresh
 
-The `TokenAuthenticator` (an OkHttp `Authenticator`) fires automatically on every HTTP 401 response from a Bearer-protected endpoint:
+The `TokenAuthenticator` (an OkHttp `Authenticator`) fires automatically on every HTTP 401 response from a protected endpoint:
 
-1. Verifies the failed request was using Bearer auth.
+1. Verifies the failed request was using Bearer auth (OAuth2 consent endpoints are exempt — see below).
 2. Calls the MTN MoMo token endpoint via a dedicated `AuthenticationService` backed by a minimal, Basic-Auth-only `OkHttpClient` — this avoids a circular dependency with the main client.
 3. Saves the refreshed Bearer token to `CredentialStorage`.
 4. If the OAuth2 access token is also expired, refreshes it in the same pass and saves it to `CredentialStorage`. An OAuth2 refresh failure is non-fatal — the original request is still retried with the refreshed Bearer token.
 5. Returns the original request so OkHttp re-runs the interceptors — `AccessTokenInterceptor` reads the new token from storage and attaches the correct `Authorization` header on the retry.
 
 After at most **one retry**, the authenticator gives up and propagates the 401 to the caller.
+
+### OAuth2 Consent Endpoints
+
+Two different Bearer tokens are in play. The regular **API-user access token** authenticates most endpoints. OAuth2 **consent resource** endpoints — those whose path contains an `oauth2` segment but not `token`, e.g. `/{productType}/oauth2/{apiVersion}/userinfo` — are instead authenticated with the **OAuth2 consent token** obtained through the CIBA flow. `AccessTokenInterceptor` routes the correct token per request automatically:
+
+- **Consent resource endpoints** (userinfo) → the OAuth2 consent token from `CredentialProvider.getOauthAccessToken()`.
+- **Everything else**, including the OAuth2 **token** endpoint (`/{productType}/oauth2/token/`) that mints the consent token → the regular Bearer token from `CredentialProvider.getAccessToken()`.
+
+On a 401 from a consent endpoint, `TokenAuthenticator` refreshes the consent token (running bc-authorize if needed) and retries — independently of the regular Bearer-token refresh above.
 
 ### Implementing `CredentialProvider`
 
@@ -101,6 +110,10 @@ class MyCredentialProvider(
         if (storage.getAccessToken().isBlank()) storage.getApiKey() else ""
 
     override fun getAccessToken(): String = storage.getAccessToken()
+
+    // The OAuth2 consent token authenticates OAuth2 resource endpoints (e.g. userinfo).
+    // Defaults to "" in the interface, so override it only if you use consent-based APIs.
+    override fun getOauthAccessToken(): String = storage.getOauthAccessToken()
 }
 ```
 

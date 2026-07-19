@@ -133,11 +133,20 @@ object Constants {
 
         /**
          * The literal path segment that identifies OAuth2 (consent) endpoints, e.g.
-         * `/{productType}/oauth2/{apiVersion}/userinfo`. Requests whose path contains this
-         * segment must be authenticated with the OAuth2 consent access token rather than the
-         * regular API-user Bearer token.
+         * `/{productType}/oauth2/{apiVersion}/userinfo`. OAuth2 *resource* endpoints (those that
+         * contain [OAUTH2] but not [TOKEN]) must be authenticated with the OAuth2 consent access
+         * token rather than the regular API-user Bearer token.
          */
         const val OAUTH2 = "oauth2"
+
+        /**
+         * The literal path segment that identifies token-issuance endpoints, e.g.
+         * `/{productType}/oauth2/token/` and `/{productType}/token/`. The OAuth2 **token** endpoint
+         * mints the consent token and must therefore be authenticated with the regular API-user
+         * Bearer token, *not* the (not-yet-issued) consent token — so it is excluded from OAuth2
+         * consent-token routing even though its path contains [OAUTH2].
+         */
+        const val TOKEN = "token"
     }
 
     /**

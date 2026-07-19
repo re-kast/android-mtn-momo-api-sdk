@@ -127,6 +127,28 @@ class AccessTokenInterceptorTest {
         )
     }
 
+    /**
+     * Verifies that the OAuth2 **token** endpoint (`/{product}/oauth2/token/`) uses the regular
+     * Bearer token, not the consent token — it mints the consent token and must not be sent the
+     * (not-yet-issued) consent token, even though its path contains the `oauth2` segment.
+     */
+    @Test
+    fun `adds regular bearer token for oauth2 token endpoint`() {
+        val interceptor = AccessTokenInterceptor(provider(token = "regular-bearer", oauthToken = "consent-token-xyz"))
+        val request = Request.Builder().url("https://example.com/remittance/oauth2/token/").build()
+        val capturedRequest = slot<Request>()
+
+        every { mockChain.request() } returns request
+        every { mockChain.proceed(capture(capturedRequest)) } returns mockResponse(request)
+
+        interceptor.intercept(mockChain)
+
+        assertEquals(
+            "${Constants.TokenTypes.BEARER} regular-bearer",
+            capturedRequest.captured.header(Constants.Headers.AUTHORIZATION)
+        )
+    }
+
     /** Verifies the interceptor returns the response produced by the chain unchanged. */
     @Test
     fun `returns response from chain`() {

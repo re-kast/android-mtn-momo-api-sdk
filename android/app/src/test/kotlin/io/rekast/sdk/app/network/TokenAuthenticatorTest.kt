@@ -96,6 +96,8 @@ class TokenAuthenticatorTest {
 
     private fun userInfoUrl() = "https://sandbox.momodeveloper.mtn.com/remittance/oauth2/v1_0/userinfo"
 
+    private fun oauth2TokenUrl() = "https://sandbox.momodeveloper.mtn.com/remittance/oauth2/token/"
+
     private fun stubAccessTokenSuccess(token: String = "new-token") {
         coEvery { mockAuthService.getAccessToken(any(), any()) } returns
             RetrofitResponse.success(AccessToken(accessToken = token, tokenType = "Bearer", expiresIn = 3600))
@@ -421,6 +423,25 @@ class TokenAuthenticatorTest {
         val result = authenticator.authenticate(null, buildUnauthorizedResponse(userInfoUrl(), authHeader = null))
 
         assertNull("Should give up when the consent token cannot be refreshed", result)
+        verify(exactly = 0) { mockStorage.saveOauthAccessToken(any()) }
+    }
+
+    /**
+     * Verifies that a 401 from the OAuth2 **token** endpoint (`/{product}/oauth2/token/`) is treated
+     * as a regular Bearer-token refresh — not a consent-token refresh — even though its path contains
+     * the `oauth2` segment. This endpoint mints the consent token, so it must refresh the regular
+     * access token instead.
+     */
+    @Test
+    fun `authenticate treats oauth2 token endpoint 401 as a regular bearer refresh`() {
+        every { mockStorage.getApiKey() } returns "test-api-key"
+        every { mockStorage.getOauthAccessToken() } returns "valid-oauth-token"
+        stubAccessTokenSuccess("new-token")
+
+        val result = authenticator.authenticate(null, buildUnauthorizedResponse(oauth2TokenUrl()))
+
+        assertNotNull("Should refresh the regular Bearer token and retry", result)
+        verify(exactly = 1) { mockStorage.saveAccessToken(any()) }
         verify(exactly = 0) { mockStorage.saveOauthAccessToken(any()) }
     }
 

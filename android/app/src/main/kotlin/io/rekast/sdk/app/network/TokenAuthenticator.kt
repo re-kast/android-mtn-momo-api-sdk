@@ -42,10 +42,13 @@ import timber.log.Timber
  * 6. Returns the original request without modification — the [io.rekast.sdk.network.interceptor.auth.AccessTokenInterceptor]
  *    will read the new token from storage and attach the correct header on the retry pass.
  *
- * On a 401 from an **OAuth2 (consent) endpoint** — one whose path contains the
- * [Constants.EndpointPaths.OAUTH2] segment, e.g. `/{productType}/oauth2/{apiVersion}/userinfo` — it
- * refreshes only the OAuth2 consent token (bc-authorize → oauth2/token) and retries, since those
- * endpoints are authenticated with the consent token rather than the regular Bearer token.
+ * On a 401 from an **OAuth2 (consent) resource endpoint** — one whose path contains the
+ * [Constants.EndpointPaths.OAUTH2] segment but not the [Constants.EndpointPaths.TOKEN] segment, e.g.
+ * `/{productType}/oauth2/{apiVersion}/userinfo` — it refreshes only the OAuth2 consent token
+ * (bc-authorize → oauth2/token) and retries, since those endpoints are authenticated with the
+ * consent token rather than the regular Bearer token. The OAuth2 token endpoint
+ * (`/{productType}/oauth2/token/`) is treated as a regular Bearer endpoint — it mints the consent
+ * token and must not itself be authenticated with it.
  *
  * @param storage Encrypted credential store; used to read the API key and save refreshed tokens.
  * @param authService Token-refresh-only [AuthenticationService] backed by a Basic-Auth-only client.
@@ -82,11 +85,15 @@ class TokenAuthenticator(
         route: Route?,
         response: Response
     ): Request? {
-        // OAuth2 (consent) endpoints — e.g. /{productType}/oauth2/{apiVersion}/userinfo — are
-        // authenticated with the OAuth2 consent token, not the regular API-user Bearer token.
+        // OAuth2 (consent) resource endpoints — e.g. /{productType}/oauth2/{apiVersion}/userinfo —
+        // are authenticated with the OAuth2 consent token, not the regular API-user Bearer token.
+        // The OAuth2 token endpoint (/{productType}/oauth2/token/) is excluded: it mints the consent
+        // token and is Bearer-authenticated, so a 401 there is a regular-token refresh, not a
+        // consent-token refresh.
+        val pathSegments = response.request.url.pathSegments
         val isOauth2Endpoint =
-            response.request.url.pathSegments
-                .contains(Constants.EndpointPaths.OAUTH2)
+            pathSegments.contains(Constants.EndpointPaths.OAUTH2) &&
+                !pathSegments.contains(Constants.EndpointPaths.TOKEN)
 
         // Only handle responses to Bearer-authenticated requests. OAuth2 endpoints are exempt from
         // this check: they may legitimately have gone out with no Authorization header when the

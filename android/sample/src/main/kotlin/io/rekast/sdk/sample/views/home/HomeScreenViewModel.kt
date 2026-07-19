@@ -35,8 +35,8 @@ import io.rekast.sdk.sample.utils.Utils
 import io.rekast.sdk.utils.AccountHolderType
 import io.rekast.sdk.utils.ProductType
 import io.rekast.sdk.utils.Settings
-import java.util.concurrent.atomic.AtomicInteger
 import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -45,27 +45,28 @@ import kotlinx.serialization.json.Json
 import timber.log.Timber
 
 /**
- * ViewModel for the Home screen, responsible for fetching and exposing basic user info,
- * account holder status, and account balance from the MTN MOMO API.
+ * ViewModel for the Home screen, responsible for fetching and exposing the signed-in subscriber's
+ * verified profile, basic user info, account holder status, and account balance from the MTN MOMO API.
  *
- * Each data-fetching method collects from a [kotlinx.coroutines.flow.Flow] returned by
- * [io.rekast.sdk.repository.DefaultRepository]. The flow always emits
- * [io.rekast.sdk.repository.data.NetworkResult.Loading] first, followed by a terminal
- * [io.rekast.sdk.repository.data.NetworkResult.Success] or
- * [io.rekast.sdk.repository.data.NetworkResult.Error].
+ * All four calls run through a single ordered pipeline in [loadHomeData] rather than concurrently:
  *
- * Because all four calls on the Home screen launch concurrently, [showProgressBar] is driven by
- * [activeRequestCount] — an `AtomicInteger` that is incremented on each `Loading` emission and
- * decremented on each terminal emission. The progress bar stays visible until the count reaches
- * zero, preventing any single call from hiding the spinner while the others are still in-flight.
+ * 1. **Verified profile** (`userinfo`, consent) — fetched first because it identifies the subscriber;
+ *    its phone number becomes the account holder used by the next two calls.
+ * 2. **Basic user info** — for the account holder derived from step 1.
+ * 3. **Account holder status** — for the same account holder.
+ * 4. **Account balance** — independent of the others.
+ *
+ * Because the pipeline is a single coroutine, [showProgressBar] is set to `true` once at the start
+ * and back to `false` in a `finally` block only after every step has completed — the spinner never
+ * hides while any request is still in flight, and later steps can wait on earlier steps' data.
  *
  * One-off UI events (snackbar messages) are emitted via [snackBarStateFlow], a [SharedFlow]
  * that the composable collects inside a `LaunchedEffect`.
  *
- * All API calls are guarded by a check on [CredentialStorage.getAccessToken]: if no valid
- * token is present the request is skipped and a snackbar is shown instead. In normal operation
- * the access token is provisioned by [io.rekast.sdk.sample.views.MainViewModel] on first
- * launch and refreshed automatically by `TokenAuthenticator` on 401.
+ * The whole pipeline is guarded by a single check on [CredentialStorage.getAccessToken]: if no valid
+ * token is present the load is skipped and an error snackbar is shown. In normal operation the access
+ * token is provisioned by [io.rekast.sdk.sample.views.MainViewModel] on first launch and refreshed
+ * automatically by `TokenAuthenticator` on 401.
  */
 @HiltViewModel
 class HomeScreenViewModel @Inject constructor(
@@ -77,13 +78,6 @@ class HomeScreenViewModel @Inject constructor(
 ) : ViewModel() {
     /** Controls whether the circular progress indicator is shown on the Home screen. */
     val showProgressBar = MutableLiveData(false)
-
-    /**
-     * Counts how many API requests are currently in-flight.
-     * The progress bar is shown while this is > 0 and hidden when it reaches 0,
-     * preventing concurrent calls from toggling the bar off while others are still loading.
-     */
-    private val activeRequestCount = AtomicInteger(0)
 
     private val _snackBarStateFlow = MutableSharedFlow<SnackBarComponentConfiguration>()
 
@@ -103,194 +97,173 @@ class HomeScreenViewModel @Inject constructor(
     var accountBalance: MutableLiveData<AccountBalance?> = MutableLiveData(null)
 
     /**
-     * Fetches basic user info from the Remittance API and posts the result to [basicUserInfo].
+     * Loads all Home screen data in a single ordered pipeline. Shows the progress bar for the whole
+     * batch, fetches each resource in sequence — so a step can wait on the previous step's data — and
+     * hides the progress bar only once every step has finished (success or failure).
      */
-    fun getBasicUserInfo() {
-        val productType = Utils.getProductSubscriptionKeys(ProductType.REMITTANCE, sampleConfig)
-
+    fun loadHomeData() {
         viewModelScope.launch(dispatchers.io()) {
-            if (credentialStorage.getAccessToken().isNotBlank()) {
-                defaultRepository.getBasicUserInfo(
-                    productType = ProductType.REMITTANCE.productType,
-                    apiVersion = sampleConfig.apiVersionV1,
-                    accountHolder = "99733123459",
-                    productSubscriptionKey = productType,
-                    environment = sampleConfig.environment
-                ).collect { foundBasicUserInfo ->
-                    when (foundBasicUserInfo) {
-                        is NetworkResult.Loading -> {
-                            activeRequestCount.incrementAndGet()
-                            showProgressBar.postValue(true)
-                        }
-
-                        is NetworkResult.Success -> {
-                            val userInfo = foundBasicUserInfo.response
-                            userInfo?.updatedAt?.let { userInfo.displayUpdatedAt = Utils.convertToDate(it.toLong()) }
-                            basicUserInfo.postValue(userInfo)
-
-                            Timber.d("Basic user info was fetched successfully")
-                            showProgressBar.postValue(activeRequestCount.decrementAndGet() > 0)
-                            emitSnackBarState(
-                                SnackBarComponentConfiguration(
-                                    message = "Basic user info was fetched successfully",
-                                    type = SnackBarType.SUCCESS
-                                )
-                            )
-                        }
-
-                        is NetworkResult.Error -> {
-                            Timber.e("Basic user info was not fetched: %s", foundBasicUserInfo.message)
-                            showProgressBar.postValue(activeRequestCount.decrementAndGet() > 0)
-
-                            emitSnackBarState(
-                                SnackBarComponentConfiguration(
-                                    message = "Basic user info was not fetched. ${foundBasicUserInfo.message}",
-                                    type = SnackBarType.ERROR
-                                )
-                            )
-                        }
-                    }
-                }
-            } else {
-                Timber.w("Basic user info skipped: access token is blank")
+            if (credentialStorage.getAccessToken().isBlank()) {
+                Timber.w("Home data load skipped: access token is blank")
                 emitSnackBarState(
                     SnackBarComponentConfiguration(
                         message = "Expired access token! Please refresh the token",
                         type = SnackBarType.ERROR
                     )
                 )
+                return@launch
+            }
+
+            showProgressBar.postValue(true)
+            try {
+                // 1. Verified profile first — its phone number identifies the account holder that the
+                //    account-scoped calls below depend on.
+                val consent = fetchUserInfoWithConsent()
+                val accountHolder = consent?.phonenumber?.takeIf { it.isNotBlank() } ?: DEFAULT_ACCOUNT_HOLDER
+
+                // 2 & 3. Account-scoped calls, using the account holder resolved from step 1.
+                fetchBasicUserInfo(accountHolder)
+                fetchAccountHolderStatus(accountHolder)
+
+                // 4. Account balance — independent of the account holder.
+                fetchAccountBalance()
+            } finally {
+                showProgressBar.postValue(false)
             }
         }
     }
 
     /**
-     * Fetches user info with OAuth2 consent from the Remittance API and logs the result.
+     * Fetches the consent-granted verified profile from the Remittance API, posts it to
+     * [userInfoWithConsent], and returns it so the caller can derive the account holder from it.
      */
-    fun getUserInfoWithConsent() {
-        val productType = Utils.getProductSubscriptionKeys(ProductType.REMITTANCE, sampleConfig)
+    private suspend fun fetchUserInfoWithConsent(): UserInfoWithConsent? {
+        val result = defaultRepository.getUserInfoWithConsent(
+            productType = ProductType.REMITTANCE.productType,
+            apiVersion = sampleConfig.apiVersionV1,
+            productSubscriptionKey = Utils.getProductSubscriptionKeys(ProductType.REMITTANCE, sampleConfig),
+            environment = sampleConfig.environment
+        ).awaitTerminal()
 
-        viewModelScope.launch(dispatchers.io()) {
-            if (credentialStorage.getAccessToken().isNotBlank()) {
-                defaultRepository.getUserInfoWithConsent(
-                    productType = ProductType.REMITTANCE.productType,
-                    apiVersion = sampleConfig.apiVersionV1,
-                    productSubscriptionKey = productType,
-                    environment = sampleConfig.environment
-                ).collect { result ->
-                    when (result) {
-                        is NetworkResult.Loading -> {
-                            activeRequestCount.incrementAndGet()
-                            showProgressBar.postValue(true)
-                        }
-
-                        is NetworkResult.Success -> {
-                            userInfoWithConsent.postValue(result.response)
-
-                            Timber.d("User info with consent was fetched successfully")
-                            showProgressBar.postValue(activeRequestCount.decrementAndGet() > 0)
-                            emitSnackBarState(
-                                SnackBarComponentConfiguration(
-                                    message = "Verified profile was fetched successfully",
-                                    type = SnackBarType.SUCCESS
-                                )
-                            )
-                        }
-
-                        is NetworkResult.Error -> {
-                            Timber.e("User info with consent was not fetched: %s", result.message)
-                            showProgressBar.postValue(activeRequestCount.decrementAndGet() > 0)
-
-                            emitSnackBarState(
-                                SnackBarComponentConfiguration(
-                                    message = "Verified profile was not fetched. ${result.message}",
-                                    type = SnackBarType.ERROR
-                                )
-                            )
-                        }
-                    }
-                }
-            } else {
-                Timber.w("User info with consent skipped: access token is blank")
+        return when (result) {
+            is NetworkResult.Success -> {
+                userInfoWithConsent.postValue(result.response)
+                Timber.d("User info with consent was fetched successfully")
                 emitSnackBarState(
                     SnackBarComponentConfiguration(
-                        message = "Expired access token! Please refresh the token",
+                        message = "Verified profile was fetched successfully",
+                        type = SnackBarType.SUCCESS
+                    )
+                )
+                result.response
+            }
+
+            is NetworkResult.Error -> {
+                Timber.e("User info with consent was not fetched: %s", result.message)
+                emitSnackBarState(
+                    SnackBarComponentConfiguration(
+                        message = "Verified profile was not fetched. ${result.message}",
                         type = SnackBarType.ERROR
                     )
                 )
+                null
             }
+
+            is NetworkResult.Loading -> null
         }
     }
 
     /**
-     * Validates the account holder status via the Remittance API and posts the result to [accountHolderStatus].
+     * Fetches basic user info for [accountHolder] and posts the result to [basicUserInfo].
      */
-    fun validateAccountHolderStatus() {
-        viewModelScope.launch(dispatchers.io()) {
-            val accountHolder = AccountHolder(
-                partyId = "99733123459",
-                partyIdType = AccountHolderType.MSISDN.accountHolderType
-            )
-            if (credentialStorage.getAccessToken().isNotBlank()) {
-                defaultRepository.validateAccountHolderStatus(
-                    productType = ProductType.REMITTANCE.productType,
-                    apiVersion = sampleConfig.apiVersionV1,
-                    accountHolder = accountHolder,
-                    productSubscriptionKey = Utils.getProductSubscriptionKeys(ProductType.REMITTANCE, sampleConfig),
-                    environment = sampleConfig.environment
-                ).collect { foundStatus ->
-                    when (foundStatus) {
-                        is NetworkResult.Loading -> {
-                            activeRequestCount.incrementAndGet()
-                            showProgressBar.postValue(true)
-                        }
+    private suspend fun fetchBasicUserInfo(accountHolder: String) {
+        val result = defaultRepository.getBasicUserInfo(
+            productType = ProductType.REMITTANCE.productType,
+            apiVersion = sampleConfig.apiVersionV1,
+            accountHolder = accountHolder,
+            productSubscriptionKey = Utils.getProductSubscriptionKeys(ProductType.REMITTANCE, sampleConfig),
+            environment = sampleConfig.environment
+        ).awaitTerminal()
 
-                        is NetworkResult.Success -> {
-                            runCatching {
-                                Json.decodeFromString<AccountHolderStatus>(foundStatus.response!!.source().readUtf8())
-                            }.onSuccess { status ->
-                                accountHolderStatus.postValue(status)
-                                Timber.d("Account Holder status was fetched successfully")
-                                showProgressBar.postValue(activeRequestCount.decrementAndGet() > 0)
-                                emitSnackBarState(
-                                    SnackBarComponentConfiguration(
-                                        message = "Account status was fetched successfully",
-                                        type = SnackBarType.SUCCESS
-                                    )
-                                )
-                            }.onFailure { throwable ->
-                                Timber.e(throwable, "Account Holder status could not be parsed")
-                                showProgressBar.postValue(activeRequestCount.decrementAndGet() > 0)
-                                emitSnackBarState(
-                                    SnackBarComponentConfiguration(
-                                        message = "Account status could not be read. ${throwable.message}",
-                                        type = SnackBarType.ERROR
-                                    )
-                                )
-                            }
-                        }
-
-                        is NetworkResult.Error -> {
-                            Timber.e("Account Holder status was not fetched: %s", foundStatus.message)
-                            showProgressBar.postValue(activeRequestCount.decrementAndGet() > 0)
-
-                            emitSnackBarState(
-                                SnackBarComponentConfiguration(
-                                    message = "Account status was not fetched. ${foundStatus.message}",
-                                    type = SnackBarType.ERROR
-                                )
-                            )
-                        }
-                    }
-                }
-            } else {
-                Timber.w("Account Holder status skipped: access token is blank")
+        when (result) {
+            is NetworkResult.Success -> {
+                val info = result.response
+                info?.updatedAt?.let { info.displayUpdatedAt = Utils.convertToDate(it.toLong()) }
+                basicUserInfo.postValue(info)
+                Timber.d("Basic user info was fetched successfully")
                 emitSnackBarState(
                     SnackBarComponentConfiguration(
-                        message = "Expired access token! Please refresh the token",
+                        message = "Basic user info was fetched successfully",
+                        type = SnackBarType.SUCCESS
+                    )
+                )
+            }
+
+            is NetworkResult.Error -> {
+                Timber.e("Basic user info was not fetched: %s", result.message)
+                emitSnackBarState(
+                    SnackBarComponentConfiguration(
+                        message = "Basic user info was not fetched. ${result.message}",
                         type = SnackBarType.ERROR
                     )
                 )
             }
+
+            is NetworkResult.Loading -> {}
+        }
+    }
+
+    /**
+     * Validates the account holder status for [accountHolder] and posts the result to [accountHolderStatus].
+     */
+    private suspend fun fetchAccountHolderStatus(accountHolder: String) {
+        val holder = AccountHolder(
+            partyId = accountHolder,
+            partyIdType = AccountHolderType.MSISDN.accountHolderType
+        )
+        val result = defaultRepository.validateAccountHolderStatus(
+            productType = ProductType.REMITTANCE.productType,
+            apiVersion = sampleConfig.apiVersionV1,
+            accountHolder = holder,
+            productSubscriptionKey = Utils.getProductSubscriptionKeys(ProductType.REMITTANCE, sampleConfig),
+            environment = sampleConfig.environment
+        ).awaitTerminal()
+
+        when (result) {
+            is NetworkResult.Success -> {
+                runCatching {
+                    Json.decodeFromString<AccountHolderStatus>(result.response!!.source().readUtf8())
+                }.onSuccess { status ->
+                    accountHolderStatus.postValue(status)
+                    Timber.d("Account Holder status was fetched successfully")
+                    emitSnackBarState(
+                        SnackBarComponentConfiguration(
+                            message = "Account status was fetched successfully",
+                            type = SnackBarType.SUCCESS
+                        )
+                    )
+                }.onFailure { throwable ->
+                    Timber.e(throwable, "Account Holder status could not be parsed")
+                    emitSnackBarState(
+                        SnackBarComponentConfiguration(
+                            message = "Account status could not be read. ${throwable.message}",
+                            type = SnackBarType.ERROR
+                        )
+                    )
+                }
+            }
+
+            is NetworkResult.Error -> {
+                Timber.e("Account Holder status was not fetched: %s", result.message)
+                emitSnackBarState(
+                    SnackBarComponentConfiguration(
+                        message = "Account status was not fetched. ${result.message}",
+                        type = SnackBarType.ERROR
+                    )
+                )
+            }
+
+            is NetworkResult.Loading -> {}
         }
     }
 
@@ -301,60 +274,58 @@ class HomeScreenViewModel @Inject constructor(
      * provisioned with Remittance subscription keys, so calling the balance endpoint with any other
      * product type (e.g. Collection) fails against this configuration.
      */
-    fun getAccountBalance() {
-        viewModelScope.launch(dispatchers.io()) {
-            if (credentialStorage.getAccessToken().isNotBlank()) {
-                defaultRepository.getAccountBalance(
-                    productType = ProductType.REMITTANCE.productType,
-                    apiVersion = sampleConfig.apiVersionV1,
-                    currency = "",
-                    productSubscriptionKey = Utils.getProductSubscriptionKeys(ProductType.REMITTANCE, sampleConfig),
-                    environment = sampleConfig.environment
-                ).collect { balance ->
-                    when (balance) {
-                        is NetworkResult.Loading -> {
-                            activeRequestCount.incrementAndGet()
-                            showProgressBar.postValue(true)
-                        }
+    private suspend fun fetchAccountBalance() {
+        val result = defaultRepository.getAccountBalance(
+            productType = ProductType.REMITTANCE.productType,
+            apiVersion = sampleConfig.apiVersionV1,
+            currency = "",
+            productSubscriptionKey = Utils.getProductSubscriptionKeys(ProductType.REMITTANCE, sampleConfig),
+            environment = sampleConfig.environment
+        ).awaitTerminal()
 
-                        is NetworkResult.Success -> {
-                            accountBalance.postValue(balance.response)
-
-                            Timber.d("Account balance fetched successfully")
-                            showProgressBar.postValue(activeRequestCount.decrementAndGet() > 0)
-                            emitSnackBarState(
-                                SnackBarComponentConfiguration(
-                                    message = "Account balance fetched successfully",
-                                    type = SnackBarType.SUCCESS
-                                )
-                            )
-                        }
-
-                        is NetworkResult.Error -> {
-                            showProgressBar.postValue(activeRequestCount.decrementAndGet() > 0)
-
-                            Timber.e("Account balance was not fetched: %s", balance.message)
-                            emitSnackBarState(
-                                SnackBarComponentConfiguration(
-                                    message = "Account balance was not fetched. ${balance.message}",
-                                    type = SnackBarType.ERROR
-                                )
-                            )
-                        }
-                    }
-                }
-            } else {
-                Timber.w("Account balance skipped: access token is blank")
+        when (result) {
+            is NetworkResult.Success -> {
+                accountBalance.postValue(result.response)
+                Timber.d("Account balance fetched successfully")
                 emitSnackBarState(
                     SnackBarComponentConfiguration(
-                        message = "Expired access token! Please refresh the token",
+                        message = "Account balance fetched successfully",
+                        type = SnackBarType.SUCCESS
+                    )
+                )
+            }
+
+            is NetworkResult.Error -> {
+                Timber.e("Account balance was not fetched: %s", result.message)
+                emitSnackBarState(
+                    SnackBarComponentConfiguration(
+                        message = "Account balance was not fetched. ${result.message}",
                         type = SnackBarType.ERROR
                     )
                 )
             }
+
+            is NetworkResult.Loading -> {}
         }
     }
+
+    /**
+     * Collects this result [Flow] to completion and returns the terminal (non-[NetworkResult.Loading])
+     * emission, so a caller can `await` the flow's final [NetworkResult.Success] or [NetworkResult.Error].
+     * Returns a synthetic [NetworkResult.Error] if the flow completes without a terminal emission.
+     */
+    private suspend fun <T> Flow<NetworkResult<T>>.awaitTerminal(): NetworkResult<T> {
+        var terminal: NetworkResult<T> = NetworkResult.Error("No response received")
+        collect { emission -> if (emission !is NetworkResult.Loading) terminal = emission }
+        return terminal
+    }
+
     private fun emitSnackBarState(snackBarComponentConfiguration: SnackBarComponentConfiguration) {
         viewModelScope.launch { _snackBarStateFlow.emit(snackBarComponentConfiguration) }
+    }
+
+    private companion object {
+        /** Fallback account-holder MSISDN used when the consent profile carries no phone number. */
+        const val DEFAULT_ACCOUNT_HOLDER = "99733123459"
     }
 }
