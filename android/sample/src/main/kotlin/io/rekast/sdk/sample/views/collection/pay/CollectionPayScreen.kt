@@ -79,7 +79,7 @@ fun CollectionScreen(
                         paymentMessage = paymentMessage,
                         paymentNote = paymentNote,
                         deliveryNote = deliveryNote,
-                        onRequestPayButtonClicked = { /*collectionPayScreenViewModel.requestToPay()*/ },
+                        onRequestPayButtonClicked = { collectionPayScreenViewModel.requestToPay() },
                         onPhoneNumberUpdated = { collectionPayScreenViewModel.onPhoneNumberUpdated(it) },
                         onFinancialIdUpdated = { collectionPayScreenViewModel.onFinancialIdUpdated(it) },
                         onReferenceIdToRefundUpdated = { collectionPayScreenViewModel.onReferenceIdToRefundUpdated(it) },

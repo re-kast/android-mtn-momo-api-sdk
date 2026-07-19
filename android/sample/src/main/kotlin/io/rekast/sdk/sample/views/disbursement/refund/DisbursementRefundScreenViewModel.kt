@@ -15,30 +15,54 @@
  */
 package io.rekast.sdk.sample.views.disbursement.refund
 
-import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
+import io.rekast.sdk.model.AccountHolder
 import io.rekast.sdk.model.MomoTransaction
 import io.rekast.sdk.repository.DefaultRepository
+import io.rekast.sdk.repository.data.NetworkResult
 import io.rekast.sdk.sample.utils.Constants
+import io.rekast.sdk.sample.utils.CredentialStorage
+import io.rekast.sdk.sample.utils.DispatcherProvider
 import io.rekast.sdk.sample.utils.SampleConfig
 import io.rekast.sdk.sample.utils.SnackBarComponentConfiguration
+import io.rekast.sdk.sample.utils.SnackBarType
+import io.rekast.sdk.sample.utils.Utils
+import io.rekast.sdk.utils.AccountHolderType
+import io.rekast.sdk.utils.ProductType
+import java.util.UUID
 import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.Json
+import timber.log.Timber
 
 /**
- * ViewModel for the Disbursement Refund screen, managing form field state and the resulting
- * [MomoTransaction] after a refund request.
+ * ViewModel for the Disbursement Refund screen.
+ *
+ * On submit it runs the full Disbursement refund flow against the SDK:
+ * 1. `refund` — reverses a prior transaction back to the payee (HTTP 202).
+ * 2. `getRefundStatus` — polls the outcome and posts it to [momoTransaction].
+ *
+ * The screen shows the input form while [momoTransaction] is null and the result once it is set.
+ * Authentication is handled automatically by the SDK's interceptor/authenticator, so the ViewModel
+ * only guards on the presence of an access token before starting.
  */
 @HiltViewModel
-class DisbursementRefundScreenViewModel @Inject constructor(private val defaultRepository: DefaultRepository, @param:ApplicationContext private val context: Context, private val sampleConfig: SampleConfig) : ViewModel() {
+class DisbursementRefundScreenViewModel @Inject constructor(
+    private val defaultRepository: DefaultRepository,
+    private val credentialStorage: CredentialStorage,
+    private val dispatchers: DispatcherProvider,
+    private val sampleConfig: SampleConfig
+) : ViewModel() {
+    private val json = Json { ignoreUnknownKeys = true }
+
     /** Controls whether the circular progress indicator is shown instead of the form. */
     val showProgressBar = MutableLiveData(false)
 
@@ -63,13 +87,13 @@ class DisbursementRefundScreenViewModel @Inject constructor(private val defaultR
 
     private val _referenceIdToRefund = MutableLiveData(Constants.EMPTY_STRING)
 
-    /** The current reference ID of the original transaction to refund. */
+    /** The current reference ID to refund entered in the form. */
     val referenceIdToRefund: LiveData<String>
         get() = _referenceIdToRefund
 
     private val _amount = MutableLiveData(Constants.EMPTY_STRING)
 
-    /** The current refund amount entered in the form. */
+    /** The current payment amount entered in the form. */
     val amount: LiveData<String>
         get() = _amount
 
@@ -148,175 +172,109 @@ class DisbursementRefundScreenViewModel @Inject constructor(private val defaultR
     /**
      * Updates the reference ID to refund field value.
      *
-     * @param deliveryNote The new reference ID to refund string.
+     * @param referenceIdToRefund The new reference ID to refund string.
      */
-    fun onReferenceIdToRefundUpdated(deliveryNote: String) {
-        _referenceIdToRefund.value = deliveryNote
+    fun onReferenceIdToRefundUpdated(referenceIdToRefund: String) {
+        _referenceIdToRefund.value = referenceIdToRefund
     }
 
-/*    fun refund() {
-        showProgressBar.postValue(true)
-        if (phoneNumber.value!!.isNotEmpty() && referenceIdToRefund.value!!.isNotEmpty() &&
-            amount.value!!.isNotEmpty() && payerMessage.value!!.isNotEmpty() &&
-            payerNote.value!!.isNotEmpty()
-        ) {
-            val accessToken = context?.let { Utils.getAccessToken(it) }
-            val transactionUuid = Settings().generateUUID()
-            val creditTransaction = createRefundTransaction()
-            if (StringUtils.isNotBlank(accessToken)) {
-                accessToken?.let { accessTokenString ->
-                    momoAPi?.refund(
-                        accessTokenString,
-                        creditTransaction,
-                        BuildConfig.MOMO_API_VERSION_V2,
-                        Settings().getProductSubscriptionKeys(ProductType.DISBURSEMENTS),
-                        transactionUuid
-                    ) { momoAPIResult ->
-                        when (momoAPIResult) {
-                            is MomoResponse.Success -> {
-                                if (deliveryNote.value!!.isNotEmpty()) {
-                                    requestToPayDeliveryNotification(
-                                        transactionUuid
-                                    )
-                                }
-
-                                getRefundStatus(transactionUuid)
-                                showProgressBar.postValue(false)
-                                emitSnackBarState(
-                                    SnackBarComponentConfiguration(
-                                        message = "Refund sent successfully"
-                                    )
-                                )
-                            }
-                            is MomoResponse.Failure -> {
-                                val momoAPIException = momoAPIResult.momoException
-                                showProgressBar.postValue(false)
-                                emitSnackBarState(
-                                    SnackBarComponentConfiguration(
-                                        message = "${momoAPIException!!.message} Refund not sent!"
-                                    )
-                                )
-                            }
-                        }
+    /**
+     * Submits a Disbursement refund, then polls the status and posts the resulting
+     * [MomoTransaction] to [momoTransaction].
+     */
+    fun refund() {
+        viewModelScope.launch(dispatchers.io()) {
+            if (credentialStorage.getAccessToken().isBlank()) {
+                Timber.w("Refund skipped: access token is blank")
+                emitError("Expired access token! Please refresh the token")
+                return@launch
+            }
+            showProgressBar.postValue(true)
+            try {
+                val referenceId = UUID.randomUUID().toString()
+                val subscriptionKey = Utils.getProductSubscriptionKeys(ProductType.DISBURSEMENTS, sampleConfig)
+                val submit = defaultRepository.refund(
+                    momoTransaction = buildTransaction(),
+                    apiVersion = sampleConfig.apiVersionV1,
+                    productSubscriptionKey = subscriptionKey,
+                    uuid = referenceId
+                ).awaitTerminal()
+                when (submit) {
+                    is NetworkResult.Success -> {
+                        Timber.d("Refund accepted (ref=%s)", referenceId)
+                        emitSuccess("Refund submitted successfully")
+                        fetchStatus(referenceId, subscriptionKey)
                     }
+
+                    is NetworkResult.Error -> {
+                        Timber.e("Refund failed: %s", submit.message)
+                        emitError("Refund was not sent. ${submit.message}")
+                    }
+
+                    is NetworkResult.Loading -> {}
                 }
-            } else {
+            } catch (exception: Exception) {
+                Timber.e(exception, "Refund failed")
+                emitError("Refund was not sent. ${exception.message}")
+            } finally {
                 showProgressBar.postValue(false)
-                emitSnackBarState(
-                    SnackBarComponentConfiguration(
-                        message = "Expired access token! Please refresh the token"
-                    )
-                )
             }
         }
     }
 
-    private fun getRefundStatus(referenceId: String) {
-        showProgressBar.postValue(true)
-        val accessToken = context?.let { Utils.getAccessToken(it) }
-        if (StringUtils.isNotBlank(accessToken)) {
-            accessToken?.let { accessTokenString ->
-                momoAPi?.getRefundStatus(
-                    referenceId,
-                    BuildConfig.MOMO_API_VERSION_V1,
-                    Settings().getProductSubscriptionKeys(ProductType.DISBURSEMENTS),
-                    accessTokenString
-                ) { momoAPIResult ->
-                    when (momoAPIResult) {
-                        is MomoResponse.Success -> {
-                            val completeDepositStatusFetch =
-                                Gson().fromJson(momoAPIResult.value!!.source().readUtf8(), MomoTransaction::class.java)
-                            momoTransaction = MutableLiveData(completeDepositStatusFetch)
-                            showProgressBar.postValue(false)
-                            emitSnackBarState(
-                                SnackBarComponentConfiguration(
-                                    message = "Refund status fetched successfully"
-                                )
-                            )
-                        }
-                        is MomoResponse.Failure -> {
-                            val momoAPIException = momoAPIResult.momoException
-                            showProgressBar.postValue(false)
-                            emitSnackBarState(
-                                SnackBarComponentConfiguration(
-                                    message = "${momoAPIException!!.message} Deposit status not fetched!"
-                                )
-                            )
-                        }
-                    }
+    /** Polls the refund status and posts the decoded transaction to [momoTransaction]. */
+    private suspend fun fetchStatus(referenceId: String, subscriptionKey: String) {
+        val result = defaultRepository.getRefundStatus(
+            referenceId = referenceId,
+            apiVersion = sampleConfig.apiVersionV1,
+            productSubscriptionKey = subscriptionKey
+        ).awaitTerminal()
+        when (result) {
+            is NetworkResult.Success -> {
+                val transaction = result.response?.source()?.readUtf8()?.let { body ->
+                    runCatching { json.decodeFromString<MomoTransaction>(body) }.getOrNull()
                 }
+                momoTransaction.postValue(transaction)
+                emitSuccess("Refund status fetched successfully")
             }
-        } else {
-            showProgressBar.postValue(false)
-            emitSnackBarState(
-                SnackBarComponentConfiguration(
-                    message = "Expired access token! Please refresh the token"
-                )
-            )
+
+            is NetworkResult.Error -> {
+                Timber.e("Refund status failed: %s", result.message)
+                emitError("Refund status not fetched. ${result.message}")
+            }
+
+            is NetworkResult.Loading -> {}
         }
     }
 
-    private fun createRefundTransaction(): MomoTransaction {
-        return MomoTransaction(
-            amount.value!!.toString(),
-            Constants.SANDBOX_CURRENCY,
-            null,
-            RandomStringUtils.randomAlphanumeric(Constants.STRING_LENGTH),
-            AccountHolder(AccountHolderType.MSISDN.name, phoneNumber.value!!.toString()),
-            null,
-            payerMessage.value!!.toString(),
-            payerNote.value!!.toString(),
-            null,
-            null,
-            referenceIdToRefund.value!!.toString()
-        )
+    /** Builds the refund payload from the current form values. */
+    private fun buildTransaction() = MomoTransaction(
+        amount = amount.value.orEmpty(),
+        currency = Constants.SANDBOX_CURRENCY,
+        financialTransactionId = financialId.value?.ifBlank { null },
+        externalId = UUID.randomUUID().toString(),
+        payee = AccountHolder(partyIdType = AccountHolderType.MSISDN.accountHolderType, partyId = phoneNumber.value.orEmpty()),
+        payer = null,
+        payerMessage = payerMessage.value.orEmpty(),
+        payeeNote = payerNote.value.orEmpty(),
+        status = null,
+        reason = null,
+        referenceIdToRefund = referenceIdToRefund.value?.ifBlank { null }
+    )
+
+    /**
+     * Collects this result [Flow] to completion and returns its terminal (non-[NetworkResult.Loading])
+     * emission, so a suspend caller can await the flow's final success or error.
+     */
+    private suspend fun <T> Flow<NetworkResult<T>>.awaitTerminal(): NetworkResult<T> {
+        var terminal: NetworkResult<T> = NetworkResult.Error("No response received")
+        collect { emission -> if (emission !is NetworkResult.Loading) terminal = emission }
+        return terminal
     }
 
-    private fun requestToPayDeliveryNotification(referenceId: String) {
-        val accessToken = context?.let { Utils.getAccessToken(it) }
-        val momoNotification = MomoNotification(
-            notificationMessage = deliveryNote.value!!.toString()
-        )
-        if (StringUtils.isNotBlank(accessToken) &&
-            Settings().checkNotificationMessageLength(momoNotification.notificationMessage)
-        ) {
-            accessToken?.let {
-                momoAPi?.requestToPayDeliveryNotification(
-                    momoNotification,
-                    referenceId,
-                    BuildConfig.MOMO_API_VERSION_V1,
-                    ProductType.DISBURSEMENTS.productType,
-                    Settings().getProductSubscriptionKeys(ProductType.DISBURSEMENTS),
-                    it
-                ) { momoAPIResult ->
-                    when (momoAPIResult) {
-                        is MomoResponse.Success -> {
-                            emitSnackBarState(
-                                SnackBarComponentConfiguration(
-                                    message = "Disbursement delivery note sent successfully"
-                                )
-                            )
-                        }
-                        is MomoResponse.Failure -> {
-                            val momoAPIException = momoAPIResult.momoException
-                            emitSnackBarState(
-                                SnackBarComponentConfiguration(
-                                    message = "${momoAPIException!!.message} Delivery note was not sent!"
-                                )
-                            )
-                        }
-                    }
-                }
-            }
-        } else {
-            showProgressBar.postValue(false)
-            emitSnackBarState(
-                SnackBarComponentConfiguration(
-                    message = "Expired access token! Please refresh the token"
-                )
-            )
-        }
-    }*/
+    private fun emitSuccess(message: String) = emitSnackBarState(SnackBarComponentConfiguration(message = message, type = SnackBarType.SUCCESS))
+
+    private fun emitError(message: String) = emitSnackBarState(SnackBarComponentConfiguration(message = message, type = SnackBarType.ERROR))
 
     private fun emitSnackBarState(snackBarComponentConfiguration: SnackBarComponentConfiguration) {
         viewModelScope.launch { _snackBarStateFlow.emit(snackBarComponentConfiguration) }

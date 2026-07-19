@@ -200,6 +200,16 @@ class CredentialStorage @Inject constructor(@param:ApplicationContext private va
     fun getLoginHint(): String = prefs.getString(KEY_LOGIN_HINT, "").orEmpty()
 
     /**
+     * Removes every persisted credential (API key, tokens, auth-request ID, and login hint).
+     *
+     * The next request will trigger a full re-bootstrap, re-provisioning all credentials from
+     * scratch. Intended for the sample app's "clear stored credentials" settings action.
+     */
+    fun clearAll() {
+        prefs.edit { clear() }
+    }
+
+    /**
      * Returns the absolute epoch-millisecond timestamp that is [seconds] from now.
      *
      * @param seconds Number of seconds from the current time (standard OAuth2 `expires_in` unit).

@@ -64,6 +64,81 @@
     <string name="verified">Verified</string>
     <string name="home_empty_hint">Your MTN MoMo account details will appear here once loaded.</string>
 
+    <!--Operation screens (Invoice, Pre-approval, Cash Transfer)-->
+    <string name="invoice_screen">Collection | Invoice</string>
+    <string name="pre_approval_screen">Collection | Pre-Approval</string>
+    <string name="cash_transfer_screen">Remittance | Cash Transfer</string>
+
+    <string name="invoice_title">Create Invoice</string>
+    <string name="pre_approval_title">Create Pre-Approval</string>
+    <string name="cash_transfer_title">Cash Transfer (V2)</string>
+
+    <string name="action_create">Create</string>
+    <string name="action_check_status">Check Status</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_send">Send</string>
+
+    <string name="label_amount">Amount *</string>
+    <string name="label_payer_msisdn">Payer phone number *</string>
+    <string name="label_payee_msisdn">Payee phone number *</string>
+    <string name="label_validity_seconds">Validity (seconds)</string>
+    <string name="label_validity_minutes">Validity (minutes) *</string>
+    <string name="label_message">Message</string>
+    <string name="label_note">Note</string>
+    <string name="label_description">Description</string>
+    <string name="label_external_id">External ID</string>
+    <string name="label_payer_first_name">Payer first name</string>
+    <string name="label_payer_surname">Payer surname</string>
+
+    <string name="console_hint">Run an operation to see its reference ID and status here.</string>
+
+    <!--Setup &amp; Config screen-->
+    <string name="setup_screen">Setup &amp; Config</string>
+    <string name="setup_config_title">Configuration</string>
+    <string name="setup_status_title">Credential Status</string>
+    <string name="setup_status_hint">These credentials are provisioned automatically on launch by the SDK bootstrap flow.</string>
+    <string name="action_rerun_setup">Re-run Setup</string>
+    <string name="status_present">Present</string>
+    <string name="status_missing">Missing</string>
+    <string name="label_environment">Environment</string>
+    <string name="label_api_version_v1">API version (v1)</string>
+    <string name="label_api_version_v2">API version (v2)</string>
+    <string name="label_api_user_id">API user ID</string>
+    <string name="label_callback_host">Callback host</string>
+    <string name="label_api_key">API key</string>
+    <string name="label_access_token">Access token</string>
+    <string name="label_oauth_token">OAuth2 consent token</string>
+    <string name="label_auth_req_id">Auth request ID</string>
+    <string name="label_login_hint">Login hint</string>
+
+    <!--Settings screen-->
+    <string name="settings_screen">Settings</string>
+    <string name="settings_environment_title">Environment</string>
+    <string name="settings_keys_title">Product Subscription Keys</string>
+    <string name="settings_keys_hint">Keys are read from local.properties at build time. Tap Show to reveal them.</string>
+    <string name="settings_app_title">Application</string>
+    <string name="settings_danger_title">Danger Zone</string>
+    <string name="settings_danger_hint">Removes all provisioned tokens and keys from secure storage. They are re-created automatically on the next launch.</string>
+    <string name="action_show">Show</string>
+    <string name="action_hide">Hide</string>
+    <string name="action_clear_credentials">Clear stored credentials</string>
+    <string name="value_not_set">Not set</string>
+    <string name="label_collection_primary_key">Collection · primary</string>
+    <string name="label_collection_secondary_key">Collection · secondary</string>
+    <string name="label_remittance_primary_key">Remittance · primary</string>
+    <string name="label_remittance_secondary_key">Remittance · secondary</string>
+    <string name="label_disbursement_primary_key">Disbursement · primary</string>
+    <string name="label_disbursement_secondary_key">Disbursement · secondary</string>
+    <string name="label_app_version">Version</string>
+    <string name="label_app_build">Build</string>
+    <string name="label_package_name">Package</string>
+
+    <!--Drawer section headers-->
+    <string name="section_general">General</string>
+    <string name="section_collection">Collection</string>
+    <string name="section_disbursement">Disbursement</string>
+    <string name="section_remittance">Remittance</string>
+
     <!--Payment page-->
     <string name="request_to_pay_title">Request to Pay</string>
     <string name="request_payment_submit_button">Request Payment</string>

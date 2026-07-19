@@ -13,62 +13,44 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.rekast.sdk.sample.views.remittance
+package io.rekast.sdk.sample.views.settings
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import io.rekast.sdk.sample.ui.theme.AppTheme
-import io.rekast.sdk.sample.views.MainViewModel
 import kotlin.getValue
 
 /**
- * Fragment that hosts the Remittance Transfer screen, rendering [RemittanceScreen] via Jetpack Compose.
+ * Fragment that hosts the Settings screen, rendering [SettingsScreen] via Jetpack Compose.
  */
 @ExperimentalMaterialApi
 @AndroidEntryPoint
-class RemittanceScreenFragment : Fragment() {
-    private val remittanceScreenViewModel by viewModels<RemittanceScreenViewModel>()
-    private val mainViewModel by activityViewModels<MainViewModel>()
+class SettingsScreenFragment : Fragment() {
+    private val settingsScreenViewModel by viewModels<SettingsScreenViewModel>()
 
-    /**
-     * Inflates the Remittance Transfer screen Compose hierarchy, wiring up [RemittanceScreen]
-     * with its ViewModel, NavController, and snackbar state.
-     */
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val navController = findNavController()
         return ComposeView(requireContext()).apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
                 AppTheme {
-                    val isBootstrapComplete by mainViewModel.isBootstrapComplete.collectAsState()
-                    val vmShowProgressBar by remittanceScreenViewModel.showProgressBar.observeAsState(false)
-                    RemittanceScreen(
+                    SettingsScreen(
                         navController = navController,
-                        snackStateFlow = remittanceScreenViewModel.snackBarStateFlow,
-                        showProgressBar = !isBootstrapComplete || vmShowProgressBar,
-                        remittanceScreenViewModel = remittanceScreenViewModel,
-                        momoTransaction = remittanceScreenViewModel.momoTransaction
+                        snackStateFlow = settingsScreenViewModel.snackBarStateFlow,
+                        viewModel = settingsScreenViewModel,
+                        onClearCredentials = { settingsScreenViewModel.clearCredentials() }
                     )
                 }
             }
         }
-    }
-
-    /** Reserved for future per-resume lifecycle operations. */
-    override fun onResume() {
-        super.onResume()
     }
 }

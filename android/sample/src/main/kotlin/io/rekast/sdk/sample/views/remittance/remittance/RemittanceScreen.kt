@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.rekast.sdk.sample.views.remittance
+package io.rekast.sdk.sample.views.remittance.remittance
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -79,7 +79,7 @@ fun RemittanceScreen(
                         paymentMessage = paymentMessage,
                         paymentNote = paymentNote,
                         deliveryNote = deliveryNote,
-                        onRequestPayButtonClicked = { /*remittanceScreenViewModel.transferRemittance()*/ },
+                        onRequestPayButtonClicked = { remittanceScreenViewModel.transferRemittance() },
                         onPhoneNumberUpdated = { remittanceScreenViewModel.onPhoneNumberUpdated(it) },
                         onFinancialIdUpdated = { remittanceScreenViewModel.onFinancialIdUpdated(it) },
                         onReferenceIdToRefundUpdated = { remittanceScreenViewModel.onReferenceIdToRefundUpdated(it) },

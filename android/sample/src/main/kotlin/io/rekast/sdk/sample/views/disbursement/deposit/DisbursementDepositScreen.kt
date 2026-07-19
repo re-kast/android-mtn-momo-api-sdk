@@ -79,7 +79,7 @@ fun DisbursementScreen(
                         paymentMessage = paymentMessage,
                         paymentNote = paymentNote,
                         deliveryNote = deliveryNote,
-                        onRequestPayButtonClicked = { /*disbursementDepositScreenViewModel.deposit()*/ },
+                        onRequestPayButtonClicked = { disbursementDepositScreenViewModel.deposit() },
                         onPhoneNumberUpdated = { disbursementDepositScreenViewModel.onPhoneNumberUpdated(it) },
                         onFinancialIdUpdated = { disbursementDepositScreenViewModel.onFinancialIdUpdated(it) },
                         onReferenceIdToRefundUpdated = { disbursementDepositScreenViewModel.onReferenceIdToRefundUpdated(it) },

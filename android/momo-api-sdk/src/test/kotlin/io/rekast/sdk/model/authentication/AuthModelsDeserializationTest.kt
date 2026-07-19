@@ -156,7 +156,7 @@ class AuthModelsDeserializationTest {
         """.trimIndent()
         val result = json.decodeFromString<Oauth2AccessToken>(raw)
         assertEquals(43200, result.refreshTokenExpiredIn)
-        assertEquals(43200::class, result.refreshTokenExpiredIn::class)
+        assertEquals(43200::class, result.refreshTokenExpiredIn!!::class)
     }
 
     /** Verifies that [ApiKey.apiKey] is mapped correctly from the `apiKey` JSON field. */

@@ -198,6 +198,17 @@ The available API groups are:
 
 For full code examples and parameter descriptions for every API, see the [Library Usage](https://mtn-momo-sdk.rekast.io/Documentation/api-reference) section of the documentation.
 
+## Sample App
+
+The `sample` module is a Jetpack Compose application that exercises every SDK operation against the MTN MoMo sandbox. Its navigation drawer groups the screens into collapsible sections:
+
+- **General** — **Home** (profile, account status, and balance), **Setup & Config** (the live credential-provisioning status the bootstrap flow normally fills in invisibly, plus a *Re-run Setup* action), and **Settings** (environment, product subscription keys with a show/hide toggle, app build info, and a *Clear stored credentials* action).
+- **Collection** — Request to Pay, Request to Withdraw, Invoice, and Pre-Approval.
+- **Disbursement** — Deposit and Refund.
+- **Remittance** — Transfer and Cash Transfer (V2).
+
+Credentials are provisioned automatically on first launch (see [Credential Bootstrap](#credential-bootstrap)); the **Setup & Config** screen surfaces that otherwise-invisible flow so you can watch each credential appear.
+
 ## License
 
 This project is licensed under the Apache License, Version 2.0. For more details, please refer to the [LICENSE](LICENSE) file.

@@ -15,14 +15,23 @@
  */
 package io.rekast.sdk.sample.ui.navigation.drawer
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.DrawerValue
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Text
 import androidx.compose.material.rememberDrawerState
@@ -30,12 +39,17 @@ import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -58,14 +72,26 @@ import kotlinx.coroutines.launch
  */
 @Composable
 fun Drawer(scope: CoroutineScope, scaffoldState: ScaffoldState, navController: NavController) {
-    val items = listOf(
-        NavigationDrawerItem.Home,
-        NavigationDrawerItem.CollectionRequestToPay,
-        NavigationDrawerItem.CollectionRequestToWithdraw,
-        NavigationDrawerItem.DisbursementDeposit,
-        NavigationDrawerItem.DisbursementRefund,
-        NavigationDrawerItem.Remittance
+    val sections = listOf(
+        R.string.section_general to listOf(NavigationDrawerItem.Home, NavigationDrawerItem.Setup, NavigationDrawerItem.Settings),
+        R.string.section_collection to listOf(
+            NavigationDrawerItem.CollectionRequestToPay,
+            NavigationDrawerItem.CollectionRequestToWithdraw,
+            NavigationDrawerItem.CollectionInvoice,
+            NavigationDrawerItem.CollectionPreApproval
+        ),
+        R.string.section_disbursement to listOf(
+            NavigationDrawerItem.DisbursementDeposit,
+            NavigationDrawerItem.DisbursementRefund
+        ),
+        R.string.section_remittance to listOf(
+            NavigationDrawerItem.Remittance,
+            NavigationDrawerItem.RemittanceCashTransfer
+        )
     )
+    val expandedSections = remember {
+        mutableStateMapOf<Int, Boolean>().apply { sections.forEach { put(it.first, true) } }
+    }
     Column {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         Row(
@@ -89,15 +115,32 @@ fun Drawer(scope: CoroutineScope, scaffoldState: ScaffoldState, navController: N
                 Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.spacing_extra_small)))
             }
         }
-        items.forEach { item ->
-            DrawerItem(item = item, selected = navBackStackEntry?.destination?.id == item.route, onItemClick = {
-                navController.navigate(item.route)
-                scope.launch {
-                    scaffoldState.drawerState.close()
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .verticalScroll(rememberScrollState())
+        ) {
+            sections.forEach { (sectionTitle, sectionItems) ->
+                val expanded = expandedSections[sectionTitle] != false
+                DrawerSectionHeader(
+                    title = stringResource(id = sectionTitle),
+                    expanded = expanded,
+                    onToggle = { expandedSections[sectionTitle] = !expanded }
+                )
+                AnimatedVisibility(visible = expanded) {
+                    Column {
+                        sectionItems.forEach { item ->
+                            DrawerItem(item = item, selected = navBackStackEntry?.destination?.id == item.route, onItemClick = {
+                                navController.navigate(item.route)
+                                scope.launch {
+                                    scaffoldState.drawerState.close()
+                                }
+                            })
+                        }
+                    }
                 }
-            })
+            }
         }
-        Spacer(modifier = Modifier.weight(1f))
         Text(
             text = stringResource(id = R.string.copyrights),
             color = Color.White,
@@ -106,6 +149,46 @@ fun Drawer(scope: CoroutineScope, scaffoldState: ScaffoldState, navController: N
             modifier = Modifier
                 .padding(dimensionResource(id = R.dimen.spacing_large))
                 .align(Alignment.CenterHorizontally)
+        )
+    }
+}
+
+/**
+ * A muted, tappable section header that collapses or expands its group of destinations.
+ *
+ * @param title The section label, rendered upper-cased.
+ * @param expanded Whether the section is currently expanded; drives the chevron rotation.
+ * @param onToggle Invoked when the header is tapped to toggle the section.
+ */
+@Composable
+private fun DrawerSectionHeader(title: String, expanded: Boolean, onToggle: () -> Unit) {
+    val rotation by animateFloatAsState(targetValue = if (expanded) 180f else 0f, label = "sectionChevron")
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onToggle)
+            .padding(
+                start = dimensionResource(id = R.dimen.spacing_large),
+                end = dimensionResource(id = R.dimen.spacing_large),
+                top = dimensionResource(id = R.dimen.spacing_medium),
+                bottom = dimensionResource(id = R.dimen.spacing_extra_small)
+            ),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(
+            text = title.uppercase(),
+            color = MaterialTheme.colors.secondary,
+            fontWeight = FontWeight.Bold,
+            fontSize = with(LocalDensity.current) { dimensionResource(id = R.dimen.spacing_medium).toSp() }
+        )
+        Image(
+            painter = painterResource(id = R.drawable.expand_more),
+            contentDescription = null,
+            colorFilter = ColorFilter.tint(MaterialTheme.colors.secondary),
+            modifier = Modifier
+                .size(dimensionResource(id = R.dimen.icon_size_default))
+                .rotate(rotation)
         )
     }
 }

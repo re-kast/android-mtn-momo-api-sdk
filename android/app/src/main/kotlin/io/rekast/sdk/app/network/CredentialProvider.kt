@@ -22,7 +22,7 @@ import io.rekast.sdk.sample.utils.SampleConfig
 /**
  * App implementation of [CredentialProvider].
  *
- * Reads credentials from [CredentialStorage] (backed by [EncryptedSharedPreferences]) so that the
+ * Reads credentials from [CredentialStorage] (backed by `EncryptedSharedPreferences`) so that the
  * SDK's interceptors always receive the most recent values without the SDK needing to store or
  * manage credentials itself.
  *

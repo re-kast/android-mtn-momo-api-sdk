@@ -49,18 +49,28 @@ private val LightSurface = Color(0xFFFFFFFF)
 private val DarkBackground = Color(0xFF121417)
 private val DarkSurface = Color(0xFF1D2024)
 
-/** Muted color for secondary/label text; adapts per theme via [io.rekast.sdk.sample.ui.theme.subtleTextColor]. */
+/** Muted color for secondary/label text in light mode; see [io.rekast.sdk.sample.ui.theme.subtleTextColor]. */
 val SubtleTextLight = Color(0xFF6B7280)
+
+/** Muted color for secondary/label text in dark mode; see [io.rekast.sdk.sample.ui.theme.subtleTextColor]. */
 val SubtleTextDark = Color(0xFF9AA3AD)
 
-/** Hairline divider/border colors per theme. */
+/** Hairline divider/border color for light mode. */
 val DividerLight = Color(0xFFE4E7EC)
+
+/** Hairline divider/border color for dark mode. */
 val DividerDark = Color(0xFF2C3036)
 
-/* Semantic status colors — tuned to read acceptably on both light and dark surfaces. */
+/** Semantic color for success states (e.g. a "Present" status pill); reads on both light and dark surfaces. */
 val SuccessColor = Color(0xFF14A44D)
+
+/** Semantic color for error/destructive states (e.g. a "Missing" pill or the clear-credentials button). */
 val DangerColor = Color(0xFFDE0E1A)
+
+/** Semantic color for warning states; reads on both light and dark surfaces. */
 val WarningColor = Color(0xFFFF8800)
+
+/** Semantic color for informational states (e.g. info snackbars); reads on both light and dark surfaces. */
 val InfoColor = Color(0xFF006EB8)
 
 /** Material light color palette anchored on the MTN blue with a yellow secondary accent. */

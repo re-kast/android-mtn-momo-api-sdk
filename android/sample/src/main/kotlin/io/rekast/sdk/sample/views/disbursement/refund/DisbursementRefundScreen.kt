@@ -80,7 +80,7 @@ fun DisbursementScreen(
                         paymentNote = paymentNote,
                         deliveryNote = deliveryNote,
                         showDeliveryTextField = false,
-                        onRequestPayButtonClicked = { /*disbursementRefundScreenViewModel.refund()*/ },
+                        onRequestPayButtonClicked = { disbursementRefundScreenViewModel.refund() },
                         onPhoneNumberUpdated = { disbursementRefundScreenViewModel.onPhoneNumberUpdated(it) },
                         onFinancialIdUpdated = { disbursementRefundScreenViewModel.onFinancialIdUpdated(it) },
                         onReferenceIdToRefundUpdated = { disbursementRefundScreenViewModel.onReferenceIdToRefundUpdated(it) },
