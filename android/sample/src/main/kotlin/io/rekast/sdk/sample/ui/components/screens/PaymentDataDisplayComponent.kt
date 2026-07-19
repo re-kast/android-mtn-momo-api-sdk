@@ -15,257 +15,65 @@
  */
 package io.rekast.sdk.sample.ui.components.screens
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Divider
-import androidx.compose.material.Text
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.MutableLiveData
 import io.rekast.sdk.model.MomoTransaction
 import io.rekast.sdk.sample.R
+import io.rekast.sdk.sample.ui.components.general.CardTitle
+import io.rekast.sdk.sample.ui.components.general.InfoRow
+import io.rekast.sdk.sample.ui.components.general.MomoCard
 import io.rekast.sdk.sample.utils.annotation.PreviewWithBackgroundExcludeGenerated
 
 /**
- * Renders a read-only summary of a completed MOMO transaction, including amount, currency,
- * financial transaction ID, external ID, payer/payee, message, note, status, reason, and
- * reference ID to refund when present.
+ * Renders a read-only summary of a completed MOMO transaction inside a card: amount, currency,
+ * financial transaction ID, external ID, payer/payee, message, note, status, reason, and reference
+ * ID to refund. Fields that are null or blank are omitted automatically.
  *
- * @param modifier Modifier applied to the root [Column].
- * @param title Section header text displayed above the transaction details.
- * @param momoTransaction LiveData holding the [MomoTransaction] to display; individual fields are hidden when null.
+ * @param modifier Modifier applied to the root container.
+ * @param title Card title displayed above the transaction details.
+ * @param momoTransaction LiveData holding the [MomoTransaction] to display.
  */
 @Composable
 fun PaymentDataDisplayComponent(modifier: Modifier = Modifier, title: String, momoTransaction: MutableLiveData<MomoTransaction?>) {
-    Column(
+    val transaction by momoTransaction.observeAsState()
+    val counterpartyLabel = if (transaction?.payee == null) {
+        stringResource(id = R.string.payer)
+    } else {
+        stringResource(id = R.string.payee)
+    }
+    val counterparty = (transaction?.payee ?: transaction?.payer)?.let { holder ->
+        holder.partyId?.let { "$it -- ${holder.partyIdType}" }
+    }
+
+    MomoCard(
         modifier = modifier
             .fillMaxSize()
+            .verticalScroll(rememberScrollState())
             .padding(20.dp)
     ) {
-        Column {
-            Text(
-                text = title,
-                style = TextStyle(
-                    fontSize = 18.sp
-                ),
-                color = colorResource(id = R.color.black),
-                fontWeight = FontWeight.Bold
-            )
-            Divider(modifier = modifier.padding(top = 10.dp, bottom = 10.dp))
-        }
-        Row(horizontalArrangement = Arrangement.SpaceEvenly, modifier = modifier.padding(top = 2.dp, bottom = 2.dp)) {
-            Column {
-                Text(
-                    text = stringResource(id = R.string.display_amount),
-                    color = colorResource(id = R.color.black),
-                    fontWeight = FontWeight.Bold
-                )
-            }
-            Column {
-                momoTransaction.value?.amount?.let {
-                    Text(
-                        text = it,
-                        color = colorResource(
-                            id = R.color.black
-                        )
-                    )
-                }
-            }
-        }
-        Row(horizontalArrangement = Arrangement.SpaceEvenly, modifier = modifier.padding(top = 2.dp, bottom = 2.dp)) {
-            Column {
-                Text(
-                    text = stringResource(id = R.string.currency),
-                    color = colorResource(id = R.color.black),
-                    fontWeight = FontWeight.Bold
-                )
-            }
-            Column {
-                momoTransaction.value?.currency?.let {
-                    Text(
-                        text = it,
-                        color = colorResource(id = R.color.black)
-                    )
-                }
-            }
-        }
-        Row(horizontalArrangement = Arrangement.SpaceEvenly, modifier = modifier.padding(top = 2.dp, bottom = 2.dp)) {
-            Column {
-                Text(
-                    text = stringResource(id = R.string.financial_transaction_id),
-                    color = colorResource(id = R.color.black),
-                    fontWeight = FontWeight.Bold
-                )
-            }
-            Column {
-                momoTransaction.value?.financialTransactionId?.let {
-                    Text(
-                        text = it,
-                        color = colorResource(id = R.color.black)
-                    )
-                }
-            }
-        }
-        Row(horizontalArrangement = Arrangement.SpaceEvenly, modifier = modifier.padding(top = 2.dp, bottom = 2.dp)) {
-            Column {
-                Text(
-                    text = stringResource(id = R.string.external_id),
-                    color = colorResource(id = R.color.black),
-                    fontWeight = FontWeight.Bold
-                )
-            }
-            Column {
-                momoTransaction.value?.externalId?.let {
-                    Text(
-                        text = it,
-                        color = colorResource(id = R.color.black)
-                    )
-                }
-            }
-        }
-        Row(horizontalArrangement = Arrangement.SpaceEvenly, modifier = modifier.padding(top = 2.dp, bottom = 2.dp)) {
-            Column {
-                val title = if (momoTransaction.value?.payee == null) {
-                    stringResource(id = R.string.payer)
-                } else {
-                    stringResource(id = R.string.payee)
-                }
-                Text(
-                    text = title,
-                    color = colorResource(id = R.color.black),
-                    fontWeight = FontWeight.Bold
-                )
-            }
-            Column {
-                if (momoTransaction.value?.payee == null) {
-                    momoTransaction.value?.payer?.partyId?.let {
-                        Text(
-                            text = it + " -- " + momoTransaction.value?.payer?.partyIdType,
-                            color = colorResource(
-                                id = R.color.black
-                            )
-                        )
-                    }
-                } else {
-                    momoTransaction.value?.payee?.partyId?.let {
-                        Text(
-                            text = it + " -- " + momoTransaction.value?.payee?.partyIdType,
-                            color = colorResource(
-                                id = R.color.black
-                            )
-                        )
-                    }
-                }
-            }
-        }
-        Row(horizontalArrangement = Arrangement.SpaceEvenly, modifier = modifier.padding(top = 2.dp, bottom = 2.dp)) {
-            Column {
-                Text(
-                    text = stringResource(id = R.string.payment_message_display),
-                    color = colorResource(id = R.color.black),
-                    fontWeight = FontWeight.Bold
-                )
-            }
-            Column {
-                momoTransaction.value?.payerMessage?.let {
-                    Text(
-                        text = it,
-                        color = colorResource(
-                            id = R.color.black
-                        )
-                    )
-                }
-            }
-        }
-        Row(horizontalArrangement = Arrangement.SpaceEvenly, modifier = modifier.padding(top = 2.dp, bottom = 2.dp)) {
-            Column {
-                Text(
-                    text = stringResource(id = R.string.payment_note_display),
-                    color = colorResource(id = R.color.black),
-                    fontWeight = FontWeight.Bold
-                )
-            }
-            Column {
-                momoTransaction.value?.payeeNote?.let {
-                    Text(
-                        text = it,
-                        color = colorResource(
-                            id = R.color.black
-                        )
-                    )
-                }
-            }
-        }
-        Row(horizontalArrangement = Arrangement.SpaceEvenly, modifier = modifier.padding(top = 2.dp, bottom = 2.dp)) {
-            Column {
-                Text(
-                    text = stringResource(id = R.string.status),
-                    color = colorResource(id = R.color.black),
-                    fontWeight = FontWeight.Bold
-                )
-            }
-            Column {
-                momoTransaction.value?.status?.let {
-                    Text(
-                        text = it,
-                        color = colorResource(
-                            id = R.color.black
-                        )
-                    )
-                }
-            }
-        }
-        Row(horizontalArrangement = Arrangement.SpaceEvenly, modifier = modifier.padding(top = 2.dp, bottom = 2.dp)) {
-            if (momoTransaction.value?.reason != null) {
-                Column {
-                    Text(
-                        text = stringResource(id = R.string.reason),
-                        color = colorResource(id = R.color.black),
-                        fontWeight = FontWeight.Bold
-                    )
-                }
-                Column {
-                    momoTransaction.value?.reason?.let {
-                        Text(
-                            text = it,
-                            color = colorResource(
-                                id = R.color.black
-                            )
-                        )
-                    }
-                }
-            }
-        }
-        Row(horizontalArrangement = Arrangement.SpaceEvenly, modifier = modifier.padding(top = 2.dp, bottom = 2.dp)) {
-            if (momoTransaction.value?.referenceIdToRefund != null) {
-                Column {
-                    Text(
-                        text = stringResource(id = R.string.reference_id_to_refund),
-                        color = colorResource(id = R.color.black),
-                        fontWeight = FontWeight.Bold
-                    )
-                }
-                Column {
-                    momoTransaction.value?.referenceIdToRefund?.let {
-                        Text(
-                            text = it,
-                            color = colorResource(
-                                id = R.color.black
-                            )
-                        )
-                    }
-                }
-            }
-        }
+        CardTitle(title = title)
+        Spacer(modifier = Modifier.height(12.dp))
+        InfoRow(label = stringResource(id = R.string.display_amount), value = transaction?.amount)
+        InfoRow(label = stringResource(id = R.string.currency), value = transaction?.currency)
+        InfoRow(label = stringResource(id = R.string.financial_transaction_id), value = transaction?.financialTransactionId)
+        InfoRow(label = stringResource(id = R.string.external_id), value = transaction?.externalId)
+        InfoRow(label = counterpartyLabel, value = counterparty)
+        InfoRow(label = stringResource(id = R.string.payment_message_display), value = transaction?.payerMessage)
+        InfoRow(label = stringResource(id = R.string.payment_note_display), value = transaction?.payeeNote)
+        InfoRow(label = stringResource(id = R.string.status), value = transaction?.status)
+        InfoRow(label = stringResource(id = R.string.reason), value = transaction?.reason)
+        InfoRow(label = stringResource(id = R.string.reference_id_to_refund), value = transaction?.referenceIdToRefund)
     }
 }
 
@@ -274,6 +82,15 @@ fun PaymentDataDisplayComponent(modifier: Modifier = Modifier, title: String, mo
 fun PaymentDataDisplayComponentPreview() {
     PaymentDataDisplayComponent(
         title = stringResource(id = R.string.request_to_pay_title),
-        momoTransaction = MutableLiveData(null)
+        momoTransaction = MutableLiveData(
+            MomoTransaction(
+                amount = "1500",
+                currency = "EUR",
+                externalId = "947354",
+                payerMessage = "Payment for goods",
+                payeeNote = "Monthly subscription",
+                status = "SUCCESSFUL"
+            )
+        )
     )
 }

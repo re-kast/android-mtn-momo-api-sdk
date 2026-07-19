@@ -94,6 +94,8 @@ class TokenAuthenticatorTest {
 
     private fun collectionUrl() = "https://sandbox.momodeveloper.mtn.com/collection/v1_0/accounts"
 
+    private fun userInfoUrl() = "https://sandbox.momodeveloper.mtn.com/remittance/oauth2/v1_0/userinfo"
+
     private fun stubAccessTokenSuccess(token: String = "new-token") {
         coEvery { mockAuthService.getAccessToken(any(), any()) } returns
             RetrofitResponse.success(AccessToken(accessToken = token, tokenType = "Bearer", expiresIn = 3600))
@@ -360,6 +362,66 @@ class TokenAuthenticatorTest {
 
         assertNull("Should give up when token refresh fails", result)
         verify(exactly = 0) { mockStorage.saveAccessToken(any()) }
+    }
+
+    /**
+     * Verifies that a 401 from an OAuth2 (consent) endpoint refreshes only the OAuth2 consent token
+     * — even when the token is not blank (present-but-rejected by the server) — and does not touch
+     * the regular Bearer access token.
+     */
+    @Test
+    fun `authenticate refreshes only consent token on 401 from oauth2 endpoint`() {
+        every { mockStorage.getApiKey() } returns "test-api-key"
+        every { mockStorage.getOauthAccessToken() } returns "stale-but-nonblank-oauth-token"
+        every { mockStorage.getBackChannelAuthorizationRequestId() } returns "stored-auth-req-id"
+        stubOauthTokenSuccess("fresh-oauth-token")
+
+        val response =
+            buildUnauthorizedResponse(userInfoUrl(), authHeader = "${Constants.TokenTypes.BEARER} stale-but-nonblank-oauth-token")
+        val result = authenticator.authenticate(null, response)
+
+        assertNotNull("Should return the original request for retry", result)
+        assertEquals(response.request.url, result!!.url)
+        verify(exactly = 1) {
+            mockStorage.saveOauthAccessToken(
+                withArg { token -> assertEquals("fresh-oauth-token", token.accessToken) }
+            )
+        }
+        verify(exactly = 0) { mockStorage.saveAccessToken(any()) }
+        coVerify(exactly = 0) { mockAuthService.getAccessToken(any(), any()) }
+    }
+
+    /**
+     * Verifies that a 401 from an OAuth2 endpoint still triggers a consent-token refresh even when
+     * the failed request carried no `Authorization` header — the consent token was missing so no
+     * header was attached, yet the endpoint must self-heal rather than bail.
+     */
+    @Test
+    fun `authenticate refreshes consent token on oauth2 endpoint even without auth header`() {
+        every { mockStorage.getApiKey() } returns "test-api-key"
+        every { mockStorage.getBackChannelAuthorizationRequestId() } returns "stored-auth-req-id"
+        stubOauthTokenSuccess("fresh-oauth-token")
+
+        val result = authenticator.authenticate(null, buildUnauthorizedResponse(userInfoUrl(), authHeader = null))
+
+        assertNotNull("Should refresh the consent token and return the request for retry", result)
+        verify(exactly = 1) { mockStorage.saveOauthAccessToken(any()) }
+    }
+
+    /**
+     * Verifies that a 401 from an OAuth2 endpoint returns `null` (propagating the 401) when the
+     * consent token cannot be refreshed — no stored `auth_req_id` and no login hint to obtain one.
+     */
+    @Test
+    fun `authenticate returns null on oauth2 endpoint when consent token cannot be refreshed`() {
+        every { mockStorage.getApiKey() } returns "test-api-key"
+        every { mockStorage.getBackChannelAuthorizationRequestId() } returns ""
+        every { mockStorage.getLoginHint() } returns ""
+
+        val result = authenticator.authenticate(null, buildUnauthorizedResponse(userInfoUrl(), authHeader = null))
+
+        assertNull("Should give up when the consent token cannot be refreshed", result)
+        verify(exactly = 0) { mockStorage.saveOauthAccessToken(any()) }
     }
 
     /**

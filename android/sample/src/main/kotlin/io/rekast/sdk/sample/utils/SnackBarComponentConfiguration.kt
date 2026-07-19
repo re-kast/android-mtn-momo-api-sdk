@@ -18,13 +18,20 @@ package io.rekast.sdk.sample.utils
 import androidx.compose.material.SnackbarDuration
 
 /**
+ * Semantic category of a snackbar message, used to pick its color: green for [SUCCESS],
+ * red for [ERROR], and the MTN blue brand color for neutral [INFO] messages.
+ */
+enum class SnackBarType { SUCCESS, ERROR, INFO }
+
+/**
  * Configuration data for displaying a [Snackbar], encapsulating message text, optional action
- * label, and display duration.
+ * label, display duration, and a semantic [type] that drives the snackbar color.
  *
  * Passed in-memory via [kotlinx.coroutines.flow.SharedFlow] — no serialization needed.
  *
  * @property message The text to display in the snackbar body.
  * @property actionLabel Optional label for the snackbar action button; null means no action.
  * @property duration How long the snackbar should be visible; defaults to [SnackbarDuration.Short].
+ * @property type The semantic type driving the snackbar color; defaults to [SnackBarType.INFO].
  */
-data class SnackBarComponentConfiguration(val message: String = "", val actionLabel: String? = null, val duration: SnackbarDuration = SnackbarDuration.Short)
+data class SnackBarComponentConfiguration(val message: String = "", val actionLabel: String? = null, val duration: SnackbarDuration = SnackbarDuration.Short, val type: SnackBarType = SnackBarType.INFO)

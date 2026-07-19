@@ -23,12 +23,14 @@ import io.rekast.sdk.model.AccountBalance
 import io.rekast.sdk.model.AccountHolder
 import io.rekast.sdk.model.AccountHolderStatus
 import io.rekast.sdk.model.BasicUserInfo
+import io.rekast.sdk.model.UserInfoWithConsent
 import io.rekast.sdk.repository.DefaultRepository
 import io.rekast.sdk.repository.data.NetworkResult
 import io.rekast.sdk.sample.utils.CredentialStorage
 import io.rekast.sdk.sample.utils.DispatcherProvider
 import io.rekast.sdk.sample.utils.SampleConfig
 import io.rekast.sdk.sample.utils.SnackBarComponentConfiguration
+import io.rekast.sdk.sample.utils.SnackBarType
 import io.rekast.sdk.sample.utils.Utils
 import io.rekast.sdk.utils.AccountHolderType
 import io.rekast.sdk.utils.ProductType
@@ -91,6 +93,9 @@ class HomeScreenViewModel @Inject constructor(
     /** Holds the fetched [BasicUserInfo] for the authenticated user; null until the API responds. */
     var basicUserInfo: MutableLiveData<BasicUserInfo?> = MutableLiveData(null)
 
+    /** Holds the fetched consent-granted [UserInfoWithConsent] profile; null until the API responds. */
+    var userInfoWithConsent: MutableLiveData<UserInfoWithConsent?> = MutableLiveData(null)
+
     /** Holds the fetched [AccountHolderStatus] for the account; null until the API responds. */
     var accountHolderStatus: MutableLiveData<AccountHolderStatus?> = MutableLiveData(null)
 
@@ -120,28 +125,40 @@ class HomeScreenViewModel @Inject constructor(
 
                         is NetworkResult.Success -> {
                             val userInfo = foundBasicUserInfo.response
-                            val date = Utils.convertToDate(userInfo?.updatedAt!!.toLong())
-                            userInfo.displayUpdatedAt = date
+                            userInfo?.updatedAt?.let { userInfo.displayUpdatedAt = Utils.convertToDate(it.toLong()) }
                             basicUserInfo.postValue(userInfo)
 
                             Timber.d("Basic user info was fetched successfully")
                             showProgressBar.postValue(activeRequestCount.decrementAndGet() > 0)
                             emitSnackBarState(
-                                SnackBarComponentConfiguration(message = "Basic user info was fetched successfully")
+                                SnackBarComponentConfiguration(
+                                    message = "Basic user info was fetched successfully",
+                                    type = SnackBarType.SUCCESS
+                                )
                             )
                         }
 
                         is NetworkResult.Error -> {
-                            Timber.e("Basic user info was not fetched %s", foundBasicUserInfo.message)
+                            Timber.e("Basic user info was not fetched: %s", foundBasicUserInfo.message)
                             showProgressBar.postValue(activeRequestCount.decrementAndGet() > 0)
 
-                            val message = foundBasicUserInfo.message
                             emitSnackBarState(
-                                SnackBarComponentConfiguration(message = "Basic user info was not fetched $message")
+                                SnackBarComponentConfiguration(
+                                    message = "Basic user info was not fetched. ${foundBasicUserInfo.message}",
+                                    type = SnackBarType.ERROR
+                                )
                             )
                         }
                     }
                 }
+            } else {
+                Timber.w("Basic user info skipped: access token is blank")
+                emitSnackBarState(
+                    SnackBarComponentConfiguration(
+                        message = "Expired access token! Please refresh the token",
+                        type = SnackBarType.ERROR
+                    )
+                )
             }
         }
     }
@@ -159,34 +176,47 @@ class HomeScreenViewModel @Inject constructor(
                     apiVersion = sampleConfig.apiVersionV1,
                     productSubscriptionKey = productType,
                     environment = sampleConfig.environment
-                ).collect { userInfoWithConsent ->
-                    when (userInfoWithConsent) {
+                ).collect { result ->
+                    when (result) {
                         is NetworkResult.Loading -> {
                             activeRequestCount.incrementAndGet()
                             showProgressBar.postValue(true)
                         }
 
                         is NetworkResult.Success -> {
-                            Timber.d(userInfoWithConsent.response.toString())
+                            userInfoWithConsent.postValue(result.response)
 
-                            Timber.d("Basic user info with consent was fetched successfully")
+                            Timber.d("User info with consent was fetched successfully")
                             showProgressBar.postValue(activeRequestCount.decrementAndGet() > 0)
                             emitSnackBarState(
-                                SnackBarComponentConfiguration(message = "Basic user info with consent was fetched successfully")
+                                SnackBarComponentConfiguration(
+                                    message = "Verified profile was fetched successfully",
+                                    type = SnackBarType.SUCCESS
+                                )
                             )
                         }
 
                         is NetworkResult.Error -> {
-                            Timber.e("Basic user info with consent was not fetched %s", userInfoWithConsent.message)
+                            Timber.e("User info with consent was not fetched: %s", result.message)
                             showProgressBar.postValue(activeRequestCount.decrementAndGet() > 0)
 
-                            val message = userInfoWithConsent.message
                             emitSnackBarState(
-                                SnackBarComponentConfiguration(message = "Basic user info with consent was not fetched $message")
+                                SnackBarComponentConfiguration(
+                                    message = "Verified profile was not fetched. ${result.message}",
+                                    type = SnackBarType.ERROR
+                                )
                             )
                         }
                     }
                 }
+            } else {
+                Timber.w("User info with consent skipped: access token is blank")
+                emitSnackBarState(
+                    SnackBarComponentConfiguration(
+                        message = "Expired access token! Please refresh the token",
+                        type = SnackBarType.ERROR
+                    )
+                )
             }
         }
     }
@@ -215,31 +245,49 @@ class HomeScreenViewModel @Inject constructor(
                         }
 
                         is NetworkResult.Success -> {
-                            val status = Json.decodeFromString<AccountHolderStatus>(foundStatus.response!!.source().readUtf8())
-                            accountHolderStatus.postValue(status)
-
-                            Timber.d("Account Holder status was fetched successfully")
-                            showProgressBar.postValue(activeRequestCount.decrementAndGet() > 0)
-                            emitSnackBarState(
-                                SnackBarComponentConfiguration(message = "Account Holder status was fetched successfully")
-                            )
+                            runCatching {
+                                Json.decodeFromString<AccountHolderStatus>(foundStatus.response!!.source().readUtf8())
+                            }.onSuccess { status ->
+                                accountHolderStatus.postValue(status)
+                                Timber.d("Account Holder status was fetched successfully")
+                                showProgressBar.postValue(activeRequestCount.decrementAndGet() > 0)
+                                emitSnackBarState(
+                                    SnackBarComponentConfiguration(
+                                        message = "Account status was fetched successfully",
+                                        type = SnackBarType.SUCCESS
+                                    )
+                                )
+                            }.onFailure { throwable ->
+                                Timber.e(throwable, "Account Holder status could not be parsed")
+                                showProgressBar.postValue(activeRequestCount.decrementAndGet() > 0)
+                                emitSnackBarState(
+                                    SnackBarComponentConfiguration(
+                                        message = "Account status could not be read. ${throwable.message}",
+                                        type = SnackBarType.ERROR
+                                    )
+                                )
+                            }
                         }
 
                         is NetworkResult.Error -> {
-                            Timber.e("Account Holder status was not fetched %s", foundStatus.message)
+                            Timber.e("Account Holder status was not fetched: %s", foundStatus.message)
                             showProgressBar.postValue(activeRequestCount.decrementAndGet() > 0)
 
-                            val message = foundStatus.message
                             emitSnackBarState(
-                                SnackBarComponentConfiguration(message = "Account Holder status was not fetched $message")
+                                SnackBarComponentConfiguration(
+                                    message = "Account status was not fetched. ${foundStatus.message}",
+                                    type = SnackBarType.ERROR
+                                )
                             )
                         }
                     }
                 }
             } else {
+                Timber.w("Account Holder status skipped: access token is blank")
                 emitSnackBarState(
                     SnackBarComponentConfiguration(
-                        message = "Expired access token! Please refresh the token"
+                        message = "Expired access token! Please refresh the token",
+                        type = SnackBarType.ERROR
                     )
                 )
             }
@@ -247,18 +295,20 @@ class HomeScreenViewModel @Inject constructor(
     }
 
     /**
-     * Fetches the account balance via the Collection API and posts the result to [accountBalance].
+     * Fetches the account balance and posts the result to [accountBalance].
      *
-     * Note: This function only works with the Collection API product type.
+     * Uses the Remittance product type to match the other Home screen calls — the sample app is
+     * provisioned with Remittance subscription keys, so calling the balance endpoint with any other
+     * product type (e.g. Collection) fails against this configuration.
      */
     fun getAccountBalance() {
         viewModelScope.launch(dispatchers.io()) {
             if (credentialStorage.getAccessToken().isNotBlank()) {
                 defaultRepository.getAccountBalance(
-                    productType = ProductType.COLLECTION.productType,
+                    productType = ProductType.REMITTANCE.productType,
                     apiVersion = sampleConfig.apiVersionV1,
                     currency = "",
-                    productSubscriptionKey = Utils.getProductSubscriptionKeys(ProductType.COLLECTION, sampleConfig),
+                    productSubscriptionKey = Utils.getProductSubscriptionKeys(ProductType.REMITTANCE, sampleConfig),
                     environment = sampleConfig.environment
                 ).collect { balance ->
                     when (balance) {
@@ -274,7 +324,8 @@ class HomeScreenViewModel @Inject constructor(
                             showProgressBar.postValue(activeRequestCount.decrementAndGet() > 0)
                             emitSnackBarState(
                                 SnackBarComponentConfiguration(
-                                    message = "Account balance fetched successfully"
+                                    message = "Account balance fetched successfully",
+                                    type = SnackBarType.SUCCESS
                                 )
                             )
                         }
@@ -282,20 +333,22 @@ class HomeScreenViewModel @Inject constructor(
                         is NetworkResult.Error -> {
                             showProgressBar.postValue(activeRequestCount.decrementAndGet() > 0)
 
-                            val message = balance.message
-                            Timber.e("Account balance not fetched! %s", message)
+                            Timber.e("Account balance was not fetched: %s", balance.message)
                             emitSnackBarState(
                                 SnackBarComponentConfiguration(
-                                    message = "Account balance not fetched! $message"
+                                    message = "Account balance was not fetched. ${balance.message}",
+                                    type = SnackBarType.ERROR
                                 )
                             )
                         }
                     }
                 }
             } else {
+                Timber.w("Account balance skipped: access token is blank")
                 emitSnackBarState(
                     SnackBarComponentConfiguration(
-                        message = "Expired access token! Please refresh the token"
+                        message = "Expired access token! Please refresh the token",
+                        type = SnackBarType.ERROR
                     )
                 )
             }

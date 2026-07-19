@@ -130,6 +130,14 @@ object Constants {
          * The path parameter for the currency.
          */
         const val CURRENCY = "currency"
+
+        /**
+         * The literal path segment that identifies OAuth2 (consent) endpoints, e.g.
+         * `/{productType}/oauth2/{apiVersion}/userinfo`. Requests whose path contains this
+         * segment must be authenticated with the OAuth2 consent access token rather than the
+         * regular API-user Bearer token.
+         */
+        const val OAUTH2 = "oauth2"
     }
 
     /**

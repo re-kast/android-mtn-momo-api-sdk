@@ -57,4 +57,11 @@ class CredentialProvider(
      * it has expired or has not yet been obtained.
      */
     override fun getAccessToken(): String = storage.getAccessToken()
+
+    /**
+     * Returns the current OAuth2 (consent) access token from [CredentialStorage], or an empty
+     * string if it has expired or has not yet been obtained. Used to authenticate OAuth2 endpoints
+     * such as `GET /{productType}/oauth2/{apiVersion}/userinfo`.
+     */
+    override fun getOauthAccessToken(): String = storage.getOauthAccessToken()
 }

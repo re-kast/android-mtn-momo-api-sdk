@@ -30,6 +30,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Divider
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.Composable
@@ -38,7 +39,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -49,6 +49,7 @@ import androidx.compose.ui.unit.sp
 import io.rekast.sdk.sample.R
 import io.rekast.sdk.sample.ui.components.general.textFieldDefaultsComponent
 import io.rekast.sdk.sample.ui.components.general.textShapeDefaultComponent
+import io.rekast.sdk.sample.ui.theme.subtleTextColor
 import io.rekast.sdk.sample.utils.annotation.PreviewWithBackgroundExcludeGenerated
 
 /**
@@ -125,7 +126,7 @@ fun PaymentDataScreenComponent(
                         style = TextStyle(
                             fontSize = 18.sp
                         ),
-                        color = colorResource(id = R.color.black),
+                        color = MaterialTheme.colors.onSurface,
                         fontWeight = FontWeight.Bold
                     )
                     Divider(
@@ -146,7 +147,7 @@ fun PaymentDataScreenComponent(
                     singleLine = true,
                     placeholder = {
                         Text(
-                            color = Color.LightGray,
+                            color = subtleTextColor,
                             text = stringResource(id = R.string.phone_number)
                         )
                     },
@@ -179,7 +180,7 @@ fun PaymentDataScreenComponent(
                         singleLine = true,
                         placeholder = {
                             Text(
-                                color = Color.LightGray,
+                                color = subtleTextColor,
                                 text = stringResource(id = R.string.financial_id)
                             )
                         },
@@ -213,7 +214,7 @@ fun PaymentDataScreenComponent(
                         singleLine = true,
                         placeholder = {
                             Text(
-                                color = Color.LightGray,
+                                color = subtleTextColor,
                                 text = stringResource(id = R.string.reference_id_refund)
                             )
                         },
@@ -246,7 +247,7 @@ fun PaymentDataScreenComponent(
                     singleLine = true,
                     placeholder = {
                         Text(
-                            color = Color.LightGray,
+                            color = subtleTextColor,
                             text = stringResource(id = R.string.amount)
                         )
                     },
@@ -279,7 +280,7 @@ fun PaymentDataScreenComponent(
                     singleLine = true,
                     placeholder = {
                         Text(
-                            color = Color.LightGray,
+                            color = subtleTextColor,
                             text = stringResource(id = R.string.payment_message)
                         )
                     },
@@ -311,7 +312,7 @@ fun PaymentDataScreenComponent(
                     singleLine = false,
                     placeholder = {
                         Text(
-                            color = Color.LightGray,
+                            color = subtleTextColor,
                             text = stringResource(id = R.string.payment_note)
                         )
                     },
@@ -350,7 +351,7 @@ fun PaymentDataScreenComponent(
                         singleLine = false,
                         placeholder = {
                             Text(
-                                color = Color.LightGray,
+                                color = subtleTextColor,
                                 text = stringResource(id = R.string.delivery_note)
                             )
                         },
@@ -383,8 +384,8 @@ fun PaymentDataScreenComponent(
                         amount.isNotEmpty() && paymentMessage.isNotEmpty() &&
                         paymentNote.isNotEmpty(),
                     colors = ButtonDefaults.buttonColors(
-                        backgroundColor = colorResource(id = R.color.accent_primary),
-                        contentColor = Color.White
+                        backgroundColor = MaterialTheme.colors.secondary,
+                        contentColor = MaterialTheme.colors.onSecondary
                     ),
                     onClick = onRequestPayButtonClicked,
                     modifier = modifier

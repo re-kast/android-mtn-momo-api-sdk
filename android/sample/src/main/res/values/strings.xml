@@ -28,6 +28,42 @@
     <string name="active">Active</string>
     <string name="available_balance">Available Balance:</string>
 
+    <!--Home screen card titles-->
+    <string name="card_profile">Profile</string>
+    <string name="card_basic_user_info">Basic User Info</string>
+    <string name="card_verified_profile">Verified Profile</string>
+    <string name="card_account_status">Account Status</string>
+    <string name="card_account_balance">Account Balance</string>
+
+    <!--Home screen field labels-->
+    <string name="label_name">Name</string>
+    <string name="label_given_name">Given name</string>
+    <string name="label_family_name">Family name</string>
+    <string name="label_middle_name">Middle name</string>
+    <string name="label_birth_date">Date of birth</string>
+    <string name="label_gender">Gender</string>
+    <string name="label_locale">Locale</string>
+    <string name="label_sub">Subject ID</string>
+    <string name="label_updated_at">Updated at</string>
+    <string name="label_email">Email</string>
+    <string name="label_phone">Phone</string>
+    <string name="label_address">Address</string>
+    <string name="label_credit_score">Credit score</string>
+    <string name="label_country_of_birth">Country of birth</string>
+    <string name="label_region_of_birth">Region of birth</string>
+    <string name="label_city_of_birth">City of birth</string>
+    <string name="label_occupation">Occupation</string>
+    <string name="label_employer">Employer</string>
+    <string name="label_identification_type">ID type</string>
+    <string name="label_identification_value">ID number</string>
+    <string name="label_status">Status</string>
+    <string name="label_available_balance">Available balance</string>
+    <string name="label_currency">Currency</string>
+
+    <!--Home screen misc-->
+    <string name="verified">Verified</string>
+    <string name="home_empty_hint">Your MTN MoMo account details will appear here once loaded.</string>
+
     <!--Payment page-->
     <string name="request_to_pay_title">Request to Pay</string>
     <string name="request_payment_submit_button">Request Payment</string>

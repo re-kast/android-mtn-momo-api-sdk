@@ -48,10 +48,11 @@ class AccessTokenInterceptorTest {
         .message("OK")
         .build()
 
-    private fun provider(token: String): CredentialProvider = mockk {
+    private fun provider(token: String, oauthToken: String = ""): CredentialProvider = mockk {
         every { getApiUserId() } returns ""
         every { getApiKey() } returns ""
         every { getAccessToken() } returns token
+        every { getOauthAccessToken() } returns oauthToken
     }
 
     /** Verifies the Authorization header value is `Bearer <token>` for a valid token. */
@@ -85,6 +86,45 @@ class AccessTokenInterceptorTest {
         interceptor.intercept(mockChain)
 
         assertNull(capturedRequest.captured.header(Constants.Headers.AUTHORIZATION))
+    }
+
+    /**
+     * Verifies that a request to an OAuth2 (consent) endpoint is authenticated with the OAuth2
+     * consent token from [CredentialProvider.getOauthAccessToken] rather than the regular Bearer token.
+     */
+    @Test
+    fun `adds oauth consent token for oauth2 endpoints`() {
+        val interceptor = AccessTokenInterceptor(provider(token = "regular-bearer", oauthToken = "consent-token-xyz"))
+        val request = Request.Builder().url("https://example.com/remittance/oauth2/v1_0/userinfo").build()
+        val capturedRequest = slot<Request>()
+
+        every { mockChain.request() } returns request
+        every { mockChain.proceed(capture(capturedRequest)) } returns mockResponse(request)
+
+        interceptor.intercept(mockChain)
+
+        assertEquals(
+            "${Constants.TokenTypes.BEARER} consent-token-xyz",
+            capturedRequest.captured.header(Constants.Headers.AUTHORIZATION)
+        )
+    }
+
+    /** Verifies that a regular (non-OAuth2) endpoint uses the regular Bearer token, not the consent token. */
+    @Test
+    fun `adds regular bearer token for non-oauth2 endpoints`() {
+        val interceptor = AccessTokenInterceptor(provider(token = "regular-bearer", oauthToken = "consent-token-xyz"))
+        val request = Request.Builder().url("https://example.com/collection/v1_0/account/balance").build()
+        val capturedRequest = slot<Request>()
+
+        every { mockChain.request() } returns request
+        every { mockChain.proceed(capture(capturedRequest)) } returns mockResponse(request)
+
+        interceptor.intercept(mockChain)
+
+        assertEquals(
+            "${Constants.TokenTypes.BEARER} regular-bearer",
+            capturedRequest.captured.header(Constants.Headers.AUTHORIZATION)
+        )
     }
 
     /** Verifies the interceptor returns the response produced by the chain unchanged. */

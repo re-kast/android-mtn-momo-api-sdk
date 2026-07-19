@@ -40,7 +40,7 @@ import kotlinx.serialization.Serializable
  * @property emailVerified Whether the user's email address has been verified.
  * @property phonenumber The user's phone number.
  * @property phoneNumberVerified Whether the user's phone number has been verified.
- * @property address The user's physical address.
+ * @property address The user's physical address as a nested [Address] object.
  * @property creditScore The user's credit score as reported by the MTN MOMO system.
  * @property active Indicates whether the user's account is active.
  * @property countryOfBirth The country where the user was born.
@@ -67,9 +67,9 @@ data class UserInfoWithConsent(
     @SerialName("email_verified") var emailVerified: Boolean? = null,
     @SerialName("phone_number") var phonenumber: String? = null,
     @SerialName("phone_number_verified") var phoneNumberVerified: Boolean? = null,
-    @SerialName("address") var address: String? = null,
-    @SerialName("credit_score") var creditScore: String? = null,
-    @SerialName("active") var active: String? = null,
+    @SerialName("address") var address: Address? = null,
+    @SerialName("credit_score") var creditScore: Int? = null,
+    @SerialName("active") var active: Boolean? = null,
     @SerialName("country_of_birth") var countryOfBirth: String? = null,
     @SerialName("region_of_birth") var regionOfBirth: String? = null,
     @SerialName("city_of_birth") var cityOfBirth: String? = null,

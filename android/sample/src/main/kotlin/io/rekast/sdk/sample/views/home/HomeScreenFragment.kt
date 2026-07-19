@@ -81,6 +81,7 @@ class HomeScreenFragment : Fragment() {
                         snackStateFlow = homeScreenViewModel.snackBarStateFlow,
                         showProgressBar = !isBootstrapComplete || vmShowProgressBar,
                         basicUserInfo = homeScreenViewModel.basicUserInfo,
+                        userInfoWithConsent = homeScreenViewModel.userInfoWithConsent,
                         accountHolderStatus = homeScreenViewModel.accountHolderStatus,
                         accountBalance = homeScreenViewModel.accountBalance
                     )

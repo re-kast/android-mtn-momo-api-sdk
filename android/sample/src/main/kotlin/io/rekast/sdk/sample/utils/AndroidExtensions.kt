@@ -78,11 +78,14 @@ fun isDeviceOnline(context: Context): Boolean {
  * [SnackBarComponentConfiguration] that contains a non-empty message.
  *
  * @param scaffoldState [ScaffoldState] used to display the snackbar.
+ * @param onDisplay Callback invoked with each configuration immediately before its snackbar is
+ *   shown; use it to drive per-message styling (e.g. success/error colors). Defaults to no-op.
  * @param action Optional callback invoked when the snackbar action is performed; defaults to no-op.
  */
-suspend fun SharedFlow<SnackBarComponentConfiguration>.hookSnackBar(scaffoldState: ScaffoldState, action: () -> Unit = {}) {
+suspend fun SharedFlow<SnackBarComponentConfiguration>.hookSnackBar(scaffoldState: ScaffoldState, onDisplay: (SnackBarComponentConfiguration) -> Unit = {}, action: () -> Unit = {}) {
     this.collectLatest { snackBarState ->
         if (snackBarState.message.isNotEmpty()) {
+            onDisplay(snackBarState)
             val snackBarResult =
                 scaffoldState.snackbarHostState.showSnackbar(
                     message = snackBarState.message,

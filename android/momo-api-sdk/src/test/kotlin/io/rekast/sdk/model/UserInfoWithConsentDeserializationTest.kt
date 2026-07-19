@@ -50,9 +50,16 @@ class UserInfoWithConsentDeserializationTest {
           "email_verified": true,
           "phone_number": "256700000000",
           "phone_number_verified": true,
-          "address": "Kampala",
-          "credit_score": "700",
-          "active": "true",
+          "address": {
+            "formatted": "Street 17\n123 45 Karlskrona\nBlekinge\nSweden",
+            "street_address": "Street 17",
+            "postal_code": "123 45",
+            "locality": "Karlskrona",
+            "region": "Blekinge",
+            "country": "Sweden"
+          },
+          "credit_score": 700,
+          "active": true,
           "country_of_birth": "UG",
           "region_of_birth": "Central",
           "city_of_birth": "Kampala",
@@ -96,9 +103,19 @@ class UserInfoWithConsentDeserializationTest {
         assertEquals(true, result.emailVerified)
         assertEquals("256700000000", result.phonenumber)
         assertEquals(true, result.phoneNumberVerified)
-        assertEquals("Kampala", result.address)
-        assertEquals("700", result.creditScore)
-        assertEquals("true", result.active)
+        assertEquals(
+            Address(
+                formatted = "Street 17\n123 45 Karlskrona\nBlekinge\nSweden",
+                streetAddress = "Street 17",
+                postalCode = "123 45",
+                locality = "Karlskrona",
+                region = "Blekinge",
+                country = "Sweden"
+            ),
+            result.address
+        )
+        assertEquals(700, result.creditScore)
+        assertEquals(true, result.active)
         assertEquals("UG", result.countryOfBirth)
         assertEquals("Central", result.regionOfBirth)
         assertEquals("Kampala", result.cityOfBirth)
@@ -151,5 +168,20 @@ class UserInfoWithConsentDeserializationTest {
         val result = json.decodeFromString<UserInfoWithConsent>(fullJson)
         assertTrue(result.updatedAt is Int)
         assertEquals(1580000000, result.updatedAt)
+    }
+
+    /**
+     * Regression test: the API returns `address` as a nested JSON object, `credit_score` as a
+     * number, and `active` as a boolean. Deserializing these into their correct types must not throw.
+     */
+    @Test
+    fun `address is deserialized as a nested object and credit_score and active as their JSON types`() {
+        val result = json.decodeFromString<UserInfoWithConsent>(fullJson)
+        assertNotNull(result.address)
+        assertEquals("Street 17", result.address?.streetAddress)
+        assertEquals("Karlskrona", result.address?.locality)
+        assertEquals("Sweden", result.address?.country)
+        assertTrue(result.creditScore is Int)
+        assertTrue(result.active is Boolean)
     }
 }

@@ -152,7 +152,7 @@ class CredentialStorage @Inject constructor(@param:ApplicationContext private va
             putString(KEY_OAUTH_ACCESS_TOKEN_TYPE, token.tokenType)
             putString(KEY_OAUTH_SCOPE, token.scope)
             putString(KEY_OAUTH_REFRESH_TOKEN, token.refreshToken)
-            putLong(KEY_OAUTH_REFRESH_TOKEN_EXPIRY, expiryInSeconds(token.refreshTokenExpiredIn))
+            putLong(KEY_OAUTH_REFRESH_TOKEN_EXPIRY, expiryInSeconds(token.refreshTokenExpiredIn ?: 0))
         }
     }
 
