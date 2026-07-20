@@ -1,0 +1,8 @@
+{
+  "label": "Contributions",
+  "position": 2,
+  "link": {
+    "type": "generated-index",
+    "description": "This section outlines the guidelines and best practices for contributing to the project, including coding standards, pull request procedures, and code review processes."
+  }
+}

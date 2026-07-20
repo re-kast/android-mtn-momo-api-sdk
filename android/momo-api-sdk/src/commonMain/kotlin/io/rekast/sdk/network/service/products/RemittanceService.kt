@@ -45,7 +45,7 @@ sealed interface RemittanceService : CommonService {
      * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Remittance product.
      * @param environment The target environment (e.g., sandbox or production).
      * @param uuid A UUID V4 used as the X-Reference-Id to uniquely identify this request.
-     * @return A [Response] with an empty body; HTTP 202 indicates the transfer was accepted.
+     * @return A `Response` with an empty body; HTTP 202 indicates the transfer was accepted.
      */
     @POST(Constants.EndPoints.CASH_TRANSFER)
     suspend fun cashTransfer(
@@ -63,7 +63,7 @@ sealed interface RemittanceService : CommonService {
      * @param apiVersion The API version to target (e.g., v2_0).
      * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Remittance product.
      * @param environment The target environment (e.g., sandbox or production).
-     * @return A [Response] whose body contains the cash transfer status details as a [ResponseBody].
+     * @return A `Response` whose body contains the cash transfer status details as a `ResponseBody`.
      */
     @GET(Constants.EndPoints.CASH_TRANSFER_STATUS)
     suspend fun getCashTransferStatus(

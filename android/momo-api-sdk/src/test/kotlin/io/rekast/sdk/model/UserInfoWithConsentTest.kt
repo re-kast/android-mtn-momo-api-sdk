@@ -15,6 +15,7 @@
  */
 package io.rekast.sdk.model
 
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
@@ -30,9 +31,45 @@ import org.junit.Test
  * was restructured to match this shape and all previously-required fields were made
  * nullable so that a sparse API response never causes a deserialization failure.
  */
-class UserInfoWithConsentDeserializationTest {
+class UserInfoWithConsentTest {
 
     private val json = Json { ignoreUnknownKeys = true }
+    private val jsonSkipDefaults = Json { encodeDefaults = false }
+    private val jsonWithDefaults = Json { encodeDefaults = true }
+
+    private fun fullUserInfoWithConsent() = UserInfoWithConsent(
+        sub = "user-sub-1",
+        name = "Jane Doe",
+        givenName = "Jane",
+        familyName = "Doe",
+        birthDate = "1990-01-01",
+        locale = "en-US",
+        gender = "female",
+        updatedAt = 1620000000,
+        status = "ACTIVE",
+        middleName = "Marie",
+        email = "jane.doe@example.com",
+        emailVerified = true,
+        phonenumber = "256770000000",
+        phoneNumberVerified = true,
+        address = Address(
+            formatted = "12 Main St\nNairobi",
+            streetAddress = "12 Main St",
+            postalCode = "00100",
+            locality = "Nairobi",
+            region = "Nairobi County",
+            country = "Kenya"
+        ),
+        creditScore = 750,
+        active = true,
+        countryOfBirth = "Kenya",
+        regionOfBirth = "Nairobi",
+        cityOfBirth = "Nairobi",
+        occupation = "Engineer",
+        employerName = "Acme Corp",
+        identificationType = "PASS",
+        identificationValue = "A1234567"
+    )
 
     private val fullJson = """
         {
@@ -183,5 +220,22 @@ class UserInfoWithConsentDeserializationTest {
         assertEquals("Sweden", result.address?.country)
         assertTrue(result.creditScore is Int)
         assertTrue(result.active is Boolean)
+    }
+
+    @Test
+    fun `UserInfoWithConsent round-trips when fully populated`() {
+        val original = fullUserInfoWithConsent()
+        assertEquals(original, jsonSkipDefaults.decodeFromString<UserInfoWithConsent>(jsonSkipDefaults.encodeToString(original)))
+        assertEquals(original, jsonWithDefaults.decodeFromString<UserInfoWithConsent>(jsonWithDefaults.encodeToString(original)))
+    }
+
+    @Test
+    fun `UserInfoWithConsent round-trips a minimal instance`() {
+        val original = UserInfoWithConsent(
+            sub = "user-sub-1",
+            name = "Jane Doe"
+        )
+        assertEquals(original, jsonSkipDefaults.decodeFromString<UserInfoWithConsent>(jsonSkipDefaults.encodeToString(original)))
+        assertEquals(original, jsonWithDefaults.decodeFromString<UserInfoWithConsent>(jsonWithDefaults.encodeToString(original)))
     }
 }

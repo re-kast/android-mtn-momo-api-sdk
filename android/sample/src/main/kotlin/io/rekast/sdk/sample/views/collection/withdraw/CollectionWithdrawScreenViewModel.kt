@@ -34,6 +34,9 @@ import io.rekast.sdk.sample.utils.SampleConfig
 import io.rekast.sdk.sample.utils.SnackBarComponentConfiguration
 import io.rekast.sdk.sample.utils.SnackBarType
 import io.rekast.sdk.sample.utils.Utils
+import io.rekast.sdk.sample.utils.bodyText
+import io.rekast.sdk.sample.utils.valueOrEmpty
+import io.rekast.sdk.sample.utils.valueOrNullIfBlank
 import io.rekast.sdk.utils.AccountHolderType
 import io.rekast.sdk.utils.ProductType
 import java.util.UUID
@@ -207,13 +210,13 @@ class CollectionWithdrawScreenViewModel @Inject constructor(
                     is NetworkResult.Success -> {
                         Timber.d("Request to withdraw accepted (ref=%s)", referenceId)
                         emitSuccess(R.string.snackbar_request_to_withdraw_submitted)
-                        if (!deliveryNote.value.isNullOrBlank()) sendDeliveryNotification(referenceId, subscriptionKey)
+                        if (!deliveryNote.valueOrEmpty().isBlank()) sendDeliveryNotification(referenceId, subscriptionKey)
                         fetchStatus(referenceId, subscriptionKey)
                     }
 
                     else -> {
                         Timber.e("Request to withdraw failed: %s", submit.message)
-                        emitError(R.string.snackbar_request_to_withdraw_failed, submit.message.orEmpty())
+                        emitError(R.string.snackbar_request_to_withdraw_failed, submit.message)
                     }
                 }
             } catch (exception: Exception) {
@@ -234,7 +237,7 @@ class CollectionWithdrawScreenViewModel @Inject constructor(
         ).awaitTerminal()
         when (result) {
             is NetworkResult.Success -> {
-                val transaction = result.response?.source()?.readUtf8()?.let { body ->
+                val transaction = result.bodyText()?.let { body ->
                     runCatching { json.decodeFromString<MomoTransaction>(body) }.getOrNull()
                 }
                 momoTransaction.postValue(transaction)
@@ -243,7 +246,7 @@ class CollectionWithdrawScreenViewModel @Inject constructor(
 
             else -> {
                 Timber.e("Request to withdraw status failed: %s", result.message)
-                emitError(R.string.snackbar_request_to_withdraw_status_failed, result.message.orEmpty())
+                emitError(R.string.snackbar_request_to_withdraw_status_failed, result.message)
             }
         }
     }
@@ -253,7 +256,7 @@ class CollectionWithdrawScreenViewModel @Inject constructor(
         val result = defaultRepository.requestToWithdrawDeliveryNotification(
             apiVersion = sampleConfig.apiVersionV1,
             referenceId = referenceId,
-            momoNotification = MomoNotification(notificationMessage = deliveryNote.value.orEmpty()),
+            momoNotification = MomoNotification(notificationMessage = deliveryNote.valueOrEmpty()),
             productSubscriptionKey = subscriptionKey,
             environment = sampleConfig.environment
         ).awaitTerminal()
@@ -262,21 +265,21 @@ class CollectionWithdrawScreenViewModel @Inject constructor(
 
             else -> {
                 Timber.e("Delivery note failed: %s", result.message)
-                emitError(R.string.snackbar_delivery_note_failed, result.message.orEmpty())
+                emitError(R.string.snackbar_delivery_note_failed, result.message)
             }
         }
     }
 
     /** Builds the request-to-withdraw payload from the current form values. */
     private fun buildTransaction() = MomoTransaction(
-        amount = amount.value.orEmpty(),
+        amount = amount.valueOrEmpty(),
         currency = Constants.SANDBOX_CURRENCY,
-        financialTransactionId = financialId.value?.ifBlank { null },
+        financialTransactionId = financialId.valueOrNullIfBlank(),
         externalId = UUID.randomUUID().toString(),
         payee = null,
-        payer = AccountHolder(partyIdType = AccountHolderType.MSISDN.accountHolderType, partyId = phoneNumber.value.orEmpty()),
-        payerMessage = payerMessage.value.orEmpty(),
-        payeeNote = payerNote.value.orEmpty(),
+        payer = AccountHolder(partyIdType = AccountHolderType.MSISDN.accountHolderType, partyId = phoneNumber.valueOrEmpty()),
+        payerMessage = payerMessage.valueOrEmpty(),
+        payeeNote = payerNote.valueOrEmpty(),
         status = null,
         reason = null,
         referenceIdToRefund = null

@@ -110,10 +110,6 @@ dokka {
                 url("https://kotlinlang.org/api/kotlinx.coroutines/")
                 packageListUrl("https://kotlinlang.org/api/kotlinx.coroutines/package-list")
             }
-            externalDocumentationLinks.register("okhttp") {
-                url("https://square.github.io/okhttp/4.x/okhttp/")
-                packageListUrl("https://square.github.io/okhttp/4.x/okhttp/package-list")
-            }
         }
         named("androidMain") {
             displayName.set("Android")

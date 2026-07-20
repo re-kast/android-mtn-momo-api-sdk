@@ -30,12 +30,14 @@ import io.rekast.sdk.sample.utils.Utils
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.ResponseBody
 import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -208,5 +210,75 @@ class CashTransferScreenViewModelTest {
         viewModel.checkStatus()
 
         assertEquals("No status body returned.", viewModel.result.value)
+    }
+
+    /**
+     * A blank currency falls back to the sandbox default while non-blank payer names are kept,
+     * exercising all three ifBlank branches in the payload builder.
+     */
+    @Test
+    fun `sendCashTransfer with blank currency and names set succeeds`() = runTest {
+        every { mockRepository.cashTransfer(any(), any(), any(), any(), any()) } returns flowOf(NetworkResult.Success(Unit))
+
+        viewModel.onAmountChanged("100")
+        viewModel.onPayeeMsisdnChanged("256700000000")
+        viewModel.onCurrencyChanged("")
+        viewModel.onPayerFirstNameChanged("Jane")
+        viewModel.onPayerSurNameChanged("Doe")
+        viewModel.sendCashTransfer()
+
+        assertNotNull(viewModel.referenceId.value)
+        assertFalse(viewModel.showProgressBar.value!!)
+    }
+
+    /** An exception carrying no message is caught and surfaced with an empty detail. */
+    @Test
+    fun `sendCashTransfer exception with null message posts error result`() = runTest {
+        every { mockRepository.cashTransfer(any(), any(), any(), any(), any()) } throws RuntimeException()
+
+        viewModel.onAmountChanged("100")
+        viewModel.onPayeeMsisdnChanged("256700000000")
+        viewModel.sendCashTransfer()
+
+        assertEquals("Error: null", viewModel.result.value)
+        assertFalse(viewModel.showProgressBar.value!!)
+    }
+
+    /** A non-blank status body is printed verbatim, exercising the non-blank ifBlank branch. */
+    @Test
+    fun `checkStatus with non-blank body prints payload`() = runTest {
+        viewModel.referenceId.value = "ref-1"
+        every { mockRepository.getCashTransferStatus(any(), any(), any(), any()) } returns
+            flowOf(NetworkResult.Success("""{"status":"SUCCESSFUL"}""".toResponseBody("application/json".toMediaType())))
+
+        viewModel.checkStatus()
+
+        assertEquals("""{"status":"SUCCESSFUL"}""", viewModel.result.value)
+    }
+
+    /** A status success with a null response body reports the placeholder rather than crashing. */
+    @Test
+    fun `checkStatus with null body reports no status body`() = runTest {
+        viewModel.referenceId.value = "ref-1"
+        @Suppress("UNCHECKED_CAST")
+        every { mockRepository.getCashTransferStatus(any(), any(), any(), any()) } returns
+            (flowOf(NetworkResult.Success(null)) as Flow<NetworkResult<ResponseBody>>)
+
+        viewModel.checkStatus()
+
+        assertEquals("No status body returned.", viewModel.result.value)
+    }
+
+    /** A leading Loading emission is ignored and the terminal Success is used to complete the flow. */
+    @Test
+    fun `sendCashTransfer ignores loading emission before terminal success`() = runTest {
+        every { mockRepository.cashTransfer(any(), any(), any(), any(), any()) } returns
+            flowOf(NetworkResult.Loading(), NetworkResult.Success(Unit))
+
+        viewModel.onAmountChanged("100")
+        viewModel.onPayeeMsisdnChanged("256700000000")
+        viewModel.sendCashTransfer()
+
+        assertNotNull(viewModel.referenceId.value)
     }
 }

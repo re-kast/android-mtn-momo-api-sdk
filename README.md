@@ -61,7 +61,7 @@ The SDK uses a **pull-based credential model** — it never stores credentials i
 │          ▲                          │                       │
 │          │                          ▼                       │
 │  MainViewModel           SDK Interceptors                   │
-│  (writes credentials)       BasicAuthInterceptor            │
+│  (writes credentials)       BasicAuthenticationInterceptor            │
 │                             AccessTokenInterceptor          │
 │                                     │                       │
 │                             TokenAuthenticator              │
@@ -147,7 +147,7 @@ To include the MTN MOMO API SDK in your project, add the following dependency to
 
 ```kotlin
 dependencies {
-    implementation("io.rekast:momo-api-sdk:0.1.0-SNAPSHOT")
+    implementation("io.rekast:momo-api-sdk:0.3.0-SNAPSHOT")
 }
 ```
 

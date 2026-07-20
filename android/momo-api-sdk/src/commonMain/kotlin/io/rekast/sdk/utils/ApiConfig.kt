@@ -19,7 +19,7 @@ package io.rekast.sdk.utils
  * Holds runtime configuration for the MTN MoMo SDK.
  *
  * Pass an instance of this class when initializing the SDK instead of relying
- * on Android-only [BuildConfig] fields, making the SDK usable on both Android
+ * on Android-only `BuildConfig` fields, making the SDK usable on both Android
  * and plain-JVM targets.
  *
  * @property baseUrl The base URL for the MTN MoMo API (e.g. `https://sandbox.momodeveloper.mtn.com/`).

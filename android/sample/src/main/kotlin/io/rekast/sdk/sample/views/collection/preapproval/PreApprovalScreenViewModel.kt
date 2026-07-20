@@ -33,6 +33,9 @@ import io.rekast.sdk.sample.utils.SampleConfig
 import io.rekast.sdk.sample.utils.SnackBarComponentConfiguration
 import io.rekast.sdk.sample.utils.SnackBarType
 import io.rekast.sdk.sample.utils.Utils
+import io.rekast.sdk.sample.utils.bodyText
+import io.rekast.sdk.sample.utils.valueOrEmpty
+import io.rekast.sdk.sample.utils.valueOrNullIfBlank
 import io.rekast.sdk.utils.AccountHolderType
 import io.rekast.sdk.utils.ProductType
 import java.util.UUID
@@ -103,10 +106,10 @@ class PreApprovalScreenViewModel @Inject constructor(
         val reference = UUID.randomUUID().toString()
         val subscriptionKey = Utils.getProductSubscriptionKeys(ProductType.COLLECTION, sampleConfig)
         val preApproval = PreApproval(
-            payer = AccountHolder(partyIdType = AccountHolderType.MSISDN.accountHolderType, partyId = payerMsisdn.value.orEmpty()),
-            payerCurrency = payerCurrency.value.orEmpty().ifBlank { Constants.SANDBOX_CURRENCY },
-            payerMessage = payerMessage.value?.ifBlank { null },
-            validityTime = validityTime.value?.toIntOrNull() ?: 0
+            payer = AccountHolder(partyIdType = AccountHolderType.MSISDN.accountHolderType, partyId = payerMsisdn.valueOrEmpty()),
+            payerCurrency = payerCurrency.valueOrEmpty().ifBlank { Constants.SANDBOX_CURRENCY },
+            payerMessage = payerMessage.valueOrNullIfBlank(),
+            validityTime = validityTime.valueOrEmpty().toIntOrNull() ?: 0
         )
         when (val response = defaultRepository.createPreApproval(sampleConfig.apiVersionV1, preApproval, reference, subscriptionKey, sampleConfig.environment).awaitTerminal()) {
             is NetworkResult.Success -> {
@@ -118,7 +121,7 @@ class PreApprovalScreenViewModel @Inject constructor(
             else -> {
                 Timber.e("Create pre-approval failed: %s", response.message)
                 result.postValue("Create failed: ${response.message}")
-                emitError(R.string.snackbar_preapproval_not_created, response.message.orEmpty())
+                emitError(R.string.snackbar_preapproval_not_created, response.message)
             }
         }
     }
@@ -127,14 +130,14 @@ class PreApprovalScreenViewModel @Inject constructor(
     fun checkStatus() = withReference { reference, subscriptionKey ->
         when (val response = defaultRepository.getPreApprovalStatus(sampleConfig.apiVersionV1, reference, subscriptionKey, sampleConfig.environment).awaitTerminal()) {
             is NetworkResult.Success -> {
-                result.postValue(response.response?.source()?.readUtf8().orEmpty().ifBlank { "No status body returned." })
+                result.postValue(response.bodyText().orEmpty().ifBlank { "No status body returned." })
                 emitSuccess(R.string.snackbar_preapproval_status_fetched)
             }
 
             else -> {
                 Timber.e("Pre-approval status failed: %s", response.message)
                 result.postValue("Status failed: ${response.message}")
-                emitError(R.string.snackbar_preapproval_status_failed, response.message.orEmpty())
+                emitError(R.string.snackbar_preapproval_status_failed, response.message)
             }
         }
     }
@@ -150,7 +153,7 @@ class PreApprovalScreenViewModel @Inject constructor(
             else -> {
                 Timber.e("Cancel pre-approval failed: %s", response.message)
                 result.postValue("Cancel failed: ${response.message}")
-                emitError(R.string.snackbar_preapproval_not_cancelled, response.message.orEmpty())
+                emitError(R.string.snackbar_preapproval_not_cancelled, response.message)
             }
         }
     }

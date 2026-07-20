@@ -32,12 +32,14 @@ import io.rekast.sdk.sample.utils.Utils
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.ResponseBody
 import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -243,5 +245,71 @@ class PreApprovalScreenViewModelTest {
         viewModel.cancelPreApproval()
 
         verify(exactly = 0) { mockRepository.cancelPreApproval(any(), any(), any(), any()) }
+    }
+
+    /**
+     * A blank payer currency falls back to the sandbox default while a non-blank payer message is
+     * kept, exercising both ifBlank branches in the payload builder.
+     */
+    @Test
+    fun `createPreApproval with blank currency and message set succeeds`() = runTest {
+        every { mockRepository.createPreApproval(any(), any(), any(), any(), any()) } returns flowOf(NetworkResult.Success(Unit))
+
+        viewModel.onPayerMsisdnChanged("256700000000")
+        viewModel.onPayerCurrencyChanged("")
+        viewModel.onPayerMessageChanged("Approve me")
+        viewModel.createPreApproval()
+
+        assertNotNull(viewModel.referenceId.value)
+        assertFalse(viewModel.showProgressBar.value!!)
+    }
+
+    /** An exception carrying no message is caught and surfaced with an empty detail. */
+    @Test
+    fun `createPreApproval exception with null message posts error result`() = runTest {
+        every { mockRepository.createPreApproval(any(), any(), any(), any(), any()) } throws RuntimeException()
+
+        viewModel.onPayerMsisdnChanged("256700000000")
+        viewModel.createPreApproval()
+
+        assertEquals("Error: null", viewModel.result.value)
+        assertFalse(viewModel.showProgressBar.value!!)
+    }
+
+    /** A non-blank status body is printed verbatim, exercising the non-blank ifBlank branch. */
+    @Test
+    fun `checkStatus with non-blank body prints payload`() = runTest {
+        viewModel.referenceId.value = "ref-1"
+        every { mockRepository.getPreApprovalStatus(any(), any(), any(), any()) } returns
+            flowOf(NetworkResult.Success("""{"status":"PENDING"}""".toResponseBody("application/json".toMediaType())))
+
+        viewModel.checkStatus()
+
+        assertEquals("""{"status":"PENDING"}""", viewModel.result.value)
+    }
+
+    /** A status success with a null response body reports the placeholder rather than crashing. */
+    @Test
+    fun `checkStatus with null body reports no status body`() = runTest {
+        viewModel.referenceId.value = "ref-1"
+        @Suppress("UNCHECKED_CAST")
+        every { mockRepository.getPreApprovalStatus(any(), any(), any(), any()) } returns
+            (flowOf(NetworkResult.Success(null)) as Flow<NetworkResult<ResponseBody>>)
+
+        viewModel.checkStatus()
+
+        assertEquals("No status body returned.", viewModel.result.value)
+    }
+
+    /** A leading Loading emission is ignored and the terminal Success is used to complete the flow. */
+    @Test
+    fun `createPreApproval ignores loading emission before terminal success`() = runTest {
+        every { mockRepository.createPreApproval(any(), any(), any(), any(), any()) } returns
+            flowOf(NetworkResult.Loading(), NetworkResult.Success(Unit))
+
+        viewModel.onPayerMsisdnChanged("256700000000")
+        viewModel.createPreApproval()
+
+        assertNotNull(viewModel.referenceId.value)
     }
 }

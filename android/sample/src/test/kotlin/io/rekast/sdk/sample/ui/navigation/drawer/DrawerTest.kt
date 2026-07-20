@@ -113,4 +113,41 @@ class DrawerTest {
             assertEquals(R.id.setupScreenFragment, navController.currentDestination?.id)
         }
     }
+
+    /**
+     * After navigating to a non-start destination the current back-stack entry changes, so the
+     * `selected = navBackStackEntry?.destination?.id == item.route` comparison resolves true for the
+     * newly-current item and false for the others (both sides of the branch across the item list).
+     */
+    @Test
+    fun `reflects selection after navigating to another destination`() {
+        setDrawer()
+        composeRule.runOnIdle { navController.navigate(R.id.setupScreenFragment) }
+        composeRule.waitForIdle()
+        assertEquals(R.id.setupScreenFragment, navController.currentDestination?.id)
+        composeRule.onNodeWithText("Setup & Config").assertExists()
+        composeRule.onNodeWithText("Home").assertExists()
+    }
+
+    /**
+     * With a [TestNavHostController] that has no graph set, `currentBackStackEntryAsState()` never
+     * emits a destination, so `navBackStackEntry` stays null. This drives the null-safe-call arm of
+     * `selected = navBackStackEntry?.destination?.id == item.route` (the whole expression evaluates
+     * to null, so no item is selected) while the drawer items still render.
+     */
+    @Test
+    fun `renders items when back stack entry is null`() {
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        val emptyNavController = TestNavHostController(context)
+        composeRule.setContent {
+            AppTheme {
+                val scaffoldState = rememberScaffoldState()
+                val scope = rememberCoroutineScope()
+                Drawer(scope = scope, scaffoldState = scaffoldState, navController = emptyNavController)
+            }
+        }
+        composeRule.waitForIdle()
+        composeRule.onNodeWithText("Home").assertExists()
+        composeRule.onNodeWithText("Setup & Config").assertExists()
+    }
 }

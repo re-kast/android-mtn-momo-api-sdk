@@ -125,6 +125,16 @@ class SettingsTest {
         assertEquals("256733123456", result)
     }
 
+    /**
+     * Verifies a short number (fewer than 11 chars) that does NOT start with "0" is returned
+     * unchanged, exercising the second operand of the leading-zero check.
+     */
+    @Test
+    fun `formatPhoneNumber returns short number unchanged when it does not start with zero`() {
+        val result = settings.formatPhoneNumber("733123456", "256")
+        assertEquals("733123456", result)
+    }
+
     /** Verifies null, empty, and whitespace-only messages fail the length check. */
     @Test
     fun `checkNotificationMessageLength returns false for blank message`() {

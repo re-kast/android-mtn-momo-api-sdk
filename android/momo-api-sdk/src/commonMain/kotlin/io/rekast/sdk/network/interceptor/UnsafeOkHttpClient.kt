@@ -23,7 +23,7 @@ import javax.net.ssl.X509TrustManager
 import okhttp3.OkHttpClient
 
 /**
- * Provides an [OkHttpClient.Builder] that bypasses SSL certificate validation.
+ * Provides an `OkHttpClient.Builder` that bypasses SSL certificate validation.
  *
  * Use this only in non-production environments (e.g., when the base URL uses plain HTTP
  * or a self-signed certificate). Never use in production as it disables all SSL security checks.
@@ -31,7 +31,7 @@ import okhttp3.OkHttpClient
 class UnsafeOkHttpClient {
 
     /**
-     * An [OkHttpClient.Builder] configured to trust all SSL certificates without validation.
+     * An `OkHttpClient.Builder` configured to trust all SSL certificates without validation.
      */
     val unsafeOkHttpClient: OkHttpClient.Builder
         get() = try { // Create a trust manager that does not validate certificate chains

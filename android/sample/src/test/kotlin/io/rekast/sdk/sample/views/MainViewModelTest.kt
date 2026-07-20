@@ -194,6 +194,26 @@ class MainViewModelTest {
     }
 
     /**
+     * Verifies that a successful [DefaultRepository.createApiKey] carrying a null `apiKey` field is
+     * tolerated: the empty fallback is stored rather than crashing.
+     */
+    @Test
+    fun `checkUser saves empty API key when createApiKey response has null apiKey`() = runTest {
+        every { mockStorage.getApiKey() } returnsMany listOf("", "", "")
+        every { mockStorage.getAccessToken() } returns "existing-token"
+        coEvery { mockRepository.checkApiUser(any(), any()) } returns flowOf(
+            NetworkResult.Success(ApiUser(targetEnvironment = "sandbox"))
+        )
+        coEvery { mockRepository.createApiKey(any(), any()) } returns flowOf(
+            NetworkResult.Success(ApiKey(apiKey = null))
+        )
+
+        viewModel.checkUser()
+
+        coVerify { mockStorage.saveApiKey("") }
+    }
+
+    /**
      * Verifies that [DefaultRepository.getAccessToken] is called when the API key is present
      * in [CredentialStorage] but no access token has been stored yet.
      */

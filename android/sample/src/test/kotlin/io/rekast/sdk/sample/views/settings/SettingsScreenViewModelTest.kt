@@ -102,6 +102,22 @@ class SettingsScreenViewModelTest {
         assertEquals("42", viewModel.appInfo.versionCode)
     }
 
+    /** A null version name from the package manager degrades to an empty string rather than crashing. */
+    @Test
+    fun `appInfo defaults blank version name when package reports none`() {
+        @Suppress("DEPRECATION")
+        val infoWithoutVersionName = PackageInfo().apply {
+            versionName = null
+            versionCode = 42
+        }
+        every { mockPackageManager.getPackageInfo("io.rekast.sdk.sample", 0) } returns infoWithoutVersionName
+
+        val viewModel = createViewModel()
+
+        assertEquals("", viewModel.appInfo.versionName)
+        assertEquals("42", viewModel.appInfo.versionCode)
+    }
+
     /** A missing package degrades gracefully to blank version fields rather than crashing. */
     @Test
     fun `appInfo falls back gracefully when package info is unavailable`() {

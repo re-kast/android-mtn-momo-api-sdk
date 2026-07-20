@@ -16,6 +16,8 @@
 package io.rekast.sdk.sample.views.remittance.cashtransfer
 
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsEnabled
+import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import io.mockk.mockk
@@ -61,6 +63,14 @@ class CashTransferScreenTest {
         }
     }
 
+    private fun setScreen(viewModel: CashTransferScreenViewModel?, showProgressBar: Boolean = false) {
+        composeRule.setContent {
+            AppTheme {
+                CashTransferScreen(navController = null, snackStateFlow = snackFlow, showProgressBar = showProgressBar, viewModel = viewModel)
+            }
+        }
+    }
+
     @Test
     fun `renders create form`() {
         setScreen()
@@ -71,5 +81,36 @@ class CashTransferScreenTest {
     fun `hides form while loading`() {
         setScreen(showProgressBar = true)
         composeRule.onNodeWithText("Cash Transfer (V2)").assertDoesNotExist()
+    }
+
+    @Test
+    fun `shows loader when view model is null`() {
+        setScreen(viewModel = null)
+        composeRule.onNodeWithText("Cash Transfer (V2)").assertDoesNotExist()
+    }
+
+    @Test
+    fun `enables send when amount and payee are set`() {
+        val vm = viewModel()
+        vm.onAmountChanged("100")
+        vm.onPayeeMsisdnChanged("256700000000")
+        setScreen(viewModel = vm)
+        composeRule.onNodeWithText("Send").assertIsEnabled()
+    }
+
+    @Test
+    fun `disables send when payee is blank`() {
+        val vm = viewModel()
+        vm.onAmountChanged("100")
+        setScreen(viewModel = vm)
+        composeRule.onNodeWithText("Send").assertIsNotEnabled()
+    }
+
+    @Test
+    fun `enables status when reference is set`() {
+        val vm = viewModel()
+        vm.referenceId.value = "ref-1"
+        setScreen(viewModel = vm)
+        composeRule.onNodeWithText("Check Status").assertIsEnabled()
     }
 }

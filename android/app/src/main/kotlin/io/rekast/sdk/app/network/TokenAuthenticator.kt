@@ -113,10 +113,12 @@ class TokenAuthenticator(
         }
 
         // Extract the product type (e.g. "collection") from the first URL path segment.
+        // OkHttp's pathSegments always contains at least one (possibly empty) element, so first()
+        // is safe and lets the blank check stand in for "no meaningful path segment".
         val productType =
             response.request.url.pathSegments
-                .firstOrNull()
-        if (productType.isNullOrBlank()) {
+                .first()
+        if (productType.isBlank()) {
             Timber.w("TokenAuthenticator: could not determine product type from URL")
             return null
         }

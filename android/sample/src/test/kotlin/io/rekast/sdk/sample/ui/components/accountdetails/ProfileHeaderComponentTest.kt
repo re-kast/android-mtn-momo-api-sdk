@@ -127,4 +127,17 @@ class ProfileHeaderComponentTest {
         composeRule.onNodeWithText("q@e.test").assertIsDisplayed()
         composeRule.onNodeWithText("Verified").assertIsDisplayed()
     }
+
+    /**
+     * A blank (but non-null) secondary value takes the `takeIf { it.isNotBlank() }` false path, so
+     * the secondary line is omitted while the name still renders.
+     */
+    @Test
+    fun `omits secondary line when secondary is blank`() {
+        setContent(
+            consent = UserInfoWithConsent(sub = "0", name = "Blank Secondary", email = "", phonenumber = null)
+        )
+        composeRule.onNodeWithText("Blank Secondary").assertIsDisplayed()
+        composeRule.onNodeWithText("Verified").assertIsDisplayed()
+    }
 }

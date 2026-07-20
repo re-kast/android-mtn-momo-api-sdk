@@ -276,6 +276,26 @@ class TokenAuthenticatorTest {
     }
 
     /**
+     * Verifies that a successful bc-authorize response carrying a null body is non-fatal: no
+     * `auth_req_id` is persisted and the original request is still returned for retry.
+     */
+    @Test
+    fun `authenticate handles bc-authorize success with a null body`() {
+        every { mockStorage.getApiKey() } returns "test-api-key"
+        every { mockStorage.getOauthAccessToken() } returns ""
+        every { mockStorage.getBackChannelAuthorizationRequestId() } returns ""
+        every { mockStorage.getLoginHint() } returns "ID:256770000000/MSISDN"
+        stubAccessTokenSuccess()
+        coEvery { mockAuthService.bcAuthorize(any(), any(), any(), any(), any(), any(), any()) } returns
+            RetrofitResponse.success<BackChannelAuthorize>(null)
+
+        val result = authenticator.authenticate(null, buildUnauthorizedResponse(collectionUrl()))
+
+        assertNotNull("bc-authorize with null body is non-fatal; request should still be retried", result)
+        verify(exactly = 0) { mockStorage.saveBackChannelAuthorizationRequestId(any(), any()) }
+    }
+
+    /**
      * Verifies that when the OAuth2 token is expired and both the `auth_req_id` and the login
      * hint are blank, [TokenAuthenticator.authenticate] skips the OAuth2 refresh entirely and
      * still returns the original request for retry with the refreshed Bearer token.

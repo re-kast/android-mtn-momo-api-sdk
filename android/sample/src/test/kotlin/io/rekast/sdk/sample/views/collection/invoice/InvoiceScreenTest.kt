@@ -16,6 +16,8 @@
 package io.rekast.sdk.sample.views.collection.invoice
 
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsEnabled
+import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import io.mockk.mockk
@@ -61,6 +63,14 @@ class InvoiceScreenTest {
         }
     }
 
+    private fun setScreen(viewModel: InvoiceScreenViewModel?, showProgressBar: Boolean = false) {
+        composeRule.setContent {
+            AppTheme {
+                InvoiceScreen(navController = null, snackStateFlow = snackFlow, showProgressBar = showProgressBar, viewModel = viewModel)
+            }
+        }
+    }
+
     @Test
     fun `renders create form`() {
         setScreen()
@@ -71,5 +81,37 @@ class InvoiceScreenTest {
     fun `hides form while loading`() {
         setScreen(showProgressBar = true)
         composeRule.onNodeWithText("Create Invoice").assertDoesNotExist()
+    }
+
+    @Test
+    fun `shows loader when view model is null`() {
+        setScreen(viewModel = null)
+        composeRule.onNodeWithText("Create Invoice").assertDoesNotExist()
+    }
+
+    @Test
+    fun `enables create when amount and payer are set`() {
+        val vm = viewModel()
+        vm.onAmountChanged("100")
+        vm.onPayerMsisdnChanged("256700000000")
+        setScreen(viewModel = vm)
+        composeRule.onNodeWithText("Create").assertIsEnabled()
+    }
+
+    @Test
+    fun `disables create when payer is blank`() {
+        val vm = viewModel()
+        vm.onAmountChanged("100")
+        setScreen(viewModel = vm)
+        composeRule.onNodeWithText("Create").assertIsNotEnabled()
+    }
+
+    @Test
+    fun `enables status and cancel when reference is set`() {
+        val vm = viewModel()
+        vm.referenceId.value = "ref-1"
+        setScreen(viewModel = vm)
+        composeRule.onNodeWithText("Check Status").assertIsEnabled()
+        composeRule.onNodeWithText("Cancel").assertIsEnabled()
     }
 }

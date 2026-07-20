@@ -120,4 +120,68 @@ class SetupScreenTest {
 
         assertTrue(rerun)
     }
+
+    /**
+     * With a null viewModel the screen takes the `return@MomoScaffold` branch (L63) and renders only
+     * the scaffold chrome, without crashing.
+     */
+    @Test
+    fun `renders with null viewModel`() {
+        composeRule.setContent {
+            AppTheme {
+                SetupScreen(navController = null, snackStateFlow = snackFlow, viewModel = null)
+            }
+        }
+        composeRule.waitForIdle()
+    }
+
+    /**
+     * All five credential flags true exercises the `true` side of every `status?.<flag> == true`
+     * branch (L84-L88): the card shows five "Present" pills and no "Missing" pills.
+     */
+    @Test
+    fun `renders all credentials present`() {
+        val vm: SetupScreenViewModel = mockk(relaxed = true) {
+            every { config } returns this@SetupScreenTest.config
+            every { status } returns MutableLiveData(
+                SetupScreenViewModel.CredentialStatus(
+                    apiKeyPresent = true,
+                    accessTokenPresent = true,
+                    oauthTokenPresent = true,
+                    authReqIdPresent = true,
+                    loginHintPresent = true
+                )
+            )
+            every { snackBarStateFlow } returns snackFlow
+        }
+        composeRule.setContent {
+            AppTheme {
+                SetupScreen(navController = null, snackStateFlow = snackFlow, viewModel = vm)
+            }
+        }
+        composeRule.onNode(hasScrollAction()).performScrollToNode(hasText("Present"))
+        composeRule.onAllNodesWithText("Present").assertCountEquals(5)
+        composeRule.onAllNodesWithText("Missing").assertCountEquals(0)
+    }
+
+    /**
+     * A non-null status LiveData with no value set makes `observeAsState()` yield a null status, so
+     * every `status?.<flag> == true` branch takes its `false`/null side: five "Missing" pills.
+     */
+    @Test
+    fun `renders with unset status value`() {
+        val vm: SetupScreenViewModel = mockk(relaxed = true) {
+            every { config } returns this@SetupScreenTest.config
+            every { status } returns MutableLiveData()
+            every { snackBarStateFlow } returns snackFlow
+        }
+        composeRule.setContent {
+            AppTheme {
+                SetupScreen(navController = null, snackStateFlow = snackFlow, viewModel = vm)
+            }
+        }
+        composeRule.onNode(hasScrollAction()).performScrollToNode(hasText("Missing"))
+        composeRule.onAllNodesWithText("Missing").assertCountEquals(5)
+        composeRule.onAllNodesWithText("Present").assertCountEquals(0)
+    }
 }
