@@ -20,7 +20,6 @@ io.rekast.sdk.utils
 module:sample
 io.rekast.sdk.sample.ui.components.accountdetails
 io.rekast.sdk.sample.ui.components.general
-io.rekast.sdk.sample.ui.components.mainscreen
 io.rekast.sdk.sample.ui.components.screens
 io.rekast.sdk.sample.ui.navigation.drawer
 io.rekast.sdk.sample.ui.navigation.navigation
@@ -29,10 +28,15 @@ io.rekast.sdk.sample.ui.theme
 io.rekast.sdk.sample.utils
 io.rekast.sdk.sample.utils.annotation
 io.rekast.sdk.sample.views
+io.rekast.sdk.sample.views.collection.invoice
 io.rekast.sdk.sample.views.collection.pay
+io.rekast.sdk.sample.views.collection.preapproval
 io.rekast.sdk.sample.views.collection.withdraw
 io.rekast.sdk.sample.views.disbursement.deposit
 io.rekast.sdk.sample.views.disbursement.refund
 io.rekast.sdk.sample.views.home
-io.rekast.sdk.sample.views.remittance
+io.rekast.sdk.sample.views.remittance.cashtransfer
+io.rekast.sdk.sample.views.remittance.remittance
+io.rekast.sdk.sample.views.settings
+io.rekast.sdk.sample.views.setup
 io.rekast.sdk.sample.views.splash

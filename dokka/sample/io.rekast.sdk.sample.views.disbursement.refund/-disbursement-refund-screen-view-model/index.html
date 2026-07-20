@@ -95,24 +95,24 @@
   <div class="breadcrumbs"><a href="../../index.html">sample</a><span class="delimiter">/</span><a href="../index.html">io.rekast.sdk.sample.views.disbursement.refund</a><span class="delimiter">/</span><span class="current">DisbursementRefundScreenViewModel</span></div>
   <div class="cover ">
     <h1 class="cover"><span>Disbursement</span><wbr><span>Refund</span><wbr><span>Screen</span><wbr><span>View</span><wbr><span><span>Model</span></span></h1>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":sample/main"><div class="symbol monospace"><span class="token keyword">class </span><a href="index.html">DisbursementRefundScreenViewModel</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">defaultRepository<span class="token operator">: </span>ERROR CLASS: Symbol not found for DefaultRepository<span class="token punctuation">, </span></span><span class="parameter ">context<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/content/Context.html">Context</a><span class="token punctuation">, </span></span><span class="parameter ">sampleConfig<span class="token operator">: </span><a href="../../io.rekast.sdk.sample.utils/-sample-config/index.html">SampleConfig</a></span></span><span class="token punctuation">)</span> : <span data-unresolved-link="/<ERROR CLASS> ERROR CLASS: Symbol not found for ViewModel///PointingToDeclaration/">&lt;ERROR CLASS&gt; ERROR CLASS: Symbol not found for ViewModel</span></div><p class="paragraph">ViewModel for the Disbursement Refund screen, managing form field state and the resulting MomoTransaction after a refund request.</p></div></div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":sample/main"><div class="symbol monospace"><span class="token keyword">class </span><a href="index.html">DisbursementRefundScreenViewModel</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">defaultRepository<span class="token operator">: </span>ERROR CLASS: Symbol not found for DefaultRepository<span class="token punctuation">, </span></span><span class="parameter ">credentialStorage<span class="token operator">: </span><a href="../../io.rekast.sdk.sample.utils/-credential-storage/index.html">CredentialStorage</a><span class="token punctuation">, </span></span><span class="parameter ">dispatchers<span class="token operator">: </span><a href="../../io.rekast.sdk.sample.utils/-dispatcher-provider/index.html">DispatcherProvider</a><span class="token punctuation">, </span></span><span class="parameter ">sampleConfig<span class="token operator">: </span><a href="../../io.rekast.sdk.sample.utils/-sample-config/index.html">SampleConfig</a></span></span><span class="token punctuation">)</span> : <span data-unresolved-link="/<ERROR CLASS> ERROR CLASS: Symbol not found for ViewModel///PointingToDeclaration/">&lt;ERROR CLASS&gt; ERROR CLASS: Symbol not found for ViewModel</span></div><p class="paragraph">ViewModel for the Disbursement Refund screen.</p><p class="paragraph">On submit it runs the full Disbursement refund flow against the SDK:</p><ol><li><p class="paragraph"><code class="lang-kotlin">refund</code> — reverses a prior transaction back to the payee (HTTP 202).</p></li><li><p class="paragraph"><code class="lang-kotlin">getRefundStatus</code> — polls the outcome and posts it to <a href="momo-transaction.html">momoTransaction</a>.</p></li></ol><p class="paragraph">The screen shows the input form while <a href="momo-transaction.html">momoTransaction</a> is null and the result once it is set. Authentication is handled automatically by the SDK's interceptor/authenticator, so the ViewModel only guards on the presence of an access token before starting.</p></div></div>
   </div>
   <div class="tabbedcontent">
     <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
     <div class="tabs-section-body">
       <div data-togglable="CONSTRUCTOR">
         <h2 class="tableheader">Constructors</h2>
-        <div class="table"><a data-name="-722912541%2FConstructors%2F326565223" anchor-label="DisbursementRefundScreenViewModel" id="-722912541%2FConstructors%2F326565223" data-filterable-set=":sample/main"></a>
+        <div class="table"><a data-name="-1948035625%2FConstructors%2F326565223" anchor-label="DisbursementRefundScreenViewModel" id="-1948035625%2FConstructors%2F326565223" data-filterable-set=":sample/main"></a>
           <div class="table-row table-row_content" data-togglable="CONSTRUCTOR" data-filterable-current=":sample/main" data-filterable-set=":sample/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-disbursement-refund-screen-view-model.html"><span>Disbursement</span><wbr><span>Refund</span><wbr><span>Screen</span><wbr><span>View</span><wbr><span><span>Model</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-722912541%2FConstructors%2F326565223"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1948035625%2FConstructors%2F326565223"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":sample/main"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">defaultRepository<span class="token operator">: </span>ERROR CLASS: Symbol not found for DefaultRepository<span class="token punctuation">, </span></span><span class="parameter ">context<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/content/Context.html">Context</a><span class="token punctuation">, </span></span><span class="parameter ">sampleConfig<span class="token operator">: </span><a href="../../io.rekast.sdk.sample.utils/-sample-config/index.html">SampleConfig</a></span></span><span class="token punctuation">)</span></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":sample/main"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">defaultRepository<span class="token operator">: </span>ERROR CLASS: Symbol not found for DefaultRepository<span class="token punctuation">, </span></span><span class="parameter ">credentialStorage<span class="token operator">: </span><a href="../../io.rekast.sdk.sample.utils/-credential-storage/index.html">CredentialStorage</a><span class="token punctuation">, </span></span><span class="parameter ">dispatchers<span class="token operator">: </span><a href="../../io.rekast.sdk.sample.utils/-dispatcher-provider/index.html">DispatcherProvider</a><span class="token punctuation">, </span></span><span class="parameter ">sampleConfig<span class="token operator">: </span><a href="../../io.rekast.sdk.sample.utils/-sample-config/index.html">SampleConfig</a></span></span><span class="token punctuation">)</span></div></div></div>
                 </div>
               </div>
             </div>
@@ -131,7 +131,7 @@
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":sample/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="amount.html">amount</a><span class="token operator">: </span>ERROR CLASS: Symbol not found for LiveData&lt;kotlin/String&gt;</div><div class="brief "><p class="paragraph">The current refund amount entered in the form.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":sample/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="amount.html">amount</a><span class="token operator">: </span>ERROR CLASS: Symbol not found for LiveData&lt;kotlin/String&gt;</div><div class="brief "><p class="paragraph">The current payment amount entered in the form.</p></div></div></div>
                 </div>
               </div>
             </div>
@@ -236,7 +236,7 @@
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":sample/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="reference-id-to-refund.html">referenceIdToRefund</a><span class="token operator">: </span>ERROR CLASS: Symbol not found for LiveData&lt;kotlin/String&gt;</div><div class="brief "><p class="paragraph">The current reference ID of the original transaction to refund.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":sample/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="reference-id-to-refund.html">referenceIdToRefund</a><span class="token operator">: </span>ERROR CLASS: Symbol not found for LiveData&lt;kotlin/String&gt;</div><div class="brief "><p class="paragraph">The current reference ID to refund entered in the form.</p></div></div></div>
                 </div>
               </div>
             </div>
@@ -375,7 +375,22 @@
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":sample/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="on-reference-id-to-refund-updated.html"><span class="token function">onReferenceIdToRefundUpdated</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">deliveryNote<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Updates the reference ID to refund field value.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":sample/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="on-reference-id-to-refund-updated.html"><span class="token function">onReferenceIdToRefundUpdated</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">referenceIdToRefund<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Updates the reference ID to refund field value.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-905825577%2FFunctions%2F326565223" anchor-label="refund" id="-905825577%2FFunctions%2F326565223" data-filterable-set=":sample/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":sample/main" data-filterable-set=":sample/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="refund.html"><span><span>refund</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-905825577%2FFunctions%2F326565223"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":sample/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="refund.html"><span class="token function">refund</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Submits a Disbursement refund, then polls the status and posts the resulting MomoTransaction to <a href="momo-transaction.html">momoTransaction</a>.</p></div></div></div>
                 </div>
               </div>
             </div>
