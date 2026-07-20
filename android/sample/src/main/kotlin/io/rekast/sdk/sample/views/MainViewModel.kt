@@ -119,12 +119,10 @@ open class MainViewModel @Inject constructor(
                     when (result) {
                         is NetworkResult.Success -> createApiKey()
 
-                        is NetworkResult.Error -> {
+                        else -> {
                             Timber.e("API user creation failed: %s", result.message)
                             _isBootstrapComplete.value = true
                         }
-
-                        is NetworkResult.Loading -> {}
                     }
                 }
         }
@@ -157,7 +155,7 @@ open class MainViewModel @Inject constructor(
                 when (result) {
                     is NetworkResult.Success -> {
                         try {
-                            val newKey = result.response?.apiKey.orEmpty()
+                            val newKey = result.data.apiKey.orEmpty()
                             credentialStorage.saveApiKey(newKey)
                             Timber.d("API key saved")
                             getAccessToken()
@@ -167,12 +165,10 @@ open class MainViewModel @Inject constructor(
                         }
                     }
 
-                    is NetworkResult.Error -> {
+                    else -> {
                         Timber.e("API key creation failed: %s", result.message)
                         _isBootstrapComplete.value = true
                     }
-
-                    is NetworkResult.Loading -> {}
                 }
             }
         }
@@ -212,12 +208,10 @@ open class MainViewModel @Inject constructor(
                             }
                         }
 
-                        is NetworkResult.Error -> {
+                        else -> {
                             Timber.e("Access token fetch failed: %s", result.message)
                             _isBootstrapComplete.value = true
                         }
-
-                        is NetworkResult.Loading -> {}
                     }
                 }
             } else {
@@ -264,20 +258,17 @@ open class MainViewModel @Inject constructor(
             ).collect { result ->
                 when (result) {
                     is NetworkResult.Success -> {
-                        result.response?.let { response ->
-                            credentialStorage.saveBackChannelAuthorizationRequestId(response.authReqId, response.expiresIn)
-                            credentialStorage.saveLoginHint(bcAuthorizeRequest.loginHint)
-                            Timber.d("BC authorize request ID saved")
-                            getOauthAccessToken()
-                        } ?: run { _isBootstrapComplete.value = true }
+                        val response = result.data
+                        credentialStorage.saveBackChannelAuthorizationRequestId(response.authReqId, response.expiresIn)
+                        credentialStorage.saveLoginHint(bcAuthorizeRequest.loginHint)
+                        Timber.d("BC authorize request ID saved")
+                        getOauthAccessToken()
                     }
 
-                    is NetworkResult.Error -> {
+                    else -> {
                         Timber.e("BC authorize failed: %s", result.message)
                         _isBootstrapComplete.value = true
                     }
-
-                    is NetworkResult.Loading -> {}
                 }
             }
         }
@@ -338,12 +329,10 @@ open class MainViewModel @Inject constructor(
                                 _isBootstrapComplete.value = true
                             }
 
-                            is NetworkResult.Error -> {
+                            else -> {
                                 Timber.e("OAuth2 token fetch failed: %s", result.message)
                                 _isBootstrapComplete.value = true
                             }
-
-                            is NetworkResult.Loading -> {}
                         }
                     }
                 }

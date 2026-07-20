@@ -18,6 +18,7 @@
     <dimen name="circular_progress_size">50dp</dimen>
 
     <!-- Font Sizes -->
+    <dimen name="font_size_section_header">12sp</dimen>
     <dimen name="font_size_medium">18sp</dimen>
     <dimen name="font_size_xlarge">40sp</dimen>
 

@@ -19,11 +19,14 @@ import io.mockk.mockk
 import io.rekast.sdk.app.network.TokenAuthenticator
 import io.rekast.sdk.network.service.AuthenticationService
 import io.rekast.sdk.network.service.products.CollectionService
+import io.rekast.sdk.network.service.products.CommonService
 import io.rekast.sdk.network.service.products.DisbursementsService
+import io.rekast.sdk.network.service.products.RemittanceService
 import io.rekast.sdk.utils.ApiConfig
 import okhttp3.logging.HttpLoggingInterceptor
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import retrofit2.Retrofit
@@ -172,10 +175,69 @@ class NetworkModuleTest {
         assertNotNull(NetworkModule.getDisbursement(retrofit))
     }
 
-    // Note: getCommonService cannot be tested here because CommonService is the root of a
-    // sealed-interface hierarchy and the JVM's Proxy.validateProxyInterfaces rejects it
-    // (isSealed() == true). The sub-interfaces (CollectionService, DisbursementsService) work
-    // because they are not themselves the root of a PermittedSubclasses declaration.
+    /**
+     * Verifies that [NetworkModule.getRemittance] returns a non-null [RemittanceService]
+     * proxy for the given [Retrofit] instance.
+     */
+    @Test
+    fun `getRemittance returns non-null RemittanceService`() {
+        val retrofit = buildRetrofit(httpsConfig)
+        assertNotNull(NetworkModule.getRemittance(retrofit))
+    }
+
+    /**
+     * [NetworkModule.getCommonService] cannot return a proxy because [CommonService] is the root of
+     * a sealed-interface hierarchy and the JVM's `Proxy.validateProxyInterfaces` rejects it
+     * (`isSealed() == true`). Calling it still executes the factory line and must raise
+     * [IllegalArgumentException] rather than silently return.
+     */
+    @Test
+    fun `getCommonService throws for the sealed CommonService interface`() {
+        val retrofit = buildRetrofit(httpsConfig)
+        assertThrows(IllegalArgumentException::class.java) {
+            NetworkModule.getCommonService(retrofit)
+        }
+    }
+
+    /**
+     * Verifies that [NetworkModule.provideMomoCredentialProvider] returns a non-null
+     * [io.rekast.sdk.network.interfaces.CredentialProvider] built from the storage and config.
+     */
+    @Test
+    fun `provideMomoCredentialProvider returns non-null provider`() {
+        val provider = NetworkModule.provideMomoCredentialProvider(mockk(relaxed = true), mockk(relaxed = true))
+        assertNotNull(provider)
+    }
+
+    /**
+     * Verifies that [NetworkModule.provideTokenRefreshAuthenticationService] returns a non-null,
+     * Basic-Auth-only [AuthenticationService] for the token-refresh path.
+     */
+    @Test
+    fun `provideTokenRefreshAuthenticationService returns non-null service`() {
+        val service =
+            NetworkModule.provideTokenRefreshAuthenticationService(
+                config = httpsConfig,
+                storage = mockk(relaxed = true),
+                json = NetworkModule.provideJson()
+            )
+        assertNotNull(service)
+    }
+
+    /**
+     * Verifies that [NetworkModule.provideTokenAuthenticator] returns a non-null
+     * [TokenAuthenticator] wired with the supplied dependencies.
+     */
+    @Test
+    fun `provideTokenAuthenticator returns non-null authenticator`() {
+        val authenticator =
+            NetworkModule.provideTokenAuthenticator(
+                storage = mockk(relaxed = true),
+                authService = mockk(relaxed = true),
+                config = httpsConfig
+            )
+        assertNotNull(authenticator)
+    }
 
     /** Builds a [Retrofit] instance using [NetworkModule] helpers for the given [config]. */
     private fun buildRetrofit(config: ApiConfig): Retrofit {

@@ -15,119 +15,41 @@
  */
 package io.rekast.sdk.sample.ui.components.accountdetails
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Text
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.MutableLiveData
 import io.rekast.sdk.model.BasicUserInfo
 import io.rekast.sdk.sample.R
-import io.rekast.sdk.sample.ui.components.general.SectionHeader
+import io.rekast.sdk.sample.ui.components.general.CardTitle
+import io.rekast.sdk.sample.ui.components.general.InfoRow
+import io.rekast.sdk.sample.ui.components.general.MomoCard
 
 /**
- * Rstarters a section displaying basic user information fields: name, birth date, gstarter,
- * updated-at date, locale, and sub identifier.
+ * Renders a card displaying the basic user information fields: name, birth date, gender,
+ * updated-at date, locale, and sub identifier. Missing fields are omitted automatically.
  *
- * @param modifier Modifier applied to the root [Column].
- * @param basicUserInfo LiveData holding the [BasicUserInfo] to display; individual fields are hidden when null.
+ * @param modifier Modifier applied to the card.
+ * @param basicUserInfo LiveData holding the [BasicUserInfo] to display.
  */
 @Composable
 fun BasicUserInfoComponent(modifier: Modifier = Modifier, basicUserInfo: MutableLiveData<BasicUserInfo?>) {
-    Column(
-        modifier = modifier.fillMaxWidth()
-    ) {
-        SectionHeader(titleResId = R.string.basic_user_info_title)
-        Row(horizontalArrangement = Arrangement.SpaceEvenly) {
-            Column(modifier = modifier.padding(start = dimensionResource(id = R.dimen.spacing_large), end = dimensionResource(id = R.dimen.spacing_large))) {
-                Text(
-                    text = stringResource(id = R.string.name),
-                    color = colorResource(id = R.color.black),
-                    fontWeight = FontWeight.Bold
-                )
-            }
-            Column(modifier = modifier.padding(start = dimensionResource(id = R.dimen.spacing_medium), end = dimensionResource(id = R.dimen.spacing_medium))) {
-                basicUserInfo.value?.name?.let { Text(text = it, color = colorResource(id = R.color.black)) }
-            }
-        }
-        Row(horizontalArrangement = Arrangement.SpaceEvenly) {
-            Column(modifier = modifier.padding(start = dimensionResource(id = R.dimen.spacing_large), end = dimensionResource(id = R.dimen.spacing_large))) {
-                Text(
-                    text = stringResource(id = R.string.birth_date),
-                    color = colorResource(id = R.color.black),
-                    fontWeight = FontWeight.Bold
-                )
-            }
-            Column(modifier = modifier.padding(start = dimensionResource(id = R.dimen.spacing_medium), end = dimensionResource(id = R.dimen.spacing_medium))) {
-                basicUserInfo.value?.birthDate?.let {
-                    Text(
-                        text = it,
-                        color = colorResource(id = R.color.black)
-                    )
-                }
-            }
-        }
-        Row(horizontalArrangement = Arrangement.SpaceEvenly) {
-            Column(modifier = modifier.padding(start = dimensionResource(id = R.dimen.spacing_large), end = dimensionResource(id = R.dimen.spacing_large))) {
-                Text(
-                    text = stringResource(id = R.string.gender),
-                    color = colorResource(id = R.color.black),
-                    fontWeight = FontWeight.Bold
-                )
-            }
-            Column(modifier = modifier.padding(start = dimensionResource(id = R.dimen.spacing_medium), end = dimensionResource(id = R.dimen.spacing_medium))) {
-                basicUserInfo.value?.gender?.let { Text(text = it, color = colorResource(id = R.color.black)) }
-            }
-        }
-        Row(horizontalArrangement = Arrangement.SpaceEvenly) {
-            Column(modifier = modifier.padding(start = dimensionResource(id = R.dimen.spacing_large), end = dimensionResource(id = R.dimen.spacing_large))) {
-                Text(
-                    text = stringResource(id = R.string.updated_at),
-                    color = colorResource(id = R.color.black),
-                    fontWeight = FontWeight.Bold
-                )
-            }
-            Column(modifier = modifier.padding(start = dimensionResource(id = R.dimen.spacing_medium), end = dimensionResource(id = R.dimen.spacing_medium))) {
-                basicUserInfo.value?.displayUpdatedAt?.let {
-                    Text(
-                        text = it,
-                        color = colorResource(id = R.color.black)
-                    )
-                }
-            }
-        }
-        Row(horizontalArrangement = Arrangement.SpaceEvenly) {
-            Column(modifier = modifier.padding(start = dimensionResource(id = R.dimen.spacing_large), end = dimensionResource(id = R.dimen.spacing_large))) {
-                Text(
-                    text = stringResource(id = R.string.locale),
-                    color = colorResource(id = R.color.black),
-                    fontWeight = FontWeight.Bold
-                )
-            }
-            Column(modifier = modifier.padding(start = dimensionResource(id = R.dimen.spacing_medium), end = dimensionResource(id = R.dimen.spacing_medium))) {
-                basicUserInfo.value?.locale?.let { Text(text = it, color = colorResource(id = R.color.black)) }
-            }
-        }
-        Row(horizontalArrangement = Arrangement.SpaceEvenly) {
-            Column(modifier = modifier.padding(start = dimensionResource(id = R.dimen.spacing_large), end = dimensionResource(id = R.dimen.spacing_large))) {
-                Text(
-                    text = stringResource(id = R.string.sub),
-                    color = colorResource(id = R.color.black),
-                    fontWeight = FontWeight.Bold
-                )
-            }
-            Column(modifier = modifier.padding(start = dimensionResource(id = R.dimen.spacing_medium), end = dimensionResource(id = R.dimen.spacing_medium))) {
-                basicUserInfo.value?.sub?.let { Text(text = it, color = colorResource(id = R.color.black)) }
-            }
-        }
+    val info by basicUserInfo.observeAsState()
+    MomoCard(modifier = modifier) {
+        CardTitle(title = stringResource(id = R.string.card_basic_user_info))
+        Spacer(modifier = Modifier.height(12.dp))
+        InfoRow(label = stringResource(id = R.string.label_name), value = info?.name)
+        InfoRow(label = stringResource(id = R.string.label_birth_date), value = info?.birthDate)
+        InfoRow(label = stringResource(id = R.string.label_gender), value = info?.gender)
+        InfoRow(label = stringResource(id = R.string.label_updated_at), value = info?.displayUpdatedAt)
+        InfoRow(label = stringResource(id = R.string.label_locale), value = info?.locale)
+        InfoRow(label = stringResource(id = R.string.label_sub), value = info?.sub)
     }
 }
 
@@ -135,6 +57,17 @@ fun BasicUserInfoComponent(modifier: Modifier = Modifier, basicUserInfo: Mutable
 @Composable
 fun BasicUserInfoComponentPreview() {
     BasicUserInfoComponent(
-        basicUserInfo = MutableLiveData(null)
+        basicUserInfo = MutableLiveData(
+            BasicUserInfo(
+                sub = "0",
+                name = "Sand Box",
+                givenName = "Sand",
+                familyName = "Box",
+                birthDate = "1976-08-13",
+                locale = "sv_SE",
+                gender = "MALE",
+                updatedAt = 1784414651
+            ).apply { displayUpdatedAt = "2026-07-18" }
+        )
     )
 }

@@ -20,7 +20,7 @@ package io.rekast.sdk
  *
  * Use this in `commonMain` code instead of importing platform-specific logging libraries.
  * Each platform supplies its own `actual` implementation:
- * - **Android** (`androidMain`): delegates to [timber.log.Timber], which must be planted in
+ * - **Android** (`androidMain`): delegates to `Timber`, which must be planted in
  *   your `Application.onCreate` (e.g. `Timber.plant(Timber.DebugTree())`).
  * - **JVM** (`jvmMain`): writes to standard output in the format `{LEVEL}/{tag}: {message}`.
  *

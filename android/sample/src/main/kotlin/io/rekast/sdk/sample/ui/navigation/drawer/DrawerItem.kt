@@ -24,18 +24,22 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import io.rekast.sdk.sample.R
 import io.rekast.sdk.sample.ui.navigation.navigation.NavigationDrawerItem
 
@@ -48,22 +52,24 @@ import io.rekast.sdk.sample.ui.navigation.navigation.NavigationDrawerItem
  */
 @Composable
 fun DrawerItem(item: NavigationDrawerItem, selected: Boolean, onItemClick: (NavigationDrawerItem) -> Unit) {
-    val background = if (selected) R.color.accent_secondary else android.R.color.transparent
+    val contentColor = if (selected) MaterialTheme.colors.secondary else Color.White
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
+            .padding(horizontal = 8.dp, vertical = 4.dp)
+            .clip(RoundedCornerShape(12.dp))
             .clickable(onClick = { onItemClick(item) })
+            .background(if (selected) MaterialTheme.colors.secondary.copy(alpha = 0.22f) else Color.Transparent)
             .height(dimensionResource(id = R.dimen.list_item_height_default))
-            .background(colorResource(id = background))
             .padding(start = dimensionResource(id = R.dimen.spacing_medium), end = dimensionResource(id = R.dimen.spacing_medium))
     ) {
         Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.spacing_extra_small)))
-        Row {
+        Row(verticalAlignment = Alignment.CenterVertically) {
             Image(
                 painter = painterResource(id = item.icon),
                 contentDescription = item.title,
-                colorFilter = ColorFilter.tint(Color.White),
+                colorFilter = ColorFilter.tint(contentColor),
                 contentScale = ContentScale.Fit,
                 modifier = Modifier
                     .height(dimensionResource(id = R.dimen.icon_size_default))
@@ -73,7 +79,8 @@ fun DrawerItem(item: NavigationDrawerItem, selected: Boolean, onItemClick: (Navi
             Text(
                 text = item.title,
                 fontSize = with(LocalDensity.current) { dimensionResource(id = R.dimen.font_size_medium).toSp() },
-                color = Color.White
+                fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Normal,
+                color = contentColor
             )
         }
         Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.spacing_extra_small)))

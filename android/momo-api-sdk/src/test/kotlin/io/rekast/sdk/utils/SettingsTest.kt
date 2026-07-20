@@ -15,13 +15,18 @@
  */
 package io.rekast.sdk.utils
 
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.ResponseBody
+import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import retrofit2.Response
 
 /**
  * Unit tests for [Settings].
@@ -120,6 +125,16 @@ class SettingsTest {
         assertEquals("256733123456", result)
     }
 
+    /**
+     * Verifies a short number (fewer than 11 chars) that does NOT start with "0" is returned
+     * unchanged, exercising the second operand of the leading-zero check.
+     */
+    @Test
+    fun `formatPhoneNumber returns short number unchanged when it does not start with zero`() {
+        val result = settings.formatPhoneNumber("733123456", "256")
+        assertEquals("733123456", result)
+    }
+
     /** Verifies null, empty, and whitespace-only messages fail the length check. */
     @Test
     fun `checkNotificationMessageLength returns false for blank message`() {
@@ -153,5 +168,25 @@ class SettingsTest {
     fun `checkNotificationMessageLength respects custom max length`() {
         assertTrue(settings.checkNotificationMessageLength("Hello", 10L))
         assertFalse(settings.checkNotificationMessageLength("Hello World", 5L))
+    }
+
+    /**
+     * Verifies generateTransactionFromResponse deserializes a JSON [ResponseBody] into a
+     * [io.rekast.sdk.model.MomoTransaction] with the expected field values.
+     */
+    @Test
+    fun `generateTransactionFromResponse deserializes body into MomoTransaction`() {
+        val json = """
+            {"amount":"150","currency":"EUR","externalId":"ext-777","payerMessage":"Pay","payeeNote":"Note","status":"SUCCESSFUL"}
+        """.trimIndent()
+        val response: Response<ResponseBody?> = Response.success(json.toResponseBody("application/json".toMediaType()))
+
+        val transaction = settings.generateTransactionFromResponse(response)
+
+        assertNotNull(transaction)
+        assertEquals("150", transaction!!.amount)
+        assertEquals("EUR", transaction.currency)
+        assertEquals("ext-777", transaction.externalId)
+        assertEquals("SUCCESSFUL", transaction.status)
     }
 }

@@ -102,6 +102,7 @@ dependencies {
     dokka(project(":app"))
     kover(project(":momo-api-sdk"))
     kover(project(":sample"))
+    kover(project(":app"))
 }
 
 tasks.register<Copy>("copyDocsToGhPages") {

@@ -760,4 +760,94 @@ class DefaultRepositoryTest {
 
         assertTrue(results.last() is NetworkResult.Error)
     }
+
+    /*
+     * The transaction methods below (requestToPay, requestToWithdraw, deposit, refund and their
+     * status queries) delegate directly to the sealed [CollectionService] / [DisbursementsService]
+     * Retrofit interfaces rather than to the mockable [DefaultSource]. Because sealed interfaces
+     * cannot be mocked, they are exercised against the real (unreachable localhost) Retrofit stubs:
+     * each call fails fast with a connection error that [safeApiCall] catches and maps to
+     * [NetworkResult.Error]. This still asserts the invariant every SDK flow must uphold —
+     * [NetworkResult.Loading] first, then exactly one terminal result — and covers the delegation.
+     */
+
+    /** [DefaultRepository.requestToPay] emits Loading then a terminal result (Error against localhost). */
+    @Test
+    fun `requestToPay emits Loading then terminal result`() = runTest {
+        val results = repository.requestToPay(sampleTransaction(), "v1_0", "sub-key", "uuid-rtp-001").toList()
+
+        assertEquals(2, results.size)
+        assertTrue(results.first() is NetworkResult.Loading)
+        assertTrue(results.last() is NetworkResult.Error)
+    }
+
+    /** [DefaultRepository.requestToPayTransactionStatus] emits Loading then a terminal result. */
+    @Test
+    fun `requestToPayTransactionStatus emits Loading then terminal result`() = runTest {
+        val results = repository.requestToPayTransactionStatus("ref-001", "v1_0", "sub-key").toList()
+
+        assertEquals(2, results.size)
+        assertTrue(results.first() is NetworkResult.Loading)
+        assertTrue(results.last() is NetworkResult.Error)
+    }
+
+    /** [DefaultRepository.requestToWithdraw] emits Loading then a terminal result. */
+    @Test
+    fun `requestToWithdraw emits Loading then terminal result`() = runTest {
+        val results = repository.requestToWithdraw(sampleTransaction(), "v1_0", "sub-key", "uuid-rtw-001").toList()
+
+        assertEquals(2, results.size)
+        assertTrue(results.first() is NetworkResult.Loading)
+        assertTrue(results.last() is NetworkResult.Error)
+    }
+
+    /** [DefaultRepository.requestToWithdrawTransactionStatus] emits Loading then a terminal result. */
+    @Test
+    fun `requestToWithdrawTransactionStatus emits Loading then terminal result`() = runTest {
+        val results = repository.requestToWithdrawTransactionStatus("ref-001", "v1_0", "sub-key").toList()
+
+        assertEquals(2, results.size)
+        assertTrue(results.first() is NetworkResult.Loading)
+        assertTrue(results.last() is NetworkResult.Error)
+    }
+
+    /** [DefaultRepository.deposit] emits Loading then a terminal result. */
+    @Test
+    fun `deposit emits Loading then terminal result`() = runTest {
+        val results = repository.deposit(sampleTransaction(), "v1_0", "sub-key", "uuid-dep-001").toList()
+
+        assertEquals(2, results.size)
+        assertTrue(results.first() is NetworkResult.Loading)
+        assertTrue(results.last() is NetworkResult.Error)
+    }
+
+    /** [DefaultRepository.getDepositStatus] emits Loading then a terminal result. */
+    @Test
+    fun `getDepositStatus emits Loading then terminal result`() = runTest {
+        val results = repository.getDepositStatus("ref-001", "v1_0", "sub-key").toList()
+
+        assertEquals(2, results.size)
+        assertTrue(results.first() is NetworkResult.Loading)
+        assertTrue(results.last() is NetworkResult.Error)
+    }
+
+    /** [DefaultRepository.refund] emits Loading then a terminal result. */
+    @Test
+    fun `refund emits Loading then terminal result`() = runTest {
+        val results = repository.refund(sampleTransaction(), "v1_0", "sub-key", "uuid-ref-001").toList()
+
+        assertEquals(2, results.size)
+        assertTrue(results.first() is NetworkResult.Loading)
+        assertTrue(results.last() is NetworkResult.Error)
+    }
+
+    /** [DefaultRepository.getRefundStatus] emits Loading then a terminal result. */
+    @Test
+    fun `getRefundStatus emits Loading then terminal result`() = runTest {
+        val results = repository.getRefundStatus("ref-001", "v1_0", "sub-key").toList()
+
+        assertEquals(2, results.size)
+        assertTrue(results.first() is NetworkResult.Loading)
+        assertTrue(results.last() is NetworkResult.Error)
+    }
 }

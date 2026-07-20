@@ -48,7 +48,7 @@ For detailed instructions on integrating and configuring the MTN MOMO API SDK, p
 
 ## Authentication & Credential Management
 
-The SDK uses a **pull-based credential model** — it never stores credentials internally. Instead, it calls your app's `CredentialProvider` implementation on every request to retrieve the current API user ID, API key, and access token.
+The SDK uses a **pull-based credential model** — it never stores credentials internally. Instead, it calls your app's `CredentialProvider` implementation on every request to retrieve the current API user ID, API key, Bearer access token, and OAuth2 consent token.
 
 ### How It Works
 
@@ -61,7 +61,7 @@ The SDK uses a **pull-based credential model** — it never stores credentials i
 │          ▲                          │                       │
 │          │                          ▼                       │
 │  MainViewModel           SDK Interceptors                   │
-│  (writes credentials)       BasicAuthInterceptor            │
+│  (writes credentials)       BasicAuthenticationInterceptor            │
 │                             AccessTokenInterceptor          │
 │                                     │                       │
 │                             TokenAuthenticator              │
@@ -75,15 +75,24 @@ Credentials are stored using `EncryptedSharedPreferences` (AES-256-GCM via the A
 
 ### Automatic Token Refresh
 
-The `TokenAuthenticator` (an OkHttp `Authenticator`) fires automatically on every HTTP 401 response from a Bearer-protected endpoint:
+The `TokenAuthenticator` (an OkHttp `Authenticator`) fires automatically on every HTTP 401 response from a protected endpoint:
 
-1. Verifies the failed request was using Bearer auth.
+1. Verifies the failed request was using Bearer auth (OAuth2 consent endpoints are exempt — see below).
 2. Calls the MTN MoMo token endpoint via a dedicated `AuthenticationService` backed by a minimal, Basic-Auth-only `OkHttpClient` — this avoids a circular dependency with the main client.
 3. Saves the refreshed Bearer token to `CredentialStorage`.
 4. If the OAuth2 access token is also expired, refreshes it in the same pass and saves it to `CredentialStorage`. An OAuth2 refresh failure is non-fatal — the original request is still retried with the refreshed Bearer token.
 5. Returns the original request so OkHttp re-runs the interceptors — `AccessTokenInterceptor` reads the new token from storage and attaches the correct `Authorization` header on the retry.
 
 After at most **one retry**, the authenticator gives up and propagates the 401 to the caller.
+
+### OAuth2 Consent Endpoints
+
+Two different Bearer tokens are in play. The regular **API-user access token** authenticates most endpoints. OAuth2 **consent resource** endpoints — those whose path contains an `oauth2` segment but not `token`, e.g. `/{productType}/oauth2/{apiVersion}/userinfo` — are instead authenticated with the **OAuth2 consent token** obtained through the CIBA flow. `AccessTokenInterceptor` routes the correct token per request automatically:
+
+- **Consent resource endpoints** (userinfo) → the OAuth2 consent token from `CredentialProvider.getOauthAccessToken()`.
+- **Everything else**, including the OAuth2 **token** endpoint (`/{productType}/oauth2/token/`) that mints the consent token → the regular Bearer token from `CredentialProvider.getAccessToken()`.
+
+On a 401 from a consent endpoint, `TokenAuthenticator` refreshes the consent token (running bc-authorize if needed) and retries — independently of the regular Bearer-token refresh above.
 
 ### Implementing `CredentialProvider`
 
@@ -101,6 +110,10 @@ class MyCredentialProvider(
         if (storage.getAccessToken().isBlank()) storage.getApiKey() else ""
 
     override fun getAccessToken(): String = storage.getAccessToken()
+
+    // The OAuth2 consent token authenticates OAuth2 resource endpoints (e.g. userinfo).
+    // Defaults to "" in the interface, so override it only if you use consent-based APIs.
+    override fun getOauthAccessToken(): String = storage.getOauthAccessToken()
 }
 ```
 
@@ -134,7 +147,7 @@ To include the MTN MOMO API SDK in your project, add the following dependency to
 
 ```kotlin
 dependencies {
-    implementation("io.rekast:momo-api-sdk:0.1.0-SNAPSHOT")
+    implementation("io.rekast:momo-api-sdk:0.3.0-SNAPSHOT")
 }
 ```
 
@@ -175,15 +188,41 @@ defaultRepository.someApi(...).collect { result ->
 
 The available API groups are:
 
-| Group | Description |
-|---|---|
-| **Authentication** | Provision API user, API key, Bearer token, and OAuth2 token via the CIBA flow |
-| **Collection** | Request to Pay, Request to Withdraw, invoices, pre-approvals, and delivery notifications |
-| **Disbursements** | Transfers, deposits, refunds, cash transfers, and delivery notifications |
-| **Remittance** | Cross-border transfers and transfer status |
-| **Account** | Account balance, basic user info, user info with consent, and account holder validation |
+| Group              | Description                                                                              |
+|--------------------|------------------------------------------------------------------------------------------|
+| **Authentication** | Provision API user, API key, Bearer token, and OAuth2 token via the CIBA flow            |
+| **Collection**     | Request to Pay, Request to Withdraw, invoices, pre-approvals, and delivery notifications |
+| **Disbursements**  | Transfers, deposits, refunds, cash transfers, and delivery notifications                 |
+| **Remittance**     | Cross-border transfers and transfer status                                               |
+| **Account**        | Account balance, basic user info, user info with consent, and account holder validation  |
 
 For full code examples and parameter descriptions for every API, see the [Library Usage](https://mtn-momo-sdk.rekast.io/Documentation/api-reference) section of the documentation.
+
+## Sample App
+
+The `sample` module is a Jetpack Compose application that exercises every SDK operation against the MTN MoMo sandbox. Its navigation drawer groups the screens into collapsible sections:
+
+- **General** — **Home** (profile, account status, and balance), **Setup & Config** (the live credential-provisioning status the bootstrap flow normally fills in invisibly, plus a *Re-run Setup* action), and **Settings** (environment, product subscription keys with a show/hide toggle, app build info, and a *Clear stored credentials* action).
+- **Collection** — Request to Pay, Request to Withdraw, Invoice, and Pre-Approval.
+- **Disbursement** — Deposit and Refund.
+- **Remittance** — Transfer and Cash Transfer (V2).
+
+Credentials are provisioned automatically on first launch (see [Credential Bootstrap](#credential-bootstrap)); the **Setup & Config** screen surfaces that otherwise-invisible flow so you can watch each credential appear.
+
+## Security
+
+Security is a first-class concern for a library that handles Mobile Money credentials and access tokens. Please review the [Security Policy](SECURITY.md) for the full details.
+
+- **Reporting a vulnerability**: Report privately via GitHub's **["Report a vulnerability"](https://github.com/re-kast/android-mtn-momo-api-sdk/security)** button — never in a public issue, PR, or discussion. [`SECURITY.md`](SECURITY.md) covers what to include and our response timelines.
+- **Supported versions**: Security fixes ship on the latest `0.x` release line only (currently `0.3.x`). Pin an explicit, non-`SNAPSHOT` version in production and upgrade promptly.
+- **Automated scanning**: Every change is analysed with [CodeQL](.github/workflows/codeql.yml).
+
+### Secure Usage Checklist
+
+- **Never commit secrets** — keep `MOMO_*` subscription keys, the API user ID, and any keystore material out of version control (use `local.properties` or a secrets manager) and rotate anything that leaks.
+- **Never ship `UnsafeOkHttpClient`** — it disables TLS certificate validation and exists solely for local sandbox testing; it must never appear in a release build or run against production endpoints.
+- **Protect tokens at rest** — access and consent tokens are held via `EncryptedSharedPreferences`; never log tokens, subscription keys, or full request/response bodies in production.
+- **Keep the SDK current** — security fixes land only on the latest release line, so update regularly.
 
 ## License
 

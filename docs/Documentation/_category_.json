@@ -1,0 +1,10 @@
+{
+  "label": "Documentation",
+  "collapsible": false,
+  "collapsed": false,
+  "position": 3,
+  "link": {
+    "type": "generated-index",
+    "description": "Library setup, usage examples for every SDK API, and guidance on maintaining code documentation."
+  }
+}

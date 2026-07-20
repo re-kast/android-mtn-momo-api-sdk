@@ -16,11 +16,14 @@
 package io.rekast.sdk.sample.views.home
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.lifecycle.Observer
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.coVerifyOrder
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkObject
+import io.mockk.slot
 import io.mockk.unmockkObject
 import io.rekast.sdk.model.AccountBalance
 import io.rekast.sdk.model.AccountHolder
@@ -32,10 +35,12 @@ import io.rekast.sdk.sample.utils.CredentialStorage
 import io.rekast.sdk.sample.utils.DispatcherProvider
 import io.rekast.sdk.sample.utils.SampleConfig
 import io.rekast.sdk.sample.utils.Utils
+import io.rekast.sdk.utils.ProductType
 import io.rekast.sdk.utils.Settings
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
@@ -44,9 +49,11 @@ import kotlinx.coroutines.test.setMain
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.After
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -54,17 +61,14 @@ import org.junit.Test
 /**
  * Unit tests for [HomeScreenViewModel].
  *
- * Verifies initial LiveData state and the three main data-fetching operations:
- * [HomeScreenViewModel.getBasicUserInfo], [HomeScreenViewModel.getAccountBalance],
- * and [HomeScreenViewModel.validateAccountHolderStatus].
+ * Verifies initial LiveData state and the single ordered data-loading pipeline [HomeScreenViewModel.loadHomeData]:
+ * the request ordering, the data dependency (the verified profile's phone number becomes the account
+ * holder for the account-scoped calls), the progress-bar lifecycle (shown for the whole batch, hidden
+ * only once every request completes), and the blank-token guard.
  *
- * For each operation the tests cover the happy path (repository returns success),
- * the error path (repository returns an error), and the guard condition
- * (access token is blank — the repository should not be called).
- *
- * [InstantTaskExecutorRule] ensures LiveData `postValue` calls are applied
- * synchronously. [UnconfinedTestDispatcher] runs IO-dispatcher coroutines
- * on the calling thread so no `advanceUntilIdle` is needed.
+ * [InstantTaskExecutorRule] ensures LiveData `postValue` calls are applied synchronously.
+ * [UnconfinedTestDispatcher] runs IO-dispatcher coroutines on the calling thread so the pipeline
+ * completes before [HomeScreenViewModel.loadHomeData] returns.
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 class HomeScreenViewModelTest {
@@ -111,236 +115,237 @@ class HomeScreenViewModelTest {
         Dispatchers.resetMain()
     }
 
+    private fun sampleBasicUserInfo() = BasicUserInfo(
+        sub = "sub-1",
+        name = "John Doe",
+        givenName = "John",
+        familyName = "Doe",
+        birthDate = "1990-01-01",
+        locale = "en",
+        gender = "male",
+        updatedAt = 1000000000
+    )
+
+    private fun activeStatusBody() = """{"result":true}""".toResponseBody("application/json".toMediaType())
+
+    /** Stubs all four repository calls to return success, with the given consent profile. */
+    private fun stubAllSuccess(consent: UserInfoWithConsent) {
+        coEvery { mockRepository.getUserInfoWithConsent(any(), any(), any(), any()) } returns flowOf(NetworkResult.Success(consent))
+        coEvery { mockRepository.getBasicUserInfo(any(), any(), any(), any(), any()) } returns flowOf(NetworkResult.Success(sampleBasicUserInfo()))
+        coEvery {
+            mockRepository.validateAccountHolderStatus(any(), any(), any<AccountHolder>(), any(), any())
+        } returns flowOf(NetworkResult.Success(activeStatusBody()))
+        coEvery { mockRepository.getAccountBalance(any(), any(), any(), any(), any()) } returns flowOf(NetworkResult.Success(AccountBalance("100.00", "EUR")))
+    }
+
     /** Verifies showProgressBar is initialised to false before any API call is made. */
     @Test
     fun `initial state has showProgressBar false`() {
         assertFalse(viewModel.showProgressBar.value!!)
     }
 
-    /** Verifies basicUserInfo is null before getBasicUserInfo is called. */
+    /** Verifies all data LiveData are null before loadHomeData is called. */
     @Test
-    fun `initial state has null basicUserInfo`() {
+    fun `initial state has null data`() {
         assertNull(viewModel.basicUserInfo.value)
-    }
-
-    /** Verifies accountHolderStatus is null before validateAccountHolderStatus is called. */
-    @Test
-    fun `initial state has null accountHolderStatus`() {
+        assertNull(viewModel.userInfoWithConsent.value)
         assertNull(viewModel.accountHolderStatus.value)
-    }
-
-    /** Verifies accountBalance is null before getAccountBalance is called. */
-    @Test
-    fun `initial state has null accountBalance`() {
         assertNull(viewModel.accountBalance.value)
     }
 
-    /** Verifies getBasicUserInfo delegates to the repository when access token is present. */
+    /** Verifies loadHomeData skips every repository call and never shows the spinner when the token is blank. */
     @Test
-    fun `getBasicUserInfo calls repository getBasicUserInfo`() = runTest {
-        coEvery {
-            mockRepository.getBasicUserInfo(any(), any(), any(), any(), any())
-        } returns flowOf(NetworkResult.Error("404"))
+    fun `loadHomeData does not call repositories when access token is blank`() = runTest {
+        val mockStorageNoToken = mockk<CredentialStorage>(relaxed = true)
+        every { mockStorageNoToken.getAccessToken() } returns ""
+        val vmWithNoToken = HomeScreenViewModel(mockRepository, mockStorageNoToken, mockSettings, testDispatcherProvider, mockSampleConfig)
 
-        viewModel.getBasicUserInfo()
+        vmWithNoToken.loadHomeData()
 
-        coVerify { mockRepository.getBasicUserInfo(any(), any(), any(), any(), any()) }
+        assertFalse(vmWithNoToken.showProgressBar.value!!)
+        coVerify(exactly = 0) { mockRepository.getUserInfoWithConsent(any(), any(), any(), any()) }
+        coVerify(exactly = 0) { mockRepository.getBasicUserInfo(any(), any(), any(), any(), any()) }
+        coVerify(exactly = 0) { mockRepository.validateAccountHolderStatus(any(), any(), any<AccountHolder>(), any(), any()) }
+        coVerify(exactly = 0) { mockRepository.getAccountBalance(any(), any(), any(), any(), any()) }
     }
 
-    /** Verifies basicUserInfo LiveData is populated and showProgressBar cleared on a successful response. */
+    /**
+     * Verifies the pipeline runs in order — verified profile, then basic user info, then account
+     * status, then account balance — and populates every LiveData on success.
+     */
     @Test
-    fun `getBasicUserInfo posts userInfo on success`() = runTest {
-        val userInfo = BasicUserInfo(
-            sub = "sub-1",
-            name = "John Doe",
-            givenName = "John",
-            familyName = "Doe",
-            birthDate = "1990-01-01",
-            locale = "en",
-            gender = "male",
-            updatedAt = 1000000000
-        )
-        coEvery {
+    fun `loadHomeData fetches in order and populates all data`() = runTest {
+        stubAllSuccess(UserInfoWithConsent(sub = "sub-1", name = "Sand Box", phonenumber = "46123456789"))
+
+        viewModel.loadHomeData()
+
+        coVerifyOrder {
+            mockRepository.getUserInfoWithConsent(any(), any(), any(), any())
             mockRepository.getBasicUserInfo(any(), any(), any(), any(), any())
-        } returns flowOf(NetworkResult.Success(userInfo))
-
-        viewModel.getBasicUserInfo()
-
+            mockRepository.validateAccountHolderStatus(any(), any(), any<AccountHolder>(), any(), any())
+            mockRepository.getAccountBalance(any(), any(), any(), any(), any())
+        }
+        assertNotNull(viewModel.userInfoWithConsent.value)
         assertNotNull(viewModel.basicUserInfo.value)
-        assertFalse(viewModel.showProgressBar.value!!)
-    }
-
-    /** Verifies showProgressBar is cleared to false when getBasicUserInfo receives an error response. */
-    @Test
-    fun `getBasicUserInfo sets showProgressBar false on error`() = runTest {
-        coEvery {
-            mockRepository.getBasicUserInfo(any(), any(), any(), any(), any())
-        } returns flowOf(NetworkResult.Error("404 Not Found"))
-
-        viewModel.getBasicUserInfo()
-
-        assertFalse(viewModel.showProgressBar.value!!)
-    }
-
-    /** Verifies getAccountBalance delegates to the repository when access token is present. */
-    @Test
-    fun `getAccountBalance calls repository getAccountBalance`() = runTest {
-        coEvery {
-            mockRepository.getAccountBalance(any(), any(), any(), any(), any())
-        } returns flowOf(NetworkResult.Error("error"))
-
-        viewModel.getAccountBalance()
-
-        coVerify { mockRepository.getAccountBalance(any(), any(), any(), any(), any()) }
-    }
-
-    /** Verifies accountBalance LiveData is populated and showProgressBar cleared on a successful response. */
-    @Test
-    fun `getAccountBalance posts balance on success`() = runTest {
-        val balance = AccountBalance(availableBalance = "100.00", currency = "EUR")
-        coEvery {
-            mockRepository.getAccountBalance(any(), any(), any(), any(), any())
-        } returns flowOf(NetworkResult.Success(balance))
-
-        viewModel.getAccountBalance()
-
+        assertNotNull(viewModel.accountHolderStatus.value)
         assertNotNull(viewModel.accountBalance.value)
         assertFalse(viewModel.showProgressBar.value!!)
     }
 
-    /** Verifies showProgressBar is cleared to false when getAccountBalance receives an error response. */
+    /**
+     * Regression guard: the account balance must be fetched with the Collection product type and
+     * subscription key, not Remittance. The MTN MoMo balance endpoint is only reliable with
+     * [ProductType.COLLECTION]; requesting it against Remittance commonly returns 401/404. See
+     * [HomeScreenViewModel.fetchAccountBalance].
+     */
     @Test
-    fun `getAccountBalance sets showProgressBar false on error`() = runTest {
-        coEvery {
-            mockRepository.getAccountBalance(any(), any(), any(), any(), any())
-        } returns flowOf(NetworkResult.Error("500 Internal Server Error"))
+    fun `loadHomeData fetches account balance using the Collection product type`() = runTest {
+        stubAllSuccess(UserInfoWithConsent(sub = "sub-1", name = "Sand Box", phonenumber = "46123456789"))
+        val balanceProductType = slot<String>()
 
-        viewModel.getAccountBalance()
+        viewModel.loadHomeData()
 
-        assertFalse(viewModel.showProgressBar.value!!)
-    }
-
-    /** Verifies getAccountBalance exits early (showProgressBar stays false) when access token is blank. */
-    @Test
-    fun `getAccountBalance sets showProgressBar false when access token is blank`() = runTest {
-        val mockStorageNoToken = mockk<CredentialStorage>(relaxed = true)
-        every { mockStorageNoToken.getAccessToken() } returns ""
-        val vmWithNoToken = HomeScreenViewModel(mockRepository, mockStorageNoToken, mockSettings, testDispatcherProvider, mockSampleConfig)
-
-        vmWithNoToken.getAccountBalance()
-
-        assertFalse(vmWithNoToken.showProgressBar.value!!)
-    }
-
-    /** Verifies validateAccountHolderStatus exits early (showProgressBar stays false) when access token is blank. */
-    @Test
-    fun `validateAccountHolderStatus sets showProgressBar false when access token is blank`() = runTest {
-        val mockStorageNoToken = mockk<CredentialStorage>(relaxed = true)
-        every { mockStorageNoToken.getAccessToken() } returns ""
-        val vmWithNoToken = HomeScreenViewModel(mockRepository, mockStorageNoToken, mockSettings, testDispatcherProvider, mockSampleConfig)
-
-        vmWithNoToken.validateAccountHolderStatus()
-
-        assertFalse(vmWithNoToken.showProgressBar.value!!)
-    }
-
-    /** Verifies validateAccountHolderStatus delegates to the repository when access token is present. */
-    @Test
-    fun `validateAccountHolderStatus calls repository validateAccountHolderStatus`() = runTest {
-        coEvery {
-            mockRepository.validateAccountHolderStatus(any(), any(), any(), any(), any())
-        } returns flowOf(NetworkResult.Error("404"))
-
-        viewModel.validateAccountHolderStatus()
-
-        coVerify { mockRepository.validateAccountHolderStatus(any(), any(), any(), any(), any()) }
+        coVerify { mockRepository.getAccountBalance(capture(balanceProductType), any(), any(), any(), any()) }
+        assertEquals(ProductType.COLLECTION.productType, balanceProductType.captured)
+        coVerify { Utils.getProductSubscriptionKeys(ProductType.COLLECTION, mockSampleConfig) }
     }
 
     /**
-     * Verifies [HomeScreenViewModel.validateAccountHolderStatus] posts the decoded
-     * [io.rekast.sdk.model.AccountHolderStatus] to [HomeScreenViewModel.accountHolderStatus]
-     * and clears the progress bar on a successful response.
+     * Verifies the data dependency: the phone number from the verified profile is threaded into the
+     * account-scoped calls (basic user info and account holder status) as the account holder.
      */
     @Test
-    fun `validateAccountHolderStatus posts status on success`() = runTest {
-        val responseBody = """{"result":true}""".toResponseBody("application/json".toMediaType())
+    fun `loadHomeData threads consent phone number into account calls`() = runTest {
+        val basicHolder = slot<String>()
+        val statusHolder = slot<AccountHolder>()
+        coEvery { mockRepository.getUserInfoWithConsent(any(), any(), any(), any()) } returns
+            flowOf(NetworkResult.Success(UserInfoWithConsent(sub = "sub-1", name = "Sand Box", phonenumber = "46123456789")))
+        coEvery { mockRepository.getBasicUserInfo(any(), any(), capture(basicHolder), any(), any()) } returns
+            flowOf(NetworkResult.Success(sampleBasicUserInfo()))
         coEvery {
-            mockRepository.validateAccountHolderStatus(any(), any(), any<AccountHolder>(), any(), any())
-        } returns flowOf(NetworkResult.Success(responseBody))
+            mockRepository.validateAccountHolderStatus(any(), any(), capture(statusHolder), any(), any())
+        } returns flowOf(NetworkResult.Success(activeStatusBody()))
+        coEvery { mockRepository.getAccountBalance(any(), any(), any(), any(), any()) } returns
+            flowOf(NetworkResult.Success(AccountBalance("100.00", "EUR")))
 
-        viewModel.validateAccountHolderStatus()
+        viewModel.loadHomeData()
 
-        assertNotNull(viewModel.accountHolderStatus.value)
-        assertFalse(viewModel.showProgressBar.value!!)
+        assertEquals("46123456789", basicHolder.captured)
+        assertEquals("46123456789", statusHolder.captured.partyId)
     }
 
-    /**
-     * Verifies [HomeScreenViewModel.validateAccountHolderStatus] clears the progress bar when
-     * the repository returns an error response.
-     */
+    /** Verifies the default account holder is used when the verified profile carries no phone number. */
     @Test
-    fun `validateAccountHolderStatus sets showProgressBar false on error`() = runTest {
+    fun `loadHomeData falls back to default account holder when consent has no phone number`() = runTest {
+        val basicHolder = slot<String>()
+        stubAllSuccess(UserInfoWithConsent(sub = "sub-1", name = "Sand Box"))
+        coEvery { mockRepository.getBasicUserInfo(any(), any(), capture(basicHolder), any(), any()) } returns
+            flowOf(NetworkResult.Success(sampleBasicUserInfo()))
+
+        viewModel.loadHomeData()
+
+        assertEquals("99733123459", basicHolder.captured)
+    }
+
+    /** Verifies the progress bar is shown for the batch and hidden only after every request completes. */
+    @Test
+    fun `loadHomeData shows progress bar then hides it after all requests complete`() = runTest {
+        stubAllSuccess(UserInfoWithConsent(sub = "sub-1", name = "Sand Box", phonenumber = "46123456789"))
+        val values = mutableListOf<Boolean>()
+        val observer = Observer<Boolean> { values.add(it) }
+        viewModel.showProgressBar.observeForever(observer)
+
+        viewModel.loadHomeData()
+        viewModel.showProgressBar.removeObserver(observer)
+
+        assertTrue("Progress bar should be shown while loading", values.contains(true))
+        assertFalse("Progress bar should be hidden after loading", values.last())
+    }
+
+    /** Verifies the progress bar is still hidden and the pipeline completes even when every request fails. */
+    @Test
+    fun `loadHomeData hides progress bar even when all requests fail`() = runTest {
+        coEvery { mockRepository.getUserInfoWithConsent(any(), any(), any(), any()) } returns flowOf(NetworkResult.Error("403"))
+        coEvery { mockRepository.getBasicUserInfo(any(), any(), any(), any(), any()) } returns flowOf(NetworkResult.Error("404"))
         coEvery {
             mockRepository.validateAccountHolderStatus(any(), any(), any<AccountHolder>(), any(), any())
         } returns flowOf(NetworkResult.Error("500"))
+        coEvery { mockRepository.getAccountBalance(any(), any(), any(), any(), any()) } returns flowOf(NetworkResult.Error("500"))
 
-        viewModel.validateAccountHolderStatus()
+        viewModel.loadHomeData()
 
         assertFalse(viewModel.showProgressBar.value!!)
-    }
-
-    /** Verifies getUserInfoWithConsent delegates to the repository when access token is present. */
-    @Test
-    fun `getUserInfoWithConsent calls repository getUserInfoWithConsent`() = runTest {
-        coEvery {
-            mockRepository.getUserInfoWithConsent(any(), any(), any(), any())
-        } returns flowOf(NetworkResult.Error("403"))
-
-        viewModel.getUserInfoWithConsent()
-
-        coVerify { mockRepository.getUserInfoWithConsent(any(), any(), any(), any()) }
+        assertNull(viewModel.basicUserInfo.value)
+        assertNull(viewModel.accountBalance.value)
     }
 
     /**
-     * Verifies [HomeScreenViewModel.getUserInfoWithConsent] clears the progress bar on a
-     * successful response.
+     * A successful account-status response whose body cannot be parsed into [AccountHolderStatus]
+     * exercises the parse-failure branch: the status is not posted, but the pipeline still
+     * completes and the progress bar is hidden.
      */
     @Test
-    fun `getUserInfoWithConsent sets showProgressBar false on success`() = runTest {
-        val userInfo = UserInfoWithConsent(sub = "sub-1", name = "John Doe")
+    fun `loadHomeData handles unparseable account status body`() = runTest {
+        val consent = UserInfoWithConsent(sub = "sub-1", name = "John Doe", phonenumber = "256770000000")
+        coEvery { mockRepository.getUserInfoWithConsent(any(), any(), any(), any()) } returns flowOf(NetworkResult.Success(consent))
+        coEvery { mockRepository.getBasicUserInfo(any(), any(), any(), any(), any()) } returns flowOf(NetworkResult.Success(sampleBasicUserInfo()))
         coEvery {
-            mockRepository.getUserInfoWithConsent(any(), any(), any(), any())
-        } returns flowOf(NetworkResult.Success(userInfo))
+            mockRepository.validateAccountHolderStatus(any(), any(), any<AccountHolder>(), any(), any())
+        } returns flowOf(NetworkResult.Success("not-json".toResponseBody("application/json".toMediaType())))
+        coEvery { mockRepository.getAccountBalance(any(), any(), any(), any(), any()) } returns flowOf(NetworkResult.Success(AccountBalance("100.00", "EUR")))
 
-        viewModel.getUserInfoWithConsent()
+        viewModel.loadHomeData()
 
+        assertNull("Unparseable status must not be posted", viewModel.accountHolderStatus.value)
         assertFalse(viewModel.showProgressBar.value!!)
     }
 
     /**
-     * Verifies [HomeScreenViewModel.getUserInfoWithConsent] clears the progress bar when the
-     * repository returns an error response.
+     * A blank (present but empty) consent phone number is rejected by the `takeIf { isNotBlank }`
+     * guard, so the default account holder is used for the account-scoped calls.
      */
     @Test
-    fun `getUserInfoWithConsent sets showProgressBar false on error`() = runTest {
-        coEvery {
-            mockRepository.getUserInfoWithConsent(any(), any(), any(), any())
-        } returns flowOf(NetworkResult.Error("404"))
+    fun `loadHomeData falls back to default account holder when consent phone is blank`() = runTest {
+        val basicHolder = slot<String>()
+        stubAllSuccess(UserInfoWithConsent(sub = "sub-1", name = "Sand Box", phonenumber = ""))
+        coEvery { mockRepository.getBasicUserInfo(any(), any(), capture(basicHolder), any(), any()) } returns
+            flowOf(NetworkResult.Success(sampleBasicUserInfo()))
 
-        viewModel.getUserInfoWithConsent()
+        viewModel.loadHomeData()
 
+        assertEquals("99733123459", basicHolder.captured)
+    }
+
+    /** A leading Loading emission is ignored and the terminal Success is used to complete the pipeline. */
+    @Test
+    fun `loadHomeData ignores loading emission before terminal success`() = runTest {
+        stubAllSuccess(UserInfoWithConsent(sub = "sub-1", name = "Sand Box", phonenumber = "46123456789"))
+        coEvery { mockRepository.getUserInfoWithConsent(any(), any(), any(), any()) } returns
+            flowOf(
+                NetworkResult.Loading(),
+                NetworkResult.Success(UserInfoWithConsent(sub = "sub-1", name = "Sand Box", phonenumber = "46123456789"))
+            )
+
+        viewModel.loadHomeData()
+
+        assertNotNull(viewModel.userInfoWithConsent.value)
         assertFalse(viewModel.showProgressBar.value!!)
     }
 
-    /** Verifies getUserInfoWithConsent exits early when access token is blank. */
+    /**
+     * A successful basic-user-info response with a null body exercises the null-safe branch: nothing
+     * is posted for the updated-at formatting and the pipeline still completes.
+     */
     @Test
-    fun `getUserInfoWithConsent does not call repository when access token is blank`() = runTest {
-        val mockStorageNoToken = mockk<CredentialStorage>(relaxed = true)
-        every { mockStorageNoToken.getAccessToken() } returns ""
-        val vmWithNoToken = HomeScreenViewModel(mockRepository, mockStorageNoToken, mockSettings, testDispatcherProvider, mockSampleConfig)
+    fun `loadHomeData handles null basic user info body`() = runTest {
+        stubAllSuccess(UserInfoWithConsent(sub = "sub-1", name = "Sand Box", phonenumber = "46123456789"))
+        @Suppress("UNCHECKED_CAST")
+        coEvery { mockRepository.getBasicUserInfo(any(), any(), any(), any(), any()) } returns
+            (flowOf(NetworkResult.Success(null)) as Flow<NetworkResult<BasicUserInfo>>)
 
-        vmWithNoToken.getUserInfoWithConsent()
+        viewModel.loadHomeData()
 
-        coVerify(exactly = 0) { mockRepository.getUserInfoWithConsent(any(), any(), any(), any()) }
+        assertNull(viewModel.basicUserInfo.value)
+        assertFalse(viewModel.showProgressBar.value!!)
     }
 }

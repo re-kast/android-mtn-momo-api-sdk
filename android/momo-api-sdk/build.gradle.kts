@@ -110,10 +110,6 @@ dokka {
                 url("https://kotlinlang.org/api/kotlinx.coroutines/")
                 packageListUrl("https://kotlinlang.org/api/kotlinx.coroutines/package-list")
             }
-            externalDocumentationLinks.register("okhttp") {
-                url("https://square.github.io/okhttp/4.x/okhttp/")
-                packageListUrl("https://square.github.io/okhttp/4.x/okhttp/package-list")
-            }
         }
         named("androidMain") {
             displayName.set("Android")
@@ -141,18 +137,26 @@ kover {
             excludes {
                 androidGeneratedClasses()
                 annotatedBy("*Generated*")
+                // Kover class filters match fully-qualified names with '.' separators and
+                // '*'/'?' wildcards (where '*' also spans package separators). Slash-based
+                // globs silently match nothing, so these use dotted patterns.
                 classes(
-                    "**/Hilt_*",
-                    "**/*_HiltModules*",
-                    "**/*_Provide*",
-                    "**/*ComponentTreeDeps*",
-                    "**/dagger/**"
+                    "*Hilt_*",
+                    "*_HiltModules*",
+                    "*_Provide*",
+                    "*ComponentTreeDeps*",
+                    "dagger.*"
                 )
                 // DefaultSource is pure delegation to sealed Retrofit service interfaces.
                 // The sealed keyword prevents both MockK and JVM Proxy from creating
                 // test doubles, making unit testing impossible without a full Hilt graph.
                 // All meaningful logic is tested via DefaultRepository (which mocks DefaultSource).
-                classes("**/DefaultSource")
+                classes("io.rekast.sdk.repository.DefaultSource")
+                // Kotlin generates a `$DefaultImpls` compatibility shim to hold interface default
+                // method bodies. Kotlin callers invoke the JVM default method directly and never
+                // touch this synthetic class, so it is unreachable dead code from the SDK's own
+                // code. The default logic itself is covered via CredentialProviderTest.
+                classes("*\$DefaultImpls")
             }
         }
     }

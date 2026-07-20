@@ -32,12 +32,19 @@ import org.junit.Test
  */
 class NetworkResultTest {
 
-    /** Verifies Success stores the response and leaves message null. */
+    /** Verifies Success stores the response and leaves message empty. */
     @Test
     fun `Success holds the response data`() {
         val result = NetworkResult.Success("hello")
         assertEquals("hello", result.response)
-        assertNull(result.message)
+        assertEquals("", result.message)
+    }
+
+    /** Verifies Success exposes its response through the non-null [NetworkResult.Success.data] accessor. */
+    @Test
+    fun `Success exposes response through non-null data accessor`() {
+        val result = NetworkResult.Success("hello")
+        assertEquals("hello", result.data)
     }
 
     /** Verifies Error stores the message and leaves response null when not provided. */
@@ -56,12 +63,12 @@ class NetworkResultTest {
         assertEquals("partial-data", result.response)
     }
 
-    /** Verifies Loading is constructed with both response and message as null. */
+    /** Verifies Loading is constructed with a null response and an empty message. */
     @Test
     fun `Loading has no response and no message`() {
         val result = NetworkResult.Loading<String>()
         assertNull(result.response)
-        assertNull(result.message)
+        assertEquals("", result.message)
     }
 
     /** Verifies Success is a subtype of NetworkResult by confirming smart-cast to the sealed parent works. */
@@ -90,6 +97,6 @@ class NetworkResultTest {
     fun `Success with null response stores null`() {
         val result = NetworkResult.Success<String?>(null)
         assertNull(result.response)
-        assertNull(result.message)
+        assertEquals("", result.message)
     }
 }

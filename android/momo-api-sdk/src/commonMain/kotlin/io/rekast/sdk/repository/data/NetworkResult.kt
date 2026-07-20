@@ -23,15 +23,21 @@ package io.rekast.sdk.repository.data
  *
  * @param T The type of the response data.
  * @property response The response data if the operation was successful.
- * @property message An optional message providing additional information about the result.
+ * @property message A message providing additional information about the result; empty by
+ * default for [Success] and [Loading], and always populated for [Error].
  */
-sealed class NetworkResult<T>(val response: T? = null, val message: String? = null) {
+sealed class NetworkResult<T>(val response: T? = null, val message: String = "") {
     /**
      * Represents a successful network operation.
      *
      * @param response The successful response data.
+     * @property data The successful response data as a non-null value. Because a [Success] is only
+     * ever constructed with a non-null response, this offers null-free access without the
+     * defensive checks a nullable [NetworkResult.response] would otherwise require.
      */
-    class Success<T>(response: T) : NetworkResult<T>(response)
+    class Success<T>(response: T) : NetworkResult<T>(response) {
+        val data: T = response
+    }
 
     /**
      * Represents an error that occurred during a network operation.

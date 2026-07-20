@@ -1,0 +1,58 @@
+name: "CodeQL"
+
+on:
+  push:
+    branches: [ develop ]
+  pull_request:
+    branches: [ develop ]
+  schedule:
+    # Weekly scan (Mondays 05:30 UTC) to catch newly-disclosed vulnerabilities.
+    - cron: '30 5 * * 1'
+
+concurrency:
+  group: codeql-${{ github.ref }}
+  cancel-in-progress: true
+
+# Restrict the GITHUB_TOKEN to read-only by default; the analyze job elevates as needed.
+permissions:
+  contents: read
+
+jobs:
+  analyze:
+    name: Analyze (${{ matrix.language }})
+    runs-on: ubuntu-latest
+    # Least-privilege for CodeQL: write scan results to the Security tab, read code and
+    # workflow-run metadata. No other scopes are required for build-mode "none".
+    permissions:
+      security-events: write
+      actions: read
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Scans the GitHub Actions workflow files themselves (e.g. missing permissions blocks).
+          - language: actions
+            build-mode: none
+          # Scans the Docusaurus config and any other JS/TS tooling (node_modules excluded).
+          - language: javascript-typescript
+            build-mode: none
+          # NOTE: java-kotlin is intentionally omitted. The project builds with Kotlin 2.4.10,
+          # which the CodeQL extractor does not support yet: build-mode "none" extracts no Kotlin,
+          # and a traced ("manual") build aborts with "Kotlin version 2.4.10 is too recent"
+          # (the ALLOW_UNSUPPORTED_VERSION opt-in does not stretch that far). Re-add the entry
+          # once CodeQL ships support for Kotlin 2.4.x — see gradle/libs.versions.toml.
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+          build-mode: ${{ matrix.build-mode }}
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:${{ matrix.language }}"

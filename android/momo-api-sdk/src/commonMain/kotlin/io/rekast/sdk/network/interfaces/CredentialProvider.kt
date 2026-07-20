@@ -39,4 +39,14 @@ interface CredentialProvider {
 
     /** Returns the current Bearer access token, or an empty string if not available or expired. */
     fun getAccessToken(): String
+
+    /**
+     * Returns the OAuth2 (consent) access token used to authenticate OAuth2 endpoints such as
+     * `GET /{productType}/oauth2/{apiVersion}/userinfo`, or an empty string if not available or expired.
+     *
+     * This is a distinct token from [getAccessToken]: it is obtained through the CIBA consent flow
+     * (`bc-authorize` → `oauth2/token`) and must be used in place of the regular API-user Bearer token
+     * on OAuth2 endpoints. Defaults to an empty string for implementations that do not use consent flows.
+     */
+    fun getOauthAccessToken(): String = ""
 }

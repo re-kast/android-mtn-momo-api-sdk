@@ -35,7 +35,6 @@ import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import io.rekast.sdk.sample.ui.theme.AppTheme
 import io.rekast.sdk.sample.views.MainViewModel
-import kotlin.getValue
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
@@ -81,6 +80,7 @@ class HomeScreenFragment : Fragment() {
                         snackStateFlow = homeScreenViewModel.snackBarStateFlow,
                         showProgressBar = !isBootstrapComplete || vmShowProgressBar,
                         basicUserInfo = homeScreenViewModel.basicUserInfo,
+                        userInfoWithConsent = homeScreenViewModel.userInfoWithConsent,
                         accountHolderStatus = homeScreenViewModel.accountHolderStatus,
                         accountBalance = homeScreenViewModel.accountBalance
                     )
@@ -99,10 +99,7 @@ class HomeScreenFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 mainViewModel.isBootstrapComplete.first { it }
-                homeScreenViewModel.getBasicUserInfo()
-                homeScreenViewModel.validateAccountHolderStatus()
-                homeScreenViewModel.getAccountBalance()
-                homeScreenViewModel.getUserInfoWithConsent()
+                homeScreenViewModel.loadHomeData()
             }
         }
     }

@@ -29,6 +29,13 @@ import okhttp3.Response
  * This interceptor adds the access token to the request headers for endpoints
  * that require Bearer Token Authentication.
  *
+ * OAuth2 (consent) **resource** endpoints — those whose path contains the
+ * [Constants.EndpointPaths.OAUTH2] segment but not the [Constants.EndpointPaths.TOKEN] segment,
+ * e.g. `/{productType}/oauth2/{apiVersion}/userinfo` — are authenticated with the OAuth2 consent
+ * token from [CredentialProvider.getOauthAccessToken]. All other endpoints, including the OAuth2
+ * **token** endpoint (`/{productType}/oauth2/token/`) which mints that consent token, use the
+ * regular API-user Bearer token from [CredentialProvider.getAccessToken].
+ *
  * The token is fetched from [CredentialProvider] on every request so that
  * the SDK never holds credential state internally.
  *
@@ -45,7 +52,15 @@ class AccessTokenInterceptor @Inject constructor(private val credentialProvider:
      */
     @Throws(IOException::class)
     override fun intercept(chain: Interceptor.Chain): Response {
-        val accessToken = credentialProvider.getAccessToken()
+        val pathSegments = chain.request().url.pathSegments
+        val isOauth2ResourceEndpoint = pathSegments.contains(Constants.EndpointPaths.OAUTH2) &&
+            !pathSegments.contains(Constants.EndpointPaths.TOKEN)
+        val accessToken =
+            if (isOauth2ResourceEndpoint) {
+                credentialProvider.getOauthAccessToken()
+            } else {
+                credentialProvider.getAccessToken()
+            }
 
         val request = chain.request().newBuilder()
 

@@ -102,7 +102,7 @@ object Constants {
         const val API_VERSION = "apiVersion"
 
         /**
-         * The path parameter for the reference ID.
+         * The path parameter for the API user ID (the `{apiUser}` path segment).
          */
         const val X_REFERENCE_ID = "apiUser"
 
@@ -130,6 +130,23 @@ object Constants {
          * The path parameter for the currency.
          */
         const val CURRENCY = "currency"
+
+        /**
+         * The literal path segment that identifies OAuth2 (consent) endpoints, e.g.
+         * `/{productType}/oauth2/{apiVersion}/userinfo`. OAuth2 *resource* endpoints (those that
+         * contain [OAUTH2] but not [TOKEN]) must be authenticated with the OAuth2 consent access
+         * token rather than the regular API-user Bearer token.
+         */
+        const val OAUTH2 = "oauth2"
+
+        /**
+         * The literal path segment that identifies token-issuance endpoints, e.g.
+         * `/{productType}/oauth2/token/` and `/{productType}/token/`. The OAuth2 **token** endpoint
+         * mints the consent token and must therefore be authenticated with the regular API-user
+         * Bearer token, *not* the (not-yet-issued) consent token — so it is excluded from OAuth2
+         * consent-token routing even though its path contains [OAUTH2].
+         */
+        const val TOKEN = "token"
     }
 
     /**
@@ -157,7 +174,7 @@ object Constants {
         const val GET_ACCESS_TOKEN = "/{productType}/token/"
 
         /**
-         * Endpoint for retrieving an access token.
+         * Endpoint for retrieving an OAuth2 access token (CIBA consent flow).
          */
         const val GET_OAUTH2_ACCESS_TOKEN = "/{productType}/oauth2/token/"
 
@@ -290,13 +307,28 @@ object Constants {
      * Contains form field constants used in form-encoded API requests.
      */
     object FormFields {
+        /** Form field for the login hint (`ID:{msisdn}/MSISDN`) sent to the bc-authorize endpoint. */
         const val LOGIN_HINT = "login_hint"
+
+        /** Form field for the requested OAuth2 scope. */
         const val SCOPE = "scope"
+
+        /** Form field for the access type (`online` or `offline`). */
         const val ACCESS_TYPE = "access_type"
+
+        /** Form field for the OAuth2 grant type. */
         const val GRANT_TYPE = "grant_type"
+
+        /** The CIBA grant type value used when exchanging an `auth_req_id` for an OAuth2 token. */
         const val CIBA_GRANT_TYPE = "urn:openid:params:grant-type:ciba"
+
+        /** Form field for the backchannel authorization request ID (`auth_req_id`). */
         const val BACK_CHANNEL_AUTHORIZATION_REQUEST_ID = "auth_req_id"
+
+        /** Default OAuth2 scope requested for the CIBA consent flow. */
         const val CIBA_SCOPE = "profile openid"
+
+        /** Default access type requested for the CIBA consent flow. */
         const val CIBA_ACCESS_TYPE = "online"
     }
 }

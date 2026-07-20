@@ -20,10 +20,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import io.rekast.sdk.sample.R
 import io.rekast.sdk.sample.utils.annotation.PreviewWithBackgroundExcludeGenerated
@@ -43,7 +43,7 @@ fun CircularProgressBarComponent(modifier: Modifier = Modifier) {
         CircularProgressIndicator(
             modifier = Modifier.size(dimensionResource(id = R.dimen.circular_progress_size)),
             strokeWidth = dimensionResource(id = R.dimen.circular_progress_stroke_width),
-            color = colorResource(id = R.color.accent_primary)
+            color = MaterialTheme.colors.secondary
         )
     }
 }

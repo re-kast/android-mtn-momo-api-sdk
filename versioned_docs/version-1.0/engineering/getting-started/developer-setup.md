@@ -10,7 +10,7 @@ sidebar_label: Developer Setup
 
 Before you begin setting up your development environment, ensure that you have the following prerequisites installed:
 
-- **Android Studio Meerkat (2024.3.1) or later**: This is the official Integrated Development Environment (IDE) for Android development, providing all the necessary tools to build, test, and debug Android applications. The project targets AGP 9.1 which requires Meerkat or later. Make sure to keep it updated to leverage the latest features and improvements.
+- **Android Studio Meerkat (2024.3.1) or later**: This is the official Integrated Development Environment (IDE) for Android development, providing all the necessary tools to build, test, and debug Android applications. The project targets AGP 9.3 which requires Meerkat or later. Make sure to keep it updated to leverage the latest features and improvements.
 
 - **OpenJDK 17**: Ensure that you have OpenJDK 17 installed and configured in Android Studio. This version is required for compiling and running the project. You can download OpenJDK from the [Adoptium](https://adoptium.net/) or [OpenJDK](https://openjdk.java.net/install/) websites.
 
@@ -90,11 +90,11 @@ The MTN MOMO SDK is based on the **MVVM (Model-View-ViewModel)** architecture an
 
 The project consists of three modules:
 
-| Module | Plugin | Purpose |
-|---|---|---|
-| `momo-api-sdk` | `com.android.kotlin.multiplatform.library` (KMP) | Core SDK — network layer, repository, models, interceptors. Published to Maven Central. |
-| `sample` | `com.android.library` | UI layer — Activities, Fragments, ViewModels, Compose screens. Depends on `momo-api-sdk`. |
-| `app` | `com.android.application` | Thin application shell — wires Hilt DI modules (`NetworkModule`, `AppModule`), provides `BuildConfig` values from `local.properties` via the Secrets Gradle Plugin, and declares the `Application` class. |
+| Module         | Plugin                                           | Purpose                                                                                                                                                                                                   |
+|----------------|--------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `momo-api-sdk` | `com.android.kotlin.multiplatform.library` (KMP) | Core SDK — network layer, repository, models, interceptors. Published to Maven Central.                                                                                                                   |
+| `sample`       | `com.android.library`                            | UI layer — Activities, Fragments, ViewModels, Compose screens. Depends on `momo-api-sdk`.                                                                                                                 |
+| `app`          | `com.android.application`                        | Thin application shell — wires Hilt DI modules (`NetworkModule`, `AppModule`), provides `BuildConfig` values from `local.properties` via the Secrets Gradle Plugin, and declares the `Application` class. |
 
 This separation is required by AGP 9.x: the `kotlin.multiplatform` plugin is incompatible with `com.android.application` in the same module, so the application entry point lives in `app` while the SDK and UI code are in separate library modules.
 

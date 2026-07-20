@@ -5,9 +5,16 @@ on:
     branches: [ develop ]
   workflow_dispatch:
 
+# Restrict the GITHUB_TOKEN to read-only by default; the deploy job elevates as needed.
+permissions:
+  contents: read
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    # Needs write access to push the built site to the gh-pages branch.
+    permissions:
+      contents: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4

@@ -16,57 +16,57 @@
 package io.rekast.sdk.sample.ui.components.accountdetails
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.height
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.MutableLiveData
 import io.rekast.sdk.model.AccountHolderStatus
 import io.rekast.sdk.sample.R
-import io.rekast.sdk.sample.ui.components.general.SectionHeader
+import io.rekast.sdk.sample.ui.components.general.CardTitle
+import io.rekast.sdk.sample.ui.components.general.MomoCard
+import io.rekast.sdk.sample.ui.components.general.StatusPill
+import io.rekast.sdk.sample.ui.theme.DangerColor
+import io.rekast.sdk.sample.ui.theme.SuccessColor
+import io.rekast.sdk.sample.ui.theme.subtleTextColor
 
 /**
- * Renders a section displaying the active/inactive status of an account holder.
+ * Renders a card showing the active/inactive status of an account holder as a colored pill.
  *
- * @param modifier Modifier applied to the root [Column].
- * @param accountHolderStatus LiveData holding the [AccountHolderStatus] to display; shows "Inactive" when null.
+ * @param modifier Modifier applied to the card.
+ * @param accountHolderStatus LiveData holding the [AccountHolderStatus]; shows "In Active" when null.
  */
 @Composable
 fun AccountStatusComponent(modifier: Modifier = Modifier, accountHolderStatus: MutableLiveData<AccountHolderStatus?>) {
-    Column(
-        modifier = modifier.fillMaxWidth()
-    ) {
-        SectionHeader(titleResId = R.string.account_status_title)
-        Row(horizontalArrangement = Arrangement.SpaceEvenly) {
-            Column(modifier = modifier.padding(start = dimensionResource(id = R.dimen.spacing_large), end = dimensionResource(id = R.dimen.spacing_large))) {
-                Text(
-                    text = stringResource(id = R.string.status),
-                    color = colorResource(id = R.color.black),
-                    fontWeight = FontWeight.Bold
-                )
-            }
-            Column(modifier = modifier.padding(start = dimensionResource(id = R.dimen.spacing_medium), end = dimensionResource(id = R.dimen.spacing_large))) {
-                accountHolderStatus.value?.result.let { result ->
-                    var text = stringResource(id = R.string.in_Active)
-                    if (result == true) {
-                        text = stringResource(id = R.string.active)
-                    }
-                    Text(
-                        text = text,
-                        color = colorResource(
-                            id = R.color.black
-                        )
-                    )
-                }
-            }
+    val status by accountHolderStatus.observeAsState()
+    val isActive = status?.result == true
+    MomoCard(modifier = modifier) {
+        CardTitle(title = stringResource(id = R.string.card_account_status))
+        Spacer(modifier = Modifier.height(12.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = stringResource(id = R.string.label_status),
+                style = MaterialTheme.typography.body2,
+                color = subtleTextColor
+            )
+            StatusPill(
+                text = stringResource(id = if (isActive) R.string.active else R.string.in_Active),
+                color = if (isActive) SuccessColor else DangerColor
+            )
         }
     }
 }
@@ -75,6 +75,6 @@ fun AccountStatusComponent(modifier: Modifier = Modifier, accountHolderStatus: M
 @Composable
 fun AccountStatusComponentPreview() {
     AccountStatusComponent(
-        accountHolderStatus = MutableLiveData(null)
+        accountHolderStatus = MutableLiveData(AccountHolderStatus(result = true))
     )
 }

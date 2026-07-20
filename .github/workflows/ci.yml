@@ -10,6 +10,11 @@ concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 
+# Least-privilege default for the GITHUB_TOKEN: these jobs only read the repo.
+# Codecov uploads authenticate with CODECOV_TOKEN, not the GITHUB_TOKEN.
+permissions:
+  contents: read
+
 jobs:
   lint:
     name: Spotless / ktlint

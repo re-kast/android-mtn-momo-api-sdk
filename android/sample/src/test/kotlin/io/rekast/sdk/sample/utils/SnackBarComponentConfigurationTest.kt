@@ -30,10 +30,16 @@ import org.junit.Test
  */
 class SnackBarComponentConfigurationTest {
 
-    /** Verifies the default message is an empty string (safe no-op initial state). */
+    /** Verifies the default messageResId is 0 (the "no message" sentinel, safe no-op initial state). */
     @Test
-    fun `default message is empty string`() {
-        assertEquals("", SnackBarComponentConfiguration().message)
+    fun `default messageResId is zero`() {
+        assertEquals(0, SnackBarComponentConfiguration().messageResId)
+    }
+
+    /** Verifies the default messageArgs is empty (no format arguments). */
+    @Test
+    fun `default messageArgs is empty`() {
+        assertEquals(emptyList<Any>(), SnackBarComponentConfiguration().messageArgs)
     }
 
     /** Verifies the default actionLabel is null (no action button rendered by default). */
@@ -48,31 +54,41 @@ class SnackBarComponentConfigurationTest {
         assertEquals(SnackbarDuration.Short, SnackBarComponentConfiguration().duration)
     }
 
+    /** Verifies the default type is INFO. */
+    @Test
+    fun `default type is INFO`() {
+        assertEquals(SnackBarType.INFO, SnackBarComponentConfiguration().type)
+    }
+
     /** Verifies all properties can be supplied with custom values. */
     @Test
     fun `custom values are stored correctly`() {
         val config = SnackBarComponentConfiguration(
-            message = "Payment processed",
+            messageResId = 42,
+            messageArgs = listOf("Payment", 100),
             actionLabel = "Dismiss",
-            duration = SnackbarDuration.Long
+            duration = SnackbarDuration.Long,
+            type = SnackBarType.SUCCESS
         )
-        assertEquals("Payment processed", config.message)
+        assertEquals(42, config.messageResId)
+        assertEquals(listOf("Payment", 100), config.messageArgs)
         assertEquals("Dismiss", config.actionLabel)
         assertEquals(SnackbarDuration.Long, config.duration)
+        assertEquals(SnackBarType.SUCCESS, config.type)
     }
 
     /** Verifies actionLabel can be explicitly set to null. */
     @Test
     fun `actionLabel can be explicitly null`() {
-        val config = SnackBarComponentConfiguration(message = "Done", actionLabel = null)
+        val config = SnackBarComponentConfiguration(messageResId = 42, actionLabel = null)
         assertNull(config.actionLabel)
     }
 
     /** Verifies two instances with the same values are equal (data class contract). */
     @Test
     fun `two instances with identical values are equal`() {
-        val a = SnackBarComponentConfiguration(message = "Hello", actionLabel = "OK")
-        val b = SnackBarComponentConfiguration(message = "Hello", actionLabel = "OK")
+        val a = SnackBarComponentConfiguration(messageResId = 42, actionLabel = "OK")
+        val b = SnackBarComponentConfiguration(messageResId = 42, actionLabel = "OK")
         assertEquals(a, b)
     }
 }
