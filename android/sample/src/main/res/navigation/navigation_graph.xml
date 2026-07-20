@@ -113,7 +113,7 @@
 
     <fragment
         android:id="@+id/remittanceScreenFragment"
-        android:name="io.rekast.sdk.sample.views.remittance.RemittanceScreenFragment"
+        android:name="io.rekast.sdk.sample.views.remittance.remittance.RemittanceScreenFragment"
         android:label="@string/remittance_screen">
 
         <action
@@ -132,4 +132,29 @@
             android:id="@+id/navigateToDisbursementRefund"
             app:destination="@+id/disbursementRefundScreenFragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/invoiceScreenFragment"
+        android:name="io.rekast.sdk.sample.views.collection.invoice.InvoiceScreenFragment"
+        android:label="@string/invoice_screen" />
+
+    <fragment
+        android:id="@+id/preApprovalScreenFragment"
+        android:name="io.rekast.sdk.sample.views.collection.preapproval.PreApprovalScreenFragment"
+        android:label="@string/pre_approval_screen" />
+
+    <fragment
+        android:id="@+id/cashTransferScreenFragment"
+        android:name="io.rekast.sdk.sample.views.remittance.cashtransfer.CashTransferScreenFragment"
+        android:label="@string/cash_transfer_screen" />
+
+    <fragment
+        android:id="@+id/setupScreenFragment"
+        android:name="io.rekast.sdk.sample.views.setup.SetupScreenFragment"
+        android:label="@string/setup_screen" />
+
+    <fragment
+        android:id="@+id/settingsScreenFragment"
+        android:name="io.rekast.sdk.sample.views.settings.SettingsScreenFragment"
+        android:label="@string/settings_screen" />
 </navigation>

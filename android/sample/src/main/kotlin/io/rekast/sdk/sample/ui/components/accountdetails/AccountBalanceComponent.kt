@@ -18,67 +18,60 @@ package io.rekast.sdk.sample.ui.components.accountdetails
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.MutableLiveData
 import io.rekast.sdk.model.AccountBalance
 import io.rekast.sdk.sample.R
-import io.rekast.sdk.sample.ui.components.general.SectionHeader
+import io.rekast.sdk.sample.ui.components.general.CardTitle
+import io.rekast.sdk.sample.ui.components.general.MomoCard
+import io.rekast.sdk.sample.ui.theme.subtleTextColor
 
 /**
- * Renders a section displaying the account balance details, including available balance and currency.
+ * Renders a card displaying the account balance as a prominent amount with its currency.
  *
- * @param modifier Modifier applied to the root [Column].
- * @param accountBalance LiveData holding the [AccountBalance] to display; renders nothing for null values.
+ * @param modifier Modifier applied to the card.
+ * @param accountBalance LiveData holding the [AccountBalance] to display.
  */
 @Composable
 fun AccountBalanceComponent(modifier: Modifier = Modifier, accountBalance: MutableLiveData<AccountBalance?>) {
-    Column(
-        modifier = modifier.fillMaxWidth()
-    ) {
-        SectionHeader(titleResId = R.string.account_balance_title)
-        Row(horizontalArrangement = Arrangement.SpaceEvenly) {
-            Column(modifier = modifier.padding(start = dimensionResource(id = R.dimen.spacing_large), end = dimensionResource(id = R.dimen.spacing_large))) {
+    val balance by accountBalance.observeAsState()
+    MomoCard(modifier = modifier) {
+        CardTitle(title = stringResource(id = R.string.card_account_balance))
+        Spacer(modifier = Modifier.height(16.dp))
+        Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.Bottom) {
+            Text(
+                text = balance?.availableBalance ?: "—",
+                style = MaterialTheme.typography.h4,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colors.onSurface
+            )
+            Spacer(modifier = Modifier.width(10.dp))
+            Column(verticalArrangement = Arrangement.Center) {
                 Text(
-                    text = stringResource(id = R.string.available_balance),
-                    color = colorResource(id = R.color.black),
-                    fontWeight = FontWeight.Bold
+                    text = stringResource(id = R.string.label_available_balance),
+                    style = MaterialTheme.typography.caption,
+                    color = subtleTextColor
                 )
-            }
-            Column(modifier = modifier.padding(start = dimensionResource(id = R.dimen.spacing_medium), end = dimensionResource(id = R.dimen.spacing_medium))) {
-                accountBalance.value?.availableBalance?.let {
+                balance?.currency?.let {
                     Text(
                         text = it,
-                        color = colorResource(
-                            id = R.color.black
-                        )
-                    )
-                }
-            }
-        }
-        Row(horizontalArrangement = Arrangement.SpaceEvenly) {
-            Column(modifier = modifier.padding(start = dimensionResource(id = R.dimen.spacing_large), end = dimensionResource(id = R.dimen.spacing_large))) {
-                Text(
-                    text = stringResource(id = R.string.currency),
-                    color = colorResource(id = R.color.black),
-                    fontWeight = FontWeight.Bold
-                )
-            }
-            Column(modifier = modifier.padding(start = dimensionResource(id = R.dimen.spacing_medium), end = dimensionResource(id = R.dimen.spacing_medium))) {
-                accountBalance.value?.currency?.let {
-                    Text(
-                        text = it,
-                        color = colorResource(
-                            id = R.color.black
-                        )
+                        style = MaterialTheme.typography.body2,
+                        fontWeight = FontWeight.Medium,
+                        color = MaterialTheme.colors.secondary
                     )
                 }
             }
@@ -90,6 +83,6 @@ fun AccountBalanceComponent(modifier: Modifier = Modifier, accountBalance: Mutab
 @Composable
 fun AccountBalanceComponentPreview() {
     AccountBalanceComponent(
-        accountBalance = MutableLiveData(null)
+        accountBalance = MutableLiveData(AccountBalance(availableBalance = "1500.00", currency = "EUR"))
     )
 }

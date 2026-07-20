@@ -15,48 +15,32 @@
  */
 package io.rekast.sdk.sample.ui.components.screens
 
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.relocation.BringIntoViewRequester
-import androidx.compose.foundation.relocation.bringIntoViewRequester
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Divider
-import androidx.compose.material.Text
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import io.rekast.sdk.sample.R
-import io.rekast.sdk.sample.ui.components.general.textFieldDefaultsComponent
-import io.rekast.sdk.sample.ui.components.general.textShapeDefaultComponent
+import io.rekast.sdk.sample.ui.components.general.CardTitle
+import io.rekast.sdk.sample.ui.components.general.MomoCard
 import io.rekast.sdk.sample.utils.annotation.PreviewWithBackgroundExcludeGenerated
 
 /**
- * Renders a scrollable payment data capture form with conditionally shown fields for financial ID,
- * reference ID to refund, and delivery note, along with a submit button.
+ * Renders a payment data capture form inside a design-system [MomoCard], with conditionally shown
+ * fields for financial ID, reference ID to refund, and delivery note, followed by a submit button.
  *
- * @param modifier Modifier applied to the inner [Column].
- * @param title Section header text displayed above the form fields.
+ * Built from the shared [LabeledField] and [OperationActionButton] building blocks so it matches the
+ * card-based look of the other operation screens (Invoice, Pre-Approval, Cash Transfer).
+ *
+ * @param modifier Modifier applied to the scrollable container.
+ * @param title Card title displayed above the form fields.
  * @param submitButtonText Label for the submit button.
  * @param phoneNumber Current value of the phone number field.
  * @param financialId Current value of the financial ID field.
@@ -77,7 +61,6 @@ import io.rekast.sdk.sample.utils.annotation.PreviewWithBackgroundExcludeGenerat
  * @param onPayerNoteUpdated Callback invoked when the payment note field value changes.
  * @param onDeliveryNoteUpdated Callback invoked when the delivery note field value changes.
  */
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun PaymentDataScreenComponent(
     modifier: Modifier = Modifier,
@@ -102,307 +85,40 @@ fun PaymentDataScreenComponent(
     onPayerNoteUpdated: (String) -> Unit,
     onDeliveryNoteUpdated: (String) -> Unit
 ) {
-    val bringIntoViewRequester = remember { BringIntoViewRequester() }
-
-    val phoneNumberFocusRequester = remember { FocusRequester() }
-    val financialIdFocusRequester = remember { FocusRequester() }
-    val amountFocusRequester = remember { FocusRequester() }
-    val payerMessageFocusRequester = remember { FocusRequester() }
-    val payerNoteFocusRequester = remember { FocusRequester() }
-    val deliveryNoteFocusRequester = remember { FocusRequester() }
-    val referenceIdToRefundFocusRequester = remember { FocusRequester() }
-
-    LazyColumn {
+    LazyColumn(
+        modifier = modifier.fillMaxSize(),
+        contentPadding = PaddingValues(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
         item {
-            Column(
-                modifier = modifier
-                    .fillMaxSize()
-                    .padding(25.dp)
-            ) {
-                Column(modifier = modifier.padding(end = 10.dp)) {
-                    Text(
-                        text = title,
-                        style = TextStyle(
-                            fontSize = 18.sp
-                        ),
-                        color = colorResource(id = R.color.black),
-                        fontWeight = FontWeight.Bold
-                    )
-                    Divider(
-                        modifier = modifier.padding(
-                            top = 10.dp
-                        )
-                    )
-                }
-                OutlinedTextField(
-                    value = phoneNumber,
-                    onValueChange = onPhoneNumberUpdated,
-                    label = {
-                        Text(
-                            text = stringResource(id = R.string.phone_number)
-                        )
-                    },
-                    maxLines = 1,
-                    singleLine = true,
-                    placeholder = {
-                        Text(
-                            color = Color.LightGray,
-                            text = stringResource(id = R.string.phone_number)
-                        )
-                    },
-                    colors = textFieldDefaultsComponent(),
-                    shape = textShapeDefaultComponent(),
-                    modifier = modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 10.dp)
-                        .background(color = Color.Unspecified)
-                        .focusRequester(phoneNumberFocusRequester),
-                    keyboardOptions = KeyboardOptions(
-                        imeAction = ImeAction.Next
-                    ),
-                    keyboardActions = KeyboardActions(
-                        onDone = {
-                            financialIdFocusRequester.requestFocus()
-                        }
-                    )
-                )
+            MomoCard {
+                CardTitle(title = title)
+                Spacer(modifier = Modifier.height(8.dp))
+                LabeledField(stringResource(id = R.string.phone_number), phoneNumber, onPhoneNumberUpdated, keyboardType = KeyboardType.Phone)
                 if (showFinancialId) {
-                    OutlinedTextField(
-                        value = financialId,
-                        onValueChange = onFinancialIdUpdated,
-                        label = {
-                            Text(
-                                text = stringResource(id = R.string.financial_id)
-                            )
-                        },
-                        maxLines = 1,
-                        singleLine = true,
-                        placeholder = {
-                            Text(
-                                color = Color.LightGray,
-                                text = stringResource(id = R.string.financial_id)
-                            )
-                        },
-                        colors = textFieldDefaultsComponent(),
-                        shape = textShapeDefaultComponent(),
-                        modifier = modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 10.dp)
-                            .background(color = Color.Unspecified)
-                            .focusRequester(financialIdFocusRequester),
-                        keyboardOptions = KeyboardOptions(
-                            imeAction = ImeAction.Next
-                        ),
-                        keyboardActions = KeyboardActions(
-                            onDone = {
-                                amountFocusRequester.requestFocus()
-                            }
-                        )
-                    )
+                    LabeledField(stringResource(id = R.string.financial_id), financialId, onFinancialIdUpdated)
                 }
                 if (showReferenceIdToRefund) {
-                    OutlinedTextField(
-                        value = referenceIdToRefund,
-                        onValueChange = onReferenceIdToRefundUpdated,
-                        label = {
-                            Text(
-                                text = stringResource(id = R.string.reference_id_refund)
-                            )
-                        },
-                        maxLines = 1,
-                        singleLine = true,
-                        placeholder = {
-                            Text(
-                                color = Color.LightGray,
-                                text = stringResource(id = R.string.reference_id_refund)
-                            )
-                        },
-                        colors = textFieldDefaultsComponent(),
-                        shape = textShapeDefaultComponent(),
-                        modifier = modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 10.dp)
-                            .background(color = Color.Unspecified)
-                            .focusRequester(referenceIdToRefundFocusRequester),
-                        keyboardOptions = KeyboardOptions(
-                            imeAction = ImeAction.Next
-                        ),
-                        keyboardActions = KeyboardActions(
-                            onDone = {
-                                amountFocusRequester.requestFocus()
-                            }
-                        )
-                    )
+                    LabeledField(stringResource(id = R.string.reference_id_refund), referenceIdToRefund, onReferenceIdToRefundUpdated)
                 }
-                OutlinedTextField(
-                    value = amount,
-                    onValueChange = onAmountUpdated,
-                    label = {
-                        Text(
-                            text = stringResource(id = R.string.amount)
-                        )
-                    },
-                    maxLines = 1,
-                    singleLine = true,
-                    placeholder = {
-                        Text(
-                            color = Color.LightGray,
-                            text = stringResource(id = R.string.amount)
-                        )
-                    },
-                    colors = textFieldDefaultsComponent(),
-                    shape = textShapeDefaultComponent(),
-                    modifier = modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 10.dp)
-                        .background(color = Color.Unspecified)
-                        .focusRequester(amountFocusRequester),
-                    keyboardOptions = KeyboardOptions(
-                        imeAction = ImeAction.Next,
-                        keyboardType = KeyboardType.Number
-                    ),
-                    keyboardActions = KeyboardActions(
-                        onDone = {
-                            payerMessageFocusRequester.requestFocus()
-                        }
-                    )
-                )
-                OutlinedTextField(
-                    value = paymentMessage,
-                    onValueChange = onPayerMessageUpdated,
-                    label = {
-                        Text(
-                            text = stringResource(id = R.string.payment_message)
-                        )
-                    },
-                    maxLines = 1,
-                    singleLine = true,
-                    placeholder = {
-                        Text(
-                            color = Color.LightGray,
-                            text = stringResource(id = R.string.payment_message)
-                        )
-                    },
-                    colors = textFieldDefaultsComponent(),
-                    shape = textShapeDefaultComponent(),
-                    modifier = modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 10.dp)
-                        .background(color = Color.Unspecified)
-                        .focusRequester(payerMessageFocusRequester),
-                    keyboardOptions = KeyboardOptions(
-                        imeAction = ImeAction.Next
-                    ),
-                    keyboardActions = KeyboardActions(
-                        onDone = {
-                            payerNoteFocusRequester.requestFocus()
-                        }
-                    )
-                )
-                OutlinedTextField(
-                    value = paymentNote,
-                    onValueChange = onPayerNoteUpdated,
-                    label = {
-                        Text(
-                            text = stringResource(id = R.string.payment_note)
-                        )
-                    },
-                    maxLines = 5,
-                    singleLine = false,
-                    placeholder = {
-                        Text(
-                            color = Color.LightGray,
-                            text = stringResource(id = R.string.payment_note)
-                        )
-                    },
-                    colors = textFieldDefaultsComponent(),
-                    shape = textShapeDefaultComponent(),
-                    modifier = modifier
-                        .fillMaxWidth()
-                        .height(150.dp)
-                        .padding(vertical = 10.dp)
-                        .background(color = Color.Unspecified)
-                        .focusRequester(payerNoteFocusRequester),
-                    keyboardOptions = KeyboardOptions(
-                        imeAction = ImeAction.Next
-                    ),
-                    keyboardActions = KeyboardActions(
-                        onDone = {
-                            deliveryNoteFocusRequester.requestFocus()
-                        }
-                    )
-                )
+                LabeledField(stringResource(id = R.string.amount), amount, onAmountUpdated, keyboardType = KeyboardType.Number)
+                LabeledField(stringResource(id = R.string.payment_message), paymentMessage, onPayerMessageUpdated)
+                LabeledField(stringResource(id = R.string.payment_note), paymentNote, onPayerNoteUpdated, singleLine = false, imeAction = ImeAction.Default)
                 if (showDeliveryTextField) {
-                    Divider(
-                        modifier = modifier.padding(
-                            top = 10.dp
-                        )
-                    )
-                    OutlinedTextField(
-                        value = deliveryNote,
-                        onValueChange = onDeliveryNoteUpdated,
-                        label = {
-                            Text(
-                                text = stringResource(id = R.string.delivery_note)
-                            )
-                        },
-                        maxLines = 10,
-                        singleLine = false,
-                        placeholder = {
-                            Text(
-                                color = Color.LightGray,
-                                text = stringResource(id = R.string.delivery_note)
-                            )
-                        },
-                        colors = textFieldDefaultsComponent(),
-                        shape = textShapeDefaultComponent(),
-                        modifier = modifier
-                            .fillMaxWidth()
-                            .height(200.dp)
-                            .padding(vertical = 10.dp)
-                            .background(color = Color.Unspecified)
-                            .focusRequester(deliveryNoteFocusRequester),
-                        keyboardOptions = KeyboardOptions(
-                            imeAction = ImeAction.Done
-                        ),
-                        keyboardActions = KeyboardActions(
-                            onDone = {
-                                deliveryNoteFocusRequester.requestFocus()
-                            }
-                        )
-                    )
+                    LabeledField(stringResource(id = R.string.delivery_note), deliveryNote, onDeliveryNoteUpdated, singleLine = false, imeAction = ImeAction.Default)
                 }
-                Divider(
-                    modifier = modifier.padding(
-                        top = 10.dp,
-                        bottom = 10.dp
-                    )
-                )
-                Button(
-                    enabled = phoneNumber.isNotEmpty() &&
-                        amount.isNotEmpty() && paymentMessage.isNotEmpty() &&
-                        paymentNote.isNotEmpty(),
-                    colors = ButtonDefaults.buttonColors(
-                        backgroundColor = colorResource(id = R.color.accent_primary),
-                        contentColor = Color.White
-                    ),
+                Spacer(modifier = Modifier.height(12.dp))
+                OperationActionButton(
+                    text = submitButtonText,
                     onClick = onRequestPayButtonClicked,
-                    modifier = modifier
-                        .fillMaxWidth()
-                        .bringIntoViewRequester(bringIntoViewRequester),
-                    elevation = null
-                ) {
-                    Text(
-                        text = submitButtonText,
-                        modifier = modifier.padding(8.dp)
-                    )
-                }
+                    enabled = phoneNumber.isNotEmpty() && amount.isNotEmpty() &&
+                        paymentMessage.isNotEmpty() && paymentNote.isNotEmpty()
+                )
             }
         }
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @PreviewWithBackgroundExcludeGenerated
 @Composable
 fun PaymentDataScreenComponentPreview() {

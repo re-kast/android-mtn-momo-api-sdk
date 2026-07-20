@@ -13,12 +13,12 @@ Publishing the MTN MOMO API SDK is handled automatically by a GitHub Actions CI 
 
 Every tag publishes to both Maven Central and GitHub Packages. A GitHub Release is also created for stable tags.
 
-| Version type | Repository | URL |
-|---|---|---|
-| Stable release | Maven Central | [io.rekast:momo-api-sdk](https://central.sonatype.com/artifact/io.rekast/momo-api-sdk) |
-| Stable release | GitHub Packages | [re-kast/android-mtn-momo-api-sdk](https://github.com/re-kast/android-mtn-momo-api-sdk/packages) |
-| Snapshot | Maven Central Snapshots | `https://central.sonatype.com/repository/maven-snapshots/` |
-| Snapshot | GitHub Packages | [re-kast/android-mtn-momo-api-sdk](https://github.com/re-kast/android-mtn-momo-api-sdk/packages) |
+| Version type   | Repository              | URL                                                                                              |
+|----------------|-------------------------|--------------------------------------------------------------------------------------------------|
+| Stable release | Maven Central           | [io.rekast:momo-api-sdk](https://central.sonatype.com/artifact/io.rekast/momo-api-sdk)           |
+| Stable release | GitHub Packages         | [re-kast/android-mtn-momo-api-sdk](https://github.com/re-kast/android-mtn-momo-api-sdk/packages) |
+| Snapshot       | Maven Central Snapshots | `https://central.sonatype.com/repository/maven-snapshots/`                                       |
+| Snapshot       | GitHub Packages         | [re-kast/android-mtn-momo-api-sdk](https://github.com/re-kast/android-mtn-momo-api-sdk/packages) |
 
 ---
 
@@ -28,10 +28,10 @@ The publish pipeline is defined in [`.github/workflows/publish.yml`](https://git
 
 ### Tag format
 
-| Tag | Published version | Destination |
-|---|---|---|
-| `v1.2.3` | `1.2.3` | Maven Central (release) |
-| `v1.2.3-SNAPSHOT` | `1.2.3-SNAPSHOT` | Maven Central Snapshots |
+| Tag               | Published version | Destination             |
+|-------------------|-------------------|-------------------------|
+| `v1.2.3`          | `1.2.3`           | Maven Central (release) |
+| `v1.2.3-SNAPSHOT` | `1.2.3-SNAPSHOT`  | Maven Central Snapshots |
 
 ### Release path
 
@@ -85,12 +85,12 @@ repositories {
 
 The following secrets must be configured under **Settings → Secrets and variables → Actions** in the repository:
 
-| Secret | Description |
-|---|---|
-| `MAVEN_CENTRAL_USERNAME` | User token name from [central.sonatype.com](https://central.sonatype.com) → Account → User Token |
+| Secret                   | Description                                                                                          |
+|--------------------------|------------------------------------------------------------------------------------------------------|
+| `MAVEN_CENTRAL_USERNAME` | User token name from [central.sonatype.com](https://central.sonatype.com) → Account → User Token     |
 | `MAVEN_CENTRAL_PASSWORD` | User token password from [central.sonatype.com](https://central.sonatype.com) → Account → User Token |
-| `SIGNING_KEY` | Armored GPG private key: `gpg --export-secret-keys --armor <KEY_ID>` |
-| `SIGNING_PASSWORD` | Passphrase for the GPG key |
+| `SIGNING_KEY`            | Armored GPG private key: `gpg --export-secret-keys --armor <KEY_ID>`                                 |
+| `SIGNING_PASSWORD`       | Passphrase for the GPG key                                                                           |
 
 ---
 

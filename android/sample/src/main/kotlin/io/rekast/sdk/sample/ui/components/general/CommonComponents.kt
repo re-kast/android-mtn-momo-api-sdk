@@ -20,11 +20,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Divider
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -50,7 +50,7 @@ fun SectionHeader(@StringRes titleResId: Int, modifier: Modifier = Modifier) {
             style = TextStyle(
                 fontSize = with(LocalDensity.current) { dimensionResource(id = R.dimen.font_size_medium).toSp() }
             ),
-            color = colorResource(id = R.color.black),
+            color = MaterialTheme.colors.onBackground,
             fontWeight = FontWeight.Bold
         )
         Divider(

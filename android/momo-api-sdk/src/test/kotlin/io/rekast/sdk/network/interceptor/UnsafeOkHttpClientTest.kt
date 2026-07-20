@@ -15,6 +15,7 @@
  */
 package io.rekast.sdk.network.interceptor
 
+import java.security.cert.X509Certificate
 import okhttp3.OkHttpClient
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
@@ -78,5 +79,24 @@ class UnsafeOkHttpClientTest {
         val builder2 = unsafeOkHttpClient.unsafeOkHttpClient
         assertNotNull(builder1)
         assertNotNull(builder2)
+    }
+
+    /**
+     * Verifies the installed all-trusting [javax.net.ssl.X509TrustManager] performs no validation:
+     * both `checkClientTrusted` and `checkServerTrusted` return without throwing for any chain, and
+     * `getAcceptedIssuers` returns an empty array. Exercises the trust manager exposed by the built
+     * [OkHttpClient] so its three methods are covered without a live TLS handshake.
+     */
+    @Test
+    fun `trust manager accepts all certificates and returns no issuers`() {
+        val client = unsafeOkHttpClient.unsafeOkHttpClient.build()
+        val trustManager = client.x509TrustManager
+        assertNotNull(trustManager)
+
+        val emptyChain = emptyArray<X509Certificate>()
+        // Neither call should throw — the manager trusts everything.
+        trustManager!!.checkClientTrusted(emptyChain, "RSA")
+        trustManager.checkServerTrusted(emptyChain, "RSA")
+        assertTrue(trustManager.acceptedIssuers.isEmpty())
     }
 }

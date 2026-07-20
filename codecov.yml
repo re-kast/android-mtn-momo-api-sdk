@@ -22,6 +22,11 @@ coverage:
         threshold: 1%
         flags:
           - sample
+      app:
+        target: auto
+        threshold: 1%
+        flags:
+          - app
     # Patch check: new code added in a PR must be covered
     patch:
       default:
@@ -36,6 +41,10 @@ flags:
   sample:
     paths:
       - android/sample/src/main/
+    carryforward: true
+  app:
+    paths:
+      - android/app/src/main/
     carryforward: true
 
 # PR comment layout — show diff, per-flag breakdown, and changed files

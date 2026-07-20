@@ -115,4 +115,12 @@ class CredentialProviderTest {
 
         assertEquals("", credentialProvider.getAccessToken())
     }
+
+    /** Verifies that [CredentialProvider.getOauthAccessToken] delegates to [CredentialStorage]. */
+    @Test
+    fun `getOauthAccessToken delegates to storage`() {
+        every { mockStorage.getOauthAccessToken() } returns "oauth-consent-token"
+
+        assertEquals("oauth-consent-token", credentialProvider.getOauthAccessToken())
+    }
 }

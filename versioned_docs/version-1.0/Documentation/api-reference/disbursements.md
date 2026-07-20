@@ -5,9 +5,9 @@ sidebar_label: Disbursements
 
 # Library Usage — Disbursements
 
-Disbursements APIs let you send money to Mobile Money accounts, query transfer status, issue cash transfers, and send delivery notifications.
+Disbursements APIs let you send money to Mobile Money accounts (transfers), credit accounts directly (deposits), and reverse transactions (refunds), plus query the status of each.
 
-All flows require a valid Bearer access token stored in `CredentialStorage`.
+Authentication is handled automatically by the SDK's interceptors — you never pass an access token. Every `DefaultRepository` method returns a `Flow<NetworkResult<T>>`; collect it inside a coroutine scope. Cross-border cash transfers live under [Remittance](./remittance).
 
 ---
 
@@ -39,14 +39,14 @@ defaultRepository.transfer(
 }
 ```
 
-| Parameter | Type | Description |
-|---|---|---|
-| `productType` | `String` | Product type string, e.g. `ProductType.DISBURSEMENT.productType` |
-| `apiVersion` | `String` | API version, e.g. `"v1_0"` |
-| `momoTransaction` | `MomoTransaction` | Transfer details (amount, currency, payee, messages) |
-| `uuid` | `String` | Unique reference ID — save this to poll for status |
-| `productSubscriptionKey` | `String` | Disbursements primary subscription key |
-| `environment` | `String` | `"sandbox"` or `"production"` |
+| Parameter                | Type              | Description                                                      |
+|--------------------------|-------------------|------------------------------------------------------------------|
+| `productType`            | `String`          | Product type string, e.g. `ProductType.DISBURSEMENT.productType` |
+| `apiVersion`             | `String`          | API version, e.g. `"v1_0"`                                       |
+| `momoTransaction`        | `MomoTransaction` | Transfer details (amount, currency, payee, messages)             |
+| `uuid`                   | `String`          | Unique reference ID — save this to poll for status               |
+| `productSubscriptionKey` | `String`          | Disbursements primary subscription key                           |
+| `environment`            | `String`          | `"sandbox"` or `"production"`                                    |
 
 ---
 
@@ -70,13 +70,13 @@ defaultRepository.getTransferStatus(
 }
 ```
 
-| Parameter | Type | Description |
-|---|---|---|
-| `productType` | `String` | Product type string |
-| `apiVersion` | `String` | API version |
-| `referenceId` | `String` | UUID used when calling `transfer` |
+| Parameter                | Type     | Description                            |
+|--------------------------|----------|----------------------------------------|
+| `productType`            | `String` | Product type string                    |
+| `apiVersion`             | `String` | API version                            |
+| `referenceId`            | `String` | UUID used when calling `transfer`      |
 | `productSubscriptionKey` | `String` | Disbursements primary subscription key |
-| `environment` | `String` | `"sandbox"` or `"production"` |
+| `environment`            | `String` | `"sandbox"` or `"production"`          |
 
 ---
 
@@ -87,8 +87,7 @@ Credits a Mobile Money account directly (agent-initiated flow).
 ```kotlin
 val transactionUuid = UUID.randomUUID().toString()
 
-val result = defaultRepository.deposit(
-    accessToken = credentialStorage.getAccessToken(),
+defaultRepository.deposit(
     momoTransaction = MomoTransaction(
         amount = "100",
         currency = "EUR",
@@ -100,17 +99,21 @@ val result = defaultRepository.deposit(
     apiVersion = "v1_0",
     productSubscriptionKey = disbursementsPrimaryKey,
     uuid = transactionUuid
-)
-// result is a Retrofit Response<Unit>; check result.isSuccessful
+).collect { result ->
+    when (result) {
+        is NetworkResult.Success -> { /* accepted (HTTP 202) — poll for status with transactionUuid */ }
+        is NetworkResult.Error   -> { /* handle result.message */ }
+        is NetworkResult.Loading -> { /* show progress */ }
+    }
+}
 ```
 
-| Parameter | Type | Description |
-|---|---|---|
-| `accessToken` | `String` | Bearer access token |
-| `momoTransaction` | `MomoTransaction` | Deposit details |
-| `apiVersion` | `String` | API version, e.g. `"v1_0"` |
-| `productSubscriptionKey` | `String` | Disbursements primary subscription key |
-| `uuid` | `String` | Unique reference ID |
+| Parameter                | Type              | Description                            |
+|--------------------------|-------------------|----------------------------------------|
+| `momoTransaction`        | `MomoTransaction` | Deposit details                        |
+| `apiVersion`             | `String`          | API version, e.g. `"v1_0"`             |
+| `productSubscriptionKey` | `String`          | Disbursements primary subscription key |
+| `uuid`                   | `String`          | Unique reference ID                    |
 
 ---
 
@@ -119,20 +122,24 @@ val result = defaultRepository.deposit(
 Retrieves the status of a deposit.
 
 ```kotlin
-val response = defaultRepository.getDepositStatus(
+defaultRepository.getDepositStatus(
     referenceId = transactionUuid,
     apiVersion = "v1_0",
-    productSubscriptionKey = disbursementsPrimaryKey,
-    accessToken = credentialStorage.getAccessToken()
-)
+    productSubscriptionKey = disbursementsPrimaryKey
+).collect { result ->
+    when (result) {
+        is NetworkResult.Success -> { /* parse the status from result.response */ }
+        is NetworkResult.Error   -> { /* handle result.message */ }
+        is NetworkResult.Loading -> { /* show progress */ }
+    }
+}
 ```
 
-| Parameter | Type | Description |
-|---|---|---|
-| `referenceId` | `String` | UUID used when calling `deposit` |
-| `apiVersion` | `String` | API version |
+| Parameter                | Type     | Description                            |
+|--------------------------|----------|----------------------------------------|
+| `referenceId`            | `String` | UUID used when calling `deposit`       |
+| `apiVersion`             | `String` | API version                            |
 | `productSubscriptionKey` | `String` | Disbursements primary subscription key |
-| `accessToken` | `String` | Bearer access token |
 
 ---
 
@@ -143,8 +150,7 @@ Reverses a previously completed disbursements transaction.
 ```kotlin
 val refundUuid = UUID.randomUUID().toString()
 
-val result = defaultRepository.refund(
-    accessToken = credentialStorage.getAccessToken(),
+defaultRepository.refund(
     momoTransaction = MomoTransaction(
         amount = "100",
         currency = "EUR",
@@ -156,16 +162,21 @@ val result = defaultRepository.refund(
     apiVersion = "v2_0",
     productSubscriptionKey = disbursementsPrimaryKey,
     uuid = refundUuid
-)
+).collect { result ->
+    when (result) {
+        is NetworkResult.Success -> { /* accepted (HTTP 202) — poll for status with refundUuid */ }
+        is NetworkResult.Error   -> { /* handle result.message */ }
+        is NetworkResult.Loading -> { /* show progress */ }
+    }
+}
 ```
 
-| Parameter | Type | Description |
-|---|---|---|
-| `accessToken` | `String` | Bearer access token |
-| `momoTransaction` | `MomoTransaction` | Refund details; set `referenceIdToRefund` to the original transaction UUID |
-| `apiVersion` | `String` | API version, e.g. `"v2_0"` |
-| `productSubscriptionKey` | `String` | Disbursements primary subscription key |
-| `uuid` | `String` | Unique reference ID for this refund |
+| Parameter                | Type              | Description                                                                |
+|--------------------------|-------------------|----------------------------------------------------------------------------|
+| `momoTransaction`        | `MomoTransaction` | Refund details; set `referenceIdToRefund` to the original transaction UUID |
+| `apiVersion`             | `String`          | API version, e.g. `"v2_0"`                                                 |
+| `productSubscriptionKey` | `String`          | Disbursements primary subscription key                                     |
+| `uuid`                   | `String`          | Unique reference ID for this refund                                        |
 
 ---
 
@@ -174,101 +185,23 @@ val result = defaultRepository.refund(
 Retrieves the status of a refund.
 
 ```kotlin
-val response = defaultRepository.getRefundStatus(
+defaultRepository.getRefundStatus(
     referenceId = refundUuid,
     apiVersion = "v2_0",
-    productSubscriptionKey = disbursementsPrimaryKey,
-    accessToken = credentialStorage.getAccessToken()
-)
-```
-
-| Parameter | Type | Description |
-|---|---|---|
-| `referenceId` | `String` | UUID used when calling `refund` |
-| `apiVersion` | `String` | API version |
-| `productSubscriptionKey` | `String` | Disbursements primary subscription key |
-| `accessToken` | `String` | Bearer access token |
-
----
-
-## Cash Transfer
-
-Initiates a cash transfer (over-the-counter disbursement).
-
-```kotlin
-defaultRepository.cashTransfer(
-    apiVersion = "v1_0",
-    cashTransfer = CashTransfer(
-        amount = "300",
-        currency = "EUR",
-        externalId = UUID.randomUUID().toString(),
-        payerIdentity = "256770000000",
-        payeeIdentity = "256770000001",
-        payerMessage = "Cash transfer",
-        payeeNote = "Transfer"
-    ),
-    uuid = UUID.randomUUID().toString(),
-    productSubscriptionKey = disbursementsPrimaryKey,
-    environment = "sandbox"
+    productSubscriptionKey = disbursementsPrimaryKey
 ).collect { result ->
     when (result) {
-        is NetworkResult.Success -> { /* transfer initiated */ }
-        is NetworkResult.Error   -> { /* failed */ }
-        is NetworkResult.Loading -> { /* in progress */ }
+        is NetworkResult.Success -> { /* parse the status from result.response */ }
+        is NetworkResult.Error   -> { /* handle result.message */ }
+        is NetworkResult.Loading -> { /* show progress */ }
     }
 }
 ```
 
-| Parameter | Type | Description |
-|---|---|---|
-| `apiVersion` | `String` | API version |
-| `cashTransfer` | `CashTransfer` | Transfer details including payer and payee identities |
-| `uuid` | `String` | Unique reference ID |
+| Parameter                | Type     | Description                            |
+|--------------------------|----------|----------------------------------------|
+| `referenceId`            | `String` | UUID used when calling `refund`        |
+| `apiVersion`             | `String` | API version                            |
 | `productSubscriptionKey` | `String` | Disbursements primary subscription key |
-| `environment` | `String` | `"sandbox"` or `"production"` |
 
----
-
-## Get Cash Transfer Status
-
-Retrieves the status of a cash transfer.
-
-```kotlin
-defaultRepository.getCashTransferStatus(
-    apiVersion = "v1_0",
-    referenceId = cashTransferUuid,
-    productSubscriptionKey = disbursementsPrimaryKey,
-    environment = "sandbox"
-).collect { result -> /* ... */ }
-```
-
-| Parameter | Type | Description |
-|---|---|---|
-| `apiVersion` | `String` | API version |
-| `referenceId` | `String` | UUID used when calling `cashTransfer` |
-| `productSubscriptionKey` | `String` | Disbursements primary subscription key |
-| `environment` | `String` | `"sandbox"` or `"production"` |
-
----
-
-## Request to Withdraw Delivery Notification
-
-Sends a delivery notification after a withdrawal has been processed.
-
-```kotlin
-defaultRepository.requestToWithdrawDeliveryNotification(
-    apiVersion = "v1_0",
-    referenceId = withdrawalUuid,
-    momoNotification = MomoNotification(notificationMessage = "Your withdrawal has been processed."),
-    productSubscriptionKey = disbursementsPrimaryKey,
-    environment = "sandbox"
-).collect { result -> /* ... */ }
-```
-
-| Parameter | Type | Description |
-|---|---|---|
-| `apiVersion` | `String` | API version |
-| `referenceId` | `String` | UUID of the original withdrawal |
-| `momoNotification` | `MomoNotification` | Notification message body |
-| `productSubscriptionKey` | `String` | Disbursements primary subscription key |
-| `environment` | `String` | `"sandbox"` or `"production"` |
+> **Cash transfers** — the V2 cross-border `cashTransfer` / `getCashTransferStatus` operations are documented under [Remittance](./remittance). **Withdrawal delivery notifications** — `requestToWithdrawDeliveryNotification` is documented under [Collection](./collection).

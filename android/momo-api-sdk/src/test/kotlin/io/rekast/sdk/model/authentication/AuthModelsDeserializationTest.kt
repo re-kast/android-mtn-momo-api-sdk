@@ -92,6 +92,32 @@ class AuthModelsDeserializationTest {
     }
 
     /**
+     * Verifies that an [Oauth2AccessToken] deserializes when the optional `scope`,
+     * `refresh_token` and `refresh_token_expired_in` fields are absent from the response.
+     *
+     * Regression test for a [kotlinx.serialization.MissingFieldException] thrown during OAuth2
+     * token refresh when the MTN MoMo token endpoint omits these fields.
+     */
+    @Test
+    fun `Oauth2AccessToken deserializes when optional fields are missing`() {
+        val raw = """
+            {
+              "access_token": "oauth2-access-token-only",
+              "token_type": "Bearer",
+              "expires_in": 3600
+            }
+        """.trimIndent()
+        val result = json.decodeFromString<Oauth2AccessToken>(raw)
+        assertNotNull(result)
+        assertEquals("oauth2-access-token-only", result.accessToken)
+        assertEquals("Bearer", result.tokenType)
+        assertEquals(3600, result.expiresIn)
+        assertNull(result.scope)
+        assertNull(result.refreshToken)
+        assertNull(result.refreshTokenExpiredIn)
+    }
+
+    /**
      * Verifies that [Oauth2AccessToken.expiresIn] is deserialized as [Int],
      * confirming numeric mapping of `expires_in`.
      */
@@ -130,7 +156,7 @@ class AuthModelsDeserializationTest {
         """.trimIndent()
         val result = json.decodeFromString<Oauth2AccessToken>(raw)
         assertEquals(43200, result.refreshTokenExpiredIn)
-        assertEquals(43200::class, result.refreshTokenExpiredIn::class)
+        assertEquals(43200::class, result.refreshTokenExpiredIn!!::class)
     }
 
     /** Verifies that [ApiKey.apiKey] is mapped correctly from the `apiKey` JSON field. */

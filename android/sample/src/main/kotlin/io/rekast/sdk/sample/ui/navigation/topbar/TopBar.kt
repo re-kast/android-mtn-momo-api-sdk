@@ -21,21 +21,24 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.material.DrawerValue
 import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
+import androidx.compose.material.contentColorFor
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.primarySurface
 import androidx.compose.material.rememberDrawerState
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.rekast.sdk.sample.R
 import kotlinx.coroutines.CoroutineScope
@@ -54,7 +57,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun TopBar(scope: CoroutineScope, scaffoldState: ScaffoldState, title: Int) {
     TopAppBar(
-        title = { Text(text = stringResource(title), fontSize = 20.sp) },
+        title = { Text(text = stringResource(title), fontSize = 20.sp, fontWeight = FontWeight.SemiBold) },
         navigationIcon = {
             val openDrawerLabel = stringResource(R.string.cd_open_navigation_drawer)
             Box(
@@ -73,8 +76,9 @@ fun TopBar(scope: CoroutineScope, scaffoldState: ScaffoldState, title: Int) {
                 )
             }
         },
-        backgroundColor = colorResource(id = R.color.accent_secondary),
-        contentColor = Color.White
+        backgroundColor = MaterialTheme.colors.primarySurface,
+        contentColor = contentColorFor(MaterialTheme.colors.primarySurface),
+        elevation = 0.dp
     )
 }
 

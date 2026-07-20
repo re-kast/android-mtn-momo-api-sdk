@@ -36,9 +36,9 @@ defaultRepository.checkApiUser(
 }
 ```
 
-| Parameter | Type | Description |
-|---|---|---|
-| `apiVersion` | `String` | API version, e.g. `"v1_0"` |
+| Parameter                | Type     | Description                                       |
+|--------------------------|----------|---------------------------------------------------|
+| `apiVersion`             | `String` | API version, e.g. `"v1_0"`                        |
 | `productSubscriptionKey` | `String` | Collection or remittance primary subscription key |
 
 ---
@@ -64,12 +64,12 @@ defaultRepository.createApiUser(
 }
 ```
 
-| Parameter | Type | Description |
-|---|---|---|
-| `providerCallBackHost` | `ProviderCallBackHost` | Callback host for the provider |
-| `apiVersion` | `String` | API version, e.g. `"v1_0"` |
-| `uuid` | `String` | Unique reference ID used as the API user ID |
-| `productSubscriptionKey` | `String` | Collection primary subscription key |
+| Parameter                | Type                   | Description                                 |
+|--------------------------|------------------------|---------------------------------------------|
+| `providerCallBackHost`   | `ProviderCallBackHost` | Callback host for the provider              |
+| `apiVersion`             | `String`               | API version, e.g. `"v1_0"`                  |
+| `uuid`                   | `String`               | Unique reference ID used as the API user ID |
+| `productSubscriptionKey` | `String`               | Collection primary subscription key         |
 
 ---
 
@@ -93,9 +93,9 @@ defaultRepository.createApiKey(
 }
 ```
 
-| Parameter | Type | Description |
-|---|---|---|
-| `apiVersion` | `String` | API version, e.g. `"v1_0"` |
+| Parameter                | Type     | Description                         |
+|--------------------------|----------|-------------------------------------|
+| `apiVersion`             | `String` | API version, e.g. `"v1_0"`          |
 | `productSubscriptionKey` | `String` | Remittance primary subscription key |
 
 ---
@@ -119,10 +119,10 @@ defaultRepository.getAccessToken(
 }
 ```
 
-| Parameter | Type | Description |
-|---|---|---|
-| `productSubscriptionKey` | `String` | Remittance primary subscription key |
-| `productType` | `String` | Product type string, e.g. `ProductType.REMITTANCE.productType` |
+| Parameter                | Type     | Description                                                    |
+|--------------------------|----------|----------------------------------------------------------------|
+| `productSubscriptionKey` | `String` | Remittance primary subscription key                            |
+| `productType`            | `String` | Product type string, e.g. `ProductType.REMITTANCE.productType` |
 
 ---
 
@@ -162,20 +162,20 @@ defaultRepository.bcAuthorize(
 }
 ```
 
-| Parameter | Type | Description |
-|---|---|---|
-| `productType` | `String` | Product type string, e.g. `ProductType.REMITTANCE.productType` |
-| `apiVersion` | `String` | API version, e.g. `"v1_0"` |
-| `bcAuthorizeRequest` | `BcAuthorizeRequest` | Login hint, scope, and access type |
-| `productSubscriptionKey` | `String` | Remittance primary subscription key |
-| `environment` | `String` | Target environment: `"sandbox"` or `"production"` |
+| Parameter                | Type                 | Description                                                    |
+|--------------------------|----------------------|----------------------------------------------------------------|
+| `productType`            | `String`             | Product type string, e.g. `ProductType.REMITTANCE.productType` |
+| `apiVersion`             | `String`             | API version, e.g. `"v1_0"`                                     |
+| `bcAuthorizeRequest`     | `BcAuthorizeRequest` | Login hint, scope, and access type                             |
+| `productSubscriptionKey` | `String`             | Remittance primary subscription key                            |
+| `environment`            | `String`             | Target environment: `"sandbox"` or `"production"`              |
 
 **`BcAuthorizeRequest` fields**
 
-| Field | Type | Description |
-|---|---|---|
-| `loginHint` | `String` | Subscriber identifier in the format `ID:{msisdn}/MSISDN` |
-| `scope` | `String` | OAuth2 scope, e.g. `"profile openid"` or `"all_info"` |
+| Field        | Type     | Description                                                          |
+|--------------|----------|----------------------------------------------------------------------|
+| `loginHint`  | `String` | Subscriber identifier in the format `ID:{msisdn}/MSISDN`             |
+| `scope`      | `String` | OAuth2 scope, e.g. `"profile openid"` or `"all_info"`                |
 | `accessType` | `String` | `"online"` for short-lived or `"offline"` for refresh-capable tokens |
 
 ---
@@ -201,9 +201,9 @@ defaultRepository.getOauthAccessToken(
 }
 ```
 
-| Parameter | Type | Description |
-|---|---|---|
-| `productType` | `String` | Product type string |
-| `productSubscriptionKey` | `String` | Remittance primary subscription key |
-| `environment` | `String` | Target environment: `"sandbox"` or `"production"` |
+| Parameter                           | Type     | Description                                                 |
+|-------------------------------------|----------|-------------------------------------------------------------|
+| `productType`                       | `String` | Product type string                                         |
+| `productSubscriptionKey`            | `String` | Remittance primary subscription key                         |
+| `environment`                       | `String` | Target environment: `"sandbox"` or `"production"`           |
 | `backChannelAuthorizationRequestId` | `String` | `auth_req_id` returned by `bcAuthorize` — must not be blank |
