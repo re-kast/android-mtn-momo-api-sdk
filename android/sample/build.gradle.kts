@@ -51,6 +51,9 @@ android {
 dependencies {
     implementation(platform(libs.androidx.compose.bom))
     implementation(project(":momo-api-sdk"))
+    // Lets Dokka resolve KDoc references to SDK types (e.g. [BasicUserInfo], [AccountBalance])
+    // from this module's documentation by including the SDK module in the doc graph.
+    dokka(project(":momo-api-sdk"))
     implementation(libs.androidx.security.crypto)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.kotlinx.coroutines.core)

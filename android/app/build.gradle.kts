@@ -135,6 +135,12 @@ dependencies {
     // (implementation deps in a KMP library are non-transitive.)
     implementation(project(":momo-api-sdk"))
 
+    // Include the SDK and sample modules in Dokka's doc graph so KDoc references to their
+    // types (e.g. [io.rekast.sdk.network.interfaces.CredentialProvider], sample utilities)
+    // resolve in this module's generated documentation.
+    dokka(project(":momo-api-sdk"))
+    dokka(project(":sample"))
+
     // Hilt — application-level DI wiring.
     implementation(libs.google.dagger.hilt)
     ksp(libs.hilt.android.compiler)
