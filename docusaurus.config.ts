@@ -116,7 +116,7 @@ const config: Config = {
                     ],
                 },
             ],
-            copyright: `Copyright © ${new Date().getFullYear()} Re.Kast Limited.`,
+            copyright: `Unofficial, community-maintained SDK — not affiliated with or endorsed by MTN. "MTN" and "MoMo" are trademarks of their respective owners.<br/>Copyright © ${new Date().getFullYear()} Re.Kast Limited.`,
         },
         prism: {
             theme: lightCodeTheme,
