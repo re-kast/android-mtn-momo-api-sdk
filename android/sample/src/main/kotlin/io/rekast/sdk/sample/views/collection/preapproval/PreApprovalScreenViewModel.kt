@@ -113,13 +113,11 @@ class PreApprovalScreenViewModel @Inject constructor(
                 emitSuccess("Pre-approval created successfully")
             }
 
-            is NetworkResult.Error -> {
+            else -> {
                 Timber.e("Create pre-approval failed: %s", response.message)
                 result.postValue("Create failed: ${response.message}")
                 emitError("Pre-approval not created. ${response.message}")
             }
-
-            is NetworkResult.Loading -> {}
         }
     }
 
@@ -131,13 +129,11 @@ class PreApprovalScreenViewModel @Inject constructor(
                 emitSuccess("Pre-approval status fetched successfully")
             }
 
-            is NetworkResult.Error -> {
+            else -> {
                 Timber.e("Pre-approval status failed: %s", response.message)
                 result.postValue("Status failed: ${response.message}")
                 emitError("Pre-approval status not fetched. ${response.message}")
             }
-
-            is NetworkResult.Loading -> {}
         }
     }
 
@@ -149,13 +145,11 @@ class PreApprovalScreenViewModel @Inject constructor(
                 emitSuccess("Pre-approval cancelled successfully")
             }
 
-            is NetworkResult.Error -> {
+            else -> {
                 Timber.e("Cancel pre-approval failed: %s", response.message)
                 result.postValue("Cancel failed: ${response.message}")
                 emitError("Pre-approval not cancelled. ${response.message}")
             }
-
-            is NetworkResult.Loading -> {}
         }
     }
 

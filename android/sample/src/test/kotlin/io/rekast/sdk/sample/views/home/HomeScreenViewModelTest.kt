@@ -277,4 +277,25 @@ class HomeScreenViewModelTest {
         assertNull(viewModel.basicUserInfo.value)
         assertNull(viewModel.accountBalance.value)
     }
+
+    /**
+     * A successful account-status response whose body cannot be parsed into [AccountHolderStatus]
+     * exercises the parse-failure branch: the status is not posted, but the pipeline still
+     * completes and the progress bar is hidden.
+     */
+    @Test
+    fun `loadHomeData handles unparseable account status body`() = runTest {
+        val consent = UserInfoWithConsent(sub = "sub-1", name = "John Doe", phonenumber = "256770000000")
+        coEvery { mockRepository.getUserInfoWithConsent(any(), any(), any(), any()) } returns flowOf(NetworkResult.Success(consent))
+        coEvery { mockRepository.getBasicUserInfo(any(), any(), any(), any(), any()) } returns flowOf(NetworkResult.Success(sampleBasicUserInfo()))
+        coEvery {
+            mockRepository.validateAccountHolderStatus(any(), any(), any<AccountHolder>(), any(), any())
+        } returns flowOf(NetworkResult.Success("not-json".toResponseBody("application/json".toMediaType())))
+        coEvery { mockRepository.getAccountBalance(any(), any(), any(), any(), any()) } returns flowOf(NetworkResult.Success(AccountBalance("100.00", "EUR")))
+
+        viewModel.loadHomeData()
+
+        assertNull("Unparseable status must not be posted", viewModel.accountHolderStatus.value)
+        assertFalse(viewModel.showProgressBar.value!!)
+    }
 }

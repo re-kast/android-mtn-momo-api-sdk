@@ -97,21 +97,24 @@ kover {
             excludes {
                 androidGeneratedClasses()
                 annotatedBy("*Generated*")
+                // Kover class filters match fully-qualified names with '.' separators and
+                // '*'/'?' wildcards (where '*' also spans package separators). Slash-based
+                // globs silently match nothing, so these use dotted patterns.
                 classes(
-                    "**/Hilt_*",
-                    "**/*_HiltModules*",
-                    "**/*_Provide*",
-                    "**/*ComponentTreeDeps*",
-                    "**/dagger/**",
-                    // Hilt-generated InstanceHolder inner classes
-                    "**/*Factory\$InstanceHolder",
-                    // Hilt aggregated injectors
-                    "hilt_aggregated_deps/**",
-                    // MomoApplication is an Android Application class (not unit-testable)
-                    "**/MomoApplication",
+                    "*Hilt_*",
+                    "*_HiltModules*",
+                    "*_Provide*",
+                    "*ComponentTreeDeps*",
+                    "dagger.*",
+                    // Hilt-generated InstanceHolder inner classes.
+                    "*Factory\$InstanceHolder",
+                    // Hilt aggregated injectors.
+                    "hilt_aggregated_deps.*",
+                    // MomoApplication is an Android Application class (not unit-testable).
+                    "io.rekast.sdk.app.MomoApplication",
                     // DispatchersModule is a Hilt module providing coroutine dispatchers;
                     // its single line is not independently testable.
-                    "**/DispatchersModule"
+                    "io.rekast.sdk.app.di.DispatchersModule"
                 )
             }
         }

@@ -206,12 +206,10 @@ class DisbursementDepositScreenViewModel @Inject constructor(
                         fetchStatus(referenceId, subscriptionKey)
                     }
 
-                    is NetworkResult.Error -> {
+                    else -> {
                         Timber.e("Deposit failed: %s", submit.message)
                         emitError("Deposit was not sent. ${submit.message}")
                     }
-
-                    is NetworkResult.Loading -> {}
                 }
             } catch (exception: Exception) {
                 Timber.e(exception, "Deposit failed")
@@ -238,12 +236,10 @@ class DisbursementDepositScreenViewModel @Inject constructor(
                 emitSuccess("Deposit status fetched successfully")
             }
 
-            is NetworkResult.Error -> {
+            else -> {
                 Timber.e("Deposit status failed: %s", result.message)
                 emitError("Deposit status not fetched. ${result.message}")
             }
-
-            is NetworkResult.Loading -> {}
         }
     }
 

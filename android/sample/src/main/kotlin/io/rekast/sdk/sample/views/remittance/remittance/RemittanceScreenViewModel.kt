@@ -208,12 +208,10 @@ class RemittanceScreenViewModel @Inject constructor(
                         fetchStatus(referenceId, subscriptionKey)
                     }
 
-                    is NetworkResult.Error -> {
+                    else -> {
                         Timber.e("Remittance transfer failed: %s", submit.message)
                         emitError("Remittance transfer was not sent. ${submit.message}")
                     }
-
-                    is NetworkResult.Loading -> {}
                 }
             } catch (exception: Exception) {
                 Timber.e(exception, "Remittance transfer failed")
@@ -242,12 +240,10 @@ class RemittanceScreenViewModel @Inject constructor(
                 emitSuccess("Remittance transfer status fetched successfully")
             }
 
-            is NetworkResult.Error -> {
+            else -> {
                 Timber.e("Remittance transfer status failed: %s", result.message)
                 emitError("Remittance transfer status not fetched. ${result.message}")
             }
-
-            is NetworkResult.Loading -> {}
         }
     }
 

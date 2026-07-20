@@ -150,38 +150,41 @@ kover {
         filters {
             excludes {
                 androidGeneratedClasses()
-                annotatedBy("*Generated*")
+                // Excludes generated code and all Compose @Preview functions (dev-only tooling,
+                // never executed by tests). Covers both the project's *ExcludeGenerated composite
+                // annotations and any plain androidx @Preview usages.
+                annotatedBy("*Generated*", "androidx.compose.ui.tooling.preview.Preview")
+                // Kover class filters match fully-qualified names with '.' separators and
+                // '*'/'?' wildcards (where '*' also spans package separators). Slash-based
+                // globs silently match nothing, so these use dotted patterns.
                 classes(
-                    // Standard Hilt-generated class patterns (slash-based, matching JVM class names)
-                    "**/Hilt_*",
-                    "**/*_HiltModules*",
-                    "**/*_Provide*",
-                    "**/*ComponentTreeDeps*",
-                    "**/dagger/**",
-                    // Hilt-generated InstanceHolder inner classes
-                    "**/*Factory\$InstanceHolder",
-                    // Hilt aggregated dependency injectors (_io_* in hilt_aggregated_deps)
-                    "hilt_aggregated_deps/**",
-                    // Screen composables (*ScreenKt) are now covered by Robolectric Compose UI tests,
-                    // so they are intentionally NOT excluded from coverage.
-                    "**/*ActivityKt",
-                    "**/*ActivityKt\$*",
-                    "**/*ComposableSingletons*",
-                    // CredentialStorage uses EncryptedSharedPreferences (Android runtime only)
-                    "**/CredentialStorage",
-                    "**/CredentialStorage\$*",
-                    // AndroidExtensions uses android.* APIs not available in unit tests
-                    "**/AndroidExtensionsKt",
-                    "**/AndroidExtensionsKt\$*",
-                    // DispatcherProvider default implementations (interface defaults, not logic)
-                    "**/DispatcherProvider",
-                    "**/DispatcherProvider\$*",
-                    "**/DefaultDispatcherProvider",
-                    "**/DefaultDispatcherProvider*",
-                    // ViewModel emitSnackBarState lambdas (fire-and-forget SharedFlow emit)
-                    "**/*\$emitSnackBarState\$*"
+                    // Standard Hilt-generated classes.
+                    "*Hilt_*",
+                    "*_HiltModules*",
+                    "*_Provide*",
+                    "*ComponentTreeDeps*",
+                    "dagger.*",
+                    // Hilt-generated InstanceHolder inner classes.
+                    "*Factory\$InstanceHolder",
+                    // Hilt aggregated dependency injectors (_io_* in hilt_aggregated_deps).
+                    "hilt_aggregated_deps.*",
+                    // Compose generated singletons and Activity entry points.
+                    "*ActivityKt",
+                    "*ActivityKt\$*",
+                    "*ComposableSingletons*",
+                    // CredentialStorage uses EncryptedSharedPreferences (Android runtime only).
+                    "io.rekast.sdk.sample.utils.CredentialStorage",
+                    "io.rekast.sdk.sample.utils.CredentialStorage\$*",
+                    // AndroidExtensions uses android.* APIs not available in unit tests.
+                    "io.rekast.sdk.sample.utils.AndroidExtensionsKt",
+                    "io.rekast.sdk.sample.utils.AndroidExtensionsKt\$*",
+                    // DispatcherProvider default implementations (interface defaults, not logic).
+                    "io.rekast.sdk.sample.utils.DispatcherProvider",
+                    "io.rekast.sdk.sample.utils.DispatcherProvider\$*",
+                    "io.rekast.sdk.sample.utils.DefaultDispatcherProvider*",
+                    // ViewModel emitSnackBarState lambdas (fire-and-forget SharedFlow emit).
+                    "*\$emitSnackBarState\$*"
                 )
-                packages("io.rekast.sdk.sample.ui")
             }
         }
     }

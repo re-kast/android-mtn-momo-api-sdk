@@ -245,4 +245,30 @@ class CollectionWithdrawScreenViewModelTest {
 
         assertNull(viewModel.momoTransaction.value)
     }
+
+    /**
+     * When a delivery note is present, a failed delivery notification is handled gracefully
+     * (error branch) without blocking the subsequent status poll.
+     */
+    @Test
+    fun `requestToWithdraw with delivery note handles failed delivery notification`() = runTest {
+        every { mockRepository.requestToWithdraw(any(), any(), any(), any()) } returns flowOf(NetworkResult.Success(Unit))
+        every { mockRepository.requestToWithdrawTransactionStatus(any(), any(), any()) } returns
+            flowOf(
+                NetworkResult.Success(
+                    """{"amount":"100","currency":"EUR","externalId":"ext-1","payerMessage":"msg","payeeNote":"note","status":"SUCCESSFUL"}"""
+                        .toResponseBody("application/json".toMediaType())
+                )
+            )
+        every { mockRepository.requestToWithdrawDeliveryNotification(any(), any(), any(), any(), any()) } returns
+            flowOf(NetworkResult.Error("delivery failed"))
+
+        viewModel.onPhoneNumberUpdated("256700000000")
+        viewModel.onAmountUpdated("100")
+        viewModel.onDeliveryNoteUpdated("Please deliver")
+        viewModel.requestToWithdraw()
+
+        verify { mockRepository.requestToWithdrawDeliveryNotification(any(), any(), any(), any(), any()) }
+        assertFalse(viewModel.showProgressBar.value!!)
+    }
 }

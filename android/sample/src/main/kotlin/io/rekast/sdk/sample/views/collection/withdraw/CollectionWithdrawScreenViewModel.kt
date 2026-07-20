@@ -209,12 +209,10 @@ class CollectionWithdrawScreenViewModel @Inject constructor(
                         fetchStatus(referenceId, subscriptionKey)
                     }
 
-                    is NetworkResult.Error -> {
+                    else -> {
                         Timber.e("Request to withdraw failed: %s", submit.message)
                         emitError("Request to withdraw was not sent. ${submit.message}")
                     }
-
-                    is NetworkResult.Loading -> {}
                 }
             } catch (exception: Exception) {
                 Timber.e(exception, "Request to withdraw failed")
@@ -241,12 +239,10 @@ class CollectionWithdrawScreenViewModel @Inject constructor(
                 emitSuccess("Request to withdraw status fetched successfully")
             }
 
-            is NetworkResult.Error -> {
+            else -> {
                 Timber.e("Request to withdraw status failed: %s", result.message)
                 emitError("Request to withdraw status not fetched. ${result.message}")
             }
-
-            is NetworkResult.Loading -> {}
         }
     }
 
@@ -262,12 +258,10 @@ class CollectionWithdrawScreenViewModel @Inject constructor(
         when (result) {
             is NetworkResult.Success -> emitSuccess("Delivery note sent successfully")
 
-            is NetworkResult.Error -> {
+            else -> {
                 Timber.e("Delivery note failed: %s", result.message)
                 emitError("Delivery note was not sent. ${result.message}")
             }
-
-            is NetworkResult.Loading -> {}
         }
     }
 

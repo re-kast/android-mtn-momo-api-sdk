@@ -470,4 +470,59 @@ class TokenAuthenticatorTest {
 
         assertNull(authenticator.authenticate(null, response))
     }
+
+    /**
+     * Verifies that an exception thrown by the Bearer token endpoint is caught and treated as a
+     * failed refresh: [TokenAuthenticator.authenticate] returns `null` and saves no token.
+     */
+    @Test
+    fun `authenticate returns null when token endpoint throws`() {
+        every { mockStorage.getApiKey() } returns "test-api-key"
+        coEvery { mockAuthService.getAccessToken(any(), any()) } throws RuntimeException("network down")
+
+        val result = authenticator.authenticate(null, buildUnauthorizedResponse(collectionUrl()))
+
+        assertNull("Should give up when the token refresh call throws", result)
+        verify(exactly = 0) { mockStorage.saveAccessToken(any()) }
+    }
+
+    /**
+     * Verifies that an exception thrown by the OAuth2 token endpoint is caught and treated as a
+     * (non-fatal) failed consent refresh: the Bearer token is still refreshed and the original
+     * request returned for retry.
+     */
+    @Test
+    fun `authenticate returns original request when OAuth2 endpoint throws`() {
+        every { mockStorage.getApiKey() } returns "test-api-key"
+        every { mockStorage.getOauthAccessToken() } returns ""
+        every { mockStorage.getBackChannelAuthorizationRequestId() } returns "stored-auth-req-id"
+        stubAccessTokenSuccess()
+        coEvery { mockAuthService.getOauth2AccessToken(any(), any(), any(), any(), any()) } throws RuntimeException("oauth down")
+
+        val result = authenticator.authenticate(null, buildUnauthorizedResponse(collectionUrl()))
+
+        assertNotNull("OAuth2 failure is non-fatal; request should still be retried", result)
+        verify(exactly = 1) { mockStorage.saveAccessToken(any()) }
+        verify(exactly = 0) { mockStorage.saveOauthAccessToken(any()) }
+    }
+
+    /**
+     * Verifies that an exception thrown by the bc-authorize endpoint is caught and treated as a
+     * (non-fatal) failure: the Bearer token is still refreshed and the original request returned.
+     */
+    @Test
+    fun `authenticate returns original request when bc-authorize throws`() {
+        every { mockStorage.getApiKey() } returns "test-api-key"
+        every { mockStorage.getOauthAccessToken() } returns ""
+        every { mockStorage.getBackChannelAuthorizationRequestId() } returns ""
+        every { mockStorage.getLoginHint() } returns "ID:256770000000/MSISDN"
+        stubAccessTokenSuccess()
+        coEvery { mockAuthService.bcAuthorize(any(), any(), any(), any(), any(), any(), any()) } throws RuntimeException("bc down")
+
+        val result = authenticator.authenticate(null, buildUnauthorizedResponse(collectionUrl()))
+
+        assertNotNull("bc-authorize failure is non-fatal; request should still be retried", result)
+        verify(exactly = 1) { mockStorage.saveAccessToken(any()) }
+        verify(exactly = 0) { mockStorage.saveOauthAccessToken(any()) }
+    }
 }

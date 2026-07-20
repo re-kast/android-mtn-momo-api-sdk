@@ -206,12 +206,10 @@ class DisbursementRefundScreenViewModel @Inject constructor(
                         fetchStatus(referenceId, subscriptionKey)
                     }
 
-                    is NetworkResult.Error -> {
+                    else -> {
                         Timber.e("Refund failed: %s", submit.message)
                         emitError("Refund was not sent. ${submit.message}")
                     }
-
-                    is NetworkResult.Loading -> {}
                 }
             } catch (exception: Exception) {
                 Timber.e(exception, "Refund failed")
@@ -238,12 +236,10 @@ class DisbursementRefundScreenViewModel @Inject constructor(
                 emitSuccess("Refund status fetched successfully")
             }
 
-            is NetworkResult.Error -> {
+            else -> {
                 Timber.e("Refund status failed: %s", result.message)
                 emitError("Refund status not fetched. ${result.message}")
             }
-
-            is NetworkResult.Loading -> {}
         }
     }
 

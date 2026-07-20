@@ -55,7 +55,7 @@ class CollectionPayScreenTest {
         mockk(relaxed = true)
     )
 
-    private fun setScreen(showProgressBar: Boolean = false) {
+    private fun setScreen(showProgressBar: Boolean = false, momoTransaction: MutableLiveData<MomoTransaction?> = MutableLiveData(null)) {
         composeRule.setContent {
             AppTheme {
                 CollectionScreen(
@@ -63,7 +63,7 @@ class CollectionPayScreenTest {
                     snackStateFlow = snackFlow,
                     showProgressBar = showProgressBar,
                     collectionPayScreenViewModel = viewModel(),
-                    momoTransaction = MutableLiveData(null)
+                    momoTransaction = momoTransaction
                 )
             }
         }
@@ -81,5 +81,19 @@ class CollectionPayScreenTest {
     fun `hides form while loading`() {
         setScreen(showProgressBar = true)
         composeRule.onNodeWithText("Request to Pay").assertDoesNotExist()
+    }
+
+    /** When a transaction result is present, the result summary (amount) is shown instead of the form. */
+    @Test
+    fun `renders result view when transaction present`() {
+        val sampleTransaction = MomoTransaction(
+            amount = "100",
+            currency = "EUR",
+            externalId = "ext-1",
+            payerMessage = "msg",
+            payeeNote = "note"
+        )
+        setScreen(momoTransaction = MutableLiveData(sampleTransaction))
+        composeRule.onNodeWithText("100").assertIsDisplayed()
     }
 }

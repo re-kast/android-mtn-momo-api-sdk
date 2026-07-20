@@ -122,13 +122,11 @@ class InvoiceScreenViewModel @Inject constructor(
                 emitSuccess("Invoice created successfully")
             }
 
-            is NetworkResult.Error -> {
+            else -> {
                 Timber.e("Create invoice failed: %s", response.message)
                 result.postValue("Create failed: ${response.message}")
                 emitError("Invoice not created. ${response.message}")
             }
-
-            is NetworkResult.Loading -> {}
         }
     }
 
@@ -140,13 +138,11 @@ class InvoiceScreenViewModel @Inject constructor(
                 emitSuccess("Invoice status fetched successfully")
             }
 
-            is NetworkResult.Error -> {
+            else -> {
                 Timber.e("Invoice status failed: %s", response.message)
                 result.postValue("Status failed: ${response.message}")
                 emitError("Invoice status not fetched. ${response.message}")
             }
-
-            is NetworkResult.Loading -> {}
         }
     }
 
@@ -158,13 +154,11 @@ class InvoiceScreenViewModel @Inject constructor(
                 emitSuccess("Invoice cancelled successfully")
             }
 
-            is NetworkResult.Error -> {
+            else -> {
                 Timber.e("Cancel invoice failed: %s", response.message)
                 result.postValue("Cancel failed: ${response.message}")
                 emitError("Invoice not cancelled. ${response.message}")
             }
-
-            is NetworkResult.Loading -> {}
         }
     }
 

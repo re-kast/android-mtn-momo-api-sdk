@@ -158,7 +158,7 @@ class HomeScreenViewModel @Inject constructor(
                 result.response
             }
 
-            is NetworkResult.Error -> {
+            else -> {
                 Timber.e("User info with consent was not fetched: %s", result.message)
                 emitSnackBarState(
                     SnackBarComponentConfiguration(
@@ -168,8 +168,6 @@ class HomeScreenViewModel @Inject constructor(
                 )
                 null
             }
-
-            is NetworkResult.Loading -> null
         }
     }
 
@@ -199,7 +197,7 @@ class HomeScreenViewModel @Inject constructor(
                 )
             }
 
-            is NetworkResult.Error -> {
+            else -> {
                 Timber.e("Basic user info was not fetched: %s", result.message)
                 emitSnackBarState(
                     SnackBarComponentConfiguration(
@@ -208,8 +206,6 @@ class HomeScreenViewModel @Inject constructor(
                     )
                 )
             }
-
-            is NetworkResult.Loading -> {}
         }
     }
 
@@ -253,7 +249,7 @@ class HomeScreenViewModel @Inject constructor(
                 }
             }
 
-            is NetworkResult.Error -> {
+            else -> {
                 Timber.e("Account Holder status was not fetched: %s", result.message)
                 emitSnackBarState(
                     SnackBarComponentConfiguration(
@@ -262,8 +258,6 @@ class HomeScreenViewModel @Inject constructor(
                     )
                 )
             }
-
-            is NetworkResult.Loading -> {}
         }
     }
 
@@ -300,7 +294,7 @@ class HomeScreenViewModel @Inject constructor(
                 )
             }
 
-            is NetworkResult.Error -> {
+            else -> {
                 Timber.e("Account balance was not fetched: %s", result.message)
                 emitSnackBarState(
                     SnackBarComponentConfiguration(
@@ -309,8 +303,6 @@ class HomeScreenViewModel @Inject constructor(
                     )
                 )
             }
-
-            is NetworkResult.Loading -> {}
         }
     }
 

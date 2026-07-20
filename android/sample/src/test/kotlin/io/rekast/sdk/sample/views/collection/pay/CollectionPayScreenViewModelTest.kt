@@ -245,4 +245,53 @@ class CollectionPayScreenViewModelTest {
 
         assertNull(viewModel.momoTransaction.value)
     }
+
+    /**
+     * When a delivery note is present, a successful request-to-pay sends a delivery notification;
+     * a failed notification is handled gracefully (error branch) without blocking status polling.
+     */
+    @Test
+    fun `requestToPay with delivery note handles failed delivery notification`() = runTest {
+        every { mockRepository.requestToPay(any(), any(), any(), any()) } returns flowOf(NetworkResult.Success(Unit))
+        every { mockRepository.requestToPayTransactionStatus(any(), any(), any()) } returns
+            flowOf(
+                NetworkResult.Success(
+                    """{"amount":"100","currency":"EUR","externalId":"ext-1","payerMessage":"msg","payeeNote":"note","status":"SUCCESSFUL"}"""
+                        .toResponseBody("application/json".toMediaType())
+                )
+            )
+        every { mockRepository.requestToPayDeliveryNotification(any(), any(), any(), any(), any(), any()) } returns
+            flowOf(NetworkResult.Error("delivery failed"))
+
+        viewModel.onPhoneNumberUpdated("256700000000")
+        viewModel.onAmountUpdated("100")
+        viewModel.onDeliveryNoteUpdated("Please deliver")
+        viewModel.requestToPay()
+
+        verify { mockRepository.requestToPayDeliveryNotification(any(), any(), any(), any(), any(), any()) }
+        assertFalse(viewModel.showProgressBar.value!!)
+    }
+
+    /** A successful delivery notification emits success and still polls for status. */
+    @Test
+    fun `requestToPay with delivery note sends notification successfully`() = runTest {
+        every { mockRepository.requestToPay(any(), any(), any(), any()) } returns flowOf(NetworkResult.Success(Unit))
+        every { mockRepository.requestToPayTransactionStatus(any(), any(), any()) } returns
+            flowOf(
+                NetworkResult.Success(
+                    """{"amount":"100","currency":"EUR","externalId":"ext-1","payerMessage":"msg","payeeNote":"note","status":"SUCCESSFUL"}"""
+                        .toResponseBody("application/json".toMediaType())
+                )
+            )
+        every { mockRepository.requestToPayDeliveryNotification(any(), any(), any(), any(), any(), any()) } returns
+            flowOf(NetworkResult.Success("ok".toResponseBody("text/plain".toMediaType())))
+
+        viewModel.onPhoneNumberUpdated("256700000000")
+        viewModel.onAmountUpdated("100")
+        viewModel.onDeliveryNoteUpdated("Please deliver")
+        viewModel.requestToPay()
+
+        verify { mockRepository.requestToPayDeliveryNotification(any(), any(), any(), any(), any(), any()) }
+        assertNotNull(viewModel.momoTransaction.value)
+    }
 }

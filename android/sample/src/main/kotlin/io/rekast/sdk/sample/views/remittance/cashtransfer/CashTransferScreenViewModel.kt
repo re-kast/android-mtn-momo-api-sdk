@@ -134,13 +134,11 @@ class CashTransferScreenViewModel @Inject constructor(
                 emitSuccess("Cash transfer sent successfully")
             }
 
-            is NetworkResult.Error -> {
+            else -> {
                 Timber.e("Cash transfer failed: %s", response.message)
                 result.postValue("Send failed: ${response.message}")
                 emitError("Cash transfer not sent. ${response.message}")
             }
-
-            is NetworkResult.Loading -> {}
         }
     }
 
@@ -152,13 +150,11 @@ class CashTransferScreenViewModel @Inject constructor(
                 emitSuccess("Cash transfer status fetched successfully")
             }
 
-            is NetworkResult.Error -> {
+            else -> {
                 Timber.e("Cash transfer status failed: %s", response.message)
                 result.postValue("Status failed: ${response.message}")
                 emitError("Cash transfer status not fetched. ${response.message}")
             }
-
-            is NetworkResult.Loading -> {}
         }
     }
 

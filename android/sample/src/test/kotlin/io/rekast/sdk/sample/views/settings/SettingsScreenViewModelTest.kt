@@ -36,6 +36,9 @@ import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 
 /**
  * Unit tests for [SettingsScreenViewModel].
@@ -43,8 +46,14 @@ import org.junit.Test
  * Verifies that the host app build metadata is read from the [PackageManager] (with a graceful
  * fallback), that the static config is exposed, and that [SettingsScreenViewModel.clearCredentials]
  * wipes secure storage and emits an informational snackbar.
+ *
+ * Runs under Robolectric so `Build.VERSION.SDK_INT` is a real, configurable value: the class default
+ * (API 34) exercises the modern `longVersionCode` path, and one test pins API 26 to cover the
+ * legacy `versionCode` fallback.
  */
 @OptIn(ExperimentalCoroutinesApi::class)
+@RunWith(RobolectricTestRunner::class)
+@Config(sdk = [34])
 class SettingsScreenViewModelTest {
 
     private val testDispatcher = UnconfinedTestDispatcher()
@@ -74,7 +83,7 @@ class SettingsScreenViewModelTest {
 
     private fun createViewModel() = SettingsScreenViewModel(mockContext, mockStorage, mockConfig)
 
-    /** appInfo is populated from the host package metadata read on construction. */
+    /** appInfo is populated from the host package metadata read on construction (modern SDK path). */
     @Test
     fun `appInfo reads package metadata`() {
         val viewModel = createViewModel()
@@ -82,6 +91,15 @@ class SettingsScreenViewModelTest {
         assertEquals("1.2.3", viewModel.appInfo.versionName)
         assertEquals("42", viewModel.appInfo.versionCode)
         assertEquals("io.rekast.sdk.sample", viewModel.appInfo.packageName)
+    }
+
+    /** On pre-P devices the legacy `versionCode` field is used to read the build version code. */
+    @Test
+    @Config(sdk = [26])
+    fun `appInfo reads legacy version code on pre-P devices`() {
+        val viewModel = createViewModel()
+
+        assertEquals("42", viewModel.appInfo.versionCode)
     }
 
     /** A missing package degrades gracefully to blank version fields rather than crashing. */

@@ -119,12 +119,10 @@ open class MainViewModel @Inject constructor(
                     when (result) {
                         is NetworkResult.Success -> createApiKey()
 
-                        is NetworkResult.Error -> {
+                        else -> {
                             Timber.e("API user creation failed: %s", result.message)
                             _isBootstrapComplete.value = true
                         }
-
-                        is NetworkResult.Loading -> {}
                     }
                 }
         }
@@ -167,12 +165,10 @@ open class MainViewModel @Inject constructor(
                         }
                     }
 
-                    is NetworkResult.Error -> {
+                    else -> {
                         Timber.e("API key creation failed: %s", result.message)
                         _isBootstrapComplete.value = true
                     }
-
-                    is NetworkResult.Loading -> {}
                 }
             }
         }
@@ -212,12 +208,10 @@ open class MainViewModel @Inject constructor(
                             }
                         }
 
-                        is NetworkResult.Error -> {
+                        else -> {
                             Timber.e("Access token fetch failed: %s", result.message)
                             _isBootstrapComplete.value = true
                         }
-
-                        is NetworkResult.Loading -> {}
                     }
                 }
             } else {
@@ -272,12 +266,10 @@ open class MainViewModel @Inject constructor(
                         } ?: run { _isBootstrapComplete.value = true }
                     }
 
-                    is NetworkResult.Error -> {
+                    else -> {
                         Timber.e("BC authorize failed: %s", result.message)
                         _isBootstrapComplete.value = true
                     }
-
-                    is NetworkResult.Loading -> {}
                 }
             }
         }
@@ -338,12 +330,10 @@ open class MainViewModel @Inject constructor(
                                 _isBootstrapComplete.value = true
                             }
 
-                            is NetworkResult.Error -> {
+                            else -> {
                                 Timber.e("OAuth2 token fetch failed: %s", result.message)
                                 _isBootstrapComplete.value = true
                             }
-
-                            is NetworkResult.Loading -> {}
                         }
                     }
                 }
