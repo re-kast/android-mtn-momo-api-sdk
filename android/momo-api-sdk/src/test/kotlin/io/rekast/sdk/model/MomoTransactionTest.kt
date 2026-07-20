@@ -15,7 +15,8 @@
  */
 package io.rekast.sdk.model
 
-import kotlinx.serialization.encodeToString
+import io.rekast.sdk.utils.PartyTypes
+import io.rekast.sdk.utils.StatusTypes
 import kotlinx.serialization.json.Json
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
@@ -33,16 +34,16 @@ class MomoTransactionTest {
         currency = "EUR",
         financialTransactionId = "fin-789",
         externalId = "ext-789",
-        payee = AccountHolder(partyIdType = "MSISDN", partyId = "256770000000"),
-        payer = AccountHolder(partyIdType = "MSISDN", partyId = "256780000000"),
+        payee = Party(partyIdType = PartyTypes.MSISDN, partyId = "256770000000"),
+        payer = Party(partyIdType = PartyTypes.MSISDN, partyId = "256780000000"),
         payerMessage = "Payment message",
         payeeNote = "Payment note",
-        status = "SUCCESSFUL",
+        status = StatusTypes.SUCCESSFUL,
         reason = "None",
         referenceIdToRefund = "ref-refund-1"
     )
 
-    /** Verifies that all required [MomoTransaction] fields and the nested [AccountHolder] payer are mapped. */
+    /** Verifies that all required [MomoTransaction] fields and the nested [Party] payer are mapped. */
     @Test
     fun `MomoTransaction required fields are mapped correctly from JSON`() {
         val raw = """
@@ -66,7 +67,7 @@ class MomoTransactionTest {
         assertEquals("Payment for goods", result.payerMessage)
         assertEquals("Thank you", result.payeeNote)
         assertNotNull(result.payer)
-        assertEquals("MSISDN", result.payer?.partyIdType)
+        assertEquals(PartyTypes.MSISDN, result.payer?.partyIdType)
         assertEquals("256700000001", result.payer?.partyId)
     }
 
@@ -90,7 +91,7 @@ class MomoTransactionTest {
         assertEquals("", result.financialTransactionId)
         assertNull(result.payee)
         assertNull(result.payer)
-        assertEquals("", result.status)
+        assertNull(result.status)
         assertEquals("", result.reason)
         assertEquals("", result.referenceIdToRefund)
     }
@@ -125,7 +126,7 @@ class MomoTransactionTest {
         val result = json.decodeFromString<MomoTransaction>(raw)
         assertNotNull(result)
         assertEquals("fin-txn-999", result.financialTransactionId)
-        assertEquals("SUCCESSFUL", result.status)
+        assertEquals(StatusTypes.SUCCESSFUL, result.status)
         assertEquals("ref-001", result.referenceIdToRefund)
         assertEquals("221700000002", result.payee?.partyId)
         assertEquals("221700000003", result.payer?.partyId)

@@ -19,9 +19,11 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.lifecycle.MutableLiveData
-import io.rekast.sdk.model.AccountHolder
 import io.rekast.sdk.model.MomoTransaction
+import io.rekast.sdk.model.Party
 import io.rekast.sdk.sample.ui.theme.AppTheme
+import io.rekast.sdk.utils.PartyTypes
+import io.rekast.sdk.utils.StatusTypes
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -71,10 +73,10 @@ class PaymentDataDisplayComponentTest {
                 amount = "1500",
                 currency = "EUR",
                 externalId = "947354",
-                payee = AccountHolder(partyIdType = "msisdn", partyId = "256770000000"),
+                payee = Party(partyIdType = PartyTypes.MSISDN, partyId = "256770000000"),
                 payerMessage = "Payment for goods",
                 payeeNote = "Monthly subscription",
-                status = "SUCCESSFUL"
+                status = StatusTypes.SUCCESSFUL
             )
         )
         composeRule.onNodeWithText("1500").assertIsDisplayed()
@@ -92,7 +94,7 @@ class PaymentDataDisplayComponentTest {
                 amount = "2000",
                 currency = "UGX",
                 externalId = "111222",
-                payer = AccountHolder(partyIdType = "msisdn", partyId = "256711111111"),
+                payer = Party(partyIdType = PartyTypes.MSISDN, partyId = "256711111111"),
                 payerMessage = "Send",
                 payeeNote = "Note"
             )

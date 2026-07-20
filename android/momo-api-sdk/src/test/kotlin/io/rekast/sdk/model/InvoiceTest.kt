@@ -15,7 +15,7 @@
  */
 package io.rekast.sdk.model
 
-import kotlinx.serialization.encodeToString
+import io.rekast.sdk.utils.PartyTypes
 import kotlinx.serialization.json.Json
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
@@ -33,7 +33,7 @@ class InvoiceTest {
         amount = "3000",
         currency = "EUR",
         validityDuration = "3600",
-        intendedPayer = AccountHolder(partyIdType = "MSISDN", partyId = "256770000000"),
+        intendedPayer = Party(partyIdType = PartyTypes.MSISDN, partyId = "256770000000"),
         payerMessage = "Please pay this invoice",
         payeeNote = "Invoice for services",
         description = "Consulting services rendered"

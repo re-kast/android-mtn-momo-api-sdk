@@ -348,6 +348,8 @@ defaultRepository.getPreApprovalStatus(
 | `productSubscriptionKey` | `String` | Collection primary subscription key        |
 | `environment`            | `String` | `"sandbox"` or `"production"`              |
 
+`getPreApprovalStatus(...)` returns `Flow<NetworkResult<PreApprovalStatus>>` (`payer`, `payerCurrency`, `payerMessage`, a `status` of type `StatusTypes` (`PENDING`, `SUCCESSFUL`, `FAILED`), `expirationDateTime`, and a `reason` of `code` + `message`).
+
 ---
 
 ## Cancel Pre-Approval
@@ -393,3 +395,59 @@ defaultRepository.getApprovedPreApprovals(
 | `accountHolderId`        | `String` | Account holder identifier whose approvals to list |
 | `productSubscriptionKey` | `String` | Collection primary subscription key             |
 | `environment`            | `String` | `"sandbox"` or `"production"`                   |
+
+`getApprovedPreApprovals(...)` returns `Flow<NetworkResult<ApprovedPreApprovals>>`, whose `preApprovalDetails` is a list of `PreApprovalDetails` (`preApprovalId`, `toFri`, `fromFri`, `fromCurrency`, `createdTime`, a `status` `StatusTypes` enum, `message`, and optional `approvedTime`, `expiryTime`, a `frequency` `FrequencyType` enum, `startDate`, `lastUsedDate`, `offer`, `externalId`, `maxDebitAmount`).
+
+---
+
+## Create Payment
+
+Creates a payment (V2). The `money` amount reuses the `Money` model.
+
+```kotlin
+defaultRepository.createPayment(
+    apiVersion = "v2_0",
+    payment = Payment(
+        externalTransactionId = UUID.randomUUID().toString(),
+        money = Money(amount = "100", currency = "EUR"),
+        customerReference = "+46070911111",
+        receiverMessage = "Payment for order #42",
+        senderNote = "Order #42"
+    ),
+    uuid = paymentUuid,
+    productSubscriptionKey = collectionPrimaryKey,
+    environment = "sandbox"
+).collect { result -> /* ... */ }
+```
+
+| Parameter                | Type      | Description                                        |
+|--------------------------|-----------|----------------------------------------------------|
+| `apiVersion`             | `String`  | API version, e.g. `"v2_0"`                         |
+| `payment`                | `Payment` | Amount/currency (`Money`), references, and notes   |
+| `uuid`                   | `String`  | Unique reference ID — save this to poll for status |
+| `productSubscriptionKey` | `String`  | Collection primary subscription key                |
+| `environment`            | `String`  | `"sandbox"` or `"production"`                      |
+
+---
+
+## Get Payment Status
+
+Checks the status of a previously created payment.
+
+```kotlin
+defaultRepository.getPaymentStatus(
+    apiVersion = "v2_0",
+    referenceId = paymentUuid,
+    productSubscriptionKey = collectionPrimaryKey,
+    environment = "sandbox"
+).collect { result -> /* ... */ }
+```
+
+| Parameter                | Type     | Description                            |
+|--------------------------|----------|----------------------------------------|
+| `apiVersion`             | `String` | API version, e.g. `"v2_0"`             |
+| `referenceId`            | `String` | UUID used when calling `createPayment` |
+| `productSubscriptionKey` | `String` | Collection primary subscription key    |
+| `environment`            | `String` | `"sandbox"` or `"production"`          |
+
+`getPaymentStatus(...)` returns `Flow<NetworkResult<PaymentStatus>>` (`referenceId`, a `status` of type `StatusTypes` (`CREATED`, `PENDING`, `SUCCESSFUL`, `FAILED`), `financialTransactionId`, and a `reason` of `code` + `message`).

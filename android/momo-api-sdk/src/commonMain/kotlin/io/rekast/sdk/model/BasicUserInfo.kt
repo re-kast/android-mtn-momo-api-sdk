@@ -37,11 +37,11 @@ import kotlinx.serialization.Transient
 data class BasicUserInfo(
     @SerialName("sub") var sub: String,
     @SerialName("name") var name: String,
-    @SerialName("given_name") var givenName: String,
-    @SerialName("family_name") var familyName: String,
-    @SerialName("birthdate") var birthDate: String,
-    @SerialName("locale") var locale: String,
-    @SerialName("gender") var gender: String,
-    @SerialName("updated_at") var updatedAt: Int,
+    @SerialName("given_name") var givenName: String? = null,
+    @SerialName("family_name") var familyName: String? = null,
+    @SerialName("birthdate") var birthDate: String? = null,
+    @SerialName("locale") var locale: String? = null,
+    @SerialName("gender") var gender: String? = null,
+    @SerialName("updated_at") var updatedAt: Int? = null,
     @Transient var displayUpdatedAt: String = ""
 )

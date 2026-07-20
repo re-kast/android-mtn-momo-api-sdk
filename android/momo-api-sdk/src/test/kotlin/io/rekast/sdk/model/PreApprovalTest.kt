@@ -15,8 +15,8 @@
  */
 package io.rekast.sdk.model
 
+import io.rekast.sdk.utils.PartyTypes
 import kotlinx.serialization.SerializationException
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
@@ -30,7 +30,7 @@ class PreApprovalTest {
     private val jsonWithDefaults = Json { encodeDefaults = true }
 
     private fun fullPreApproval() = PreApproval(
-        payer = AccountHolder(partyIdType = "MSISDN", partyId = "256770000000"),
+        payer = Party(partyIdType = PartyTypes.MSISDN, partyId = "256770000000"),
         payerCurrency = "EUR",
         payerMessage = "Please approve this pre-approval",
         validityTime = 3600
@@ -49,7 +49,7 @@ class PreApprovalTest {
         """.trimIndent()
         val result = json.decodeFromString<PreApproval>(raw)
         assertNotNull(result)
-        assertEquals("MSISDN", result.payer.partyIdType)
+        assertEquals(PartyTypes.MSISDN, result.payer.partyIdType)
         assertEquals("256700000001", result.payer.partyId)
         assertEquals("EUR", result.payerCurrency)
         assertEquals("Pre-approval for subscription", result.payerMessage)
@@ -80,7 +80,7 @@ class PreApprovalTest {
     @Test
     fun `PreApproval round-trips a minimal instance`() {
         val original = PreApproval(
-            payer = AccountHolder(partyIdType = "MSISDN", partyId = "256770000000"),
+            payer = Party(partyIdType = PartyTypes.MSISDN, partyId = "256770000000"),
             payerCurrency = "EUR",
             validityTime = 3600
         )

@@ -20,7 +20,7 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import io.rekast.sdk.model.BackChannelAuthorize
+import io.rekast.sdk.model.BcAuthorizeResponse
 import io.rekast.sdk.model.authentication.AccessToken
 import io.rekast.sdk.model.authentication.Oauth2AccessToken
 import io.rekast.sdk.network.service.AuthenticationService
@@ -119,7 +119,7 @@ class TokenAuthenticatorTest {
 
     private fun stubBcAuthorizeSuccess(authReqId: String = "bc-req-id-123") {
         coEvery { mockAuthService.bcAuthorize(any(), any(), any(), any(), any(), any(), any()) } returns
-            RetrofitResponse.success(BackChannelAuthorize(authReqId = authReqId, interval = 5, expiresIn = 300))
+            RetrofitResponse.success(BcAuthorizeResponse(authReqId = authReqId, interval = 5, expiresIn = 300))
     }
 
     /**
@@ -287,7 +287,7 @@ class TokenAuthenticatorTest {
         every { mockStorage.getLoginHint() } returns "ID:256770000000/MSISDN"
         stubAccessTokenSuccess()
         coEvery { mockAuthService.bcAuthorize(any(), any(), any(), any(), any(), any(), any()) } returns
-            RetrofitResponse.success<BackChannelAuthorize>(null)
+            RetrofitResponse.success<BcAuthorizeResponse>(null)
 
         val result = authenticator.authenticate(null, buildUnauthorizedResponse(collectionUrl()))
 

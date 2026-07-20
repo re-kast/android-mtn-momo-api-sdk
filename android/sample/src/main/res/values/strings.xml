@@ -69,11 +69,13 @@
     <string name="pre_approval_screen">Collection | Pre-Approval</string>
     <string name="approved_pre_approvals_screen">Collection | Approved Pre-Approvals</string>
     <string name="cash_transfer_screen">Remittance | Cash Transfer</string>
+    <string name="payment_screen">Collection | Payment</string>
 
     <string name="invoice_title">Create Invoice</string>
     <string name="pre_approval_title">Create Pre-Approval</string>
     <string name="approved_pre_approvals_title">Approved Pre-Approvals</string>
     <string name="cash_transfer_title">Cash Transfer (V2)</string>
+    <string name="payment_title">Create Payment</string>
 
     <string name="action_create">Create</string>
     <string name="action_check_status">Check Status</string>
@@ -82,6 +84,9 @@
     <string name="action_get_approved">Get Approved</string>
 
     <string name="label_amount">Amount *</string>
+    <string name="label_customer_reference">Customer reference</string>
+    <string name="label_receiver_message">Receiver message</string>
+    <string name="label_sender_note">Sender note</string>
     <string name="label_payer_msisdn">Payer phone number *</string>
     <string name="label_payee_msisdn">Payee phone number *</string>
     <string name="label_validity_seconds">Validity (seconds)</string>
@@ -244,6 +249,11 @@
     <string name="snackbar_cash_transfer_status_failed">Cash transfer status not fetched. %1$s</string>
     <string name="snackbar_cash_transfer_required_first">Send a cash transfer first</string>
 
+    <string name="snackbar_payment_created">Payment created successfully</string>
+    <string name="snackbar_payment_not_created">Payment not created. %1$s</string>
+    <string name="snackbar_payment_status_fetched">Payment status fetched successfully</string>
+    <string name="snackbar_payment_status_failed">Payment status not fetched. %1$s</string>
+    <string name="snackbar_payment_required_first">Create a payment first</string>
     <string name="snackbar_invoice_created">Invoice created successfully</string>
     <string name="snackbar_invoice_not_created">Invoice not created. %1$s</string>
     <string name="snackbar_invoice_status_fetched">Invoice status fetched successfully</string>

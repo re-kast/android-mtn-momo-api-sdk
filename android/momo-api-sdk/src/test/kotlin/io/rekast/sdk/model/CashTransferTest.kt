@@ -15,7 +15,7 @@
  */
 package io.rekast.sdk.model
 
-import kotlinx.serialization.encodeToString
+import io.rekast.sdk.utils.PartyTypes
 import kotlinx.serialization.json.Json
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
@@ -32,7 +32,7 @@ class CashTransferTest {
         amount = "1500",
         currency = "EUR",
         externalId = "ext-123",
-        payee = AccountHolder(partyIdType = "MSISDN", partyId = "256770000000"),
+        payee = Party(partyIdType = PartyTypes.MSISDN, partyId = "256770000000"),
         payerMessage = "Sending funds",
         payeeNote = "Received funds",
         payerIdentificationType = "PASS",
@@ -67,7 +67,7 @@ class CashTransferTest {
         assertEquals("1000", result.amount)
         assertEquals("EUR", result.currency)
         assertEquals("ct-001", result.externalId)
-        assertEquals("MSISDN", result.payee.partyIdType)
+        assertEquals(PartyTypes.MSISDN, result.payee.partyIdType)
         assertEquals("256700000003", result.payee.partyId)
         assertEquals("Remittance transfer", result.payerMessage)
     }
@@ -137,7 +137,7 @@ class CashTransferTest {
             amount = "1500",
             currency = "EUR",
             externalId = "ext-123",
-            payee = AccountHolder(partyIdType = "MSISDN", partyId = "256770000000"),
+            payee = Party(partyIdType = PartyTypes.MSISDN, partyId = "256770000000"),
             payerMessage = "Sending funds",
             payeeNote = "Received funds"
         )

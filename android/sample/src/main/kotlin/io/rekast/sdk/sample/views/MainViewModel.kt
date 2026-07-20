@@ -26,7 +26,7 @@ import io.rekast.sdk.sample.utils.CredentialStorage
 import io.rekast.sdk.sample.utils.DispatcherProvider
 import io.rekast.sdk.sample.utils.SampleConfig
 import io.rekast.sdk.sample.utils.Utils
-import io.rekast.sdk.utils.ProductType
+import io.rekast.sdk.utils.ProductTypes
 import io.rekast.sdk.utils.Settings
 import javax.inject.Inject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -99,9 +99,9 @@ open class MainViewModel @Inject constructor(
     @OptIn(ExperimentalCoroutinesApi::class)
     fun checkUser() {
         _isBootstrapComplete.value = false
-        val productType = Utils.getProductSubscriptionKeys(ProductType.COLLECTION, sampleConfig)
+        val productTypes = Utils.getProductSubscriptionKeys(ProductTypes.COLLECTION, sampleConfig)
         viewModelScope.launch(dispatchers.io()) {
-            defaultRepository.checkApiUser(sampleConfig.apiVersionV1, productType)
+            defaultRepository.checkApiUser(sampleConfig.apiVersionV1, productTypes)
                 .flatMapLatest { result ->
                     when (result) {
                         is NetworkResult.Success -> flowOf(result)
@@ -109,7 +109,7 @@ open class MainViewModel @Inject constructor(
                         is NetworkResult.Error -> {
                             Timber.e(result.message)
                             val callbackHost = ProviderCallBackHost(providerCallbackHost = sampleConfig.providerCallbackHost)
-                            defaultRepository.createApiUser(callbackHost, sampleConfig.apiVersionV1, sampleConfig.apiUserId, productType)
+                            defaultRepository.createApiUser(callbackHost, sampleConfig.apiVersionV1, sampleConfig.apiUserId, productTypes)
                         }
 
                         is NetworkResult.Loading -> flowOf(result)
@@ -139,11 +139,11 @@ open class MainViewModel @Inject constructor(
      * set to `true` to unblock any waiting observers, and [getAccessToken] is not called. The user
      * will remain without credentials until [checkUser] is invoked again.
      *
-     * Uses the [io.rekast.sdk.utils.ProductType.REMITTANCE] subscription key, matching the token
+     * Uses the [io.rekast.sdk.utils.ProductTypes.REMITTANCE] subscription key, matching the token
      * that will be obtained in [getAccessToken].
      */
     private fun createApiKey() {
-        val productType = Utils.getProductSubscriptionKeys(ProductType.REMITTANCE, sampleConfig)
+        val productTypes = Utils.getProductSubscriptionKeys(ProductTypes.REMITTANCE, sampleConfig)
         viewModelScope.launch(dispatchers.io()) {
             val existingKey = credentialStorage.getApiKey()
             if (existingKey.isNotBlank()) {
@@ -151,7 +151,7 @@ open class MainViewModel @Inject constructor(
                 return@launch
             }
 
-            defaultRepository.createApiKey(apiVersion = sampleConfig.apiVersionV1, productSubscriptionKey = productType).collect { result ->
+            defaultRepository.createApiKey(apiVersion = sampleConfig.apiVersionV1, productSubscriptionKey = productTypes).collect { result ->
                 when (result) {
                     is NetworkResult.Success -> {
                         try {
@@ -189,13 +189,13 @@ open class MainViewModel @Inject constructor(
      * re-invocation is needed after the first successful bootstrap.
      */
     private fun getAccessToken() {
-        val productType = Utils.getProductSubscriptionKeys(ProductType.REMITTANCE, sampleConfig)
+        val productTypes = Utils.getProductSubscriptionKeys(ProductTypes.REMITTANCE, sampleConfig)
         viewModelScope.launch(dispatchers.io()) {
             val apiKey = credentialStorage.getApiKey()
             val accessToken = credentialStorage.getAccessToken()
 
             if (apiKey.isNotBlank() && accessToken.isBlank()) {
-                defaultRepository.getAccessToken(productSubscriptionKey = productType, productType = ProductType.REMITTANCE.productType).collect { result ->
+                defaultRepository.getAccessToken(productSubscriptionKey = productTypes, productType = ProductTypes.REMITTANCE.productType).collect { result ->
                     when (result) {
                         is NetworkResult.Success -> {
                             try {
@@ -242,7 +242,7 @@ open class MainViewModel @Inject constructor(
      * the login hint stored by this method.
      */
     fun bcAuthorize() {
-        val productType = Utils.getProductSubscriptionKeys(ProductType.REMITTANCE, sampleConfig)
+        val productTypes = Utils.getProductSubscriptionKeys(ProductTypes.REMITTANCE, sampleConfig)
         val bcAuthorizeRequest = BcAuthorizeRequest(
             loginHint = "ID:563667/MSISDN",
             scope = "all_info",
@@ -250,10 +250,10 @@ open class MainViewModel @Inject constructor(
         )
         viewModelScope.launch(dispatchers.io()) {
             defaultRepository.bcAuthorize(
-                productType = ProductType.REMITTANCE.productType,
+                productType = ProductTypes.REMITTANCE.productType,
                 apiVersion = sampleConfig.apiVersionV1,
                 bcAuthorizeRequest = bcAuthorizeRequest,
-                productSubscriptionKey = productType,
+                productSubscriptionKey = productTypes,
                 environment = sampleConfig.environment
             ).collect { result ->
                 when (result) {
@@ -294,7 +294,7 @@ open class MainViewModel @Inject constructor(
      * OAuth2 token endpoint uses Bearer auth, not Basic Auth.
      */
     private fun getOauthAccessToken() {
-        val productType = Utils.getProductSubscriptionKeys(ProductType.REMITTANCE, sampleConfig)
+        val productTypes = Utils.getProductSubscriptionKeys(ProductTypes.REMITTANCE, sampleConfig)
         viewModelScope.launch(dispatchers.io()) {
             val accessToken = credentialStorage.getAccessToken()
             val oauthToken = credentialStorage.getOauthAccessToken()
@@ -313,8 +313,8 @@ open class MainViewModel @Inject constructor(
 
                 accessToken.isNotBlank() -> {
                     defaultRepository.getOauthAccessToken(
-                        productType = ProductType.REMITTANCE.productType,
-                        productSubscriptionKey = productType,
+                        productType = ProductTypes.REMITTANCE.productType,
+                        productSubscriptionKey = productTypes,
                         environment = sampleConfig.environment,
                         backChannelAuthorizationRequestId = backChannelAuthorizationRequestId
                     ).collect { result ->

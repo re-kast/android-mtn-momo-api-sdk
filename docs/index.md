@@ -209,12 +209,22 @@ The available API groups are:
 | Group                                                              | Description                                                                              |
 |--------------------------------------------------------------------|------------------------------------------------------------------------------------------|
 | [**Authentication**](./Documentation/api-reference/authentication) | Provision API user, API key, Bearer token, and OAuth2 token via the CIBA flow            |
-| [**Collection**](./Documentation/api-reference/collection)         | Request to Pay, Request to Withdraw, invoices, pre-approvals, and delivery notifications |
+| [**Collection**](./Documentation/api-reference/collection)         | Request to Pay, Request to Withdraw, payments, invoices, pre-approvals, and delivery notifications |
 | [**Disbursements**](./Documentation/api-reference/disbursements)   | Transfers, deposits, refunds, cash transfers, and delivery notifications                 |
 | [**Remittance**](./Documentation/api-reference/remittance)         | Cross-border transfers and transfer status                                               |
 | [**Account**](./Documentation/api-reference/account)               | Account balance, basic user info, user info with consent, and account holder validation  |
 
 Each page contains a working Kotlin code snippet followed by a parameter table. See the [Library Usage](./Documentation/api-reference) section in the sidebar for the full reference.
+
+### Status responses
+
+Status queries deserialize the response into a typed model (collected as `Flow<NetworkResult<T>>`):
+
+- `requestToPayTransactionStatus`, `requestToWithdrawTransactionStatus`, `getTransferStatus`, `getDepositStatus`, `getRefundStatus`, and `getCashTransferStatus` return `MomoTransaction`.
+- `validateAccountHolderStatus` returns `AccountHolderStatus`.
+- `getApprovedPreApprovals` returns `ApprovedPreApprovals` (a `preApprovalDetails` list of `PreApprovalDetails`, with `status` a `StatusTypes` enum and `frequency` a `FrequencyType` enum).
+- `getPreApprovalStatus` returns `PreApprovalStatus`.
+- `getPaymentStatus` returns `PaymentStatus` (with a `StatusTypes` enum status).
 
 ## Security
 

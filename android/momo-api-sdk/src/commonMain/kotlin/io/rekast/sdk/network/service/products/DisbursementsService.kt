@@ -17,7 +17,6 @@ package io.rekast.sdk.network.service.products
 
 import io.rekast.sdk.model.MomoTransaction
 import io.rekast.sdk.utils.Constants
-import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -57,7 +56,7 @@ sealed interface DisbursementsService : CommonService {
      * @param apiVersion The API version to target (e.g., v1_0 or v2_0).
      * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Disbursements product.
      * @param environment The target environment (e.g., sandbox or production).
-     * @return A `Response` whose body contains the deposit status as a `ResponseBody`.
+     * @return A `Response` whose body is the parsed [MomoTransaction].
      */
     @GET(Constants.EndPoints.DEPOSIT_STATUS)
     suspend fun getDepositStatus(
@@ -65,7 +64,7 @@ sealed interface DisbursementsService : CommonService {
         @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
         @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
         @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String
-    ): Response<ResponseBody>
+    ): Response<MomoTransaction>
 
     /**
      * Initiates a refund for a previously completed transaction.
@@ -93,7 +92,7 @@ sealed interface DisbursementsService : CommonService {
      * @param apiVersion The API version to target (e.g., v1_0 or v2_0).
      * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Disbursements product.
      * @param environment The target environment (e.g., sandbox or production).
-     * @return A `Response` whose body contains the refund status as a `ResponseBody`.
+     * @return A `Response` whose body is the parsed [MomoTransaction].
      */
     @GET(Constants.EndPoints.REFUND_STATUS)
     suspend fun getRefundStatus(
@@ -101,5 +100,5 @@ sealed interface DisbursementsService : CommonService {
         @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
         @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
         @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String
-    ): Response<ResponseBody>
+    ): Response<MomoTransaction>
 }

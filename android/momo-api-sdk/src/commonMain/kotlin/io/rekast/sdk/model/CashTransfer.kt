@@ -29,7 +29,7 @@ import kotlinx.serialization.Serializable
  * @property amount The transfer amount as a string.
  * @property currency The ISO 4217 currency code for the transaction (e.g., `"EUR"`, `"UGX"`).
  * @property externalId Merchant-assigned reference used to correlate the transfer on the integrator side.
- * @property payee The [AccountHolder] receiving the funds.
+ * @property payee The [Party] receiving the funds.
  * @property payerMessage A message visible to the payer describing the purpose of the transfer.
  * @property payeeNote A note visible to the payee describing the purpose of the transfer.
  * @property payerIdentificationType Type of identification document; one of `CPFA`, `SRSA`, `NRIN`,
@@ -51,7 +51,7 @@ data class CashTransfer(
     @SerialName("amount") val amount: String,
     @SerialName("currency") val currency: String,
     @SerialName("externalId") val externalId: String,
-    @SerialName("payee") val payee: AccountHolder,
+    @SerialName("payee") val payee: Party,
     @SerialName("payerMessage") val payerMessage: String,
     @SerialName("payeeNote") val payeeNote: String,
     @SerialName("payerIdentificationType") val payerIdentificationType: String? = null,

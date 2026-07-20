@@ -34,6 +34,7 @@ import io.rekast.sdk.sample.ui.components.general.CardTitle
 import io.rekast.sdk.sample.ui.components.general.InfoRow
 import io.rekast.sdk.sample.ui.components.general.MomoCard
 import io.rekast.sdk.sample.utils.annotation.PreviewWithBackgroundExcludeGenerated
+import io.rekast.sdk.utils.StatusTypes
 
 /**
  * Renders a read-only summary of a completed MOMO transaction inside a card: amount, currency,
@@ -53,7 +54,7 @@ fun PaymentDataDisplayComponent(modifier: Modifier = Modifier, title: String, mo
         stringResource(id = R.string.payee)
     }
     val counterparty = (transaction?.payee ?: transaction?.payer)?.let { holder ->
-        holder.partyId?.let { "$it -- ${holder.partyIdType}" }
+        holder.partyId?.let { "$it -- ${holder.partyIdType.partyType}" }
     }
 
     MomoCard(
@@ -71,7 +72,7 @@ fun PaymentDataDisplayComponent(modifier: Modifier = Modifier, title: String, mo
         InfoRow(label = counterpartyLabel, value = counterparty)
         InfoRow(label = stringResource(id = R.string.payment_message_display), value = transaction?.payerMessage)
         InfoRow(label = stringResource(id = R.string.payment_note_display), value = transaction?.payeeNote)
-        InfoRow(label = stringResource(id = R.string.status), value = transaction?.status)
+        InfoRow(label = stringResource(id = R.string.status), value = transaction?.status?.name)
         InfoRow(label = stringResource(id = R.string.reason), value = transaction?.reason)
         InfoRow(label = stringResource(id = R.string.reference_id_to_refund), value = transaction?.referenceIdToRefund)
     }
@@ -89,7 +90,7 @@ fun PaymentDataDisplayComponentPreview() {
                 externalId = "947354",
                 payerMessage = "Payment for goods",
                 payeeNote = "Monthly subscription",
-                status = "SUCCESSFUL"
+                status = StatusTypes.SUCCESSFUL
             )
         )
     )

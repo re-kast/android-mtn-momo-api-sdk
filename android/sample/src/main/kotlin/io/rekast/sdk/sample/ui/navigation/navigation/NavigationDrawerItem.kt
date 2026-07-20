@@ -95,6 +95,14 @@ sealed class NavigationDrawerItem(var route: Int, var icon: Int, var title: Stri
             Constants.NavigationTitle.COLLECTION_APPROVED_PRE_APPROVALS
         )
 
+    /** Navigates to the Collection Payment screen. */
+    object CollectionPayment :
+        NavigationDrawerItem(
+            R.id.paymentScreenFragment,
+            R.drawable.payments,
+            Constants.NavigationTitle.COLLECTION_PAYMENT
+        )
+
     /** Navigates to the Remittance Cash Transfer screen. */
     object RemittanceCashTransfer :
         NavigationDrawerItem(

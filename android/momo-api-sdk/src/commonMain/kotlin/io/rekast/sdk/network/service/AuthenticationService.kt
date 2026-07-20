@@ -15,7 +15,7 @@
  */
 package io.rekast.sdk.network.service
 
-import io.rekast.sdk.model.BackChannelAuthorize
+import io.rekast.sdk.model.BcAuthorizeResponse
 import io.rekast.sdk.model.ProviderCallBackHost
 import io.rekast.sdk.model.authentication.AccessToken
 import io.rekast.sdk.model.authentication.ApiKey
@@ -119,7 +119,7 @@ interface AuthenticationService {
     /**
      * Initiates a backchannel authorization (CIBA) request for the specified product type.
      *
-     * The response contains a [BackChannelAuthorize] with an `auth_req_id` that must be used
+     * The response contains a [BcAuthorizeResponse] with an `auth_req_id` that must be used
      * to poll for the access token once the user has approved the request on their device.
      *
      * @param productType The type of product initiating the authorization (e.g., collection).
@@ -129,7 +129,7 @@ interface AuthenticationService {
      * @param accessType The access type for the token (`online` or `offline`). Defaults to `online`.
      * @param productSubscriptionKey The subscription key for the product.
      * @param environment The target environment (e.g., sandbox or production).
-     * @return A `Response` containing the [BackChannelAuthorize] with the authorization request details.
+     * @return A `Response` containing the [BcAuthorizeResponse] with the authorization request details.
      */
     @FormUrlEncoded
     @POST(Constants.EndPoints.BC_AUTHORIZE)
@@ -141,5 +141,5 @@ interface AuthenticationService {
         @Field(Constants.FormFields.ACCESS_TYPE) accessType: String,
         @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
         @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String
-    ): Response<BackChannelAuthorize>
+    ): Response<BcAuthorizeResponse>
 }

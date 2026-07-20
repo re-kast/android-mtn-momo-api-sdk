@@ -15,10 +15,14 @@
  */
 package io.rekast.sdk.network.service.products
 
+import io.rekast.sdk.model.ApprovedPreApprovals
 import io.rekast.sdk.model.Invoice
 import io.rekast.sdk.model.MomoNotification
 import io.rekast.sdk.model.MomoTransaction
+import io.rekast.sdk.model.Payment
+import io.rekast.sdk.model.PaymentStatus
 import io.rekast.sdk.model.PreApproval
+import io.rekast.sdk.model.PreApprovalStatus
 import io.rekast.sdk.utils.Constants
 import okhttp3.ResponseBody
 import retrofit2.Response
@@ -61,7 +65,7 @@ sealed interface CollectionService : CommonService {
      * @param apiVersion The API version to target (e.g., v1_0 or v2_0).
      * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Collection product.
      * @param environment The target environment (e.g., sandbox or production).
-     * @return A `Response` whose body contains the transaction status as a `ResponseBody`.
+     * @return A `Response` whose body is the parsed [MomoTransaction].
      */
     @GET(Constants.EndPoints.REQUEST_TO_PAY_STATUS)
     suspend fun requestToPayTransactionStatus(
@@ -69,7 +73,7 @@ sealed interface CollectionService : CommonService {
         @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
         @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
         @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String
-    ): Response<ResponseBody>
+    ): Response<MomoTransaction>
 
     /**
      * Initiates a request-to-withdraw, prompting the specified payer to approve a withdrawal.
@@ -97,7 +101,7 @@ sealed interface CollectionService : CommonService {
      * @param apiVersion The API version to target (e.g., v1_0 or v2_0).
      * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Collection product.
      * @param environment The target environment (e.g., sandbox or production).
-     * @return A `Response` whose body contains the withdrawal status as a `ResponseBody`.
+     * @return A `Response` whose body is the parsed [MomoTransaction].
      */
     @GET(Constants.EndPoints.REQUEST_TO_WITHDRAW_STATUS)
     suspend fun requestToWithdrawTransactionStatus(
@@ -105,7 +109,7 @@ sealed interface CollectionService : CommonService {
         @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
         @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
         @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String
-    ): Response<ResponseBody>
+    ): Response<MomoTransaction>
 
     /**
      * Creates a Collection invoice, prompting the [Invoice.intendedPayer] to pay via their wallet.
@@ -128,6 +132,43 @@ sealed interface CollectionService : CommonService {
         @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String,
         @Header(Constants.Headers.X_REFERENCE_ID) uuid: String
     ): Response<Unit>
+
+    /**
+     * Creates a Collection payment (V2). Poll [getPaymentStatus] with the same [uuid] as the
+     * reference ID to check the outcome.
+     *
+     * @param payment The payment payload (amount/currency, references, notes, and options).
+     * @param apiVersion The API version to target; use `v2_0` for this endpoint.
+     * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Collection product.
+     * @param environment The target environment (e.g., sandbox or production).
+     * @param uuid A UUID V4 used as the X-Reference-Id; use this same ID to query the payment status.
+     * @return A `Response` with an empty body; HTTP 202 indicates the payment was accepted.
+     */
+    @POST(Constants.EndPoints.CREATE_PAYMENT)
+    suspend fun createPayment(
+        @Body payment: Payment,
+        @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
+        @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
+        @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String,
+        @Header(Constants.Headers.X_REFERENCE_ID) uuid: String
+    ): Response<Unit>
+
+    /**
+     * Retrieves the current status of a previously created Collection payment.
+     *
+     * @param referenceId The UUID V4 reference ID used when calling [createPayment].
+     * @param apiVersion The API version to target; use `v2_0` for this endpoint.
+     * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Collection product.
+     * @param environment The target environment (e.g., sandbox or production).
+     * @return A `Response` whose body is the parsed [PaymentStatus].
+     */
+    @GET(Constants.EndPoints.PAYMENT_STATUS)
+    suspend fun getPaymentStatus(
+        @Path(Constants.EndpointPaths.REFERENCE_ID) referenceId: String,
+        @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
+        @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
+        @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String
+    ): Response<PaymentStatus>
 
     /**
      * Retrieves the current status of a previously created invoice.
@@ -190,7 +231,7 @@ sealed interface CollectionService : CommonService {
      * @param apiVersion The API version to target (e.g., v1_0 or v2_0).
      * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Collection product.
      * @param environment The target environment (e.g., sandbox or production).
-     * @return A `Response` whose body contains the pre-approval status details as a `ResponseBody`.
+     * @return A `Response` whose body is the parsed [PreApprovalStatus].
      */
     @GET(Constants.EndPoints.PRE_APPROVAL_STATUS)
     suspend fun getPreApprovalStatus(
@@ -198,7 +239,7 @@ sealed interface CollectionService : CommonService {
         @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
         @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
         @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String
-    ): Response<ResponseBody>
+    ): Response<PreApprovalStatus>
 
     /**
      * Cancels an active pre-approval, immediately revoking the merchant's ability to debit
@@ -226,7 +267,7 @@ sealed interface CollectionService : CommonService {
      * @param apiVersion The API version to target (e.g., v1_0 or v2_0).
      * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Collection product.
      * @param environment The target environment (e.g., sandbox or production).
-     * @return A `Response` whose body contains the approved pre-approvals as a `ResponseBody`.
+     * @return A `Response` whose body is the parsed [ApprovedPreApprovals].
      */
     @GET(Constants.EndPoints.GET_APPROVED_PRE_APPROVALS)
     suspend fun getApprovedPreApprovals(
@@ -235,7 +276,7 @@ sealed interface CollectionService : CommonService {
         @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
         @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
         @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String
-    ): Response<ResponseBody>
+    ): Response<ApprovedPreApprovals>
 
     /**
      * Sends a delivery notification for a request-to-withdraw transaction.

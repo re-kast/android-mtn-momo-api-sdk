@@ -19,135 +19,162 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 
 /**
- * Unit tests for the SDK utility enums: [ProductType], [AccountHolderType], and [TransactionStatus].
+ * Unit tests for the SDK utility enums: [ProductTypes], [PartyTypes], and [StatusTypes].
  *
  * Verifies that each enum contains the expected constants, that [Enum.valueOf] resolves every
- * constant by name, and that the string property values exposed by [ProductType] and
- * [AccountHolderType] match the documented MTN MOMO API identifiers.
+ * constant by name, and that the string property values exposed by [ProductTypes] and
+ * [PartyTypes] match the documented MTN MOMO API identifiers.
  */
 class EnumsTest {
 
-    // ---- ProductType ----
+    // ---- ProductTypes ----
 
     /**
-     * Verifies that [ProductType] exposes exactly three product types: Collection, Disbursements,
+     * Verifies that [ProductTypes] exposes exactly three product types: Collection, Disbursements,
      * and Remittance — the three MTN MOMO product lines supported by this SDK.
      */
     @Test
     fun `ProductType has exactly 3 entries`() {
-        assertEquals(3, ProductType.entries.size)
+        assertEquals(3, ProductTypes.entries.size)
     }
 
     /**
-     * Verifies that [ProductType.COLLECTION] carries the string `"collection"` used as the URL
+     * Verifies that [ProductTypes.COLLECTION] carries the string `"collection"` used as the URL
      * path segment in the MTN MOMO API.
      */
     @Test
     fun `ProductType COLLECTION productType is collection`() {
-        assertEquals("collection", ProductType.COLLECTION.productType)
+        assertEquals("collection", ProductTypes.COLLECTION.productType)
     }
 
     /**
-     * Verifies that [ProductType.DISBURSEMENTS] carries the string `"disbursements"`.
+     * Verifies that [ProductTypes.DISBURSEMENTS] carries the string `"disbursements"`.
      */
     @Test
     fun `ProductType DISBURSEMENTS productType is disbursements`() {
-        assertEquals("disbursements", ProductType.DISBURSEMENTS.productType)
+        assertEquals("disbursements", ProductTypes.DISBURSEMENTS.productType)
     }
 
     /**
-     * Verifies that [ProductType.REMITTANCE] carries the string `"remittance"`.
+     * Verifies that [ProductTypes.REMITTANCE] carries the string `"remittance"`.
      */
     @Test
     fun `ProductType REMITTANCE productType is remittance`() {
-        assertEquals("remittance", ProductType.REMITTANCE.productType)
+        assertEquals("remittance", ProductTypes.REMITTANCE.productType)
     }
 
     /**
-     * Verifies that all [ProductType] entries round-trip through [ProductType.valueOf].
+     * Verifies that all [ProductTypes] entries round-trip through [ProductTypes.valueOf].
      */
     @Test
     fun `ProductType all entries resolve by valueOf`() {
-        for (entry in ProductType.entries) {
-            assertEquals(entry, ProductType.valueOf(entry.name))
+        for (entry in ProductTypes.entries) {
+            assertEquals(entry, ProductTypes.valueOf(entry.name))
         }
     }
 
-    // ---- AccountHolderType ----
+    // ---- PartyTypes ----
 
     /**
-     * Verifies that [AccountHolderType] exposes exactly three holder types: MSISDN, EMAIL,
+     * Verifies that [PartyTypes] exposes exactly three holder types: MSISDN, EMAIL,
      * and PARTY_CODE.
      */
     @Test
     fun `AccountHolderType has exactly 3 entries`() {
-        assertEquals(3, AccountHolderType.entries.size)
+        assertEquals(3, PartyTypes.entries.size)
     }
 
     /**
-     * Verifies that [AccountHolderType.MSISDN] carries the string `"msisdn"` used in API requests.
+     * Verifies that [PartyTypes.MSISDN] carries the string `"msisdn"` used in API requests.
      */
     @Test
     fun `AccountHolderType MSISDN accountHolderType is msisdn`() {
-        assertEquals("msisdn", AccountHolderType.MSISDN.accountHolderType)
+        assertEquals("msisdn", PartyTypes.MSISDN.partyType)
     }
 
     /**
-     * Verifies that [AccountHolderType.EMAIL] carries the string `"email"`.
+     * Verifies that [PartyTypes.EMAIL] carries the string `"email"`.
      */
     @Test
     fun `AccountHolderType EMAIL accountHolderType is email`() {
-        assertEquals("email", AccountHolderType.EMAIL.accountHolderType)
+        assertEquals("email", PartyTypes.EMAIL.partyType)
     }
 
     /**
-     * Verifies that [AccountHolderType.PARTY_CODE] carries the string `"party_code"`.
+     * Verifies that [PartyTypes.PARTY_CODE] carries the string `"party_code"`.
      */
     @Test
     fun `AccountHolderType PARTY_CODE accountHolderType is party_code`() {
-        assertEquals("party_code", AccountHolderType.PARTY_CODE.accountHolderType)
+        assertEquals("party_code", PartyTypes.PARTY_CODE.partyType)
     }
 
     /**
-     * Verifies that all [AccountHolderType] entries round-trip through [AccountHolderType.valueOf].
+     * Verifies that all [PartyTypes] entries round-trip through [PartyTypes.valueOf].
      */
     @Test
     fun `AccountHolderType all entries resolve by valueOf`() {
-        for (entry in AccountHolderType.entries) {
-            assertEquals(entry, AccountHolderType.valueOf(entry.name))
+        for (entry in PartyTypes.entries) {
+            assertEquals(entry, PartyTypes.valueOf(entry.name))
         }
     }
 
-    // ---- TransactionStatus ----
+    // ---- StatusTypes ----
 
     /**
-     * Verifies that [TransactionStatus] exposes exactly three states: SUCCESSFUL, PENDING,
-     * and FAILED.
+     * Verifies that [StatusTypes] exposes exactly eight states: the transaction states
+     * (SUCCESSFUL, PENDING, FAILED, CREATED) plus the pre-approval states (APPROVED, CANCELLED,
+     * EXPIRED, REJECTED).
      */
     @Test
-    fun `TransactionStatus has exactly 3 entries`() {
-        assertEquals(3, TransactionStatus.entries.size)
+    fun `StatusTypes has exactly 8 entries`() {
+        assertEquals(8, StatusTypes.entries.size)
     }
 
     /**
-     * Verifies that all three [TransactionStatus] constants are accessible and round-trip
-     * through [TransactionStatus.valueOf].
+     * Verifies that all [StatusTypes] constants are accessible and round-trip
+     * through [StatusTypes.valueOf].
      */
     @Test
-    fun `TransactionStatus all entries resolve by valueOf`() {
-        for (entry in TransactionStatus.entries) {
-            assertEquals(entry, TransactionStatus.valueOf(entry.name))
+    fun `StatusTypes all entries resolve by valueOf`() {
+        for (entry in StatusTypes.entries) {
+            assertEquals(entry, StatusTypes.valueOf(entry.name))
         }
     }
 
     /**
-     * Spot-checks the ordinal positions of [TransactionStatus] constants to catch accidental
+     * Spot-checks the ordinal positions of [StatusTypes] constants to catch accidental
      * reordering.
      */
     @Test
-    fun `TransactionStatus ordinals are stable`() {
-        assertEquals(0, TransactionStatus.SUCCESSFUL.ordinal)
-        assertEquals(1, TransactionStatus.PENDING.ordinal)
-        assertEquals(2, TransactionStatus.FAILED.ordinal)
+    fun `StatusTypes ordinals are stable`() {
+        assertEquals(0, StatusTypes.SUCCESSFUL.ordinal)
+        assertEquals(1, StatusTypes.PENDING.ordinal)
+        assertEquals(2, StatusTypes.FAILED.ordinal)
+        assertEquals(3, StatusTypes.CREATED.ordinal)
+        assertEquals(4, StatusTypes.APPROVED.ordinal)
+        assertEquals(5, StatusTypes.CANCELLED.ordinal)
+        assertEquals(6, StatusTypes.EXPIRED.ordinal)
+        assertEquals(7, StatusTypes.REJECTED.ordinal)
+    }
+
+    // ---- FrequencyTypes ----
+
+    /**
+     * Verifies that [FrequencyTypes] exposes exactly three cadences: DAILY, WEEKLY, and MONTHLY.
+     */
+    @Test
+    fun `FrequencyType has exactly 3 entries`() {
+        assertEquals(3, FrequencyTypes.entries.size)
+    }
+
+    /**
+     * Verifies that all [FrequencyTypes] constants are accessible and round-trip
+     * through [FrequencyTypes.valueOf].
+     */
+    @Test
+    fun `FrequencyType all entries resolve by valueOf`() {
+        for (entry in FrequencyTypes.entries) {
+            assertEquals(entry, FrequencyTypes.valueOf(entry.name))
+        }
     }
 }

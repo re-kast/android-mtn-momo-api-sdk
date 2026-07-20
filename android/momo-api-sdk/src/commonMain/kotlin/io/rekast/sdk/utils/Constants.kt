@@ -304,6 +304,16 @@ object Constants {
             "/collection/{apiVersion}/preapprovals/{accountHolderIdType}/{accountHolderId}"
 
         /**
+         * Endpoint for creating a Collection payment (V2).
+         */
+        const val CREATE_PAYMENT = "/collection/{apiVersion}/payment"
+
+        /**
+         * Endpoint for retrieving the status of a Collection payment by reference ID.
+         */
+        const val PAYMENT_STATUS = "/collection/{apiVersion}/payment/{referenceId}"
+
+        /**
          * Endpoint for sending a delivery notification for a request-to-withdraw transaction.
          */
         const val REQUEST_TO_WITHDRAW_DELIVERY_NOTIFICATION = "/collection/{apiVersion}/requesttowithdraw/{referenceId}/deliverynotification"

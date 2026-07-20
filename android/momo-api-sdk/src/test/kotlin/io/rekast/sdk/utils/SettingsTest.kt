@@ -187,6 +187,6 @@ class SettingsTest {
         assertEquals("150", transaction!!.amount)
         assertEquals("EUR", transaction.currency)
         assertEquals("ext-777", transaction.externalId)
-        assertEquals("SUCCESSFUL", transaction.status)
+        assertEquals(StatusTypes.SUCCESSFUL, transaction.status)
     }
 }

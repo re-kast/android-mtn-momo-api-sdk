@@ -19,15 +19,21 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import io.rekast.sdk.model.AccountBalance
-import io.rekast.sdk.model.AccountHolder
-import io.rekast.sdk.model.BackChannelAuthorize
+import io.rekast.sdk.model.AccountHolderStatus
+import io.rekast.sdk.model.ApprovedPreApprovals
 import io.rekast.sdk.model.BasicUserInfo
 import io.rekast.sdk.model.BcAuthorizeRequest
+import io.rekast.sdk.model.BcAuthorizeResponse
 import io.rekast.sdk.model.CashTransfer
 import io.rekast.sdk.model.Invoice
 import io.rekast.sdk.model.MomoNotification
 import io.rekast.sdk.model.MomoTransaction
+import io.rekast.sdk.model.Money
+import io.rekast.sdk.model.Party
+import io.rekast.sdk.model.Payment
+import io.rekast.sdk.model.PaymentStatus
 import io.rekast.sdk.model.PreApproval
+import io.rekast.sdk.model.PreApprovalStatus
 import io.rekast.sdk.model.ProviderCallBackHost
 import io.rekast.sdk.model.UserInfoWithConsent
 import io.rekast.sdk.model.authentication.AccessToken
@@ -38,6 +44,8 @@ import io.rekast.sdk.network.service.products.CollectionService
 import io.rekast.sdk.network.service.products.DisbursementsService
 import io.rekast.sdk.repository.data.NetworkResult
 import io.rekast.sdk.utils.ApiConfig
+import io.rekast.sdk.utils.PartyTypes
+import io.rekast.sdk.utils.StatusTypes
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.toList
@@ -391,17 +399,14 @@ class DefaultRepositoryTest {
 
     /**
      * Verifies that [DefaultRepository.validateAccountHolderStatus] emits [NetworkResult.Loading]
-     * then [NetworkResult.Success] containing a [ResponseBody].
+     * then [NetworkResult.Success] containing the parsed [AccountHolderStatus].
      */
     @Test
     fun `validateAccountHolderStatus emits Loading then Success`() = runTest {
-        val body = mockk<ResponseBody>(relaxed = true)
-        val accountHolder = AccountHolder(partyIdType = "msisdn", partyId = "256700000000")
-        coEvery {
-            defaultSource.validateAccountHolderStatus(any(), any(), any(), any(), any())
-        } returns Response.success(body)
+        val party = Party(partyIdType = PartyTypes.MSISDN, partyId = "256700000000")
+        coEvery { defaultSource.validateAccountHolderStatus(any(), any(), any(), any(), any()) } returns Response.success(AccountHolderStatus(result = true))
 
-        val results = repository.validateAccountHolderStatus("collection", "v1_0", accountHolder, "sub-key", "sandbox").toList()
+        val results = repository.validateAccountHolderStatus("collection", "v1_0", party, "sub-key", "sandbox").toList()
 
         assertTrue(results.first() is NetworkResult.Loading)
         assertTrue(results.last() is NetworkResult.Success)
@@ -413,12 +418,11 @@ class DefaultRepositoryTest {
      */
     @Test
     fun `validateAccountHolderStatus emits Error on failure`() = runTest {
-        val accountHolder = AccountHolder(partyIdType = "msisdn", partyId = "256700000000")
-        coEvery {
-            defaultSource.validateAccountHolderStatus(any(), any(), any(), any(), any())
-        } returns Response.error(404, "not found".toResponseBody("text/plain".toMediaType()))
+        val party = Party(partyIdType = PartyTypes.MSISDN, partyId = "256700000000")
+        coEvery { defaultSource.validateAccountHolderStatus(any(), any(), any(), any(), any()) } returns
+            Response.error(404, "not found".toResponseBody("text/plain".toMediaType()))
 
-        val results = repository.validateAccountHolderStatus("collection", "v1_0", accountHolder, "sub-key", "sandbox").toList()
+        val results = repository.validateAccountHolderStatus("collection", "v1_0", party, "sub-key", "sandbox").toList()
 
         assertTrue(results.last() is NetworkResult.Error)
     }
@@ -456,14 +460,13 @@ class DefaultRepositoryTest {
 
     /**
      * Verifies that [DefaultRepository.getTransferStatus] emits [NetworkResult.Loading] then
-     * [NetworkResult.Success] containing a [ResponseBody].
+     * [NetworkResult.Success] containing the parsed [MomoTransaction].
      */
     @Test
     fun `getTransferStatus emits Loading then Success`() = runTest {
-        val body = mockk<ResponseBody>(relaxed = true)
         coEvery {
             defaultSource.getTransferStatus(any(), any(), any(), any(), any())
-        } returns Response.success(body)
+        } returns Response.success(sampleTransaction())
 
         val results = repository.getTransferStatus("remittance", "v1_0", "ref-001", "sub-key", "sandbox").toList()
 
@@ -521,11 +524,11 @@ class DefaultRepositoryTest {
 
     /**
      * Verifies that [DefaultRepository.bcAuthorize] emits [NetworkResult.Loading] then
-     * [NetworkResult.Success] containing the [BackChannelAuthorize] response.
+     * [NetworkResult.Success] containing the [BcAuthorizeResponse] response.
      */
     @Test
     fun `bcAuthorize emits Loading then Success`() = runTest {
-        val bcAuth = BackChannelAuthorize(authReqId = "auth-req-001", interval = 5, expiresIn = 120)
+        val bcAuth = BcAuthorizeResponse(authReqId = "auth-req-001", interval = 5, expiresIn = 120)
         val request = BcAuthorizeRequest(loginHint = "ID:256700000000/MSISDN", scope = "profile openid", accessType = "online")
         coEvery {
             defaultSource.bcAuthorize(any(), any(), any(), any(), any())
@@ -556,7 +559,7 @@ class DefaultRepositoryTest {
 
     private fun sampleInvoice() = Invoice(externalId = "inv-001", amount = "100", currency = "EUR")
     private fun samplePreApproval() = PreApproval(
-        payer = AccountHolder(partyIdType = "MSISDN", partyId = "256700000000"),
+        payer = Party(partyIdType = PartyTypes.MSISDN, partyId = "256700000000"),
         payerCurrency = "EUR",
         validityTime = 3600
     )
@@ -564,7 +567,7 @@ class DefaultRepositoryTest {
         amount = "200",
         currency = "EUR",
         externalId = "ct-001",
-        payee = AccountHolder(partyIdType = "MSISDN", partyId = "256700000001"),
+        payee = Party(partyIdType = PartyTypes.MSISDN, partyId = "256700000001"),
         payerMessage = "Transfer",
         payeeNote = "Received"
     )
@@ -578,6 +581,52 @@ class DefaultRepositoryTest {
 
         assertTrue(results.first() is NetworkResult.Loading)
         assertTrue(results.last() is NetworkResult.Success)
+    }
+
+    /** Verifies [DefaultRepository.createPayment] emits Loading then Success on HTTP 202. */
+    @Test
+    fun `createPayment emits Loading then Success`() = runTest {
+        coEvery { defaultSource.createPayment(any(), any(), any(), any(), any()) } returns Response.success(Unit)
+
+        val payment = Payment(externalTransactionId = "ext-001", money = Money(amount = "100", currency = "EUR"))
+        val results = repository.createPayment("v2_0", payment, "uuid-pay-001", "sub-key", "sandbox").toList()
+
+        assertTrue(results.first() is NetworkResult.Loading)
+        assertTrue(results.last() is NetworkResult.Success)
+    }
+
+    /** Verifies [DefaultRepository.createPayment] emits Error on failure. */
+    @Test
+    fun `createPayment emits Error on failure`() = runTest {
+        coEvery { defaultSource.createPayment(any(), any(), any(), any(), any()) } returns
+            Response.error(400, "bad".toResponseBody("text/plain".toMediaType()))
+
+        val results = repository.createPayment("v2_0", Payment(), "uuid-pay-001", "sub-key", "sandbox").toList()
+
+        assertTrue(results.last() is NetworkResult.Error)
+    }
+
+    /** Verifies [DefaultRepository.getPaymentStatus] emits Loading then Success. */
+    @Test
+    fun `getPaymentStatus emits Loading then Success`() = runTest {
+        coEvery { defaultSource.getPaymentStatus(any(), any(), any(), any()) } returns
+            Response.success(PaymentStatus(referenceId = "pay-ref-001", status = StatusTypes.SUCCESSFUL))
+
+        val results = repository.getPaymentStatus("v2_0", "pay-ref-001", "sub-key", "sandbox").toList()
+
+        assertTrue(results.first() is NetworkResult.Loading)
+        assertTrue(results.last() is NetworkResult.Success)
+    }
+
+    /** Verifies [DefaultRepository.getPaymentStatus] emits Error on failure. */
+    @Test
+    fun `getPaymentStatus emits Error on failure`() = runTest {
+        coEvery { defaultSource.getPaymentStatus(any(), any(), any(), any()) } returns
+            Response.error(404, "not found".toResponseBody("text/plain".toMediaType()))
+
+        val results = repository.getPaymentStatus("v2_0", "pay-ref-001", "sub-key", "sandbox").toList()
+
+        assertTrue(results.last() is NetworkResult.Error)
     }
 
     /** Verifies that [DefaultRepository.createInvoice] emits Error on a non-2xx response. */
@@ -650,13 +699,23 @@ class DefaultRepositoryTest {
     /** Verifies that [DefaultRepository.getPreApprovalStatus] emits Loading then Success. */
     @Test
     fun `getPreApprovalStatus emits Loading then Success`() = runTest {
-        val body = mockk<ResponseBody>(relaxed = true)
-        coEvery { defaultSource.getPreApprovalStatus(any(), any(), any(), any()) } returns Response.success(body)
+        coEvery { defaultSource.getPreApprovalStatus(any(), any(), any(), any()) } returns Response.success(PreApprovalStatus(status = StatusTypes.PENDING))
 
         val results = repository.getPreApprovalStatus("v1_0", "pa-ref-001", "sub-key", "sandbox").toList()
 
         assertTrue(results.first() is NetworkResult.Loading)
         assertTrue(results.last() is NetworkResult.Success)
+    }
+
+    /** Verifies that [DefaultRepository.getPreApprovalStatus] emits Error on a non-2xx response. */
+    @Test
+    fun `getPreApprovalStatus emits Error on failure`() = runTest {
+        coEvery { defaultSource.getPreApprovalStatus(any(), any(), any(), any()) } returns
+            Response.error(404, "not found".toResponseBody("text/plain".toMediaType()))
+
+        val results = repository.getPreApprovalStatus("v1_0", "pa-ref-001", "sub-key", "sandbox").toList()
+
+        assertTrue(results.last() is NetworkResult.Error)
     }
 
     /** Verifies that [DefaultRepository.cancelPreApproval] emits Loading then Success on HTTP 200. */
@@ -684,8 +743,7 @@ class DefaultRepositoryTest {
     /** Verifies that [DefaultRepository.getApprovedPreApprovals] emits Loading then Success. */
     @Test
     fun `getApprovedPreApprovals emits Loading then Success`() = runTest {
-        val body = mockk<ResponseBody>(relaxed = true)
-        coEvery { defaultSource.getApprovedPreApprovals(any(), any(), any(), any(), any()) } returns Response.success(body)
+        coEvery { defaultSource.getApprovedPreApprovals(any(), any(), any(), any(), any()) } returns Response.success(ApprovedPreApprovals())
 
         val results = repository.getApprovedPreApprovals("v2_0", "MSISDN", "256774290781", "sub-key", "sandbox").toList()
 
@@ -700,6 +758,17 @@ class DefaultRepositoryTest {
             Response.error(404, "not found".toResponseBody("text/plain".toMediaType()))
 
         val results = repository.getApprovedPreApprovals("v2_0", "MSISDN", "256774290781", "sub-key", "sandbox").toList()
+
+        assertTrue(results.last() is NetworkResult.Error)
+    }
+
+    /** Verifies [DefaultRepository.getTransferStatus] emits Error on failure. */
+    @Test
+    fun `getTransferStatus emits Error on failure`() = runTest {
+        coEvery { defaultSource.getTransferStatus(any(), any(), any(), any(), any()) } returns
+            Response.error(404, "not found".toResponseBody("text/plain".toMediaType()))
+
+        val results = repository.getTransferStatus("remittance", "v1_0", "ref-001", "sub-key", "sandbox").toList()
 
         assertTrue(results.last() is NetworkResult.Error)
     }
@@ -729,13 +798,23 @@ class DefaultRepositoryTest {
     /** Verifies that [DefaultRepository.getCashTransferStatus] emits Loading then Success. */
     @Test
     fun `getCashTransferStatus emits Loading then Success`() = runTest {
-        val body = mockk<ResponseBody>(relaxed = true)
-        coEvery { defaultSource.getCashTransferStatus(any(), any(), any(), any()) } returns Response.success(body)
+        coEvery { defaultSource.getCashTransferStatus(any(), any(), any(), any()) } returns Response.success(sampleTransaction())
 
         val results = repository.getCashTransferStatus("v2_0", "ct-ref-001", "sub-key", "sandbox").toList()
 
         assertTrue(results.first() is NetworkResult.Loading)
         assertTrue(results.last() is NetworkResult.Success)
+    }
+
+    /** Verifies that [DefaultRepository.getCashTransferStatus] emits Error on a non-2xx response. */
+    @Test
+    fun `getCashTransferStatus emits Error on failure`() = runTest {
+        coEvery { defaultSource.getCashTransferStatus(any(), any(), any(), any()) } returns
+            Response.error(404, "not found".toResponseBody("text/plain".toMediaType()))
+
+        val results = repository.getCashTransferStatus("v2_0", "ct-ref-001", "sub-key", "sandbox").toList()
+
+        assertTrue(results.last() is NetworkResult.Error)
     }
 
     /**

@@ -21,6 +21,7 @@ import io.mockk.mockk
 import io.mockk.mockkObject
 import io.mockk.unmockkObject
 import io.mockk.verify
+import io.rekast.sdk.model.MomoTransaction
 import io.rekast.sdk.repository.DefaultRepository
 import io.rekast.sdk.repository.data.NetworkResult
 import io.rekast.sdk.sample.utils.CredentialStorage
@@ -36,9 +37,6 @@ import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.ResponseBody
-import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -200,18 +198,6 @@ class CashTransferScreenViewModelTest {
         assertEquals("Status failed: nope", viewModel.result.value)
     }
 
-    /** A blank status body reports the placeholder rather than an empty console. */
-    @Test
-    fun `checkStatus with blank body reports no status body`() = runTest {
-        viewModel.referenceId.value = "ref-1"
-        every { mockRepository.getCashTransferStatus(any(), any(), any(), any()) } returns
-            flowOf(NetworkResult.Success("".toResponseBody("application/json".toMediaType())))
-
-        viewModel.checkStatus()
-
-        assertEquals("No status body returned.", viewModel.result.value)
-    }
-
     /**
      * A blank currency falls back to the sandbox default while non-blank payer names are kept,
      * exercising all three ifBlank branches in the payload builder.
@@ -244,25 +230,26 @@ class CashTransferScreenViewModelTest {
         assertFalse(viewModel.showProgressBar.value!!)
     }
 
-    /** A non-blank status body is printed verbatim, exercising the non-blank ifBlank branch. */
+    /** A parsed status payload is printed via its string representation. */
     @Test
     fun `checkStatus with non-blank body prints payload`() = runTest {
         viewModel.referenceId.value = "ref-1"
+        val transaction = MomoTransaction(amount = "100", currency = "EUR", externalId = "ext-1", payerMessage = "msg", payeeNote = "note")
         every { mockRepository.getCashTransferStatus(any(), any(), any(), any()) } returns
-            flowOf(NetworkResult.Success("""{"status":"SUCCESSFUL"}""".toResponseBody("application/json".toMediaType())))
+            flowOf(NetworkResult.Success(transaction))
 
         viewModel.checkStatus()
 
-        assertEquals("""{"status":"SUCCESSFUL"}""", viewModel.result.value)
+        assertEquals(transaction.toString(), viewModel.result.value)
     }
 
-    /** A status success with a null response body reports the placeholder rather than crashing. */
+    /** A status success with a null response reports the placeholder rather than crashing. */
     @Test
     fun `checkStatus with null body reports no status body`() = runTest {
         viewModel.referenceId.value = "ref-1"
         @Suppress("UNCHECKED_CAST")
         every { mockRepository.getCashTransferStatus(any(), any(), any(), any()) } returns
-            (flowOf(NetworkResult.Success(null)) as Flow<NetworkResult<ResponseBody>>)
+            (flowOf(NetworkResult.Success(null)) as Flow<NetworkResult<MomoTransaction>>)
 
         viewModel.checkStatus()
 

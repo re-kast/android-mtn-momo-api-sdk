@@ -21,8 +21,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.rekast.sdk.model.AccountHolder
 import io.rekast.sdk.model.Invoice
+import io.rekast.sdk.model.Party
 import io.rekast.sdk.repository.DefaultRepository
 import io.rekast.sdk.repository.data.NetworkResult
 import io.rekast.sdk.sample.R
@@ -36,8 +36,8 @@ import io.rekast.sdk.sample.utils.Utils
 import io.rekast.sdk.sample.utils.bodyText
 import io.rekast.sdk.sample.utils.valueOrEmpty
 import io.rekast.sdk.sample.utils.valueOrNullIfBlank
-import io.rekast.sdk.utils.AccountHolderType
-import io.rekast.sdk.utils.ProductType
+import io.rekast.sdk.utils.PartyTypes
+import io.rekast.sdk.utils.ProductTypes
 import java.util.UUID
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
@@ -109,13 +109,13 @@ class InvoiceScreenViewModel @Inject constructor(
     /** Creates an invoice with a fresh reference ID and stores that ID for status/cancel. */
     fun createInvoice() = launchOperation {
         val reference = UUID.randomUUID().toString()
-        val subscriptionKey = Utils.getProductSubscriptionKeys(ProductType.COLLECTION, sampleConfig)
+        val subscriptionKey = Utils.getProductSubscriptionKeys(ProductTypes.COLLECTION, sampleConfig)
         val invoice = Invoice(
             externalId = UUID.randomUUID().toString(),
             amount = amount.valueOrEmpty(),
             currency = currency.valueOrEmpty().ifBlank { Constants.SANDBOX_CURRENCY },
             validityDuration = validityDuration.valueOrNullIfBlank(),
-            intendedPayer = AccountHolder(partyIdType = AccountHolderType.MSISDN.accountHolderType, partyId = payerMsisdn.valueOrEmpty()),
+            intendedPayer = Party(partyIdType = PartyTypes.MSISDN, partyId = payerMsisdn.valueOrEmpty()),
             payerMessage = null,
             payeeNote = null,
             description = description.valueOrNullIfBlank()
@@ -195,7 +195,7 @@ class InvoiceScreenViewModel @Inject constructor(
             emitError(R.string.snackbar_invoice_required_first)
             return
         }
-        launchOperation { block(reference, Utils.getProductSubscriptionKeys(ProductType.COLLECTION, sampleConfig)) }
+        launchOperation { block(reference, Utils.getProductSubscriptionKeys(ProductTypes.COLLECTION, sampleConfig)) }
     }
 
     private suspend fun <T> Flow<NetworkResult<T>>.awaitTerminal(): NetworkResult<T> {

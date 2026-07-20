@@ -21,9 +21,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.rekast.sdk.model.AccountHolder
 import io.rekast.sdk.model.MomoNotification
 import io.rekast.sdk.model.MomoTransaction
+import io.rekast.sdk.model.Party
 import io.rekast.sdk.repository.DefaultRepository
 import io.rekast.sdk.repository.data.NetworkResult
 import io.rekast.sdk.sample.R
@@ -34,11 +34,10 @@ import io.rekast.sdk.sample.utils.SampleConfig
 import io.rekast.sdk.sample.utils.SnackBarComponentConfiguration
 import io.rekast.sdk.sample.utils.SnackBarType
 import io.rekast.sdk.sample.utils.Utils
-import io.rekast.sdk.sample.utils.bodyText
 import io.rekast.sdk.sample.utils.valueOrEmpty
 import io.rekast.sdk.sample.utils.valueOrNullIfBlank
-import io.rekast.sdk.utils.AccountHolderType
-import io.rekast.sdk.utils.ProductType
+import io.rekast.sdk.utils.PartyTypes
+import io.rekast.sdk.utils.ProductTypes
 import java.util.UUID
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
@@ -46,7 +45,6 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
-import kotlinx.serialization.json.Json
 import timber.log.Timber
 
 /**
@@ -68,7 +66,6 @@ class CollectionPayScreenViewModel @Inject constructor(
     private val dispatchers: DispatcherProvider,
     private val sampleConfig: SampleConfig
 ) : ViewModel() {
-    private val json = Json { ignoreUnknownKeys = true }
 
     /** Controls whether the circular progress indicator is shown instead of the form. */
     val showProgressBar = MutableLiveData(false)
@@ -199,7 +196,7 @@ class CollectionPayScreenViewModel @Inject constructor(
             showProgressBar.postValue(true)
             try {
                 val referenceId = UUID.randomUUID().toString()
-                val subscriptionKey = Utils.getProductSubscriptionKeys(ProductType.COLLECTION, sampleConfig)
+                val subscriptionKey = Utils.getProductSubscriptionKeys(ProductTypes.COLLECTION, sampleConfig)
                 val submit = defaultRepository.requestToPay(
                     momoTransaction = buildTransaction(),
                     apiVersion = sampleConfig.apiVersionV1,
@@ -237,10 +234,7 @@ class CollectionPayScreenViewModel @Inject constructor(
         ).awaitTerminal()
         when (result) {
             is NetworkResult.Success -> {
-                val transaction = result.bodyText()?.let { body ->
-                    runCatching { json.decodeFromString<MomoTransaction>(body) }.getOrNull()
-                }
-                momoTransaction.postValue(transaction)
+                momoTransaction.postValue(result.response)
                 emitSuccess(R.string.snackbar_request_to_pay_status_fetched)
             }
 
@@ -254,7 +248,7 @@ class CollectionPayScreenViewModel @Inject constructor(
     /** Sends a delivery notification to the payer for the given request-to-pay reference. */
     private suspend fun sendDeliveryNotification(referenceId: String, subscriptionKey: String) {
         val result = defaultRepository.requestToPayDeliveryNotification(
-            productType = ProductType.COLLECTION.productType,
+            productType = ProductTypes.COLLECTION.productType,
             apiVersion = sampleConfig.apiVersionV1,
             referenceId = referenceId,
             momoNotification = MomoNotification(notificationMessage = deliveryNote.valueOrEmpty()),
@@ -278,7 +272,7 @@ class CollectionPayScreenViewModel @Inject constructor(
         financialTransactionId = financialId.valueOrNullIfBlank(),
         externalId = UUID.randomUUID().toString(),
         payee = null,
-        payer = AccountHolder(partyIdType = AccountHolderType.MSISDN.accountHolderType, partyId = phoneNumber.valueOrEmpty()),
+        payer = Party(partyIdType = PartyTypes.MSISDN, partyId = phoneNumber.valueOrEmpty()),
         payerMessage = payerMessage.valueOrEmpty(),
         payeeNote = payerNote.valueOrEmpty(),
         status = null,

@@ -21,6 +21,7 @@ import io.mockk.mockk
 import io.mockk.mockkObject
 import io.mockk.unmockkObject
 import io.mockk.verify
+import io.rekast.sdk.model.MomoTransaction
 import io.rekast.sdk.repository.DefaultRepository
 import io.rekast.sdk.repository.data.NetworkResult
 import io.rekast.sdk.sample.utils.CredentialStorage
@@ -36,9 +37,6 @@ import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.ResponseBody
-import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -149,12 +147,7 @@ class DisbursementRefundScreenViewModelTest {
     fun `refund submits then fetches status and posts transaction`() = runTest {
         every { mockRepository.refund(any(), any(), any(), any()) } returns flowOf(NetworkResult.Success(Unit))
         every { mockRepository.getRefundStatus(any(), any(), any()) } returns
-            flowOf(
-                NetworkResult.Success(
-                    """{"amount":"100","currency":"EUR","externalId":"ext-1","payerMessage":"msg","payeeNote":"note","status":"SUCCESSFUL"}"""
-                        .toResponseBody("application/json".toMediaType())
-                )
-            )
+            flowOf(NetworkResult.Success(sampleTransaction()))
 
         viewModel.onPhoneNumberUpdated("256700000000")
         viewModel.onReferenceIdToRefundUpdated("REF-ABC-001")
@@ -218,33 +211,13 @@ class DisbursementRefundScreenViewModelTest {
         assertNull(viewModel.momoTransaction.value)
     }
 
-    /** A status body that cannot be parsed posts a null transaction rather than crashing. */
-    @Test
-    fun `refund status with unparseable body posts null transaction`() = runTest {
-        every { mockRepository.refund(any(), any(), any(), any()) } returns flowOf(NetworkResult.Success(Unit))
-        every { mockRepository.getRefundStatus(any(), any(), any()) } returns
-            flowOf(NetworkResult.Success("not-json".toResponseBody("application/json".toMediaType())))
-
-        viewModel.onPhoneNumberUpdated("256700000000")
-        viewModel.onAmountUpdated("100")
-        viewModel.refund()
-
-        assertNull(viewModel.momoTransaction.value)
-    }
-
     /** A leading Loading emission is ignored and the terminal Success is used to complete the flow. */
     @Test
     fun `refund ignores loading emission before terminal success`() = runTest {
         every { mockRepository.refund(any(), any(), any(), any()) } returns
             flowOf(NetworkResult.Loading(), NetworkResult.Success(Unit))
         every { mockRepository.getRefundStatus(any(), any(), any()) } returns
-            flowOf(
-                NetworkResult.Loading(),
-                NetworkResult.Success(
-                    """{"amount":"100","currency":"EUR","externalId":"ext-1","payerMessage":"msg","payeeNote":"note","status":"SUCCESSFUL"}"""
-                        .toResponseBody("application/json".toMediaType())
-                )
-            )
+            flowOf(NetworkResult.Loading(), NetworkResult.Success(sampleTransaction()))
 
         viewModel.onPhoneNumberUpdated("256700000000")
         viewModel.onAmountUpdated("100")
@@ -258,7 +231,7 @@ class DisbursementRefundScreenViewModelTest {
     fun `refund with non-blank financial id completes`() = runTest {
         every { mockRepository.refund(any(), any(), any(), any()) } returns flowOf(NetworkResult.Success(Unit))
         every { mockRepository.getRefundStatus(any(), any(), any()) } returns
-            flowOf(NetworkResult.Success("{}".toResponseBody("application/json".toMediaType())))
+            flowOf(NetworkResult.Success(sampleTransaction()))
 
         viewModel.onPhoneNumberUpdated("256700000000")
         viewModel.onAmountUpdated("100")
@@ -288,7 +261,7 @@ class DisbursementRefundScreenViewModelTest {
         every { mockRepository.refund(any(), any(), any(), any()) } returns flowOf(NetworkResult.Success(Unit))
         @Suppress("UNCHECKED_CAST")
         every { mockRepository.getRefundStatus(any(), any(), any()) } returns
-            (flowOf(NetworkResult.Success(null)) as Flow<NetworkResult<ResponseBody>>)
+            (flowOf(NetworkResult.Success(null)) as Flow<NetworkResult<MomoTransaction>>)
 
         viewModel.onPhoneNumberUpdated("256700000000")
         viewModel.onAmountUpdated("100")
@@ -296,4 +269,12 @@ class DisbursementRefundScreenViewModelTest {
 
         assertNull(viewModel.momoTransaction.value)
     }
+
+    private fun sampleTransaction() = MomoTransaction(
+        amount = "100",
+        currency = "EUR",
+        externalId = "ext-1",
+        payerMessage = "msg",
+        payeeNote = "note"
+    )
 }

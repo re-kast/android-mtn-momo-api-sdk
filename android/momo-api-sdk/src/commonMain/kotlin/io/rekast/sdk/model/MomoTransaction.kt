@@ -15,6 +15,7 @@
  */
 package io.rekast.sdk.model
 
+import io.rekast.sdk.utils.StatusTypes
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -29,7 +30,7 @@ import kotlinx.serialization.Serializable
  * @property payer The account holder sending the funds; populated for collection operations.
  * @property payerMessage A message visible to the payer describing the purpose of the transaction.
  * @property payeeNote A note visible to the payee describing the purpose of the transaction.
- * @property status The current status of the transaction (see [io.rekast.sdk.utils.TransactionStatus]).
+ * @property status The current status of the transaction (see [io.rekast.sdk.utils.StatusTypes]).
  * @property reason The failure reason when the transaction status is FAILED.
  * @property referenceIdToRefund The reference ID of the original transaction to refund; used only in refund operations.
  */
@@ -39,11 +40,11 @@ data class MomoTransaction(
     @SerialName("currency") var currency: String,
     @SerialName("financialTransactionId") var financialTransactionId: String? = "",
     @SerialName("externalId") var externalId: String,
-    @SerialName("payee") var payee: AccountHolder? = null,
-    @SerialName("payer") var payer: AccountHolder? = null,
+    @SerialName("payee") var payee: Party? = null,
+    @SerialName("payer") var payer: Party? = null,
     @SerialName("payerMessage") var payerMessage: String,
     @SerialName("payeeNote") var payeeNote: String,
-    @SerialName("status") var status: String? = "",
+    @SerialName("status") var status: StatusTypes? = null,
     @SerialName("reason") var reason: String? = "",
     @SerialName("referenceIdToRefund") var referenceIdToRefund: String? = ""
 )

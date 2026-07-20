@@ -16,6 +16,7 @@
 package io.rekast.sdk.network.service.products
 
 import io.rekast.sdk.model.AccountBalance
+import io.rekast.sdk.model.AccountHolderStatus
 import io.rekast.sdk.model.BasicUserInfo
 import io.rekast.sdk.model.MomoNotification
 import io.rekast.sdk.model.MomoTransaction
@@ -37,7 +38,7 @@ sealed interface CommonService {
     /**
      * Makes a request to get the Basic ApiUser Info.
      *
-     * @param productType The API product ([io.rekast.sdk.utils.ProductType]).
+     * @param productType The API product ([io.rekast.sdk.utils.ProductTypes]).
      * @param apiVersion The app Version (e.g., v1_0 or v2_0).
      * @param accountHolder The account holder ID.
      * @param productSubscriptionKey The Product subscription Key (Ocp-Apim-Subscription-Key).
@@ -56,7 +57,7 @@ sealed interface CommonService {
     /**
      * Makes a request to get the ApiUser Info with Consent.
      *
-     * @param productType The API product ([io.rekast.sdk.utils.ProductType]).
+     * @param productType The API product ([io.rekast.sdk.utils.ProductTypes]).
      * @param apiVersion The app Version (e.g., v1_0 or v2_0).
      * @param productSubscriptionKey The Product subscription Key (Ocp-Apim-Subscription-Key).
      * @param environment The API environment (X-Target-Environment).
@@ -73,13 +74,13 @@ sealed interface CommonService {
     /**
      * Makes a request to check the account holder status.
      *
-     * @param productType The API product ([io.rekast.sdk.utils.ProductType]).
+     * @param productType The API product ([io.rekast.sdk.utils.ProductTypes]).
      * @param apiVersion The app Version (e.g., v1_0 or v2_0).
      * @param accountHolderId The account holder unique ID (e.g., phone number).
      * @param accountHolderType The account holder type (e.g., MSISDN).
      * @param productSubscriptionKey The Product subscription Key (Ocp-Apim-Subscription-Key).
      * @param environment The API environment (X-Target-Environment).
-     * @return A `Response` whose body contains the account holder status as a `ResponseBody`.
+     * @return A `Response` whose body is the parsed [AccountHolderStatus] (`{"result": <bool>}`).
      */
     @GET(Constants.EndPoints.VALIDATE_ACCOUNT_HOLDER_STATUS)
     suspend fun validateAccountHolderStatus(
@@ -89,12 +90,12 @@ sealed interface CommonService {
         @Path(Constants.EndpointPaths.ACCOUNT_HOLDER_TYPE) accountHolderType: String,
         @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
         @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String
-    ): Response<ResponseBody>
+    ): Response<AccountHolderStatus>
 
     /**
-     * Makes a request to get the Account Balance. This only works with the [io.rekast.sdk.utils.ProductType.COLLECTION]. It seems to break with the other API product type.
+     * Makes a request to get the Account Balance. This only works with the [io.rekast.sdk.utils.ProductTypes.COLLECTION]. It seems to break with the other API product type.
      *
-     * @param productType The API product ([io.rekast.sdk.utils.ProductType]).
+     * @param productType The API product ([io.rekast.sdk.utils.ProductTypes]).
      * @param apiVersion The app Version (e.g., v1_0 or v2_0).
      * @param productSubscriptionKey The Product subscription Key (Ocp-Apim-Subscription-Key).
      * @param environment The API environment (X-Target-Environment).
@@ -109,10 +110,10 @@ sealed interface CommonService {
     ): Response<AccountBalance>
 
     /**
-     * Makes a request to get the Account Balance in a specific currency. This only works with the [io.rekast.sdk.utils.ProductType.COLLECTION]. It seems to break with the other API product type.
+     * Makes a request to get the Account Balance in a specific currency. This only works with the [io.rekast.sdk.utils.ProductTypes.COLLECTION]. It seems to break with the other API product type.
      * Use EUR as the currency on sandbox
      *
-     * @param productType The API product ([io.rekast.sdk.utils.ProductType]).
+     * @param productType The API product ([io.rekast.sdk.utils.ProductTypes]).
      * @param apiVersion The app Version (e.g., v1_0 or v2_0).
      * @param currency The currency based on the ISO standard.
      * @param productSubscriptionKey The Product subscription Key (Ocp-Apim-Subscription-Key).
@@ -131,7 +132,7 @@ sealed interface CommonService {
     /**
      * Makes a request to transfer funds.
      *
-     * @param productType The API product ([io.rekast.sdk.utils.ProductType]).
+     * @param productType The API product ([io.rekast.sdk.utils.ProductTypes]).
      * @param apiVersion The app Version (e.g., v1_0 or v2_0).
      * @param momoTransaction The transfer payload [MomoTransaction].
      * @param uuid The unique reference ID for the transfer.
@@ -152,12 +153,12 @@ sealed interface CommonService {
     /**
      * Makes a request to get the transfer status.
      *
-     * @param productType The API product ([io.rekast.sdk.utils.ProductType]).
+     * @param productType The API product ([io.rekast.sdk.utils.ProductTypes]).
      * @param apiVersion The app Version (e.g., v1_0 or v2_0).
      * @param referenceId The transfer reference ID (UUID V4).
      * @param productSubscriptionKey The Product subscription Key (Ocp-Apim-Subscription-Key).
      * @param environment The API environment (X-Target-Environment).
-     * @return A `Response` whose body contains the transfer status as a `ResponseBody`.
+     * @return A `Response` whose body is the parsed [MomoTransaction].
      */
     @GET(Constants.EndPoints.GET_TRANSFER_STATUS)
     suspend fun getTransferStatus(
@@ -166,12 +167,12 @@ sealed interface CommonService {
         @Path(Constants.EndpointPaths.REFERENCE_ID) referenceId: String,
         @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
         @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String
-    ): Response<ResponseBody>
+    ): Response<MomoTransaction>
 
     /**
      * Makes a request to send a delivery notification.
      *
-     * @param productType The API product ([io.rekast.sdk.utils.ProductType]).
+     * @param productType The API product ([io.rekast.sdk.utils.ProductTypes]).
      * @param apiVersion The app Version (e.g., v1_0 or v2_0).
      * @param referenceId The transfer reference ID (UUID V4).
      * @param momoNotification The notification message.
