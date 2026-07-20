@@ -298,6 +298,12 @@ object Constants {
         const val PRE_APPROVAL_STATUS = "/collection/{apiVersion}/preapproval/{referenceId}"
 
         /**
+         * Endpoint for retrieving the list of approved pre-approvals for a given account holder.
+         */
+        const val GET_APPROVED_PRE_APPROVALS =
+            "/collection/{apiVersion}/preapprovals/{accountHolderIdType}/{accountHolderId}"
+
+        /**
          * Endpoint for sending a delivery notification for a request-to-withdraw transaction.
          */
         const val REQUEST_TO_WITHDRAW_DELIVERY_NOTIFICATION = "/collection/{apiVersion}/requesttowithdraw/{referenceId}/deliverynotification"

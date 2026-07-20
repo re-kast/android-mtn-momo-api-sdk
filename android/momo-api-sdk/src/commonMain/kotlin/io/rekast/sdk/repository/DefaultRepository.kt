@@ -549,6 +549,26 @@ class DefaultRepository @Inject constructor(private val defaultSource: DefaultSo
     }
 
     /**
+     * Retrieves the list of approved pre-approvals for a given account holder.
+     *
+     * @param apiVersion The version of the API to use.
+     * @param accountHolderIdType The type of the account holder identifier (e.g., MSISDN).
+     * @param accountHolderId The account holder identifier of the payer whose pre-approvals to list.
+     * @param productSubscriptionKey The subscription key for the Collection product.
+     * @param environment The target environment (e.g., sandbox or production).
+     * @return A `Flow` emitting a [NetworkResult] whose body contains the approved pre-approvals as a `ResponseBody`.
+     */
+    fun getApprovedPreApprovals(apiVersion: String, accountHolderIdType: String, accountHolderId: String, productSubscriptionKey: String, environment: String): Flow<NetworkResult<ResponseBody>> = executeApiCall {
+        defaultSource.getApprovedPreApprovals(
+            accountHolderIdType = accountHolderIdType,
+            accountHolderId = accountHolderId,
+            apiVersion = apiVersion,
+            productSubscriptionKey = productSubscriptionKey,
+            environment = environment
+        )
+    }
+
+    /**
      * Sends a delivery notification to the payer for an existing request-to-withdraw transaction.
      *
      * @param apiVersion The version of the API to use.

@@ -144,6 +144,11 @@
         android:label="@string/pre_approval_screen" />
 
     <fragment
+        android:id="@+id/approvedPreApprovalsScreenFragment"
+        android:name="io.rekast.sdk.sample.views.collection.preapproval.approved.ApprovedPreApprovalsScreenFragment"
+        android:label="@string/approved_pre_approvals_screen" />
+
+    <fragment
         android:id="@+id/cashTransferScreenFragment"
         android:name="io.rekast.sdk.sample.views.remittance.cashtransfer.CashTransferScreenFragment"
         android:label="@string/cash_transfer_screen" />

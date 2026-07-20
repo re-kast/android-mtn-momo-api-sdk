@@ -219,6 +219,25 @@ sealed interface CollectionService : CommonService {
     ): Response<Unit>
 
     /**
+     * Retrieves the list of approved pre-approvals for a given account holder.
+     *
+     * @param accountHolderIdType The type of the account holder identifier (e.g., MSISDN).
+     * @param accountHolderId The account holder identifier of the payer whose pre-approvals to list.
+     * @param apiVersion The API version to target (e.g., v1_0 or v2_0).
+     * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Collection product.
+     * @param environment The target environment (e.g., sandbox or production).
+     * @return A `Response` whose body contains the approved pre-approvals as a `ResponseBody`.
+     */
+    @GET(Constants.EndPoints.GET_APPROVED_PRE_APPROVALS)
+    suspend fun getApprovedPreApprovals(
+        @Path(Constants.EndpointPaths.ACCOUNT_HOLDER_TYPE) accountHolderIdType: String,
+        @Path(Constants.EndpointPaths.ACCOUNT_HOLDER_ID) accountHolderId: String,
+        @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
+        @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
+        @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String
+    ): Response<ResponseBody>
+
+    /**
      * Sends a delivery notification for a request-to-withdraw transaction.
      *
      * @param referenceId The UUID V4 reference ID used when calling [requestToWithdraw].

@@ -428,6 +428,24 @@ class DefaultSource @Inject constructor(
     )
 
     /**
+     * Retrieves the list of approved pre-approvals for a given account holder.
+     *
+     * @param accountHolderIdType The type of the account holder identifier (e.g., MSISDN).
+     * @param accountHolderId The account holder identifier of the payer whose pre-approvals to list.
+     * @param apiVersion The version of the API to use.
+     * @param productSubscriptionKey The subscription key for the Collection product.
+     * @param environment The API environment (e.g., sandbox or production).
+     * @return A `Response` whose body contains the approved pre-approvals.
+     */
+    suspend fun getApprovedPreApprovals(accountHolderIdType: String, accountHolderId: String, apiVersion: String, productSubscriptionKey: String, environment: String) = collectionService.getApprovedPreApprovals(
+        accountHolderIdType = accountHolderIdType,
+        accountHolderId = accountHolderId,
+        apiVersion = apiVersion,
+        productSubscriptionKey = productSubscriptionKey,
+        environment = environment
+    )
+
+    /**
      * Sends a delivery notification for a request-to-withdraw transaction.
      *
      * @param apiVersion The version of the API to use.

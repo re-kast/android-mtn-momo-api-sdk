@@ -681,6 +681,29 @@ class DefaultRepositoryTest {
         assertTrue(results.last() is NetworkResult.Error)
     }
 
+    /** Verifies that [DefaultRepository.getApprovedPreApprovals] emits Loading then Success. */
+    @Test
+    fun `getApprovedPreApprovals emits Loading then Success`() = runTest {
+        val body = mockk<ResponseBody>(relaxed = true)
+        coEvery { defaultSource.getApprovedPreApprovals(any(), any(), any(), any(), any()) } returns Response.success(body)
+
+        val results = repository.getApprovedPreApprovals("v2_0", "MSISDN", "256774290781", "sub-key", "sandbox").toList()
+
+        assertTrue(results.first() is NetworkResult.Loading)
+        assertTrue(results.last() is NetworkResult.Success)
+    }
+
+    /** Verifies that [DefaultRepository.getApprovedPreApprovals] emits Error on a non-2xx response. */
+    @Test
+    fun `getApprovedPreApprovals emits Error on failure`() = runTest {
+        coEvery { defaultSource.getApprovedPreApprovals(any(), any(), any(), any(), any()) } returns
+            Response.error(404, "not found".toResponseBody("text/plain".toMediaType()))
+
+        val results = repository.getApprovedPreApprovals("v2_0", "MSISDN", "256774290781", "sub-key", "sandbox").toList()
+
+        assertTrue(results.last() is NetworkResult.Error)
+    }
+
     /** Verifies that [DefaultRepository.cashTransfer] emits Loading then Success on HTTP 202. */
     @Test
     fun `cashTransfer emits Loading then Success`() = runTest {

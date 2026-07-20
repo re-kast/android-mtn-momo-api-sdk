@@ -67,16 +67,19 @@
     <!--Operation screens (Invoice, Pre-approval, Cash Transfer)-->
     <string name="invoice_screen">Collection | Invoice</string>
     <string name="pre_approval_screen">Collection | Pre-Approval</string>
+    <string name="approved_pre_approvals_screen">Collection | Approved Pre-Approvals</string>
     <string name="cash_transfer_screen">Remittance | Cash Transfer</string>
 
     <string name="invoice_title">Create Invoice</string>
     <string name="pre_approval_title">Create Pre-Approval</string>
+    <string name="approved_pre_approvals_title">Approved Pre-Approvals</string>
     <string name="cash_transfer_title">Cash Transfer (V2)</string>
 
     <string name="action_create">Create</string>
     <string name="action_check_status">Check Status</string>
     <string name="action_cancel">Cancel</string>
     <string name="action_send">Send</string>
+    <string name="action_get_approved">Get Approved</string>
 
     <string name="label_amount">Amount *</string>
     <string name="label_payer_msisdn">Payer phone number *</string>
@@ -256,4 +259,6 @@
     <string name="snackbar_preapproval_cancelled">Pre-approval cancelled successfully</string>
     <string name="snackbar_preapproval_not_cancelled">Pre-approval not cancelled. %1$s</string>
     <string name="snackbar_preapproval_required_first">Create a pre-approval first</string>
+    <string name="snackbar_approved_preapprovals_fetched">Approved pre-approvals fetched successfully</string>
+    <string name="snackbar_approved_preapprovals_failed">Approved pre-approvals not fetched. %1$s</string>
 </resources>

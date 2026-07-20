@@ -29,6 +29,7 @@ object Constants {
         const val DISBURSEMENT_REFUND = "Disbursement | Refund"
         const val COLLECTION_INVOICE = "Collection | Invoice"
         const val COLLECTION_PRE_APPROVAL = "Collection | Pre-Approval"
+        const val COLLECTION_APPROVED_PRE_APPROVALS = "Collection | Approved Pre-Approvals"
         const val REMITTANCE_CASH_TRANSFER = "Remittance | Cash Transfer"
         const val SETUP = "Setup & Config"
         const val SETTINGS = "Settings"

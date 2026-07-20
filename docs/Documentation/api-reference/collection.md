@@ -369,3 +369,27 @@ defaultRepository.cancelPreApproval(
 | `referenceId`            | `String` | UUID of the pre-approval to cancel  |
 | `productSubscriptionKey` | `String` | Collection primary subscription key |
 | `environment`            | `String` | `"sandbox"` or `"production"`       |
+
+---
+
+## Get Approved Pre-Approvals
+
+Lists the approved pre-approvals for a given account holder.
+
+```kotlin
+defaultRepository.getApprovedPreApprovals(
+    apiVersion = "v1_0",
+    accountHolderIdType = "MSISDN",
+    accountHolderId = "256774290781",
+    productSubscriptionKey = collectionPrimaryKey,
+    environment = "sandbox"
+).collect { result -> /* ... */ }
+```
+
+| Parameter                | Type     | Description                                     |
+|--------------------------|----------|-------------------------------------------------|
+| `apiVersion`             | `String` | API version                                     |
+| `accountHolderIdType`    | `String` | Account holder identifier type (e.g. `MSISDN`)  |
+| `accountHolderId`        | `String` | Account holder identifier whose approvals to list |
+| `productSubscriptionKey` | `String` | Collection primary subscription key             |
+| `environment`            | `String` | `"sandbox"` or `"production"`                   |
