@@ -44,13 +44,13 @@ defaultRepository.getAccountBalance(
 ).collect { result -> /* ... */ }
 ```
 
-| Parameter | Type | Description |
-|---|---|---|
-| `productType` | `String` | Product type string |
-| `apiVersion` | `String` | API version, e.g. `"v1_0"` |
-| `currency` | `String?` | ISO-4217 currency code, or `null` for the default currency |
-| `productSubscriptionKey` | `String` | Primary subscription key for the product |
-| `environment` | `String` | `"sandbox"` or `"production"` |
+| Parameter                | Type      | Description                                                |
+|--------------------------|-----------|------------------------------------------------------------|
+| `productType`            | `String`  | Product type string                                        |
+| `apiVersion`             | `String`  | API version, e.g. `"v1_0"`                                 |
+| `currency`               | `String?` | ISO-4217 currency code, or `null` for the default currency |
+| `productSubscriptionKey` | `String`  | Primary subscription key for the product                   |
+| `environment`            | `String`  | `"sandbox"` or `"production"`                              |
 
 ---
 
@@ -77,13 +77,13 @@ defaultRepository.getBasicUserInfo(
 }
 ```
 
-| Parameter | Type | Description |
-|---|---|---|
-| `productType` | `String` | Product type string |
-| `apiVersion` | `String` | API version |
-| `accountHolder` | `String` | MSISDN of the account holder |
-| `productSubscriptionKey` | `String` | Primary subscription key |
-| `environment` | `String` | `"sandbox"` or `"production"` |
+| Parameter                | Type     | Description                   |
+|--------------------------|----------|-------------------------------|
+| `productType`            | `String` | Product type string           |
+| `apiVersion`             | `String` | API version                   |
+| `accountHolder`          | `String` | MSISDN of the account holder  |
+| `productSubscriptionKey` | `String` | Primary subscription key      |
+| `environment`            | `String` | `"sandbox"` or `"production"` |
 
 ---
 
@@ -109,35 +109,35 @@ defaultRepository.getUserInfoWithConsent(
 }
 ```
 
-| Parameter | Type | Description |
-|---|---|---|
-| `productType` | `String` | Product type string. Use the product whose subscription key you have provisioned (e.g. `ProductType.REMITTANCE.productType`) |
-| `apiVersion` | `String` | API version |
-| `productSubscriptionKey` | `String` | Primary subscription key |
-| `environment` | `String` | `"sandbox"` or `"production"` |
+| Parameter                | Type     | Description                                                                                                                  |
+|--------------------------|----------|------------------------------------------------------------------------------------------------------------------------------|
+| `productType`            | `String` | Product type string. Use the product whose subscription key you have provisioned (e.g. `ProductType.REMITTANCE.productType`) |
+| `apiVersion`             | `String` | API version                                                                                                                  |
+| `productSubscriptionKey` | `String` | Primary subscription key                                                                                                     |
+| `environment`            | `String` | `"sandbox"` or `"production"`                                                                                                |
 
 **`UserInfoWithConsent` response fields**
 
 Only `sub` and `name` are always present; every other field is optional (nullable) and is simply omitted when the API does not return it.
 
-| Field | Type | Description |
-|---|---|---|
-| `sub` | `String` | Subject identifier for the user |
-| `name` | `String` | Full name |
-| `givenName` / `familyName` / `middleName` | `String?` | Name parts |
-| `birthDate` | `String?` | Date of birth |
-| `gender` | `String?` | Gender |
-| `locale` | `String?` | Locale, e.g. `sv_SE` |
-| `email` | `String?` | Email address |
-| `emailVerified` | `Boolean?` | Whether the email is verified |
-| `phonenumber` | `String?` | Phone number (`phone_number`) |
-| `phoneNumberVerified` | `Boolean?` | Whether the phone number is verified |
-| `address` | `Address?` | Nested address object (`formatted`, `streetAddress`, `postalCode`, `locality`, `region`, `country`) |
-| `creditScore` | `Int?` | Credit score |
-| `active` | `Boolean?` | Whether the account is active |
-| `countryOfBirth` / `regionOfBirth` / `cityOfBirth` | `String?` | Birthplace |
-| `occupation` / `employerName` | `String?` | Employment details |
-| `identificationType` / `identificationValue` | `String?` | Identification document type and number |
+| Field                                              | Type       | Description                                                                                         |
+|----------------------------------------------------|------------|-----------------------------------------------------------------------------------------------------|
+| `sub`                                              | `String`   | Subject identifier for the user                                                                     |
+| `name`                                             | `String`   | Full name                                                                                           |
+| `givenName` / `familyName` / `middleName`          | `String?`  | Name parts                                                                                          |
+| `birthDate`                                        | `String?`  | Date of birth                                                                                       |
+| `gender`                                           | `String?`  | Gender                                                                                              |
+| `locale`                                           | `String?`  | Locale, e.g. `sv_SE`                                                                                |
+| `email`                                            | `String?`  | Email address                                                                                       |
+| `emailVerified`                                    | `Boolean?` | Whether the email is verified                                                                       |
+| `phonenumber`                                      | `String?`  | Phone number (`phone_number`)                                                                       |
+| `phoneNumberVerified`                              | `Boolean?` | Whether the phone number is verified                                                                |
+| `address`                                          | `Address?` | Nested address object (`formatted`, `streetAddress`, `postalCode`, `locality`, `region`, `country`) |
+| `creditScore`                                      | `Int?`     | Credit score                                                                                        |
+| `active`                                           | `Boolean?` | Whether the account is active                                                                       |
+| `countryOfBirth` / `regionOfBirth` / `cityOfBirth` | `String?`  | Birthplace                                                                                          |
+| `occupation` / `employerName`                      | `String?`  | Employment details                                                                                  |
+| `identificationType` / `identificationValue`       | `String?`  | Identification document type and number                                                             |
 
 ---
 
@@ -161,10 +161,10 @@ defaultRepository.validateAccountHolderStatus(
 }
 ```
 
-| Parameter | Type | Description |
-|---|---|---|
-| `productType` | `String` | Product type string |
-| `apiVersion` | `String` | API version |
-| `accountHolder` | `AccountHolder` | Account identifier — `partyIdType` is typically `"MSISDN"` |
-| `productSubscriptionKey` | `String` | Primary subscription key |
-| `environment` | `String` | `"sandbox"` or `"production"` |
+| Parameter                | Type            | Description                                                |
+|--------------------------|-----------------|------------------------------------------------------------|
+| `productType`            | `String`        | Product type string                                        |
+| `apiVersion`             | `String`        | API version                                                |
+| `accountHolder`          | `AccountHolder` | Account identifier — `partyIdType` is typically `"MSISDN"` |
+| `productSubscriptionKey` | `String`        | Primary subscription key                                   |
+| `environment`            | `String`        | `"sandbox"` or `"production"`                              |

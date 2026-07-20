@@ -16,6 +16,7 @@
 package io.rekast.sdk.sample.views.splash
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -25,6 +26,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Divider
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -48,7 +50,9 @@ import kotlinx.coroutines.delay
  */
 @Composable
 fun SplashScreen(modifier: Modifier = Modifier) = Box(
-    modifier = modifier.fillMaxSize()
+    modifier = modifier
+        .fillMaxSize()
+        .background(MaterialTheme.colors.background)
 ) {
     LaunchedEffect(Unit) {
         delay(300)
@@ -79,6 +83,7 @@ fun SplashScreen(modifier: Modifier = Modifier) = Box(
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
             fontSize = 22.sp,
+            color = MaterialTheme.colors.onBackground,
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
     }

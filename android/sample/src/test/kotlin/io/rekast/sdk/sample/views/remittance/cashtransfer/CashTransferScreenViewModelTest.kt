@@ -35,6 +35,8 @@ import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -128,5 +130,83 @@ class CashTransferScreenViewModelTest {
         viewModel.checkStatus()
 
         verify(exactly = 0) { mockRepository.getCashTransferStatus(any(), any(), any(), any()) }
+    }
+
+    @Test
+    fun `onCurrencyChanged updates currency`() {
+        viewModel.onCurrencyChanged("USD")
+        assertEquals("USD", viewModel.currency.value)
+    }
+
+    @Test
+    fun `onPayerMessageChanged updates message`() {
+        viewModel.onPayerMessageChanged("From abroad")
+        assertEquals("From abroad", viewModel.payerMessage.value)
+    }
+
+    @Test
+    fun `onPayeeNoteChanged updates note`() {
+        viewModel.onPayeeNoteChanged("Family support")
+        assertEquals("Family support", viewModel.payeeNote.value)
+    }
+
+    @Test
+    fun `onPayerFirstNameChanged updates first name`() {
+        viewModel.onPayerFirstNameChanged("Jane")
+        assertEquals("Jane", viewModel.payerFirstName.value)
+    }
+
+    @Test
+    fun `onPayerSurNameChanged updates surname`() {
+        viewModel.onPayerSurNameChanged("Doe")
+        assertEquals("Doe", viewModel.payerSurName.value)
+    }
+
+    /** A send error posts a failure message and leaves no reference ID. */
+    @Test
+    fun `sendCashTransfer error path posts failure result`() = runTest {
+        every { mockRepository.cashTransfer(any(), any(), any(), any(), any()) } returns flowOf(NetworkResult.Error("bad"))
+
+        viewModel.onAmountChanged("100")
+        viewModel.onPayeeMsisdnChanged("256700000000")
+        viewModel.sendCashTransfer()
+
+        assertNull(viewModel.referenceId.value)
+        assertEquals("Send failed: bad", viewModel.result.value)
+    }
+
+    /** An exception during an operation is caught and surfaced in the console. */
+    @Test
+    fun `sendCashTransfer exception path posts error result`() = runTest {
+        every { mockRepository.cashTransfer(any(), any(), any(), any(), any()) } throws RuntimeException("kaboom")
+
+        viewModel.onAmountChanged("100")
+        viewModel.onPayeeMsisdnChanged("256700000000")
+        viewModel.sendCashTransfer()
+
+        assertEquals("Error: kaboom", viewModel.result.value)
+    }
+
+    /** A status error posts a failure message. */
+    @Test
+    fun `checkStatus error path posts failure result`() = runTest {
+        viewModel.referenceId.value = "ref-1"
+        every { mockRepository.getCashTransferStatus(any(), any(), any(), any()) } returns flowOf(NetworkResult.Error("nope"))
+
+        viewModel.checkStatus()
+
+        assertEquals("Status failed: nope", viewModel.result.value)
+    }
+
+    /** A blank status body reports the placeholder rather than an empty console. */
+    @Test
+    fun `checkStatus with blank body reports no status body`() = runTest {
+        viewModel.referenceId.value = "ref-1"
+        every { mockRepository.getCashTransferStatus(any(), any(), any(), any()) } returns
+            flowOf(NetworkResult.Success("".toResponseBody("application/json".toMediaType())))
+
+        viewModel.checkStatus()
+
+        assertEquals("No status body returned.", viewModel.result.value)
     }
 }

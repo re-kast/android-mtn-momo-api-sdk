@@ -270,16 +270,21 @@ class HomeScreenViewModel @Inject constructor(
     /**
      * Fetches the account balance and posts the result to [accountBalance].
      *
-     * Uses the Remittance product type to match the other Home screen calls — the sample app is
-     * provisioned with Remittance subscription keys, so calling the balance endpoint with any other
-     * product type (e.g. Collection) fails against this configuration.
+     * Uses the Collection product type and subscription key, not Remittance: the MTN MoMo balance
+     * endpoint only works reliably with [ProductType.COLLECTION] (see
+     * [io.rekast.sdk.repository.DefaultRepository.getAccountBalance]), and calling it against
+     * Remittance commonly returns 401/404. This is safe because the Bearer token provisioned during
+     * bootstrap is api-user-scoped — it is accepted across products — so pairing it with the
+     * Collection subscription key targets the Collection balance endpoint the same way the Collection
+     * screens do. The account holder / user-info calls above remain on Remittance because those
+     * endpoints are product-agnostic.
      */
     private suspend fun fetchAccountBalance() {
         val result = defaultRepository.getAccountBalance(
-            productType = ProductType.REMITTANCE.productType,
+            productType = ProductType.COLLECTION.productType,
             apiVersion = sampleConfig.apiVersionV1,
             currency = "",
-            productSubscriptionKey = Utils.getProductSubscriptionKeys(ProductType.REMITTANCE, sampleConfig),
+            productSubscriptionKey = Utils.getProductSubscriptionKeys(ProductType.COLLECTION, sampleConfig),
             environment = sampleConfig.environment
         ).awaitTerminal()
 

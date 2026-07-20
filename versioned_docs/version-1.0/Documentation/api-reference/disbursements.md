@@ -39,14 +39,14 @@ defaultRepository.transfer(
 }
 ```
 
-| Parameter | Type | Description |
-|---|---|---|
-| `productType` | `String` | Product type string, e.g. `ProductType.DISBURSEMENT.productType` |
-| `apiVersion` | `String` | API version, e.g. `"v1_0"` |
-| `momoTransaction` | `MomoTransaction` | Transfer details (amount, currency, payee, messages) |
-| `uuid` | `String` | Unique reference ID — save this to poll for status |
-| `productSubscriptionKey` | `String` | Disbursements primary subscription key |
-| `environment` | `String` | `"sandbox"` or `"production"` |
+| Parameter                | Type              | Description                                                      |
+|--------------------------|-------------------|------------------------------------------------------------------|
+| `productType`            | `String`          | Product type string, e.g. `ProductType.DISBURSEMENT.productType` |
+| `apiVersion`             | `String`          | API version, e.g. `"v1_0"`                                       |
+| `momoTransaction`        | `MomoTransaction` | Transfer details (amount, currency, payee, messages)             |
+| `uuid`                   | `String`          | Unique reference ID — save this to poll for status               |
+| `productSubscriptionKey` | `String`          | Disbursements primary subscription key                           |
+| `environment`            | `String`          | `"sandbox"` or `"production"`                                    |
 
 ---
 
@@ -70,13 +70,13 @@ defaultRepository.getTransferStatus(
 }
 ```
 
-| Parameter | Type | Description |
-|---|---|---|
-| `productType` | `String` | Product type string |
-| `apiVersion` | `String` | API version |
-| `referenceId` | `String` | UUID used when calling `transfer` |
+| Parameter                | Type     | Description                            |
+|--------------------------|----------|----------------------------------------|
+| `productType`            | `String` | Product type string                    |
+| `apiVersion`             | `String` | API version                            |
+| `referenceId`            | `String` | UUID used when calling `transfer`      |
 | `productSubscriptionKey` | `String` | Disbursements primary subscription key |
-| `environment` | `String` | `"sandbox"` or `"production"` |
+| `environment`            | `String` | `"sandbox"` or `"production"`          |
 
 ---
 
@@ -108,12 +108,12 @@ defaultRepository.deposit(
 }
 ```
 
-| Parameter | Type | Description |
-|---|---|---|
-| `momoTransaction` | `MomoTransaction` | Deposit details |
-| `apiVersion` | `String` | API version, e.g. `"v1_0"` |
-| `productSubscriptionKey` | `String` | Disbursements primary subscription key |
-| `uuid` | `String` | Unique reference ID |
+| Parameter                | Type              | Description                            |
+|--------------------------|-------------------|----------------------------------------|
+| `momoTransaction`        | `MomoTransaction` | Deposit details                        |
+| `apiVersion`             | `String`          | API version, e.g. `"v1_0"`             |
+| `productSubscriptionKey` | `String`          | Disbursements primary subscription key |
+| `uuid`                   | `String`          | Unique reference ID                    |
 
 ---
 
@@ -135,10 +135,10 @@ defaultRepository.getDepositStatus(
 }
 ```
 
-| Parameter | Type | Description |
-|---|---|---|
-| `referenceId` | `String` | UUID used when calling `deposit` |
-| `apiVersion` | `String` | API version |
+| Parameter                | Type     | Description                            |
+|--------------------------|----------|----------------------------------------|
+| `referenceId`            | `String` | UUID used when calling `deposit`       |
+| `apiVersion`             | `String` | API version                            |
 | `productSubscriptionKey` | `String` | Disbursements primary subscription key |
 
 ---
@@ -171,12 +171,12 @@ defaultRepository.refund(
 }
 ```
 
-| Parameter | Type | Description |
-|---|---|---|
-| `momoTransaction` | `MomoTransaction` | Refund details; set `referenceIdToRefund` to the original transaction UUID |
-| `apiVersion` | `String` | API version, e.g. `"v2_0"` |
-| `productSubscriptionKey` | `String` | Disbursements primary subscription key |
-| `uuid` | `String` | Unique reference ID for this refund |
+| Parameter                | Type              | Description                                                                |
+|--------------------------|-------------------|----------------------------------------------------------------------------|
+| `momoTransaction`        | `MomoTransaction` | Refund details; set `referenceIdToRefund` to the original transaction UUID |
+| `apiVersion`             | `String`          | API version, e.g. `"v2_0"`                                                 |
+| `productSubscriptionKey` | `String`          | Disbursements primary subscription key                                     |
+| `uuid`                   | `String`          | Unique reference ID for this refund                                        |
 
 ---
 
@@ -198,10 +198,10 @@ defaultRepository.getRefundStatus(
 }
 ```
 
-| Parameter | Type | Description |
-|---|---|---|
-| `referenceId` | `String` | UUID used when calling `refund` |
-| `apiVersion` | `String` | API version |
+| Parameter                | Type     | Description                            |
+|--------------------------|----------|----------------------------------------|
+| `referenceId`            | `String` | UUID used when calling `refund`        |
+| `apiVersion`             | `String` | API version                            |
 | `productSubscriptionKey` | `String` | Disbursements primary subscription key |
 
 > **Cash transfers** — the V2 cross-border `cashTransfer` / `getCashTransferStatus` operations are documented under [Remittance](./remittance). **Withdrawal delivery notifications** — `requestToWithdrawDeliveryNotification` is documented under [Collection](./collection).

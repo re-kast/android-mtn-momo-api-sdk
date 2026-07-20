@@ -41,12 +41,12 @@ defaultRepository.requestToPay(
 
 Authentication is handled automatically by the SDK's interceptors — you never pass an access token. Every `DefaultRepository` method returns a `Flow<NetworkResult<T>>`; collect it inside a coroutine scope.
 
-| Parameter | Type | Description |
-|---|---|---|
-| `momoTransaction` | `MomoTransaction` | Payment details (amount, currency, payer, messages) |
-| `apiVersion` | `String` | API version, e.g. `"v1_0"` |
-| `productSubscriptionKey` | `String` | Collection primary subscription key |
-| `uuid` | `String` | Unique reference ID — save this to poll for status |
+| Parameter                | Type              | Description                                         |
+|--------------------------|-------------------|-----------------------------------------------------|
+| `momoTransaction`        | `MomoTransaction` | Payment details (amount, currency, payer, messages) |
+| `apiVersion`             | `String`          | API version, e.g. `"v1_0"`                          |
+| `productSubscriptionKey` | `String`          | Collection primary subscription key                 |
+| `uuid`                   | `String`          | Unique reference ID — save this to poll for status  |
 
 ---
 
@@ -68,11 +68,11 @@ defaultRepository.requestToPayTransactionStatus(
 }
 ```
 
-| Parameter | Type | Description |
-|---|---|---|
-| `referenceId` | `String` | UUID used when calling `requestToPay` |
-| `apiVersion` | `String` | API version, e.g. `"v1_0"` |
-| `productSubscriptionKey` | `String` | Collection primary subscription key |
+| Parameter                | Type     | Description                           |
+|--------------------------|----------|---------------------------------------|
+| `referenceId`            | `String` | UUID used when calling `requestToPay` |
+| `apiVersion`             | `String` | API version, e.g. `"v1_0"`            |
+| `productSubscriptionKey` | `String` | Collection primary subscription key   |
 
 ---
 
@@ -104,12 +104,12 @@ defaultRepository.requestToWithdraw(
 }
 ```
 
-| Parameter | Type | Description |
-|---|---|---|
-| `momoTransaction` | `MomoTransaction` | Transaction details |
-| `apiVersion` | `String` | API version, e.g. `"v2_0"` |
-| `productSubscriptionKey` | `String` | Collection primary subscription key |
-| `uuid` | `String` | Unique reference ID |
+| Parameter                | Type              | Description                         |
+|--------------------------|-------------------|-------------------------------------|
+| `momoTransaction`        | `MomoTransaction` | Transaction details                 |
+| `apiVersion`             | `String`          | API version, e.g. `"v2_0"`          |
+| `productSubscriptionKey` | `String`          | Collection primary subscription key |
+| `uuid`                   | `String`          | Unique reference ID                 |
 
 ---
 
@@ -129,11 +129,11 @@ defaultRepository.requestToWithdrawTransactionStatus(
 }
 ```
 
-| Parameter | Type | Description |
-|---|---|---|
-| `referenceId` | `String` | UUID used when calling `requestToWithdraw` |
-| `apiVersion` | `String` | API version, e.g. `"v2_0"` |
-| `productSubscriptionKey` | `String` | Collection primary subscription key |
+| Parameter                | Type     | Description                                |
+|--------------------------|----------|--------------------------------------------|
+| `referenceId`            | `String` | UUID used when calling `requestToWithdraw` |
+| `apiVersion`             | `String` | API version, e.g. `"v2_0"`                 |
+| `productSubscriptionKey` | `String` | Collection primary subscription key        |
 
 ---
 
@@ -158,14 +158,14 @@ defaultRepository.requestToPayDeliveryNotification(
 }
 ```
 
-| Parameter | Type | Description |
-|---|---|---|
-| `productType` | `String` | Product initiating the notification, e.g. `ProductType.COLLECTION.productType` |
-| `apiVersion` | `String` | API version, e.g. `"v1_0"` |
-| `referenceId` | `String` | UUID of the original `requestToPay` |
-| `momoNotification` | `MomoNotification` | Notification message body |
-| `productSubscriptionKey` | `String` | Collection primary subscription key |
-| `environment` | `String` | `"sandbox"` or `"production"` |
+| Parameter                | Type               | Description                                                                    |
+|--------------------------|--------------------|--------------------------------------------------------------------------------|
+| `productType`            | `String`           | Product initiating the notification, e.g. `ProductType.COLLECTION.productType` |
+| `apiVersion`             | `String`           | API version, e.g. `"v1_0"`                                                     |
+| `referenceId`            | `String`           | UUID of the original `requestToPay`                                            |
+| `momoNotification`       | `MomoNotification` | Notification message body                                                      |
+| `productSubscriptionKey` | `String`           | Collection primary subscription key                                            |
+| `environment`            | `String`           | `"sandbox"` or `"production"`                                                  |
 
 ---
 
@@ -189,13 +189,13 @@ defaultRepository.requestToWithdrawDeliveryNotification(
 }
 ```
 
-| Parameter | Type | Description |
-|---|---|---|
-| `apiVersion` | `String` | API version, e.g. `"v1_0"` |
-| `referenceId` | `String` | UUID of the original `requestToWithdraw` |
-| `momoNotification` | `MomoNotification` | Notification message body |
-| `productSubscriptionKey` | `String` | Collection primary subscription key |
-| `environment` | `String` | `"sandbox"` or `"production"` |
+| Parameter                | Type               | Description                              |
+|--------------------------|--------------------|------------------------------------------|
+| `apiVersion`             | `String`           | API version, e.g. `"v1_0"`               |
+| `referenceId`            | `String`           | UUID of the original `requestToWithdraw` |
+| `momoNotification`       | `MomoNotification` | Notification message body                |
+| `productSubscriptionKey` | `String`           | Collection primary subscription key      |
+| `environment`            | `String`           | `"sandbox"` or `"production"`            |
 
 ---
 
@@ -227,13 +227,13 @@ defaultRepository.createInvoice(
 }
 ```
 
-| Parameter | Type | Description |
-|---|---|---|
-| `apiVersion` | `String` | API version, e.g. `"v1_0"` |
-| `invoice` | `Invoice` | Invoice details including amount, currency, payer, and payee |
-| `uuid` | `String` | Unique reference ID for the invoice |
-| `productSubscriptionKey` | `String` | Collection primary subscription key |
-| `environment` | `String` | `"sandbox"` or `"production"` |
+| Parameter                | Type      | Description                                                  |
+|--------------------------|-----------|--------------------------------------------------------------|
+| `apiVersion`             | `String`  | API version, e.g. `"v1_0"`                                   |
+| `invoice`                | `Invoice` | Invoice details including amount, currency, payer, and payee |
+| `uuid`                   | `String`  | Unique reference ID for the invoice                          |
+| `productSubscriptionKey` | `String`  | Collection primary subscription key                          |
+| `environment`            | `String`  | `"sandbox"` or `"production"`                                |
 
 ---
 
@@ -256,12 +256,12 @@ defaultRepository.getInvoiceStatus(
 }
 ```
 
-| Parameter | Type | Description |
-|---|---|---|
-| `apiVersion` | `String` | API version |
-| `referenceId` | `String` | UUID used when calling `createInvoice` |
-| `productSubscriptionKey` | `String` | Collection primary subscription key |
-| `environment` | `String` | `"sandbox"` or `"production"` |
+| Parameter                | Type     | Description                            |
+|--------------------------|----------|----------------------------------------|
+| `apiVersion`             | `String` | API version                            |
+| `referenceId`            | `String` | UUID used when calling `createInvoice` |
+| `productSubscriptionKey` | `String` | Collection primary subscription key    |
+| `environment`            | `String` | `"sandbox"` or `"production"`          |
 
 ---
 
@@ -284,12 +284,12 @@ defaultRepository.cancelInvoice(
 }
 ```
 
-| Parameter | Type | Description |
-|---|---|---|
-| `apiVersion` | `String` | API version |
-| `referenceId` | `String` | UUID of the invoice to cancel |
+| Parameter                | Type     | Description                         |
+|--------------------------|----------|-------------------------------------|
+| `apiVersion`             | `String` | API version                         |
+| `referenceId`            | `String` | UUID of the invoice to cancel       |
 | `productSubscriptionKey` | `String` | Collection primary subscription key |
-| `environment` | `String` | `"sandbox"` or `"production"` |
+| `environment`            | `String` | `"sandbox"` or `"production"`       |
 
 ---
 
@@ -318,13 +318,13 @@ defaultRepository.createPreApproval(
 }
 ```
 
-| Parameter | Type | Description |
-|---|---|---|
-| `apiVersion` | `String` | API version |
-| `preApproval` | `PreApproval` | Payer details, currency, message, and validity duration in seconds |
-| `uuid` | `String` | Unique reference ID |
-| `productSubscriptionKey` | `String` | Collection primary subscription key |
-| `environment` | `String` | `"sandbox"` or `"production"` |
+| Parameter                | Type          | Description                                                        |
+|--------------------------|---------------|--------------------------------------------------------------------|
+| `apiVersion`             | `String`      | API version                                                        |
+| `preApproval`            | `PreApproval` | Payer details, currency, message, and validity duration in seconds |
+| `uuid`                   | `String`      | Unique reference ID                                                |
+| `productSubscriptionKey` | `String`      | Collection primary subscription key                                |
+| `environment`            | `String`      | `"sandbox"` or `"production"`                                      |
 
 ---
 
@@ -341,12 +341,12 @@ defaultRepository.getPreApprovalStatus(
 ).collect { result -> /* ... */ }
 ```
 
-| Parameter | Type | Description |
-|---|---|---|
-| `apiVersion` | `String` | API version |
-| `referenceId` | `String` | UUID used when calling `createPreApproval` |
-| `productSubscriptionKey` | `String` | Collection primary subscription key |
-| `environment` | `String` | `"sandbox"` or `"production"` |
+| Parameter                | Type     | Description                                |
+|--------------------------|----------|--------------------------------------------|
+| `apiVersion`             | `String` | API version                                |
+| `referenceId`            | `String` | UUID used when calling `createPreApproval` |
+| `productSubscriptionKey` | `String` | Collection primary subscription key        |
+| `environment`            | `String` | `"sandbox"` or `"production"`              |
 
 ---
 
@@ -363,9 +363,9 @@ defaultRepository.cancelPreApproval(
 ).collect { result -> /* ... */ }
 ```
 
-| Parameter | Type | Description |
-|---|---|---|
-| `apiVersion` | `String` | API version |
-| `referenceId` | `String` | UUID of the pre-approval to cancel |
+| Parameter                | Type     | Description                         |
+|--------------------------|----------|-------------------------------------|
+| `apiVersion`             | `String` | API version                         |
+| `referenceId`            | `String` | UUID of the pre-approval to cancel  |
 | `productSubscriptionKey` | `String` | Collection primary subscription key |
-| `environment` | `String` | `"sandbox"` or `"production"` |
+| `environment`            | `String` | `"sandbox"` or `"production"`       |

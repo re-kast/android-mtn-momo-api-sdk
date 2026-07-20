@@ -57,9 +57,10 @@ fun UserInfoWithConsentComponent(modifier: Modifier = Modifier, userInfoWithCons
         InfoRow(label = stringResource(id = R.string.label_phone), value = info?.phonenumber)
         InfoRow(label = stringResource(id = R.string.label_locale), value = info?.locale)
 
-        info?.address?.let { address ->
+        val addressLine = info?.address?.readable().orEmpty()
+        if (addressLine.isNotBlank()) {
             RowDivider()
-            InfoRow(label = stringResource(id = R.string.label_address), value = address.readable())
+            InfoRow(label = stringResource(id = R.string.label_address), value = addressLine)
         }
 
         val hasBirthplace = !info?.countryOfBirth.isNullOrBlank() ||

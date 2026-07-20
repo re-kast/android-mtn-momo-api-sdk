@@ -35,6 +35,7 @@ import io.rekast.sdk.sample.utils.CredentialStorage
 import io.rekast.sdk.sample.utils.DispatcherProvider
 import io.rekast.sdk.sample.utils.SampleConfig
 import io.rekast.sdk.sample.utils.Utils
+import io.rekast.sdk.utils.ProductType
 import io.rekast.sdk.utils.Settings
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -188,6 +189,24 @@ class HomeScreenViewModelTest {
         assertNotNull(viewModel.accountHolderStatus.value)
         assertNotNull(viewModel.accountBalance.value)
         assertFalse(viewModel.showProgressBar.value!!)
+    }
+
+    /**
+     * Regression guard: the account balance must be fetched with the Collection product type and
+     * subscription key, not Remittance. The MTN MoMo balance endpoint is only reliable with
+     * [ProductType.COLLECTION]; requesting it against Remittance commonly returns 401/404. See
+     * [HomeScreenViewModel.fetchAccountBalance].
+     */
+    @Test
+    fun `loadHomeData fetches account balance using the Collection product type`() = runTest {
+        stubAllSuccess(UserInfoWithConsent(sub = "sub-1", name = "Sand Box", phonenumber = "46123456789"))
+        val balanceProductType = slot<String>()
+
+        viewModel.loadHomeData()
+
+        coVerify { mockRepository.getAccountBalance(capture(balanceProductType), any(), any(), any(), any()) }
+        assertEquals(ProductType.COLLECTION.productType, balanceProductType.captured)
+        coVerify { Utils.getProductSubscriptionKeys(ProductType.COLLECTION, mockSampleConfig) }
     }
 
     /**

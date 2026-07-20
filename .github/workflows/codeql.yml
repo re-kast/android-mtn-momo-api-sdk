@@ -1,0 +1,56 @@
+name: "CodeQL"
+
+on:
+  push:
+    branches: [ develop ]
+  pull_request:
+    branches: [ develop ]
+  schedule:
+    # Weekly scan (Mondays 05:30 UTC) to catch newly-disclosed vulnerabilities.
+    - cron: '30 5 * * 1'
+
+concurrency:
+  group: codeql-${{ github.ref }}
+  cancel-in-progress: true
+
+# Restrict the GITHUB_TOKEN to read-only by default; the analyze job elevates as needed.
+permissions:
+  contents: read
+
+jobs:
+  analyze:
+    name: Analyze (${{ matrix.language }})
+    runs-on: ubuntu-latest
+    # Least-privilege for CodeQL: write scan results to the Security tab, read code and
+    # workflow-run metadata. No other scopes are required for build-mode "none".
+    permissions:
+      security-events: write
+      actions: read
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Scans the GitHub Actions workflow files themselves (e.g. missing permissions blocks).
+          - language: actions
+            build-mode: none
+          # Scans the Kotlin/Java SDK, sample, and app sources without a Gradle build.
+          - language: java-kotlin
+            build-mode: none
+          # Scans the Docusaurus config and any other JS/TS tooling (node_modules excluded).
+          - language: javascript-typescript
+            build-mode: none
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+          build-mode: ${{ matrix.build-mode }}
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:${{ matrix.language }}"

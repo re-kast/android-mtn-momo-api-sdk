@@ -50,7 +50,10 @@ import kotlinx.coroutines.flow.SharedFlow
  * @param titleRes String resource for the top bar title.
  * @param navController [NavController] used by the drawer; when null the drawer is omitted (previews).
  * @param snackStateFlow Flow of snackbar messages to display.
- * @param content Screen body; receives the scaffold content padding to apply to its root.
+ * @param content Screen body. The scaffold's content padding is already applied by the wrapping
+ *   [Box], so callers must **not** apply it again (doing so would double-pad). The [PaddingValues]
+ *   is still passed in for the rare case a screen needs the raw inset values (e.g. to offset an edge-
+ *   to-edge element); most screens can ignore the parameter.
  */
 @Composable
 fun MomoScaffold(@StringRes titleRes: Int, navController: NavController?, snackStateFlow: SharedFlow<SnackBarComponentConfiguration>, content: @Composable (PaddingValues) -> Unit) {
@@ -58,7 +61,7 @@ fun MomoScaffold(@StringRes titleRes: Int, navController: NavController?, snackS
     val scope = rememberCoroutineScope()
     var snackBarType by remember { mutableStateOf(SnackBarType.INFO) }
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(snackStateFlow) {
         snackStateFlow.hookSnackBar(scaffoldState, onDisplay = { snackBarType = it.type })
     }
 

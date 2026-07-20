@@ -29,6 +29,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Divider
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.Composable
@@ -46,6 +47,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import io.rekast.sdk.sample.R
+import io.rekast.sdk.sample.ui.theme.subtleTextColor
 
 /**
  * Renders a payment data capture form with fields for phone number, financial ID, amount,
@@ -103,7 +105,7 @@ fun PaymentDataScreenComponent(
                 style = TextStyle(
                     fontSize = with(LocalDensity.current) { dimensionResource(id = R.dimen.font_size_medium).toSp() }
                 ),
-                color = colorResource(id = R.color.black),
+                color = MaterialTheme.colors.onBackground,
                 fontWeight = FontWeight.Bold
             )
             Divider(
@@ -124,7 +126,7 @@ fun PaymentDataScreenComponent(
             singleLine = true,
             placeholder = {
                 Text(
-                    color = Color.LightGray,
+                    color = subtleTextColor,
                     text = stringResource(id = R.string.phone_number)
                 )
             },
@@ -149,7 +151,7 @@ fun PaymentDataScreenComponent(
             singleLine = true,
             placeholder = {
                 Text(
-                    color = Color.LightGray,
+                    color = subtleTextColor,
                     text = stringResource(id = R.string.financial_id)
                 )
             },
@@ -174,7 +176,7 @@ fun PaymentDataScreenComponent(
             singleLine = true,
             placeholder = {
                 Text(
-                    color = Color.LightGray,
+                    color = subtleTextColor,
                     text = stringResource(id = R.string.amount)
                 )
             },
@@ -199,7 +201,7 @@ fun PaymentDataScreenComponent(
             singleLine = true,
             placeholder = {
                 Text(
-                    color = Color.LightGray,
+                    color = subtleTextColor,
                     text = stringResource(id = R.string.payment_message)
                 )
             },
@@ -224,7 +226,7 @@ fun PaymentDataScreenComponent(
             singleLine = false,
             placeholder = {
                 Text(
-                    color = Color.LightGray,
+                    color = subtleTextColor,
                     text = stringResource(id = R.string.payment_note)
                 )
             },

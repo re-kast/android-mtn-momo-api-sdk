@@ -188,13 +188,13 @@ defaultRepository.someApi(...).collect { result ->
 
 The available API groups are:
 
-| Group | Description |
-|---|---|
-| **Authentication** | Provision API user, API key, Bearer token, and OAuth2 token via the CIBA flow |
-| **Collection** | Request to Pay, Request to Withdraw, invoices, pre-approvals, and delivery notifications |
-| **Disbursements** | Transfers, deposits, refunds, cash transfers, and delivery notifications |
-| **Remittance** | Cross-border transfers and transfer status |
-| **Account** | Account balance, basic user info, user info with consent, and account holder validation |
+| Group              | Description                                                                              |
+|--------------------|------------------------------------------------------------------------------------------|
+| **Authentication** | Provision API user, API key, Bearer token, and OAuth2 token via the CIBA flow            |
+| **Collection**     | Request to Pay, Request to Withdraw, invoices, pre-approvals, and delivery notifications |
+| **Disbursements**  | Transfers, deposits, refunds, cash transfers, and delivery notifications                 |
+| **Remittance**     | Cross-border transfers and transfer status                                               |
+| **Account**        | Account balance, basic user info, user info with consent, and account holder validation  |
 
 For full code examples and parameter descriptions for every API, see the [Library Usage](https://mtn-momo-sdk.rekast.io/Documentation/api-reference) section of the documentation.
 

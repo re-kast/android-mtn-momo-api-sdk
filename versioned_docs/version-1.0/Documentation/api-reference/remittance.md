@@ -39,14 +39,14 @@ defaultRepository.transfer(
 }
 ```
 
-| Parameter | Type | Description |
-|---|---|---|
-| `productType` | `String` | `ProductType.REMITTANCE.productType` |
-| `apiVersion` | `String` | API version, e.g. `"v1_0"` |
-| `momoTransaction` | `MomoTransaction` | Transfer details (amount, currency, payee, messages) |
-| `uuid` | `String` | Unique reference ID — save this to poll for status |
-| `productSubscriptionKey` | `String` | Remittance primary subscription key |
-| `environment` | `String` | `"sandbox"` or `"production"` |
+| Parameter                | Type              | Description                                          |
+|--------------------------|-------------------|------------------------------------------------------|
+| `productType`            | `String`          | `ProductType.REMITTANCE.productType`                 |
+| `apiVersion`             | `String`          | API version, e.g. `"v1_0"`                           |
+| `momoTransaction`        | `MomoTransaction` | Transfer details (amount, currency, payee, messages) |
+| `uuid`                   | `String`          | Unique reference ID — save this to poll for status   |
+| `productSubscriptionKey` | `String`          | Remittance primary subscription key                  |
+| `environment`            | `String`          | `"sandbox"` or `"production"`                        |
 
 ---
 
@@ -70,13 +70,13 @@ defaultRepository.getTransferStatus(
 }
 ```
 
-| Parameter | Type | Description |
-|---|---|---|
-| `productType` | `String` | `ProductType.REMITTANCE.productType` |
-| `apiVersion` | `String` | API version |
-| `referenceId` | `String` | UUID used when calling `transfer` |
-| `productSubscriptionKey` | `String` | Remittance primary subscription key |
-| `environment` | `String` | `"sandbox"` or `"production"` |
+| Parameter                | Type     | Description                          |
+|--------------------------|----------|--------------------------------------|
+| `productType`            | `String` | `ProductType.REMITTANCE.productType` |
+| `apiVersion`             | `String` | API version                          |
+| `referenceId`            | `String` | UUID used when calling `transfer`    |
+| `productSubscriptionKey` | `String` | Remittance primary subscription key  |
+| `environment`            | `String` | `"sandbox"` or `"production"`        |
 
 ---
 
@@ -116,13 +116,13 @@ defaultRepository.cashTransfer(
 }
 ```
 
-| Parameter | Type | Description |
-|---|---|---|
-| `apiVersion` | `String` | API version; use `"v2_0"` for this endpoint |
-| `cashTransfer` | `CashTransfer` | Recipient (`payee`), amounts, and optional payer KYC fields |
-| `uuid` | `String` | Unique reference ID — save this to poll for status |
-| `productSubscriptionKey` | `String` | Remittance primary subscription key |
-| `environment` | `String` | `"sandbox"` or `"production"` |
+| Parameter                | Type           | Description                                                 |
+|--------------------------|----------------|-------------------------------------------------------------|
+| `apiVersion`             | `String`       | API version; use `"v2_0"` for this endpoint                 |
+| `cashTransfer`           | `CashTransfer` | Recipient (`payee`), amounts, and optional payer KYC fields |
+| `uuid`                   | `String`       | Unique reference ID — save this to poll for status          |
+| `productSubscriptionKey` | `String`       | Remittance primary subscription key                         |
+| `environment`            | `String`       | `"sandbox"` or `"production"`                               |
 
 ---
 
@@ -145,9 +145,9 @@ defaultRepository.getCashTransferStatus(
 }
 ```
 
-| Parameter | Type | Description |
-|---|---|---|
-| `apiVersion` | `String` | API version; use `"v2_0"` for this endpoint |
-| `referenceId` | `String` | UUID used when calling `cashTransfer` |
-| `productSubscriptionKey` | `String` | Remittance primary subscription key |
-| `environment` | `String` | `"sandbox"` or `"production"` |
+| Parameter                | Type     | Description                                 |
+|--------------------------|----------|---------------------------------------------|
+| `apiVersion`             | `String` | API version; use `"v2_0"` for this endpoint |
+| `referenceId`            | `String` | UUID used when calling `cashTransfer`       |
+| `productSubscriptionKey` | `String` | Remittance primary subscription key         |
+| `environment`            | `String` | `"sandbox"` or `"production"`               |

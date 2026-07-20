@@ -19,8 +19,10 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkObject
+import io.mockk.slot
 import io.mockk.unmockkObject
 import io.mockk.verify
+import io.rekast.sdk.model.PreApproval
 import io.rekast.sdk.repository.DefaultRepository
 import io.rekast.sdk.repository.data.NetworkResult
 import io.rekast.sdk.sample.utils.CredentialStorage
@@ -35,6 +37,8 @@ import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -122,5 +126,122 @@ class PreApprovalScreenViewModelTest {
         viewModel.checkStatus()
 
         verify(exactly = 0) { mockRepository.getPreApprovalStatus(any(), any(), any(), any()) }
+    }
+
+    @Test
+    fun `onPayerCurrencyChanged updates currency`() {
+        viewModel.onPayerCurrencyChanged("USD")
+        assertEquals("USD", viewModel.payerCurrency.value)
+    }
+
+    @Test
+    fun `onPayerMessageChanged updates message`() {
+        viewModel.onPayerMessageChanged("Approve me")
+        assertEquals("Approve me", viewModel.payerMessage.value)
+    }
+
+    @Test
+    fun `onValidityTimeChanged updates validity time`() {
+        viewModel.onValidityTimeChanged("3600")
+        assertEquals("3600", viewModel.validityTime.value)
+    }
+
+    /** A create error posts a failure message and leaves no reference ID. */
+    @Test
+    fun `createPreApproval error path posts failure result`() = runTest {
+        every { mockRepository.createPreApproval(any(), any(), any(), any(), any()) } returns flowOf(NetworkResult.Error("bad"))
+
+        viewModel.onPayerMsisdnChanged("256700000000")
+        viewModel.createPreApproval()
+
+        assertNull(viewModel.referenceId.value)
+        assertEquals("Create failed: bad", viewModel.result.value)
+    }
+
+    /** An exception during an operation is caught and surfaced in the console. */
+    @Test
+    fun `createPreApproval exception path posts error result`() = runTest {
+        every { mockRepository.createPreApproval(any(), any(), any(), any(), any()) } throws RuntimeException("kaboom")
+
+        viewModel.onPayerMsisdnChanged("256700000000")
+        viewModel.createPreApproval()
+
+        assertEquals("Error: kaboom", viewModel.result.value)
+    }
+
+    /** A blank validity time defaults to 0 in the submitted payload. */
+    @Test
+    fun `createPreApproval defaults blank validity time to zero`() = runTest {
+        val payload = slot<PreApproval>()
+        every { mockRepository.createPreApproval(any(), capture(payload), any(), any(), any()) } returns flowOf(NetworkResult.Success(Unit))
+
+        viewModel.onPayerMsisdnChanged("256700000000")
+        viewModel.createPreApproval()
+
+        assertEquals(0, payload.captured.validityTime)
+    }
+
+    /** A status error posts a failure message. */
+    @Test
+    fun `checkStatus error path posts failure result`() = runTest {
+        viewModel.referenceId.value = "ref-1"
+        every { mockRepository.getPreApprovalStatus(any(), any(), any(), any()) } returns flowOf(NetworkResult.Error("nope"))
+
+        viewModel.checkStatus()
+
+        assertEquals("Status failed: nope", viewModel.result.value)
+    }
+
+    /** A blank status body reports the placeholder rather than an empty console. */
+    @Test
+    fun `checkStatus with blank body reports no status body`() = runTest {
+        viewModel.referenceId.value = "ref-1"
+        every { mockRepository.getPreApprovalStatus(any(), any(), any(), any()) } returns
+            flowOf(NetworkResult.Success("".toResponseBody("application/json".toMediaType())))
+
+        viewModel.checkStatus()
+
+        assertEquals("No status body returned.", viewModel.result.value)
+    }
+
+    /** Cancel succeeds and reports the cancelled reference. */
+    @Test
+    fun `cancelPreApproval success posts cancelled result`() = runTest {
+        viewModel.referenceId.value = "ref-1"
+        every { mockRepository.cancelPreApproval(any(), any(), any(), any()) } returns flowOf(NetworkResult.Success(Unit))
+
+        viewModel.cancelPreApproval()
+
+        assertEquals("Pre-approval ref-1 cancelled.", viewModel.result.value)
+    }
+
+    /** Cancel error posts a failure message. */
+    @Test
+    fun `cancelPreApproval error posts failure result`() = runTest {
+        viewModel.referenceId.value = "ref-1"
+        every { mockRepository.cancelPreApproval(any(), any(), any(), any()) } returns flowOf(NetworkResult.Error("cant"))
+
+        viewModel.cancelPreApproval()
+
+        assertEquals("Cancel failed: cant", viewModel.result.value)
+    }
+
+    /** Cancel is a no-op before any pre-approval has been created. */
+    @Test
+    fun `cancelPreApproval without reference does nothing`() = runTest {
+        viewModel.cancelPreApproval()
+
+        verify(exactly = 0) { mockRepository.cancelPreApproval(any(), any(), any(), any()) }
+    }
+
+    /** Cancel is skipped when the access token is blank. */
+    @Test
+    fun `cancelPreApproval does not call repository when access token is blank`() = runTest {
+        every { mockStorage.getAccessToken() } returns ""
+        viewModel.referenceId.value = "ref-1"
+
+        viewModel.cancelPreApproval()
+
+        verify(exactly = 0) { mockRepository.cancelPreApproval(any(), any(), any(), any()) }
     }
 }

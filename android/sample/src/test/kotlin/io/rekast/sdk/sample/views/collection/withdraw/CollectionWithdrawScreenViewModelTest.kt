@@ -174,4 +174,75 @@ class CollectionWithdrawScreenViewModelTest {
         verify(exactly = 0) { mockRepository.requestToWithdraw(any(), any(), any(), any()) }
         assertFalse(viewModel.showProgressBar.value!!)
     }
+
+    /** A submit error does not poll for status and leaves the transaction null. */
+    @Test
+    fun `requestToWithdraw error path does not fetch status`() = runTest {
+        every { mockRepository.requestToWithdraw(any(), any(), any(), any()) } returns flowOf(NetworkResult.Error("boom"))
+
+        viewModel.onPhoneNumberUpdated("256700000000")
+        viewModel.onAmountUpdated("100")
+        viewModel.requestToWithdraw()
+
+        verify(exactly = 0) { mockRepository.requestToWithdrawTransactionStatus(any(), any(), any()) }
+        assertNull(viewModel.momoTransaction.value)
+        assertFalse(viewModel.showProgressBar.value!!)
+    }
+
+    /** An exception during submit is caught and the progress bar is cleared. */
+    @Test
+    fun `requestToWithdraw exception path clears progress bar`() = runTest {
+        every { mockRepository.requestToWithdraw(any(), any(), any(), any()) } throws RuntimeException("network down")
+
+        viewModel.onPhoneNumberUpdated("256700000000")
+        viewModel.onAmountUpdated("100")
+        viewModel.requestToWithdraw()
+
+        assertNull(viewModel.momoTransaction.value)
+        assertFalse(viewModel.showProgressBar.value!!)
+    }
+
+    /** A non-blank delivery note triggers the delivery-notification call after a successful submit. */
+    @Test
+    fun `requestToWithdraw with delivery note sends delivery notification`() = runTest {
+        every { mockRepository.requestToWithdraw(any(), any(), any(), any()) } returns flowOf(NetworkResult.Success(Unit))
+        every { mockRepository.requestToWithdrawDeliveryNotification(any(), any(), any(), any(), any()) } returns
+            flowOf(NetworkResult.Success("ok".toResponseBody("text/plain".toMediaType())))
+        every { mockRepository.requestToWithdrawTransactionStatus(any(), any(), any()) } returns
+            flowOf(NetworkResult.Success("{}".toResponseBody("application/json".toMediaType())))
+
+        viewModel.onPhoneNumberUpdated("256700000000")
+        viewModel.onAmountUpdated("100")
+        viewModel.onDeliveryNoteUpdated("Delivered")
+        viewModel.requestToWithdraw()
+
+        verify { mockRepository.requestToWithdrawDeliveryNotification(any(), any(), any(), any(), any()) }
+    }
+
+    /** A status error after a successful submit leaves the transaction null. */
+    @Test
+    fun `requestToWithdraw status error leaves transaction null`() = runTest {
+        every { mockRepository.requestToWithdraw(any(), any(), any(), any()) } returns flowOf(NetworkResult.Success(Unit))
+        every { mockRepository.requestToWithdrawTransactionStatus(any(), any(), any()) } returns flowOf(NetworkResult.Error("status boom"))
+
+        viewModel.onPhoneNumberUpdated("256700000000")
+        viewModel.onAmountUpdated("100")
+        viewModel.requestToWithdraw()
+
+        assertNull(viewModel.momoTransaction.value)
+    }
+
+    /** A status body that cannot be parsed posts a null transaction rather than crashing. */
+    @Test
+    fun `requestToWithdraw status with unparseable body posts null transaction`() = runTest {
+        every { mockRepository.requestToWithdraw(any(), any(), any(), any()) } returns flowOf(NetworkResult.Success(Unit))
+        every { mockRepository.requestToWithdrawTransactionStatus(any(), any(), any()) } returns
+            flowOf(NetworkResult.Success("not-json".toResponseBody("application/json".toMediaType())))
+
+        viewModel.onPhoneNumberUpdated("256700000000")
+        viewModel.onAmountUpdated("100")
+        viewModel.requestToWithdraw()
+
+        assertNull(viewModel.momoTransaction.value)
+    }
 }

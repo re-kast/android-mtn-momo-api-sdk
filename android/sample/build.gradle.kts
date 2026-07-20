@@ -42,7 +42,8 @@ android {
     testOptions {
         unitTests {
             isReturnDefaultValues = true
-            isIncludeAndroidResources = false
+            // Robolectric Compose UI tests need real string/resource lookups (stringResource, TopBar title).
+            isIncludeAndroidResources = true
         }
     }
 }
@@ -97,6 +98,10 @@ dependencies {
     testImplementation(libs.androidx.navigation.testing)
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.androidx.lifecycle.runtime.testing)
+    // Compose UI tests for the screen composables, run on the JVM via Robolectric.
+    testImplementation(platform(libs.androidx.compose.bom))
+    testImplementation(libs.androidx.compose.ui.test.junit4)
+    testImplementation(libs.androidx.compose.ui.test.manifest)
 
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.test.espresso.core)
@@ -157,10 +162,8 @@ kover {
                     "**/*Factory\$InstanceHolder",
                     // Hilt aggregated dependency injectors (_io_* in hilt_aggregated_deps)
                     "hilt_aggregated_deps/**",
-                    // Top-level Compose screen functions compile to *ScreenKt classes and their
-                    // inner lambdas; these are not unit-testable.
-                    "**/*ScreenKt",
-                    "**/*ScreenKt\$*",
+                    // Screen composables (*ScreenKt) are now covered by Robolectric Compose UI tests,
+                    // so they are intentionally NOT excluded from coverage.
                     "**/*ActivityKt",
                     "**/*ActivityKt\$*",
                     "**/*ComposableSingletons*",
