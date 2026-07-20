@@ -42,7 +42,7 @@ sealed interface CommonService {
      * @param accountHolder The account holder ID.
      * @param productSubscriptionKey The Product subscription Key (Ocp-Apim-Subscription-Key).
      * @param environment The API environment (X-Target-Environment).
-     * @return A [Response] containing the [BasicUserInfo].
+     * @return A `Response` containing the [BasicUserInfo].
      */
     @GET(Constants.EndPoints.GET_BASIC_USER_INFO)
     suspend fun getBasicUserInfo(
@@ -60,7 +60,7 @@ sealed interface CommonService {
      * @param apiVersion The app Version (e.g., v1_0 or v2_0).
      * @param productSubscriptionKey The Product subscription Key (Ocp-Apim-Subscription-Key).
      * @param environment The API environment (X-Target-Environment).
-     * @return A [Response] containing the [UserInfoWithConsent].
+     * @return A `Response` containing the [UserInfoWithConsent].
      */
     @GET(Constants.EndPoints.GET_USER_INFO_WITH_CONSENT)
     suspend fun getUserInfoWithConsent(
@@ -79,7 +79,7 @@ sealed interface CommonService {
      * @param accountHolderType The account holder type (e.g., MSISDN).
      * @param productSubscriptionKey The Product subscription Key (Ocp-Apim-Subscription-Key).
      * @param environment The API environment (X-Target-Environment).
-     * @return A [Response] whose body contains the account holder status as a [ResponseBody].
+     * @return A `Response` whose body contains the account holder status as a `ResponseBody`.
      */
     @GET(Constants.EndPoints.VALIDATE_ACCOUNT_HOLDER_STATUS)
     suspend fun validateAccountHolderStatus(
@@ -98,7 +98,7 @@ sealed interface CommonService {
      * @param apiVersion The app Version (e.g., v1_0 or v2_0).
      * @param productSubscriptionKey The Product subscription Key (Ocp-Apim-Subscription-Key).
      * @param environment The API environment (X-Target-Environment).
-     * @return A [Response] containing the [AccountBalance].
+     * @return A `Response` containing the [AccountBalance].
      */
     @GET(Constants.EndPoints.GET_ACCOUNT_BALANCE)
     suspend fun getAccountBalance(
@@ -117,7 +117,7 @@ sealed interface CommonService {
      * @param currency The currency based on the ISO standard.
      * @param productSubscriptionKey The Product subscription Key (Ocp-Apim-Subscription-Key).
      * @param environment The API environment (X-Target-Environment).
-     * @return A [Response] containing the [AccountBalance].
+     * @return A `Response` containing the [AccountBalance].
      */
     @GET(Constants.EndPoints.GET_ACCOUNT_BALANCE_IN_SPECIFIC_CURRENCY)
     suspend fun getAccountBalanceInSpecificCurrency(
@@ -137,7 +137,7 @@ sealed interface CommonService {
      * @param uuid The unique reference ID for the transfer.
      * @param productSubscriptionKey The Product subscription Key (Ocp-Apim-Subscription-Key).
      * @param environment The API environment (X-Target-Environment).
-     * @return A [Response] indicating the result of the transfer.
+     * @return A `Response` indicating the result of the transfer.
      */
     @POST(Constants.EndPoints.TRANSFER)
     suspend fun transfer(
@@ -157,7 +157,7 @@ sealed interface CommonService {
      * @param referenceId The transfer reference ID (UUID V4).
      * @param productSubscriptionKey The Product subscription Key (Ocp-Apim-Subscription-Key).
      * @param environment The API environment (X-Target-Environment).
-     * @return A [Response] whose body contains the transfer status as a [ResponseBody].
+     * @return A `Response` whose body contains the transfer status as a `ResponseBody`.
      */
     @GET(Constants.EndPoints.GET_TRANSFER_STATUS)
     suspend fun getTransferStatus(
@@ -178,7 +178,7 @@ sealed interface CommonService {
      * @param notificationMessage The message to be sent to the user.
      * @param productSubscriptionKey The Product subscription Key (Ocp-Apim-Subscription-Key).
      * @param environment The API environment (X-Target-Environment).
-     * @return A [Response] whose body contains the result of the notification request as a [ResponseBody].
+     * @return A `Response` whose body contains the result of the notification request as a `ResponseBody`.
      */
     @POST(Constants.EndPoints.REQUEST_TO_PAY_DELIVERY_NOTIFICATION)
     suspend fun requestToPayDeliveryNotification(

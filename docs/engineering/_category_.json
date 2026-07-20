@@ -1,0 +1,10 @@
+{
+  "label": "Engineering",
+  "collapsible": false,
+  "collapsed": false,
+  "position": 2,
+  "link": {
+    "type": "generated-index",
+    "description": "This section provides an overview of the engineering principles and practices applied in the project, including architecture, design patterns, and best practices."
+  }
+}

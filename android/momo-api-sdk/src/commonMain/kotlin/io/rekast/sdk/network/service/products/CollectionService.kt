@@ -43,7 +43,7 @@ sealed interface CollectionService : CommonService {
      * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Collection product.
      * @param environment The target environment (e.g., sandbox or production).
      * @param uuid A UUID V4 used as the X-Reference-Id to uniquely identify this request.
-     * @return A [Response] with an empty body; HTTP 202 indicates the request was accepted.
+     * @return A `Response` with an empty body; HTTP 202 indicates the request was accepted.
      */
     @POST(Constants.EndPoints.REQUEST_TO_PAY)
     suspend fun requestToPay(
@@ -61,7 +61,7 @@ sealed interface CollectionService : CommonService {
      * @param apiVersion The API version to target (e.g., v1_0 or v2_0).
      * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Collection product.
      * @param environment The target environment (e.g., sandbox or production).
-     * @return A [Response] whose body contains the transaction status as a [ResponseBody].
+     * @return A `Response` whose body contains the transaction status as a `ResponseBody`.
      */
     @GET(Constants.EndPoints.REQUEST_TO_PAY_STATUS)
     suspend fun requestToPayTransactionStatus(
@@ -79,7 +79,7 @@ sealed interface CollectionService : CommonService {
      * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Collection product.
      * @param environment The target environment (e.g., sandbox or production).
      * @param uuid A UUID V4 used as the X-Reference-Id to uniquely identify this request.
-     * @return A [Response] with an empty body; HTTP 202 indicates the request was accepted.
+     * @return A `Response` with an empty body; HTTP 202 indicates the request was accepted.
      */
     @POST(Constants.EndPoints.REQUEST_TO_WITHDRAW)
     suspend fun requestToWithdraw(
@@ -97,7 +97,7 @@ sealed interface CollectionService : CommonService {
      * @param apiVersion The API version to target (e.g., v1_0 or v2_0).
      * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Collection product.
      * @param environment The target environment (e.g., sandbox or production).
-     * @return A [Response] whose body contains the withdrawal status as a [ResponseBody].
+     * @return A `Response` whose body contains the withdrawal status as a `ResponseBody`.
      */
     @GET(Constants.EndPoints.REQUEST_TO_WITHDRAW_STATUS)
     suspend fun requestToWithdrawTransactionStatus(
@@ -118,7 +118,7 @@ sealed interface CollectionService : CommonService {
      * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Collection product.
      * @param environment The target environment (e.g., sandbox or production).
      * @param uuid A UUID V4 used as the X-Reference-Id; use this same ID to query the invoice status.
-     * @return A [Response] with an empty body; HTTP 202 indicates the invoice was accepted.
+     * @return A `Response` with an empty body; HTTP 202 indicates the invoice was accepted.
      */
     @POST(Constants.EndPoints.INVOICE)
     suspend fun createInvoice(
@@ -136,7 +136,7 @@ sealed interface CollectionService : CommonService {
      * @param apiVersion The API version to target (e.g., v1_0 or v2_0).
      * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Collection product.
      * @param environment The target environment (e.g., sandbox or production).
-     * @return A [Response] whose body contains the invoice status details as a [ResponseBody].
+     * @return A `Response` whose body contains the invoice status details as a `ResponseBody`.
      */
     @GET(Constants.EndPoints.INVOICE_STATUS)
     suspend fun getInvoiceStatus(
@@ -153,7 +153,7 @@ sealed interface CollectionService : CommonService {
      * @param apiVersion The API version to target (e.g., v1_0 or v2_0).
      * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Collection product.
      * @param environment The target environment (e.g., sandbox or production).
-     * @return A [Response] with an empty body; HTTP 200 indicates successful cancellation.
+     * @return A `Response` with an empty body; HTTP 200 indicates successful cancellation.
      */
     @DELETE(Constants.EndPoints.INVOICE_STATUS)
     suspend fun cancelInvoice(
@@ -172,7 +172,7 @@ sealed interface CollectionService : CommonService {
      * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Collection product.
      * @param environment The target environment (e.g., sandbox or production).
      * @param uuid A UUID V4 used as the X-Reference-Id; use this same ID to query the pre-approval status.
-     * @return A [Response] with an empty body; HTTP 202 indicates the pre-approval was accepted.
+     * @return A `Response` with an empty body; HTTP 202 indicates the pre-approval was accepted.
      */
     @POST(Constants.EndPoints.PRE_APPROVAL)
     suspend fun createPreApproval(
@@ -190,7 +190,7 @@ sealed interface CollectionService : CommonService {
      * @param apiVersion The API version to target (e.g., v1_0 or v2_0).
      * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Collection product.
      * @param environment The target environment (e.g., sandbox or production).
-     * @return A [Response] whose body contains the pre-approval status details as a [ResponseBody].
+     * @return A `Response` whose body contains the pre-approval status details as a `ResponseBody`.
      */
     @GET(Constants.EndPoints.PRE_APPROVAL_STATUS)
     suspend fun getPreApprovalStatus(
@@ -208,7 +208,7 @@ sealed interface CollectionService : CommonService {
      * @param apiVersion The API version to target (e.g., v1_0 or v2_0).
      * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Collection product.
      * @param environment The target environment (e.g., sandbox or production).
-     * @return A [Response] with an empty body; HTTP 200 indicates successful cancellation.
+     * @return A `Response` with an empty body; HTTP 200 indicates successful cancellation.
      */
     @DELETE(Constants.EndPoints.PRE_APPROVAL_STATUS)
     suspend fun cancelPreApproval(
@@ -227,7 +227,7 @@ sealed interface CollectionService : CommonService {
      * @param notificationMessage The notification message text (also sent as a header per MTN API spec).
      * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Collection product.
      * @param environment The target environment (e.g., sandbox or production).
-     * @return A [Response] whose body contains the delivery result as a [ResponseBody].
+     * @return A `Response` whose body contains the delivery result as a `ResponseBody`.
      */
     @POST(Constants.EndPoints.REQUEST_TO_WITHDRAW_DELIVERY_NOTIFICATION)
     suspend fun requestToWithdrawDeliveryNotification(

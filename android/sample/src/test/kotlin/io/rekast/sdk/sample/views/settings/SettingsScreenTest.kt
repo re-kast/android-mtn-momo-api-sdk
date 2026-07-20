@@ -113,4 +113,19 @@ class SettingsScreenTest {
 
         assertTrue(cleared)
     }
+
+    /**
+     * With a null viewModel the screen takes the `?: return@MomoScaffold` branch (L69) and renders
+     * only the scaffold chrome, without crashing. The non-null-config side is covered by the other
+     * tests in this class.
+     */
+    @Test
+    fun `renders with null viewModel`() {
+        composeRule.setContent {
+            AppTheme {
+                SettingsScreen(navController = null, snackStateFlow = snackFlow, viewModel = null)
+            }
+        }
+        composeRule.waitForIdle()
+    }
 }

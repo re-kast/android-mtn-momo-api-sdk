@@ -154,4 +154,136 @@ class UserInfoWithConsentComponentTest {
         composeRule.onNodeWithText("Address").assertIsDisplayed()
         composeRule.onNodeWithText("Line1, Line2").assertIsDisplayed()
     }
+
+    /**
+     * Birthplace block entered via the *second* operand: `countryOfBirth` is blank (so the first
+     * `!isNullOrBlank()` is false and its blank-string arm is exercised) while `regionOfBirth` is
+     * set, driving the middle term of the `hasBirthplace` OR chain true.
+     */
+    @Test
+    fun `renders birthplace when only region present`() {
+        setContent(
+            UserInfoWithConsent(
+                sub = "sub-2",
+                name = "Sand Box",
+                countryOfBirth = "",
+                regionOfBirth = "Blekinge",
+                cityOfBirth = null
+            )
+        )
+        composeRule.onNodeWithText("Region of birth").assertIsDisplayed()
+        composeRule.onNodeWithText("Blekinge").assertIsDisplayed()
+        // First operand was blank, so the country row is skipped.
+        composeRule.onNodeWithText("Country of birth").assertDoesNotExist()
+    }
+
+    /**
+     * Birthplace block entered via the *third* operand: both `countryOfBirth` (null) and
+     * `regionOfBirth` (blank) are false, so the final `cityOfBirth` term drives the OR chain true.
+     */
+    @Test
+    fun `renders birthplace when only city present`() {
+        setContent(
+            UserInfoWithConsent(
+                sub = "sub-3",
+                name = "Sand Box",
+                countryOfBirth = null,
+                regionOfBirth = "",
+                cityOfBirth = "Karlskrona"
+            )
+        )
+        composeRule.onNodeWithText("City of birth").assertIsDisplayed()
+        composeRule.onNodeWithText("Karlskrona").assertIsDisplayed()
+        composeRule.onNodeWithText("Country of birth").assertDoesNotExist()
+        composeRule.onNodeWithText("Region of birth").assertDoesNotExist()
+    }
+
+    /**
+     * Employment block entered via the *second* operand: `occupation` is blank (first term false)
+     * while `employerName` is set, driving the `hasEmployment` OR chain true through its tail.
+     */
+    @Test
+    fun `renders employment when only employer present`() {
+        setContent(
+            UserInfoWithConsent(
+                sub = "sub-4",
+                name = "Sand Box",
+                occupation = "",
+                employerName = "Ericsson"
+            )
+        )
+        composeRule.onNodeWithText("Employer").assertIsDisplayed()
+        composeRule.onNodeWithText("Ericsson").assertIsDisplayed()
+        composeRule.onNodeWithText("Occupation").assertDoesNotExist()
+    }
+
+    /**
+     * Identification block entered via the *second* operand: `identificationType` is blank (first
+     * term false), `identificationValue` is set, and `creditScore` stays null.
+     */
+    @Test
+    fun `renders identification when only value present`() {
+        setContent(
+            UserInfoWithConsent(
+                sub = "sub-5",
+                name = "Sand Box",
+                identificationType = "",
+                identificationValue = "S1234567",
+                creditScore = null
+            )
+        )
+        composeRule.onNodeWithText("ID number").assertIsDisplayed()
+        composeRule.onNodeWithText("S1234567").assertIsDisplayed()
+        composeRule.onNodeWithText("ID type").assertDoesNotExist()
+        composeRule.onNodeWithText("Credit score").assertDoesNotExist()
+    }
+
+    /**
+     * Identification block entered via the *third* operand: both `identificationType` and
+     * `identificationValue` are blank (first two terms false), so the `creditScore != null` term
+     * drives the OR chain true.
+     */
+    @Test
+    fun `renders identification when only credit score present`() {
+        setContent(
+            UserInfoWithConsent(
+                sub = "sub-6",
+                name = "Sand Box",
+                identificationType = "",
+                identificationValue = "",
+                creditScore = 777
+            )
+        )
+        composeRule.onNodeWithText("Credit score").assertIsDisplayed()
+        composeRule.onNodeWithText("777").assertIsDisplayed()
+        composeRule.onNodeWithText("ID type").assertDoesNotExist()
+        composeRule.onNodeWithText("ID number").assertDoesNotExist()
+    }
+
+    /**
+     * A non-null [Address] whose structured parts are all blank *and* whose `formatted` is null:
+     * `Address.readable()` runs, the `joinToString` yields blank so `ifBlank` fires, and the
+     * `formatted?.replace(...)` safe-call takes its null arm, collapsing to an empty string. The
+     * address block is therefore skipped.
+     */
+    @Test
+    fun `skips address when structured parts blank and formatted null`() {
+        setContent(
+            UserInfoWithConsent(
+                sub = "sub-7",
+                name = "Sand Box",
+                address = Address(
+                    streetAddress = "",
+                    locality = "",
+                    postalCode = "",
+                    region = "",
+                    country = "",
+                    formatted = null
+                )
+            )
+        )
+        composeRule.waitForIdle()
+        composeRule.onNodeWithText("Verified Profile").assertIsDisplayed()
+        composeRule.onNodeWithText("Address").assertDoesNotExist()
+    }
 }

@@ -71,7 +71,7 @@ The SDK uses a **pull-based credential model** — it never stores credentials i
 │          ▲                          │                       │
 │          │                          ▼                       │
 │  MainViewModel           SDK Interceptors                   │
-│  (writes credentials)       BasicAuthInterceptor            │
+│  (writes credentials)       BasicAuthenticationInterceptor            │
 │                             AccessTokenInterceptor          │
 │                                     │                       │
 │                             TokenAuthenticator              │
@@ -157,7 +157,7 @@ To include the MTN MOMO API SDK in your project, add the following dependency to
 
 ```kotlin
 dependencies {
-    implementation("io.rekast:momo-api-sdk:0.1.0-SNAPSHOT")
+    implementation("io.rekast:momo-api-sdk:0.3.0-SNAPSHOT")
 }
 ```
 
@@ -211,6 +211,21 @@ The available API groups are:
 | [**Account**](./Documentation/api-reference/account)               | Account balance, basic user info, user info with consent, and account holder validation  |
 
 Each page contains a working Kotlin code snippet followed by a parameter table. See the [Library Usage](./Documentation/api-reference) section in the sidebar for the full reference.
+
+## Security
+
+Security is a first-class concern for a library that handles Mobile Money credentials and access tokens. Please review the [Security Policy](https://github.com/re-kast/android-mtn-momo-api-sdk/blob/develop/SECURITY.md) for the full details.
+
+- **Reporting a vulnerability**: Report privately via GitHub's **["Report a vulnerability"](https://github.com/re-kast/android-mtn-momo-api-sdk/security)** button — never in a public issue, PR, or discussion. The [Security Policy](https://github.com/re-kast/android-mtn-momo-api-sdk/blob/develop/SECURITY.md) covers what to include and our response timelines.
+- **Supported versions**: Security fixes ship on the latest `0.x` release line only (currently `0.3.x`). Pin an explicit, non-`SNAPSHOT` version in production and upgrade promptly.
+- **Automated scanning**: Every change is analysed with [CodeQL](https://github.com/re-kast/android-mtn-momo-api-sdk/blob/develop/.github/workflows/codeql.yml).
+
+### Secure Usage Checklist
+
+- **Never commit secrets** — keep `MOMO_*` subscription keys, the API user ID, and any keystore material out of version control (use `local.properties` or a secrets manager) and rotate anything that leaks.
+- **Never ship `UnsafeOkHttpClient`** — it disables TLS certificate validation and exists solely for local sandbox testing; it must never appear in a release build or run against production endpoints.
+- **Protect tokens at rest** — access and consent tokens are held via `EncryptedSharedPreferences`; never log tokens, subscription keys, or full request/response bodies in production.
+- **Keep the SDK current** — security fixes land only on the latest release line, so update regularly.
 
 ## License
 

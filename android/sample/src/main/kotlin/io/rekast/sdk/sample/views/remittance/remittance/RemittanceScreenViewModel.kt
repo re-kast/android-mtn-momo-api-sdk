@@ -33,6 +33,9 @@ import io.rekast.sdk.sample.utils.SampleConfig
 import io.rekast.sdk.sample.utils.SnackBarComponentConfiguration
 import io.rekast.sdk.sample.utils.SnackBarType
 import io.rekast.sdk.sample.utils.Utils
+import io.rekast.sdk.sample.utils.bodyText
+import io.rekast.sdk.sample.utils.valueOrEmpty
+import io.rekast.sdk.sample.utils.valueOrNullIfBlank
 import io.rekast.sdk.utils.AccountHolderType
 import io.rekast.sdk.utils.ProductType
 import java.util.UUID
@@ -212,7 +215,7 @@ class RemittanceScreenViewModel @Inject constructor(
 
                     else -> {
                         Timber.e("Remittance transfer failed: %s", submit.message)
-                        emitError(R.string.snackbar_remittance_failed, submit.message.orEmpty())
+                        emitError(R.string.snackbar_remittance_failed, submit.message)
                     }
                 }
             } catch (exception: Exception) {
@@ -235,7 +238,7 @@ class RemittanceScreenViewModel @Inject constructor(
         ).awaitTerminal()
         when (result) {
             is NetworkResult.Success -> {
-                val transaction = result.response?.source()?.readUtf8()?.let { body ->
+                val transaction = result.bodyText()?.let { body ->
                     runCatching { json.decodeFromString<MomoTransaction>(body) }.getOrNull()
                 }
                 momoTransaction.postValue(transaction)
@@ -244,21 +247,21 @@ class RemittanceScreenViewModel @Inject constructor(
 
             else -> {
                 Timber.e("Remittance transfer status failed: %s", result.message)
-                emitError(R.string.snackbar_remittance_status_failed, result.message.orEmpty())
+                emitError(R.string.snackbar_remittance_status_failed, result.message)
             }
         }
     }
 
     /** Builds the transfer payload from the current form values. */
     private fun buildTransaction() = MomoTransaction(
-        amount = amount.value.orEmpty(),
+        amount = amount.valueOrEmpty(),
         currency = Constants.SANDBOX_CURRENCY,
-        financialTransactionId = financialId.value?.ifBlank { null },
+        financialTransactionId = financialId.valueOrNullIfBlank(),
         externalId = UUID.randomUUID().toString(),
-        payee = AccountHolder(partyIdType = AccountHolderType.MSISDN.accountHolderType, partyId = phoneNumber.value.orEmpty()),
+        payee = AccountHolder(partyIdType = AccountHolderType.MSISDN.accountHolderType, partyId = phoneNumber.valueOrEmpty()),
         payer = null,
-        payerMessage = payerMessage.value.orEmpty(),
-        payeeNote = payerNote.value.orEmpty(),
+        payerMessage = payerMessage.valueOrEmpty(),
+        payeeNote = payerNote.valueOrEmpty(),
         status = null,
         reason = null,
         referenceIdToRefund = null

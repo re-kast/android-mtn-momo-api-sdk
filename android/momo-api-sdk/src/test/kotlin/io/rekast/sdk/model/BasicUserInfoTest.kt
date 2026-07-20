@@ -15,6 +15,7 @@
  */
 package io.rekast.sdk.model
 
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
@@ -28,9 +29,22 @@ import org.junit.Test
  * locally-computed value annotated [@Transient] so it must be excluded from
  * deserialization entirely — a missing key must never cause a failure.
  */
-class BasicUserInfoDeserializationTest {
+class BasicUserInfoTest {
 
     private val json = Json { ignoreUnknownKeys = true }
+    private val jsonSkipDefaults = Json { encodeDefaults = false }
+    private val jsonWithDefaults = Json { encodeDefaults = true }
+
+    private fun fullBasicUserInfo() = BasicUserInfo(
+        sub = "user-sub-123",
+        name = "John Doe",
+        givenName = "John",
+        familyName = "Doe",
+        birthDate = "1990-01-15",
+        locale = "en_US",
+        gender = "male",
+        updatedAt = 1700000000
+    )
 
     /** Realistic API payload — no `display_updated_at` key. */
     private val apiJson = """
@@ -108,5 +122,12 @@ class BasicUserInfoDeserializationTest {
         val result = json.decodeFromString<BasicUserInfo>(jsonWithExtra)
         assertNotNull(result)
         assertEquals("s", result.sub)
+    }
+
+    @Test
+    fun `BasicUserInfo round-trips when fully populated`() {
+        val original = fullBasicUserInfo()
+        assertEquals(original, jsonSkipDefaults.decodeFromString<BasicUserInfo>(jsonSkipDefaults.encodeToString(original)))
+        assertEquals(original, jsonWithDefaults.decodeFromString<BasicUserInfo>(jsonWithDefaults.encodeToString(original)))
     }
 }

@@ -1,0 +1,10 @@
+{
+  "label": "Library Usage",
+  "collapsible": true,
+  "collapsed": false,
+  "position": 2,
+  "link": {
+    "type": "generated-index",
+    "description": "Code examples and parameter descriptions for every API exposed by the MTN MOMO Android SDK, organised by product area."
+  }
+}

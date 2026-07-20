@@ -10,7 +10,7 @@ sidebar_label: Developer Setup
 
 Before you begin setting up your development environment, ensure that you have the following prerequisites installed:
 
-- **Android Studio Meerkat (2024.3.1) or later**: This is the official Integrated Development Environment (IDE) for Android development, providing all the necessary tools to build, test, and debug Android applications. The project targets AGP 9.1 which requires Meerkat or later. Make sure to keep it updated to leverage the latest features and improvements.
+- **Android Studio Meerkat (2024.3.1) or later**: This is the official Integrated Development Environment (IDE) for Android development, providing all the necessary tools to build, test, and debug Android applications. The project targets AGP 9.3 which requires Meerkat or later. Make sure to keep it updated to leverage the latest features and improvements.
 
 - **OpenJDK 17**: Ensure that you have OpenJDK 17 installed and configured in Android Studio. This version is required for compiling and running the project. You can download OpenJDK from the [Adoptium](https://adoptium.net/) or [OpenJDK](https://openjdk.java.net/install/) websites.
 

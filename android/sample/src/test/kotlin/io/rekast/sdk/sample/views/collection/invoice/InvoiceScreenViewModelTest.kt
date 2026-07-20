@@ -30,12 +30,14 @@ import io.rekast.sdk.sample.utils.Utils
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.ResponseBody
 import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -255,5 +257,63 @@ class InvoiceScreenViewModelTest {
         viewModel.cancelInvoice()
 
         verify(exactly = 0) { mockRepository.cancelInvoice(any(), any(), any(), any()) }
+    }
+
+    /**
+     * A blank currency falls back to the sandbox default while non-blank validity duration and
+     * description are kept, exercising all three ifBlank branches in the payload builder.
+     */
+    @Test
+    fun `createInvoice with blank currency and optional fields set succeeds`() = runTest {
+        every { mockRepository.createInvoice(any(), any(), any(), any(), any()) } returns flowOf(NetworkResult.Success(Unit))
+
+        viewModel.onAmountChanged("100")
+        viewModel.onPayerMsisdnChanged("256700000000")
+        viewModel.onCurrencyChanged("")
+        viewModel.onValidityDurationChanged("3600")
+        viewModel.onDescriptionChanged("Invoice for order 42")
+        viewModel.createInvoice()
+
+        assertNotNull(viewModel.referenceId.value)
+        assertFalse(viewModel.showProgressBar.value!!)
+    }
+
+    /** An exception carrying no message is caught and surfaced with an empty detail. */
+    @Test
+    fun `createInvoice exception with null message posts error result`() = runTest {
+        every { mockRepository.createInvoice(any(), any(), any(), any(), any()) } throws RuntimeException()
+
+        viewModel.onAmountChanged("100")
+        viewModel.onPayerMsisdnChanged("256700000000")
+        viewModel.createInvoice()
+
+        assertEquals("Error: null", viewModel.result.value)
+        assertFalse(viewModel.showProgressBar.value!!)
+    }
+
+    /** A status success with a null response body reports the placeholder rather than crashing. */
+    @Test
+    fun `checkStatus with null body reports no status body`() = runTest {
+        viewModel.referenceId.value = "ref-1"
+        @Suppress("UNCHECKED_CAST")
+        every { mockRepository.getInvoiceStatus(any(), any(), any(), any()) } returns
+            (flowOf(NetworkResult.Success(null)) as Flow<NetworkResult<ResponseBody>>)
+
+        viewModel.checkStatus()
+
+        assertEquals("No status body returned.", viewModel.result.value)
+    }
+
+    /** A leading Loading emission is ignored and the terminal Success is used to complete the flow. */
+    @Test
+    fun `createInvoice ignores loading emission before terminal success`() = runTest {
+        every { mockRepository.createInvoice(any(), any(), any(), any(), any()) } returns
+            flowOf(NetworkResult.Loading(), NetworkResult.Success(Unit))
+
+        viewModel.onAmountChanged("100")
+        viewModel.onPayerMsisdnChanged("256700000000")
+        viewModel.createInvoice()
+
+        assertNotNull(viewModel.referenceId.value)
     }
 }

@@ -46,7 +46,7 @@ interface AuthenticationService {
      * @param apiVersion The version of the API (e.g., v1_0 or v2_0).
      * @param uuid A unique identifier for the request.
      * @param productSubscriptionKey The subscription key for the product.
-     * @return A [Response] containing the created [ApiUser].
+     * @return A `Response` containing the created [ApiUser].
      */
     @POST(Constants.EndPoints.CREATE_API_USER)
     suspend fun createApiUser(
@@ -62,7 +62,7 @@ interface AuthenticationService {
      * @param apiVersion The version of the API (e.g., v1_0 or v2_0).
      * @param apiUser The ID of the API user to retrieve.
      * @param productSubscriptionKey The subscription key for the product.
-     * @return A [Response] containing the requested [ApiUser].
+     * @return A `Response` containing the requested [ApiUser].
      */
     @GET(Constants.EndPoints.GET_API_USER)
     suspend fun getApiUser(
@@ -77,7 +77,7 @@ interface AuthenticationService {
      * @param apiVersion The version of the API (e.g., v1_0 or v2_0).
      * @param apiUser The ID of the API user for whom to create the key.
      * @param productSubscriptionKey The subscription key for the product.
-     * @return A [Response] containing the generated [ApiKey].
+     * @return A `Response` containing the generated [ApiKey].
      */
     @POST(Constants.EndPoints.CREATE_API_KEY)
     suspend fun createApiKey(
@@ -91,7 +91,7 @@ interface AuthenticationService {
      *
      * @param productType The type of product for which to obtain the access token.
      * @param productSubscriptionKey The subscription key for the product.
-     * @return A [Response] containing the obtained [AccessToken].
+     * @return A `Response` containing the obtained [AccessToken].
      */
     @POST(Constants.EndPoints.GET_ACCESS_TOKEN)
     suspend fun getAccessToken(@Path(Constants.EndpointPaths.PRODUCT_TYPE) productType: String, @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String): Response<AccessToken>
@@ -104,7 +104,7 @@ interface AuthenticationService {
      * @param environment The target environment (e.g., production, sandbox).
      * @param grantType The OAuth2 grant type; defaults to the CIBA grant (`urn:openid:params:grant-type:ciba`).
      * @param authReqId The `auth_req_id` from a prior [bcAuthorize] call, exchanged for the OAuth2 token.
-     * @return A [Response] containing the obtained [Oauth2AccessToken].
+     * @return A `Response` containing the obtained [Oauth2AccessToken].
      */
     @FormUrlEncoded
     @POST(Constants.EndPoints.GET_OAUTH2_ACCESS_TOKEN)
@@ -129,7 +129,7 @@ interface AuthenticationService {
      * @param accessType The access type for the token (`online` or `offline`). Defaults to `online`.
      * @param productSubscriptionKey The subscription key for the product.
      * @param environment The target environment (e.g., sandbox or production).
-     * @return A [Response] containing the [BackChannelAuthorize] with the authorization request details.
+     * @return A `Response` containing the [BackChannelAuthorize] with the authorization request details.
      */
     @FormUrlEncoded
     @POST(Constants.EndPoints.BC_AUTHORIZE)

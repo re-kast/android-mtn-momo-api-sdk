@@ -73,7 +73,7 @@ class DataResponseTest {
         val result = dataResponse.safeApiCall { response }
 
         assertTrue(result is NetworkResult.Error)
-        assertTrue(result.message!!.contains("404"))
+        assertTrue(result.message.contains("404"))
     }
 
     /** Verifies an exception thrown inside the lambda is caught and wrapped in NetworkResult.Error. */
@@ -82,7 +82,16 @@ class DataResponseTest {
         val result = dataResponse.safeApiCall<String> { throw RuntimeException("network failure") }
 
         assertTrue(result is NetworkResult.Error)
-        assertTrue(result.message!!.contains("network failure"))
+        assertTrue(result.message.contains("network failure"))
+    }
+
+    /** Verifies an exception with a null message falls back to its toString() for the error text. */
+    @Test
+    fun `safeApiCall uses toString when the thrown exception has no message`() = runBlocking {
+        val result = dataResponse.safeApiCall<String> { throw RuntimeException() }
+
+        assertTrue(result is NetworkResult.Error)
+        assertTrue(result.message.contains("RuntimeException"))
     }
 
     /** Verifies the error message for a non-2xx response includes the HTTP status code. */
@@ -94,7 +103,7 @@ class DataResponseTest {
         val result = dataResponse.safeApiCall { response }
 
         assertTrue(result is NetworkResult.Error)
-        assertTrue(result.message!!.contains("404"))
+        assertTrue(result.message.contains("404"))
     }
 
     /** Verifies the provided suspend lambda is invoked exactly once per safeApiCall invocation. */

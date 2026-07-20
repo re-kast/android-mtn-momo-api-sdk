@@ -39,7 +39,7 @@ sealed interface DisbursementsService : CommonService {
      * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Disbursements product.
      * @param environment The target environment (e.g., sandbox or production).
      * @param uuid A UUID V4 used as the X-Reference-Id to uniquely identify this request.
-     * @return A [Response] with an empty body; HTTP 202 indicates the request was accepted.
+     * @return A `Response` with an empty body; HTTP 202 indicates the request was accepted.
      */
     @POST(Constants.EndPoints.DEPOSIT)
     suspend fun deposit(
@@ -57,7 +57,7 @@ sealed interface DisbursementsService : CommonService {
      * @param apiVersion The API version to target (e.g., v1_0 or v2_0).
      * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Disbursements product.
      * @param environment The target environment (e.g., sandbox or production).
-     * @return A [Response] whose body contains the deposit status as a [ResponseBody].
+     * @return A `Response` whose body contains the deposit status as a `ResponseBody`.
      */
     @GET(Constants.EndPoints.DEPOSIT_STATUS)
     suspend fun getDepositStatus(
@@ -75,7 +75,7 @@ sealed interface DisbursementsService : CommonService {
      * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Disbursements product.
      * @param environment The target environment (e.g., sandbox or production).
      * @param uuid A UUID V4 used as the X-Reference-Id to uniquely identify this request.
-     * @return A [Response] with an empty body; HTTP 202 indicates the request was accepted.
+     * @return A `Response` with an empty body; HTTP 202 indicates the request was accepted.
      */
     @POST(Constants.EndPoints.REFUND)
     suspend fun refund(
@@ -93,7 +93,7 @@ sealed interface DisbursementsService : CommonService {
      * @param apiVersion The API version to target (e.g., v1_0 or v2_0).
      * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Disbursements product.
      * @param environment The target environment (e.g., sandbox or production).
-     * @return A [Response] whose body contains the refund status as a [ResponseBody].
+     * @return A `Response` whose body contains the refund status as a `ResponseBody`.
      */
     @GET(Constants.EndPoints.REFUND_STATUS)
     suspend fun getRefundStatus(

@@ -40,6 +40,7 @@ import io.rekast.sdk.utils.Settings
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
@@ -296,6 +297,55 @@ class HomeScreenViewModelTest {
         viewModel.loadHomeData()
 
         assertNull("Unparseable status must not be posted", viewModel.accountHolderStatus.value)
+        assertFalse(viewModel.showProgressBar.value!!)
+    }
+
+    /**
+     * A blank (present but empty) consent phone number is rejected by the `takeIf { isNotBlank }`
+     * guard, so the default account holder is used for the account-scoped calls.
+     */
+    @Test
+    fun `loadHomeData falls back to default account holder when consent phone is blank`() = runTest {
+        val basicHolder = slot<String>()
+        stubAllSuccess(UserInfoWithConsent(sub = "sub-1", name = "Sand Box", phonenumber = ""))
+        coEvery { mockRepository.getBasicUserInfo(any(), any(), capture(basicHolder), any(), any()) } returns
+            flowOf(NetworkResult.Success(sampleBasicUserInfo()))
+
+        viewModel.loadHomeData()
+
+        assertEquals("99733123459", basicHolder.captured)
+    }
+
+    /** A leading Loading emission is ignored and the terminal Success is used to complete the pipeline. */
+    @Test
+    fun `loadHomeData ignores loading emission before terminal success`() = runTest {
+        stubAllSuccess(UserInfoWithConsent(sub = "sub-1", name = "Sand Box", phonenumber = "46123456789"))
+        coEvery { mockRepository.getUserInfoWithConsent(any(), any(), any(), any()) } returns
+            flowOf(
+                NetworkResult.Loading(),
+                NetworkResult.Success(UserInfoWithConsent(sub = "sub-1", name = "Sand Box", phonenumber = "46123456789"))
+            )
+
+        viewModel.loadHomeData()
+
+        assertNotNull(viewModel.userInfoWithConsent.value)
+        assertFalse(viewModel.showProgressBar.value!!)
+    }
+
+    /**
+     * A successful basic-user-info response with a null body exercises the null-safe branch: nothing
+     * is posted for the updated-at formatting and the pipeline still completes.
+     */
+    @Test
+    fun `loadHomeData handles null basic user info body`() = runTest {
+        stubAllSuccess(UserInfoWithConsent(sub = "sub-1", name = "Sand Box", phonenumber = "46123456789"))
+        @Suppress("UNCHECKED_CAST")
+        coEvery { mockRepository.getBasicUserInfo(any(), any(), any(), any(), any()) } returns
+            (flowOf(NetworkResult.Success(null)) as Flow<NetworkResult<BasicUserInfo>>)
+
+        viewModel.loadHomeData()
+
+        assertNull(viewModel.basicUserInfo.value)
         assertFalse(viewModel.showProgressBar.value!!)
     }
 }

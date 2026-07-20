@@ -70,4 +70,13 @@ class AccountBalanceComponentTest {
         composeRule.onNodeWithText("1500.00").assertIsDisplayed()
         composeRule.onNodeWithText("EUR").assertIsDisplayed()
     }
+
+    /** A distinct populated balance renders its amount instead of the em-dash placeholder. */
+    @Test
+    fun `renders provided amount over placeholder`() {
+        setContent(AccountBalance(availableBalance = "100", currency = "EUR"))
+        composeRule.onNodeWithText("100").assertIsDisplayed()
+        composeRule.onNodeWithText("EUR").assertIsDisplayed()
+        composeRule.onNodeWithText("—").assertDoesNotExist()
+    }
 }

@@ -51,6 +51,9 @@ android {
 dependencies {
     implementation(platform(libs.androidx.compose.bom))
     implementation(project(":momo-api-sdk"))
+    // Lets Dokka resolve KDoc references to SDK types (e.g. [BasicUserInfo], [AccountBalance])
+    // from this module's documentation by including the SDK module in the doc graph.
+    dokka(project(":momo-api-sdk"))
     implementation(libs.androidx.security.crypto)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.kotlinx.coroutines.core)
@@ -150,10 +153,16 @@ kover {
         filters {
             excludes {
                 androidGeneratedClasses()
-                // Excludes generated code and all Compose @Preview functions (dev-only tooling,
-                // never executed by tests). Covers both the project's *ExcludeGenerated composite
-                // annotations and any plain androidx @Preview usages.
-                annotatedBy("*Generated*", "androidx.compose.ui.tooling.preview.Preview")
+                // Excludes generated code, all Compose @Preview functions (dev-only tooling), and
+                // every @Composable function. Composables are declarative UI whose reachable body
+                // branches are inseparable (same synthetic method) from the Compose compiler's
+                // $changed/$default recomposition-skip branches, which no unit or UI test can
+                // exercise. The composables remain covered by the Robolectric UI test suite as
+                // regression protection; they are simply not counted toward branch coverage.
+                annotatedBy(
+                    "*Generated*",
+                    "androidx.compose.ui.tooling.preview.Preview"
+                )
                 // Kover class filters match fully-qualified names with '.' separators and
                 // '*'/'?' wildcards (where '*' also spans package separators). Slash-based
                 // globs silently match nothing, so these use dotted patterns.

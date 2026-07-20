@@ -33,6 +33,9 @@ import io.rekast.sdk.sample.utils.SampleConfig
 import io.rekast.sdk.sample.utils.SnackBarComponentConfiguration
 import io.rekast.sdk.sample.utils.SnackBarType
 import io.rekast.sdk.sample.utils.Utils
+import io.rekast.sdk.sample.utils.bodyText
+import io.rekast.sdk.sample.utils.valueOrEmpty
+import io.rekast.sdk.sample.utils.valueOrNullIfBlank
 import io.rekast.sdk.utils.AccountHolderType
 import io.rekast.sdk.utils.ProductType
 import java.util.UUID
@@ -109,13 +112,13 @@ class InvoiceScreenViewModel @Inject constructor(
         val subscriptionKey = Utils.getProductSubscriptionKeys(ProductType.COLLECTION, sampleConfig)
         val invoice = Invoice(
             externalId = UUID.randomUUID().toString(),
-            amount = amount.value.orEmpty(),
-            currency = currency.value.orEmpty().ifBlank { Constants.SANDBOX_CURRENCY },
-            validityDuration = validityDuration.value?.ifBlank { null },
-            intendedPayer = AccountHolder(partyIdType = AccountHolderType.MSISDN.accountHolderType, partyId = payerMsisdn.value.orEmpty()),
+            amount = amount.valueOrEmpty(),
+            currency = currency.valueOrEmpty().ifBlank { Constants.SANDBOX_CURRENCY },
+            validityDuration = validityDuration.valueOrNullIfBlank(),
+            intendedPayer = AccountHolder(partyIdType = AccountHolderType.MSISDN.accountHolderType, partyId = payerMsisdn.valueOrEmpty()),
             payerMessage = null,
             payeeNote = null,
-            description = description.value?.ifBlank { null }
+            description = description.valueOrNullIfBlank()
         )
         when (val response = defaultRepository.createInvoice(sampleConfig.apiVersionV1, invoice, reference, subscriptionKey, sampleConfig.environment).awaitTerminal()) {
             is NetworkResult.Success -> {
@@ -127,7 +130,7 @@ class InvoiceScreenViewModel @Inject constructor(
             else -> {
                 Timber.e("Create invoice failed: %s", response.message)
                 result.postValue("Create failed: ${response.message}")
-                emitError(R.string.snackbar_invoice_not_created, response.message.orEmpty())
+                emitError(R.string.snackbar_invoice_not_created, response.message)
             }
         }
     }
@@ -136,14 +139,14 @@ class InvoiceScreenViewModel @Inject constructor(
     fun checkStatus() = withReference { reference, subscriptionKey ->
         when (val response = defaultRepository.getInvoiceStatus(sampleConfig.apiVersionV1, reference, subscriptionKey, sampleConfig.environment).awaitTerminal()) {
             is NetworkResult.Success -> {
-                result.postValue(response.response?.source()?.readUtf8().orEmpty().ifBlank { "No status body returned." })
+                result.postValue(response.bodyText().orEmpty().ifBlank { "No status body returned." })
                 emitSuccess(R.string.snackbar_invoice_status_fetched)
             }
 
             else -> {
                 Timber.e("Invoice status failed: %s", response.message)
                 result.postValue("Status failed: ${response.message}")
-                emitError(R.string.snackbar_invoice_status_failed, response.message.orEmpty())
+                emitError(R.string.snackbar_invoice_status_failed, response.message)
             }
         }
     }
@@ -159,7 +162,7 @@ class InvoiceScreenViewModel @Inject constructor(
             else -> {
                 Timber.e("Cancel invoice failed: %s", response.message)
                 result.postValue("Cancel failed: ${response.message}")
-                emitError(R.string.snackbar_invoice_not_cancelled, response.message.orEmpty())
+                emitError(R.string.snackbar_invoice_not_cancelled, response.message)
             }
         }
     }

@@ -20,7 +20,7 @@ import timber.log.Timber
 /**
  * Android `actual` implementation of [Logger].
  *
- * Delegates to [timber.log.Timber]. Timber must be planted in your `Application.onCreate`
+ * Delegates to `Timber`. Timber must be planted in your `Application.onCreate`
  * before the SDK is used — e.g. `Timber.plant(Timber.DebugTree())`.
  */
 actual object Logger {

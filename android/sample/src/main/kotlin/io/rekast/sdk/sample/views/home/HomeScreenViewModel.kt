@@ -33,6 +33,7 @@ import io.rekast.sdk.sample.utils.SampleConfig
 import io.rekast.sdk.sample.utils.SnackBarComponentConfiguration
 import io.rekast.sdk.sample.utils.SnackBarType
 import io.rekast.sdk.sample.utils.Utils
+import io.rekast.sdk.sample.utils.messageOrEmpty
 import io.rekast.sdk.utils.AccountHolderType
 import io.rekast.sdk.utils.ProductType
 import io.rekast.sdk.utils.Settings
@@ -164,7 +165,7 @@ class HomeScreenViewModel @Inject constructor(
                 emitSnackBarState(
                     SnackBarComponentConfiguration(
                         messageResId = R.string.snackbar_verified_profile_failed,
-                        messageArgs = listOf(result.message.orEmpty()),
+                        messageArgs = listOf(result.message),
                         type = SnackBarType.ERROR
                     )
                 )
@@ -204,7 +205,7 @@ class HomeScreenViewModel @Inject constructor(
                 emitSnackBarState(
                     SnackBarComponentConfiguration(
                         messageResId = R.string.snackbar_basic_user_info_failed,
-                        messageArgs = listOf(result.message.orEmpty()),
+                        messageArgs = listOf(result.message),
                         type = SnackBarType.ERROR
                     )
                 )
@@ -246,7 +247,7 @@ class HomeScreenViewModel @Inject constructor(
                     emitSnackBarState(
                         SnackBarComponentConfiguration(
                             messageResId = R.string.snackbar_account_status_unreadable,
-                            messageArgs = listOf(throwable.message.orEmpty()),
+                            messageArgs = listOf(throwable.messageOrEmpty()),
                             type = SnackBarType.ERROR
                         )
                     )
@@ -258,7 +259,7 @@ class HomeScreenViewModel @Inject constructor(
                 emitSnackBarState(
                     SnackBarComponentConfiguration(
                         messageResId = R.string.snackbar_account_status_failed,
-                        messageArgs = listOf(result.message.orEmpty()),
+                        messageArgs = listOf(result.message),
                         type = SnackBarType.ERROR
                     )
                 )
@@ -304,7 +305,7 @@ class HomeScreenViewModel @Inject constructor(
                 emitSnackBarState(
                     SnackBarComponentConfiguration(
                         messageResId = R.string.snackbar_account_balance_failed,
-                        messageArgs = listOf(result.message.orEmpty()),
+                        messageArgs = listOf(result.message),
                         type = SnackBarType.ERROR
                     )
                 )

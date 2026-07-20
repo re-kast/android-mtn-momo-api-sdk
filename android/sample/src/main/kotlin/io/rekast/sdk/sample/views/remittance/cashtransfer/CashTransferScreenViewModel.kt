@@ -33,6 +33,9 @@ import io.rekast.sdk.sample.utils.SampleConfig
 import io.rekast.sdk.sample.utils.SnackBarComponentConfiguration
 import io.rekast.sdk.sample.utils.SnackBarType
 import io.rekast.sdk.sample.utils.Utils
+import io.rekast.sdk.sample.utils.bodyText
+import io.rekast.sdk.sample.utils.valueOrEmpty
+import io.rekast.sdk.sample.utils.valueOrNullIfBlank
 import io.rekast.sdk.utils.AccountHolderType
 import io.rekast.sdk.utils.ProductType
 import java.util.UUID
@@ -120,14 +123,14 @@ class CashTransferScreenViewModel @Inject constructor(
         val reference = UUID.randomUUID().toString()
         val subscriptionKey = Utils.getProductSubscriptionKeys(ProductType.REMITTANCE, sampleConfig)
         val cashTransfer = CashTransfer(
-            amount = amount.value.orEmpty(),
-            currency = currency.value.orEmpty().ifBlank { Constants.SANDBOX_CURRENCY },
+            amount = amount.valueOrEmpty(),
+            currency = currency.valueOrEmpty().ifBlank { Constants.SANDBOX_CURRENCY },
             externalId = UUID.randomUUID().toString(),
-            payee = AccountHolder(partyIdType = AccountHolderType.MSISDN.accountHolderType, partyId = payeeMsisdn.value.orEmpty()),
-            payerMessage = payerMessage.value.orEmpty(),
-            payeeNote = payeeNote.value.orEmpty(),
-            payerFirstName = payerFirstName.value?.ifBlank { null },
-            payerSurName = payerSurName.value?.ifBlank { null }
+            payee = AccountHolder(partyIdType = AccountHolderType.MSISDN.accountHolderType, partyId = payeeMsisdn.valueOrEmpty()),
+            payerMessage = payerMessage.valueOrEmpty(),
+            payeeNote = payeeNote.valueOrEmpty(),
+            payerFirstName = payerFirstName.valueOrNullIfBlank(),
+            payerSurName = payerSurName.valueOrNullIfBlank()
         )
         when (val response = defaultRepository.cashTransfer(sampleConfig.apiVersionV1, cashTransfer, reference, subscriptionKey, sampleConfig.environment).awaitTerminal()) {
             is NetworkResult.Success -> {
@@ -139,7 +142,7 @@ class CashTransferScreenViewModel @Inject constructor(
             else -> {
                 Timber.e("Cash transfer failed: %s", response.message)
                 result.postValue("Send failed: ${response.message}")
-                emitError(R.string.snackbar_cash_transfer_failed, response.message.orEmpty())
+                emitError(R.string.snackbar_cash_transfer_failed, response.message)
             }
         }
     }
@@ -148,14 +151,14 @@ class CashTransferScreenViewModel @Inject constructor(
     fun checkStatus() = withReference { reference, subscriptionKey ->
         when (val response = defaultRepository.getCashTransferStatus(sampleConfig.apiVersionV1, reference, subscriptionKey, sampleConfig.environment).awaitTerminal()) {
             is NetworkResult.Success -> {
-                result.postValue(response.response?.source()?.readUtf8().orEmpty().ifBlank { "No status body returned." })
+                result.postValue(response.bodyText().orEmpty().ifBlank { "No status body returned." })
                 emitSuccess(R.string.snackbar_cash_transfer_status_fetched)
             }
 
             else -> {
                 Timber.e("Cash transfer status failed: %s", response.message)
                 result.postValue("Status failed: ${response.message}")
-                emitError(R.string.snackbar_cash_transfer_status_failed, response.message.orEmpty())
+                emitError(R.string.snackbar_cash_transfer_status_failed, response.message)
             }
         }
     }

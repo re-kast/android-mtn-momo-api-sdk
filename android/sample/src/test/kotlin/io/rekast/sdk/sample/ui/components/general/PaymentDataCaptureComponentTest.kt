@@ -109,4 +109,56 @@ class PaymentDataCaptureComponentTest {
         composeRule.onNodeWithText("Submit Now").assertIsNotEnabled()
         assertFalse(clicked)
     }
+
+    /** An empty phone number disables submit (drives the first `isNotEmpty()` false branch). */
+    @Test
+    fun `submit disabled when phone number is empty`() {
+        setForm(
+            phoneNumber = "",
+            financialId = "fin-1",
+            amount = "1000",
+            paymentMessage = "msg",
+            paymentNote = "note"
+        )
+        composeRule.onNodeWithText("Submit Now").assertIsNotEnabled()
+    }
+
+    /** An empty financial ID disables submit (drives the second `isNotEmpty()` false branch). */
+    @Test
+    fun `submit disabled when financial id is empty`() {
+        setForm(
+            phoneNumber = "256770000000",
+            financialId = "",
+            amount = "1000",
+            paymentMessage = "msg",
+            paymentNote = "note"
+        )
+        composeRule.onNodeWithText("Submit Now").assertIsNotEnabled()
+    }
+
+    /** An empty amount disables submit (drives the third `isNotEmpty()` false branch). */
+    @Test
+    fun `submit disabled when amount is empty`() {
+        setForm(
+            phoneNumber = "256770000000",
+            financialId = "fin-1",
+            amount = "",
+            paymentMessage = "msg",
+            paymentNote = "note"
+        )
+        composeRule.onNodeWithText("Submit Now").assertIsNotEnabled()
+    }
+
+    /** An empty payment message disables submit (drives the fourth `isNotEmpty()` false branch). */
+    @Test
+    fun `submit disabled when payment message is empty`() {
+        setForm(
+            phoneNumber = "256770000000",
+            financialId = "fin-1",
+            amount = "1000",
+            paymentMessage = "",
+            paymentNote = "note"
+        )
+        composeRule.onNodeWithText("Submit Now").assertIsNotEnabled()
+    }
 }

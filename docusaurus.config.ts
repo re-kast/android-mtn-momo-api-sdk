@@ -111,6 +111,7 @@ const config: Config = {
                         {label: 'GitHub', href: 'https://github.com/re-kast/android-mtn-momo-api-sdk'},
                         {label: 'Issues', href: 'https://github.com/re-kast/android-mtn-momo-api-sdk/issues'},
                         {label: 'MTN MoMo Developer Portal', href: 'https://momodeveloper.mtn.com/'},
+                        {label: 'Security Policy', href: 'https://github.com/re-kast/android-mtn-momo-api-sdk/blob/develop/SECURITY.md'},
                         {label: 'License', href: 'https://github.com/re-kast/android-mtn-momo-api-sdk/blob/develop/LICENSE'},
                     ],
                 },
