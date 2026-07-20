@@ -14,6 +14,10 @@ sidebar_label: Overview
 
 ## Overview
 
+:::note[Unofficial SDK]
+This is a community-maintained library and is **not affiliated with, endorsed by, or supported by MTN**. "MTN" and "MoMo" are trademarks of their respective owners. For issues with the MTN MoMo API itself, contact MTN via the [MoMo Developer Portal](https://momodeveloper.mtn.com/).
+:::
+
 The MTN MOMO API SDK is a **Kotlin Multiplatform (KMP)** library designed to simplify the integration of MTN’s Mobile Money (MOMO) services into Android and JVM applications. The core SDK targets both Android and JVM platforms, while a full-featured Android sample app demonstrates every API operation. This SDK enables developers to seamlessly interact with MTN’s extensive mobile payment infrastructure, facilitating core functionalities such as secure user authentication, balance inquiries, and efficient transaction processing. By abstracting the complexities of the MOMO API, this library provides a reliable and secure bridge between Android applications and MTN’s financial services, allowing developers to focus on building exceptional user experiences.
 
 For more information about the MTN MOMO API, please visit the official documentation [here](https://momodeveloper.mtn.com/).
