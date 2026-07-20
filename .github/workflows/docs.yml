@@ -1,0 +1,88 @@
+name: Publish Project Docs
+
+on:
+  push:
+    branches: [ develop ]
+  workflow_dispatch:
+
+# Restrict the GITHUB_TOKEN to read-only by default; the deploy job elevates as needed.
+permissions:
+  contents: read
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    # Needs write access to push the built site to the gh-pages branch.
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: yarn
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: gradle
+
+      - name: Create local.properties
+        working-directory: android
+        run: |
+          cat <<'EOF' > local.properties
+          MOMO_BASE_URL="https://sandbox.momodeveloper.mtn.com/"
+          MOMO_PROVIDER_CALLBACK_HOST="localhost"
+          MOMO_COLLECTION_PRIMARY_KEY="placeholder"
+          MOMO_COLLECTION_SECONDARY_KEY="placeholder"
+          MOMO_REMITTANCE_PRIMARY_KEY="placeholder"
+          MOMO_REMITTANCE_SECONDARY_KEY="placeholder"
+          MOMO_DISBURSEMENTS_PRIMARY_KEY="placeholder"
+          MOMO_DISBURSEMENTS_SECONDARY_KEY="placeholder"
+          MOMO_API_USER_ID="placeholder"
+          MOMO_ENVIRONMENT="sandbox"
+          MOMO_API_VERSION_V1="v1_0"
+          MOMO_API_VERSION_V2="v2_0"
+          EOF
+
+      - name: Create keystore.properties
+        run: touch keystore.properties
+        working-directory: android
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+        working-directory: android
+
+      - name: Generate Dokka docs
+        run: ./gradlew dokkaGenerate
+        working-directory: android
+
+      - name: Install Docusaurus dependencies
+        run: yarn install
+
+      - name: Update browserslist database
+        run: npx update-browserslist-db@latest
+
+      - name: Build Docusaurus site
+        run: yarn build
+
+      - name: Copy Dokka output into Docusaurus build
+        run: |
+          mkdir -p ./build/dokka
+          cp -r android/build/dokka/html/. ./build/dokka/
+          cp -r CNAME ./build
+
+      - name: Deploy to gh-pages
+        if: ${{ github.event_name == 'push' }}
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: ./build
+          user_name: github-actions[bot]
+          user_email: 41898282+github-actions[bot]@users.noreply.github.com

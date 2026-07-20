@@ -1,0 +1,58 @@
+codecov:
+  # Wait for all CI checks to finish before posting coverage status
+  require_ci_to_pass: true
+  notify:
+    wait_for_ci: true
+
+coverage:
+  status:
+    # Project-level check: overall coverage must not drop
+    project:
+      default:
+        target: auto       # stay at or above the current coverage
+        threshold: 1%      # allow up to 1% drop before failing
+        base: auto
+      momo-api-sdk:
+        target: auto
+        threshold: 1%
+        flags:
+          - momo-api-sdk
+      sample:
+        target: auto
+        threshold: 1%
+        flags:
+          - sample
+      app:
+        target: auto
+        threshold: 1%
+        flags:
+          - app
+    # Patch check: new code added in a PR must be covered
+    patch:
+      default:
+        target: 80%        # at least 80% of new lines must be tested
+
+# Isolate coverage by module so each gets its own status check
+flags:
+  momo-api-sdk:
+    paths:
+      - android/momo-api-sdk/src/main/
+    carryforward: true
+  sample:
+    paths:
+      - android/sample/src/main/
+    carryforward: true
+  app:
+    paths:
+      - android/app/src/main/
+    carryforward: true
+
+# PR comment layout — show diff, per-flag breakdown, and changed files
+comment:
+  layout: "diff, flags, files"
+  behavior: default        # update the comment on each new push
+  require_changes: true    # only comment when coverage actually changes
+
+# Keep GitHub Check annotations (inline coverage markers on the PR diff)
+github_checks:
+  annotations: true

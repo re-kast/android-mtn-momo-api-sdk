@@ -1,0 +1,259 @@
+<resources>
+    <string name="app_name">MTN Momo API SDK Sample App</string>
+    <string name="app_title">SDK Sample Application</string>
+    <string name="copyrights">Developed by Benjamin Mwalimu</string>
+    <string name="action_settings">Settings</string>
+
+    <!-- Strings used for fragments for navigation -->
+    <string name="home_screen">Home</string>
+    <string name="collections_pay_screen">Collections | Request To Pay</string>
+    <string name="collections_withdraw_screen">Collections | Request To Withdraw</string>
+    <string name="disbursement_deposit_screen">Disbursement | Deposit</string>
+    <string name="disbursement_Refund_screen">Disbursement | Refund</string>
+    <string name="remittance_screen">Remittance</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+    <!--Basic ApiUser Information-->
+    <string name="basic_user_info_title">Basic User Information:</string>
+    <string name="account_status_title">Account Status:</string>
+    <string name="account_balance_title">Account Balance:</string>
+    <string name="name">Name:</string>
+    <string name="birth_date">BirthDate:</string>
+    <string name="gender">Gender:</string>
+    <string name="updated_at">Updated At:</string>
+    <string name="locale">Locale:</string>
+    <string name="sub">Sub:</string>
+    <string name="in_Active">In Active</string>
+    <string name="active">Active</string>
+    <string name="available_balance">Available Balance:</string>
+
+    <!--Home screen card titles-->
+    <string name="card_profile">Profile</string>
+    <string name="card_basic_user_info">Basic User Info</string>
+    <string name="card_verified_profile">Verified Profile</string>
+    <string name="card_account_status">Account Status</string>
+    <string name="card_account_balance">Account Balance</string>
+
+    <!--Home screen field labels-->
+    <string name="label_name">Name</string>
+    <string name="label_given_name">Given name</string>
+    <string name="label_family_name">Family name</string>
+    <string name="label_middle_name">Middle name</string>
+    <string name="label_birth_date">Date of birth</string>
+    <string name="label_gender">Gender</string>
+    <string name="label_locale">Locale</string>
+    <string name="label_sub">Subject ID</string>
+    <string name="label_updated_at">Updated at</string>
+    <string name="label_email">Email</string>
+    <string name="label_phone">Phone</string>
+    <string name="label_address">Address</string>
+    <string name="label_credit_score">Credit score</string>
+    <string name="label_country_of_birth">Country of birth</string>
+    <string name="label_region_of_birth">Region of birth</string>
+    <string name="label_city_of_birth">City of birth</string>
+    <string name="label_occupation">Occupation</string>
+    <string name="label_employer">Employer</string>
+    <string name="label_identification_type">ID type</string>
+    <string name="label_identification_value">ID number</string>
+    <string name="label_status">Status</string>
+    <string name="label_available_balance">Available balance</string>
+    <string name="label_currency">Currency</string>
+
+    <!--Home screen misc-->
+    <string name="verified">Verified</string>
+    <string name="home_empty_hint">Your MTN MoMo account details will appear here once loaded.</string>
+
+    <!--Operation screens (Invoice, Pre-approval, Cash Transfer)-->
+    <string name="invoice_screen">Collection | Invoice</string>
+    <string name="pre_approval_screen">Collection | Pre-Approval</string>
+    <string name="cash_transfer_screen">Remittance | Cash Transfer</string>
+
+    <string name="invoice_title">Create Invoice</string>
+    <string name="pre_approval_title">Create Pre-Approval</string>
+    <string name="cash_transfer_title">Cash Transfer (V2)</string>
+
+    <string name="action_create">Create</string>
+    <string name="action_check_status">Check Status</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_send">Send</string>
+
+    <string name="label_amount">Amount *</string>
+    <string name="label_payer_msisdn">Payer phone number *</string>
+    <string name="label_payee_msisdn">Payee phone number *</string>
+    <string name="label_validity_seconds">Validity (seconds)</string>
+    <string name="label_validity_minutes">Validity (minutes) *</string>
+    <string name="label_message">Message</string>
+    <string name="label_note">Note</string>
+    <string name="label_description">Description</string>
+    <string name="label_external_id">External ID</string>
+    <string name="label_payer_first_name">Payer first name</string>
+    <string name="label_payer_surname">Payer surname</string>
+
+    <string name="console_hint">Run an operation to see its reference ID and status here.</string>
+
+    <!--Setup &amp; Config screen-->
+    <string name="setup_screen">Setup &amp; Config</string>
+    <string name="setup_config_title">Configuration</string>
+    <string name="setup_status_title">Credential Status</string>
+    <string name="setup_status_hint">These credentials are provisioned automatically on launch by the SDK bootstrap flow.</string>
+    <string name="action_rerun_setup">Re-run Setup</string>
+    <string name="status_present">Present</string>
+    <string name="status_missing">Missing</string>
+    <string name="label_environment">Environment</string>
+    <string name="label_api_version_v1">API version (v1)</string>
+    <string name="label_api_version_v2">API version (v2)</string>
+    <string name="label_api_user_id">API user ID</string>
+    <string name="label_callback_host">Callback host</string>
+    <string name="label_api_key">API key</string>
+    <string name="label_access_token">Access token</string>
+    <string name="label_oauth_token">OAuth2 consent token</string>
+    <string name="label_auth_req_id">Auth request ID</string>
+    <string name="label_login_hint">Login hint</string>
+
+    <!--Settings screen-->
+    <string name="settings_screen">Settings</string>
+    <string name="settings_environment_title">Environment</string>
+    <string name="settings_keys_title">Product Subscription Keys</string>
+    <string name="settings_keys_hint">Keys are read from local.properties at build time. Tap Show to reveal them.</string>
+    <string name="settings_app_title">Application</string>
+    <string name="settings_danger_title">Danger Zone</string>
+    <string name="settings_danger_hint">Removes all provisioned tokens and keys from secure storage. They are re-created automatically on the next launch.</string>
+    <string name="action_show">Show</string>
+    <string name="action_hide">Hide</string>
+    <string name="action_clear_credentials">Clear stored credentials</string>
+    <string name="value_not_set">Not set</string>
+    <string name="label_collection_primary_key">Collection · primary</string>
+    <string name="label_collection_secondary_key">Collection · secondary</string>
+    <string name="label_remittance_primary_key">Remittance · primary</string>
+    <string name="label_remittance_secondary_key">Remittance · secondary</string>
+    <string name="label_disbursement_primary_key">Disbursement · primary</string>
+    <string name="label_disbursement_secondary_key">Disbursement · secondary</string>
+    <string name="label_app_version">Version</string>
+    <string name="label_app_build">Build</string>
+    <string name="label_package_name">Package</string>
+
+    <!--Drawer section headers-->
+    <string name="section_general">General</string>
+    <string name="section_collection">Collection</string>
+    <string name="section_disbursement">Disbursement</string>
+    <string name="section_remittance">Remittance</string>
+
+    <!--Payment page-->
+    <string name="request_to_pay_title">Request to Pay</string>
+    <string name="request_payment_submit_button">Request Payment</string>
+
+    <string name="request_to_withdraw_title">Request to Withdraw</string>
+    <string name="request_withdraw_submit_button">Withdraw</string>
+
+    <string name="request_to_deposit_title">Request to Deposit</string>
+    <string name="send_deposit_submit_button">Send Deposit</string>
+
+    <string name="request_to_refund_title">Request to Refund</string>
+    <string name="send_refund_submit_button">Send Refund</string>
+
+    <string name="request_to_transfer_title">Request to Transfer</string>
+    <string name="transfer_submit_button">Transfer</string>
+
+    <string name="phone_number">Phone number *</string>
+    <string name="financial_id">Financial Id *</string>
+    <string name="amount">Amount *</string>
+    <string name="payment_message">Payment Message *</string>
+    <string name="payment_note">Payment note *</string>
+    <string name="delivery_note">Delivery note *</string>
+    <string name="reference_id_refund">Reference Id To Refund *</string>
+
+    <string name="display_amount">Amount:</string>
+    <string name="currency">Currency:</string>
+    <string name="financial_transaction_id">Financial Transaction Id:</string>
+    <string name="external_id">External Id:</string>
+    <string name="payee">Payee:</string>
+    <string name="payer">Payer:</string>
+    <string name="payer_message">Payer Message:</string>
+    <string name="payee_note">Payee Note:</string>
+    <string name="status">Status:</string>
+    <string name="reason">Reason:</string>
+    <string name="reference_id_to_refund">Reference Id To Refund</string>
+    <string name="payment_message_display">Payment Message</string>
+    <string name="payment_note_display">Payment note</string>
+    <string name="delivery_note_display">Delivery note</string>
+
+    <!--Accessibility-->
+    <string name="cd_open_navigation_drawer">Open navigation drawer</string>
+
+    <!--Navigation Titles-->
+    <string name="home">Home</string>
+    <string name="remittance">Remittance</string>
+    <string name="collection_request_to_pay">Collection | Request To Pay</string>
+    <string name="collection_request_to_withdraw">Collection | Request To Withdraw</string>
+    <string name="disbursement_deposit">Disbursement | Deposit</string>
+    <string name="disbursement_refund">Disbursement | Refund</string>
+
+    <!-- Operation console -->
+    <string name="operation_result_title">Result</string>
+
+    <!-- Snackbar messages. Entries ending in a "%1$s" placeholder are formatted with an error detail. -->
+    <string name="snackbar_token_expired">Expired access token! Please refresh the token</string>
+    <string name="snackbar_sdk_setup_rerunning">Re-running SDK setup…</string>
+    <string name="snackbar_credentials_cleared">Stored credentials cleared</string>
+    <string name="snackbar_operation_failed">Operation failed. %1$s</string>
+
+    <string name="snackbar_verified_profile_fetched">Verified profile was fetched successfully</string>
+    <string name="snackbar_verified_profile_failed">Verified profile was not fetched. %1$s</string>
+    <string name="snackbar_basic_user_info_fetched">Basic user info was fetched successfully</string>
+    <string name="snackbar_basic_user_info_failed">Basic user info was not fetched. %1$s</string>
+    <string name="snackbar_account_status_fetched">Account status was fetched successfully</string>
+    <string name="snackbar_account_status_unreadable">Account status could not be read. %1$s</string>
+    <string name="snackbar_account_status_failed">Account status was not fetched. %1$s</string>
+    <string name="snackbar_account_balance_fetched">Account balance fetched successfully</string>
+    <string name="snackbar_account_balance_failed">Account balance was not fetched. %1$s</string>
+
+    <string name="snackbar_request_to_pay_submitted">Request to pay submitted successfully</string>
+    <string name="snackbar_request_to_pay_failed">Request to pay was not sent. %1$s</string>
+    <string name="snackbar_request_to_pay_status_fetched">Request to pay status fetched successfully</string>
+    <string name="snackbar_request_to_pay_status_failed">Request to pay status not fetched. %1$s</string>
+    <string name="snackbar_delivery_note_sent">Delivery note sent successfully</string>
+    <string name="snackbar_delivery_note_failed">Delivery note was not sent. %1$s</string>
+
+    <string name="snackbar_request_to_withdraw_submitted">Request to withdraw submitted successfully</string>
+    <string name="snackbar_request_to_withdraw_failed">Request to withdraw was not sent. %1$s</string>
+    <string name="snackbar_request_to_withdraw_status_fetched">Request to withdraw status fetched successfully</string>
+    <string name="snackbar_request_to_withdraw_status_failed">Request to withdraw status not fetched. %1$s</string>
+
+    <string name="snackbar_deposit_submitted">Deposit submitted successfully</string>
+    <string name="snackbar_deposit_failed">Deposit was not sent. %1$s</string>
+    <string name="snackbar_deposit_status_fetched">Deposit status fetched successfully</string>
+    <string name="snackbar_deposit_status_failed">Deposit status not fetched. %1$s</string>
+
+    <string name="snackbar_refund_submitted">Refund submitted successfully</string>
+    <string name="snackbar_refund_failed">Refund was not sent. %1$s</string>
+    <string name="snackbar_refund_status_fetched">Refund status fetched successfully</string>
+    <string name="snackbar_refund_status_failed">Refund status not fetched. %1$s</string>
+
+    <string name="snackbar_remittance_submitted">Remittance transfer submitted successfully</string>
+    <string name="snackbar_remittance_failed">Remittance transfer was not sent. %1$s</string>
+    <string name="snackbar_remittance_status_fetched">Remittance transfer status fetched successfully</string>
+    <string name="snackbar_remittance_status_failed">Remittance transfer status not fetched. %1$s</string>
+
+    <string name="snackbar_cash_transfer_sent">Cash transfer sent successfully</string>
+    <string name="snackbar_cash_transfer_failed">Cash transfer not sent. %1$s</string>
+    <string name="snackbar_cash_transfer_status_fetched">Cash transfer status fetched successfully</string>
+    <string name="snackbar_cash_transfer_status_failed">Cash transfer status not fetched. %1$s</string>
+    <string name="snackbar_cash_transfer_required_first">Send a cash transfer first</string>
+
+    <string name="snackbar_invoice_created">Invoice created successfully</string>
+    <string name="snackbar_invoice_not_created">Invoice not created. %1$s</string>
+    <string name="snackbar_invoice_status_fetched">Invoice status fetched successfully</string>
+    <string name="snackbar_invoice_status_failed">Invoice status not fetched. %1$s</string>
+    <string name="snackbar_invoice_cancelled">Invoice cancelled successfully</string>
+    <string name="snackbar_invoice_not_cancelled">Invoice not cancelled. %1$s</string>
+    <string name="snackbar_invoice_required_first">Create an invoice first</string>
+
+    <string name="snackbar_preapproval_created">Pre-approval created successfully</string>
+    <string name="snackbar_preapproval_not_created">Pre-approval not created. %1$s</string>
+    <string name="snackbar_preapproval_status_fetched">Pre-approval status fetched successfully</string>
+    <string name="snackbar_preapproval_status_failed">Pre-approval status not fetched. %1$s</string>
+    <string name="snackbar_preapproval_cancelled">Pre-approval cancelled successfully</string>
+    <string name="snackbar_preapproval_not_cancelled">Pre-approval not cancelled. %1$s</string>
+    <string name="snackbar_preapproval_required_first">Create a pre-approval first</string>
+</resources>

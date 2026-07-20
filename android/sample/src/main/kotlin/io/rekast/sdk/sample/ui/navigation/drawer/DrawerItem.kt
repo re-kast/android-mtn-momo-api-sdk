@@ -1,0 +1,94 @@
+/*
+ * Copyright 2023-2026, Benjamin Mwalimu
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package io.rekast.sdk.sample.ui.navigation.drawer
+
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import io.rekast.sdk.sample.R
+import io.rekast.sdk.sample.ui.navigation.navigation.NavigationDrawerItem
+
+/**
+ * Renders a single navigation drawer row with an icon and title, highlighted when selected.
+ *
+ * @param item The [NavigationDrawerItem] describing the route, icon, and title to render.
+ * @param selected Whether this item corresponds to the currently active destination.
+ * @param onItemClick Callback invoked with the clicked [NavigationDrawerItem] when the row is tapped.
+ */
+@Composable
+fun DrawerItem(item: NavigationDrawerItem, selected: Boolean, onItemClick: (NavigationDrawerItem) -> Unit) {
+    val contentColor = if (selected) MaterialTheme.colors.secondary else Color.White
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 8.dp, vertical = 4.dp)
+            .clip(RoundedCornerShape(12.dp))
+            .clickable(onClick = { onItemClick(item) })
+            .background(if (selected) MaterialTheme.colors.secondary.copy(alpha = 0.22f) else Color.Transparent)
+            .height(dimensionResource(id = R.dimen.list_item_height_default))
+            .padding(start = dimensionResource(id = R.dimen.spacing_medium), end = dimensionResource(id = R.dimen.spacing_medium))
+    ) {
+        Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.spacing_extra_small)))
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Image(
+                painter = painterResource(id = item.icon),
+                contentDescription = item.title,
+                colorFilter = ColorFilter.tint(contentColor),
+                contentScale = ContentScale.Fit,
+                modifier = Modifier
+                    .height(dimensionResource(id = R.dimen.icon_size_default))
+                    .width(dimensionResource(id = R.dimen.icon_size_default))
+            )
+            Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.spacing_extra_small)))
+            Text(
+                text = item.title,
+                fontSize = with(LocalDensity.current) { dimensionResource(id = R.dimen.font_size_medium).toSp() },
+                fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Normal,
+                color = contentColor
+            )
+        }
+        Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.spacing_extra_small)))
+    }
+}
+
+@Preview(showBackground = false)
+@Composable
+fun DrawerItemPreview() {
+    DrawerItem(item = NavigationDrawerItem.Home, selected = false, onItemClick = {})
+}
