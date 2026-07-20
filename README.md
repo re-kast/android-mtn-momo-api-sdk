@@ -209,6 +209,21 @@ The `sample` module is a Jetpack Compose application that exercises every SDK op
 
 Credentials are provisioned automatically on first launch (see [Credential Bootstrap](#credential-bootstrap)); the **Setup & Config** screen surfaces that otherwise-invisible flow so you can watch each credential appear.
 
+## Security
+
+Security is a first-class concern for a library that handles Mobile Money credentials and access tokens. Please review the [Security Policy](SECURITY.md) for the full details.
+
+- **Reporting a vulnerability**: Report privately via GitHub's **["Report a vulnerability"](https://github.com/re-kast/android-mtn-momo-api-sdk/security)** button — never in a public issue, PR, or discussion. [`SECURITY.md`](SECURITY.md) covers what to include and our response timelines.
+- **Supported versions**: Security fixes ship on the latest `0.x` release line only (currently `0.3.x`). Pin an explicit, non-`SNAPSHOT` version in production and upgrade promptly.
+- **Automated scanning**: Every change is analysed with [CodeQL](.github/workflows/codeql.yml).
+
+### Secure Usage Checklist
+
+- **Never commit secrets** — keep `MOMO_*` subscription keys, the API user ID, and any keystore material out of version control (use `local.properties` or a secrets manager) and rotate anything that leaks.
+- **Never ship `UnsafeOkHttpClient`** — it disables TLS certificate validation and exists solely for local sandbox testing; it must never appear in a release build or run against production endpoints.
+- **Protect tokens at rest** — access and consent tokens are held via `EncryptedSharedPreferences`; never log tokens, subscription keys, or full request/response bodies in production.
+- **Keep the SDK current** — security fixes land only on the latest release line, so update regularly.
+
 ## License
 
 This project is licensed under the Apache License, Version 2.0. For more details, please refer to the [LICENSE](LICENSE) file.

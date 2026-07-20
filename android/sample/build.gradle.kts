@@ -161,7 +161,7 @@ kover {
                 // regression protection; they are simply not counted toward branch coverage.
                 annotatedBy(
                     "*Generated*",
-                    "androidx.compose.ui.tooling.preview.Preview"
+                    "androidx.compose.ui.tooling.preview.Preview
                 )
                 // Kover class filters match fully-qualified names with '.' separators and
                 // '*'/'?' wildcards (where '*' also spans package separators). Slash-based
