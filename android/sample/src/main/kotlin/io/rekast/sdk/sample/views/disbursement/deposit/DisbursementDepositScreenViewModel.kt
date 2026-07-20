@@ -15,6 +15,7 @@
  */
 package io.rekast.sdk.sample.views.disbursement.deposit
 
+import androidx.annotation.StringRes
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -24,6 +25,7 @@ import io.rekast.sdk.model.AccountHolder
 import io.rekast.sdk.model.MomoTransaction
 import io.rekast.sdk.repository.DefaultRepository
 import io.rekast.sdk.repository.data.NetworkResult
+import io.rekast.sdk.sample.R
 import io.rekast.sdk.sample.utils.Constants
 import io.rekast.sdk.sample.utils.CredentialStorage
 import io.rekast.sdk.sample.utils.DispatcherProvider
@@ -186,7 +188,7 @@ class DisbursementDepositScreenViewModel @Inject constructor(
         viewModelScope.launch(dispatchers.io()) {
             if (credentialStorage.getAccessToken().isBlank()) {
                 Timber.w("Deposit skipped: access token is blank")
-                emitError("Expired access token! Please refresh the token")
+                emitError(R.string.snackbar_token_expired)
                 return@launch
             }
             showProgressBar.postValue(true)
@@ -202,18 +204,18 @@ class DisbursementDepositScreenViewModel @Inject constructor(
                 when (submit) {
                     is NetworkResult.Success -> {
                         Timber.d("Deposit accepted (ref=%s)", referenceId)
-                        emitSuccess("Deposit submitted successfully")
+                        emitSuccess(R.string.snackbar_deposit_submitted)
                         fetchStatus(referenceId, subscriptionKey)
                     }
 
                     else -> {
                         Timber.e("Deposit failed: %s", submit.message)
-                        emitError("Deposit was not sent. ${submit.message}")
+                        emitError(R.string.snackbar_deposit_failed, submit.message.orEmpty())
                     }
                 }
             } catch (exception: Exception) {
                 Timber.e(exception, "Deposit failed")
-                emitError("Deposit was not sent. ${exception.message}")
+                emitError(R.string.snackbar_deposit_failed, exception.message.orEmpty())
             } finally {
                 showProgressBar.postValue(false)
             }
@@ -233,12 +235,12 @@ class DisbursementDepositScreenViewModel @Inject constructor(
                     runCatching { json.decodeFromString<MomoTransaction>(body) }.getOrNull()
                 }
                 momoTransaction.postValue(transaction)
-                emitSuccess("Deposit status fetched successfully")
+                emitSuccess(R.string.snackbar_deposit_status_fetched)
             }
 
             else -> {
                 Timber.e("Deposit status failed: %s", result.message)
-                emitError("Deposit status not fetched. ${result.message}")
+                emitError(R.string.snackbar_deposit_status_failed, result.message.orEmpty())
             }
         }
     }
@@ -268,9 +270,9 @@ class DisbursementDepositScreenViewModel @Inject constructor(
         return terminal
     }
 
-    private fun emitSuccess(message: String) = emitSnackBarState(SnackBarComponentConfiguration(message = message, type = SnackBarType.SUCCESS))
+    private fun emitSuccess(@StringRes messageResId: Int, vararg args: Any) = emitSnackBarState(SnackBarComponentConfiguration(messageResId = messageResId, messageArgs = args.toList(), type = SnackBarType.SUCCESS))
 
-    private fun emitError(message: String) = emitSnackBarState(SnackBarComponentConfiguration(message = message, type = SnackBarType.ERROR))
+    private fun emitError(@StringRes messageResId: Int, vararg args: Any) = emitSnackBarState(SnackBarComponentConfiguration(messageResId = messageResId, messageArgs = args.toList(), type = SnackBarType.ERROR))
 
     private fun emitSnackBarState(snackBarComponentConfiguration: SnackBarComponentConfiguration) {
         viewModelScope.launch { _snackBarStateFlow.emit(snackBarComponentConfiguration) }

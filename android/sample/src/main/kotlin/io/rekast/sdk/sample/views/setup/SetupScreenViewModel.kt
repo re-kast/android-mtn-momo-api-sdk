@@ -20,6 +20,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.rekast.sdk.sample.R
 import io.rekast.sdk.sample.utils.CredentialStorage
 import io.rekast.sdk.sample.utils.SampleConfig
 import io.rekast.sdk.sample.utils.SnackBarComponentConfiguration
@@ -61,7 +62,7 @@ class SetupScreenViewModel @Inject constructor(private val credentialStorage: Cr
     fun notifyRerun() {
         viewModelScope.launch {
             _snackBarStateFlow.emit(
-                SnackBarComponentConfiguration(message = "Re-running SDK setup…", type = SnackBarType.INFO)
+                SnackBarComponentConfiguration(messageResId = R.string.snackbar_sdk_setup_rerunning, type = SnackBarType.INFO)
             )
         }
     }

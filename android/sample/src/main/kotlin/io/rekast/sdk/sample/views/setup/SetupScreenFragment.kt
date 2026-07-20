@@ -32,7 +32,6 @@ import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import io.rekast.sdk.sample.ui.theme.AppTheme
 import io.rekast.sdk.sample.views.MainViewModel
-import kotlin.getValue
 
 /**
  * Fragment that hosts the Setup & Config screen, rendering [SetupScreen] via Jetpack Compose.

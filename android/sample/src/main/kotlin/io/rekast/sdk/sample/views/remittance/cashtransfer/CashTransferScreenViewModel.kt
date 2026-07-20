@@ -15,6 +15,7 @@
  */
 package io.rekast.sdk.sample.views.remittance.cashtransfer
 
+import androidx.annotation.StringRes
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -24,6 +25,7 @@ import io.rekast.sdk.model.AccountHolder
 import io.rekast.sdk.model.CashTransfer
 import io.rekast.sdk.repository.DefaultRepository
 import io.rekast.sdk.repository.data.NetworkResult
+import io.rekast.sdk.sample.R
 import io.rekast.sdk.sample.utils.Constants
 import io.rekast.sdk.sample.utils.CredentialStorage
 import io.rekast.sdk.sample.utils.DispatcherProvider
@@ -131,13 +133,13 @@ class CashTransferScreenViewModel @Inject constructor(
             is NetworkResult.Success -> {
                 referenceId.postValue(reference)
                 result.postValue("Cash transfer sent.\nReference: $reference")
-                emitSuccess("Cash transfer sent successfully")
+                emitSuccess(R.string.snackbar_cash_transfer_sent)
             }
 
             else -> {
                 Timber.e("Cash transfer failed: %s", response.message)
                 result.postValue("Send failed: ${response.message}")
-                emitError("Cash transfer not sent. ${response.message}")
+                emitError(R.string.snackbar_cash_transfer_failed, response.message.orEmpty())
             }
         }
     }
@@ -147,13 +149,13 @@ class CashTransferScreenViewModel @Inject constructor(
         when (val response = defaultRepository.getCashTransferStatus(sampleConfig.apiVersionV1, reference, subscriptionKey, sampleConfig.environment).awaitTerminal()) {
             is NetworkResult.Success -> {
                 result.postValue(response.response?.source()?.readUtf8().orEmpty().ifBlank { "No status body returned." })
-                emitSuccess("Cash transfer status fetched successfully")
+                emitSuccess(R.string.snackbar_cash_transfer_status_fetched)
             }
 
             else -> {
                 Timber.e("Cash transfer status failed: %s", response.message)
                 result.postValue("Status failed: ${response.message}")
-                emitError("Cash transfer status not fetched. ${response.message}")
+                emitError(R.string.snackbar_cash_transfer_status_failed, response.message.orEmpty())
             }
         }
     }
@@ -163,7 +165,7 @@ class CashTransferScreenViewModel @Inject constructor(
         viewModelScope.launch(dispatchers.io()) {
             if (credentialStorage.getAccessToken().isBlank()) {
                 Timber.w("Cash transfer operation skipped: access token is blank")
-                emitError("Expired access token! Please refresh the token")
+                emitError(R.string.snackbar_token_expired)
                 return@launch
             }
             showProgressBar.postValue(true)
@@ -172,7 +174,7 @@ class CashTransferScreenViewModel @Inject constructor(
             } catch (exception: Exception) {
                 Timber.e(exception, "Cash transfer operation failed")
                 result.postValue("Error: ${exception.message}")
-                emitError("Operation failed. ${exception.message}")
+                emitError(R.string.snackbar_operation_failed, exception.message.orEmpty())
             } finally {
                 showProgressBar.postValue(false)
             }
@@ -183,7 +185,7 @@ class CashTransferScreenViewModel @Inject constructor(
     private fun withReference(block: suspend (String, String) -> Unit) {
         val reference = referenceId.value
         if (reference.isNullOrBlank()) {
-            emitError("Send a cash transfer first")
+            emitError(R.string.snackbar_cash_transfer_required_first)
             return
         }
         launchOperation { block(reference, Utils.getProductSubscriptionKeys(ProductType.REMITTANCE, sampleConfig)) }
@@ -195,9 +197,9 @@ class CashTransferScreenViewModel @Inject constructor(
         return terminal
     }
 
-    private fun emitSuccess(message: String) = emitSnackBarState(SnackBarComponentConfiguration(message = message, type = SnackBarType.SUCCESS))
+    private fun emitSuccess(@StringRes messageResId: Int, vararg args: Any) = emitSnackBarState(SnackBarComponentConfiguration(messageResId = messageResId, messageArgs = args.toList(), type = SnackBarType.SUCCESS))
 
-    private fun emitError(message: String) = emitSnackBarState(SnackBarComponentConfiguration(message = message, type = SnackBarType.ERROR))
+    private fun emitError(@StringRes messageResId: Int, vararg args: Any) = emitSnackBarState(SnackBarComponentConfiguration(messageResId = messageResId, messageArgs = args.toList(), type = SnackBarType.ERROR))
 
     private fun emitSnackBarState(snackBarComponentConfiguration: SnackBarComponentConfiguration) {
         viewModelScope.launch { _snackBarStateFlow.emit(snackBarComponentConfiguration) }

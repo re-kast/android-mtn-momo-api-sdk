@@ -30,10 +30,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import io.rekast.sdk.sample.R
 import io.rekast.sdk.sample.ui.components.general.CardTitle
 import io.rekast.sdk.sample.ui.components.general.MomoCard
 import io.rekast.sdk.sample.ui.theme.subtleTextColor
@@ -121,7 +123,7 @@ fun OperationActionButton(text: String, onClick: () -> Unit, modifier: Modifier 
 @Composable
 fun OperationConsole(result: String?, hint: String, modifier: Modifier = Modifier) {
     MomoCard(modifier = modifier) {
-        CardTitle(title = "Result")
+        CardTitle(title = stringResource(R.string.operation_result_title))
         Spacer(modifier = Modifier.height(10.dp))
         if (result.isNullOrBlank()) {
             Text(text = hint, style = MaterialTheme.typography.body2, color = subtleTextColor)

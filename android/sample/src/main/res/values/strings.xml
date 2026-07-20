@@ -188,4 +188,72 @@
     <string name="collection_request_to_withdraw">Collection | Request To Withdraw</string>
     <string name="disbursement_deposit">Disbursement | Deposit</string>
     <string name="disbursement_refund">Disbursement | Refund</string>
+
+    <!-- Operation console -->
+    <string name="operation_result_title">Result</string>
+
+    <!-- Snackbar messages. Entries ending in a "%1$s" placeholder are formatted with an error detail. -->
+    <string name="snackbar_token_expired">Expired access token! Please refresh the token</string>
+    <string name="snackbar_sdk_setup_rerunning">Re-running SDK setup…</string>
+    <string name="snackbar_credentials_cleared">Stored credentials cleared</string>
+    <string name="snackbar_operation_failed">Operation failed. %1$s</string>
+
+    <string name="snackbar_verified_profile_fetched">Verified profile was fetched successfully</string>
+    <string name="snackbar_verified_profile_failed">Verified profile was not fetched. %1$s</string>
+    <string name="snackbar_basic_user_info_fetched">Basic user info was fetched successfully</string>
+    <string name="snackbar_basic_user_info_failed">Basic user info was not fetched. %1$s</string>
+    <string name="snackbar_account_status_fetched">Account status was fetched successfully</string>
+    <string name="snackbar_account_status_unreadable">Account status could not be read. %1$s</string>
+    <string name="snackbar_account_status_failed">Account status was not fetched. %1$s</string>
+    <string name="snackbar_account_balance_fetched">Account balance fetched successfully</string>
+    <string name="snackbar_account_balance_failed">Account balance was not fetched. %1$s</string>
+
+    <string name="snackbar_request_to_pay_submitted">Request to pay submitted successfully</string>
+    <string name="snackbar_request_to_pay_failed">Request to pay was not sent. %1$s</string>
+    <string name="snackbar_request_to_pay_status_fetched">Request to pay status fetched successfully</string>
+    <string name="snackbar_request_to_pay_status_failed">Request to pay status not fetched. %1$s</string>
+    <string name="snackbar_delivery_note_sent">Delivery note sent successfully</string>
+    <string name="snackbar_delivery_note_failed">Delivery note was not sent. %1$s</string>
+
+    <string name="snackbar_request_to_withdraw_submitted">Request to withdraw submitted successfully</string>
+    <string name="snackbar_request_to_withdraw_failed">Request to withdraw was not sent. %1$s</string>
+    <string name="snackbar_request_to_withdraw_status_fetched">Request to withdraw status fetched successfully</string>
+    <string name="snackbar_request_to_withdraw_status_failed">Request to withdraw status not fetched. %1$s</string>
+
+    <string name="snackbar_deposit_submitted">Deposit submitted successfully</string>
+    <string name="snackbar_deposit_failed">Deposit was not sent. %1$s</string>
+    <string name="snackbar_deposit_status_fetched">Deposit status fetched successfully</string>
+    <string name="snackbar_deposit_status_failed">Deposit status not fetched. %1$s</string>
+
+    <string name="snackbar_refund_submitted">Refund submitted successfully</string>
+    <string name="snackbar_refund_failed">Refund was not sent. %1$s</string>
+    <string name="snackbar_refund_status_fetched">Refund status fetched successfully</string>
+    <string name="snackbar_refund_status_failed">Refund status not fetched. %1$s</string>
+
+    <string name="snackbar_remittance_submitted">Remittance transfer submitted successfully</string>
+    <string name="snackbar_remittance_failed">Remittance transfer was not sent. %1$s</string>
+    <string name="snackbar_remittance_status_fetched">Remittance transfer status fetched successfully</string>
+    <string name="snackbar_remittance_status_failed">Remittance transfer status not fetched. %1$s</string>
+
+    <string name="snackbar_cash_transfer_sent">Cash transfer sent successfully</string>
+    <string name="snackbar_cash_transfer_failed">Cash transfer not sent. %1$s</string>
+    <string name="snackbar_cash_transfer_status_fetched">Cash transfer status fetched successfully</string>
+    <string name="snackbar_cash_transfer_status_failed">Cash transfer status not fetched. %1$s</string>
+    <string name="snackbar_cash_transfer_required_first">Send a cash transfer first</string>
+
+    <string name="snackbar_invoice_created">Invoice created successfully</string>
+    <string name="snackbar_invoice_not_created">Invoice not created. %1$s</string>
+    <string name="snackbar_invoice_status_fetched">Invoice status fetched successfully</string>
+    <string name="snackbar_invoice_status_failed">Invoice status not fetched. %1$s</string>
+    <string name="snackbar_invoice_cancelled">Invoice cancelled successfully</string>
+    <string name="snackbar_invoice_not_cancelled">Invoice not cancelled. %1$s</string>
+    <string name="snackbar_invoice_required_first">Create an invoice first</string>
+
+    <string name="snackbar_preapproval_created">Pre-approval created successfully</string>
+    <string name="snackbar_preapproval_not_created">Pre-approval not created. %1$s</string>
+    <string name="snackbar_preapproval_status_fetched">Pre-approval status fetched successfully</string>
+    <string name="snackbar_preapproval_status_failed">Pre-approval status not fetched. %1$s</string>
+    <string name="snackbar_preapproval_cancelled">Pre-approval cancelled successfully</string>
+    <string name="snackbar_preapproval_not_cancelled">Pre-approval not cancelled. %1$s</string>
+    <string name="snackbar_preapproval_required_first">Create a pre-approval first</string>
 </resources>

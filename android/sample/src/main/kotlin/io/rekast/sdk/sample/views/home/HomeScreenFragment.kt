@@ -35,7 +35,6 @@ import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import io.rekast.sdk.sample.ui.theme.AppTheme
 import io.rekast.sdk.sample.views.MainViewModel
-import kotlin.getValue
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 

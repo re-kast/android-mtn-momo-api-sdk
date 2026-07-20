@@ -26,6 +26,7 @@ import io.rekast.sdk.model.BasicUserInfo
 import io.rekast.sdk.model.UserInfoWithConsent
 import io.rekast.sdk.repository.DefaultRepository
 import io.rekast.sdk.repository.data.NetworkResult
+import io.rekast.sdk.sample.R
 import io.rekast.sdk.sample.utils.CredentialStorage
 import io.rekast.sdk.sample.utils.DispatcherProvider
 import io.rekast.sdk.sample.utils.SampleConfig
@@ -107,7 +108,7 @@ class HomeScreenViewModel @Inject constructor(
                 Timber.w("Home data load skipped: access token is blank")
                 emitSnackBarState(
                     SnackBarComponentConfiguration(
-                        message = "Expired access token! Please refresh the token",
+                        messageResId = R.string.snackbar_token_expired,
                         type = SnackBarType.ERROR
                     )
                 )
@@ -151,7 +152,7 @@ class HomeScreenViewModel @Inject constructor(
                 Timber.d("User info with consent was fetched successfully")
                 emitSnackBarState(
                     SnackBarComponentConfiguration(
-                        message = "Verified profile was fetched successfully",
+                        messageResId = R.string.snackbar_verified_profile_fetched,
                         type = SnackBarType.SUCCESS
                     )
                 )
@@ -162,7 +163,8 @@ class HomeScreenViewModel @Inject constructor(
                 Timber.e("User info with consent was not fetched: %s", result.message)
                 emitSnackBarState(
                     SnackBarComponentConfiguration(
-                        message = "Verified profile was not fetched. ${result.message}",
+                        messageResId = R.string.snackbar_verified_profile_failed,
+                        messageArgs = listOf(result.message.orEmpty()),
                         type = SnackBarType.ERROR
                     )
                 )
@@ -191,7 +193,7 @@ class HomeScreenViewModel @Inject constructor(
                 Timber.d("Basic user info was fetched successfully")
                 emitSnackBarState(
                     SnackBarComponentConfiguration(
-                        message = "Basic user info was fetched successfully",
+                        messageResId = R.string.snackbar_basic_user_info_fetched,
                         type = SnackBarType.SUCCESS
                     )
                 )
@@ -201,7 +203,8 @@ class HomeScreenViewModel @Inject constructor(
                 Timber.e("Basic user info was not fetched: %s", result.message)
                 emitSnackBarState(
                     SnackBarComponentConfiguration(
-                        message = "Basic user info was not fetched. ${result.message}",
+                        messageResId = R.string.snackbar_basic_user_info_failed,
+                        messageArgs = listOf(result.message.orEmpty()),
                         type = SnackBarType.ERROR
                     )
                 )
@@ -234,7 +237,7 @@ class HomeScreenViewModel @Inject constructor(
                     Timber.d("Account Holder status was fetched successfully")
                     emitSnackBarState(
                         SnackBarComponentConfiguration(
-                            message = "Account status was fetched successfully",
+                            messageResId = R.string.snackbar_account_status_fetched,
                             type = SnackBarType.SUCCESS
                         )
                     )
@@ -242,7 +245,8 @@ class HomeScreenViewModel @Inject constructor(
                     Timber.e(throwable, "Account Holder status could not be parsed")
                     emitSnackBarState(
                         SnackBarComponentConfiguration(
-                            message = "Account status could not be read. ${throwable.message}",
+                            messageResId = R.string.snackbar_account_status_unreadable,
+                            messageArgs = listOf(throwable.message.orEmpty()),
                             type = SnackBarType.ERROR
                         )
                     )
@@ -253,7 +257,8 @@ class HomeScreenViewModel @Inject constructor(
                 Timber.e("Account Holder status was not fetched: %s", result.message)
                 emitSnackBarState(
                     SnackBarComponentConfiguration(
-                        message = "Account status was not fetched. ${result.message}",
+                        messageResId = R.string.snackbar_account_status_failed,
+                        messageArgs = listOf(result.message.orEmpty()),
                         type = SnackBarType.ERROR
                     )
                 )
@@ -288,7 +293,7 @@ class HomeScreenViewModel @Inject constructor(
                 Timber.d("Account balance fetched successfully")
                 emitSnackBarState(
                     SnackBarComponentConfiguration(
-                        message = "Account balance fetched successfully",
+                        messageResId = R.string.snackbar_account_balance_fetched,
                         type = SnackBarType.SUCCESS
                     )
                 )
@@ -298,7 +303,8 @@ class HomeScreenViewModel @Inject constructor(
                 Timber.e("Account balance was not fetched: %s", result.message)
                 emitSnackBarState(
                     SnackBarComponentConfiguration(
-                        message = "Account balance was not fetched. ${result.message}",
+                        messageResId = R.string.snackbar_account_balance_failed,
+                        messageArgs = listOf(result.message.orEmpty()),
                         type = SnackBarType.ERROR
                     )
                 )

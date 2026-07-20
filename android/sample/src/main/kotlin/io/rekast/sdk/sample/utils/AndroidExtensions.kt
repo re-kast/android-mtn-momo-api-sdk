@@ -78,17 +78,20 @@ fun isDeviceOnline(context: Context): Boolean {
  * [SnackBarComponentConfiguration] that contains a non-empty message.
  *
  * @param scaffoldState [ScaffoldState] used to display the snackbar.
+ * @param context [Context] used to resolve the configuration's [SnackBarComponentConfiguration.messageResId]
+ *   (and its format args) into a display string.
  * @param onDisplay Callback invoked with each configuration immediately before its snackbar is
  *   shown; use it to drive per-message styling (e.g. success/error colors). Defaults to no-op.
  * @param action Optional callback invoked when the snackbar action is performed; defaults to no-op.
  */
-suspend fun SharedFlow<SnackBarComponentConfiguration>.hookSnackBar(scaffoldState: ScaffoldState, onDisplay: (SnackBarComponentConfiguration) -> Unit = {}, action: () -> Unit = {}) {
+suspend fun SharedFlow<SnackBarComponentConfiguration>.hookSnackBar(scaffoldState: ScaffoldState, context: Context, onDisplay: (SnackBarComponentConfiguration) -> Unit = {}, action: () -> Unit = {}) {
     this.collectLatest { snackBarState ->
-        if (snackBarState.message.isNotEmpty()) {
+        if (snackBarState.messageResId != 0) {
             onDisplay(snackBarState)
+            val message = context.getString(snackBarState.messageResId, *snackBarState.messageArgs.toTypedArray())
             val snackBarResult =
                 scaffoldState.snackbarHostState.showSnackbar(
-                    message = snackBarState.message,
+                    message = message,
                     actionLabel = snackBarState.actionLabel,
                     duration = snackBarState.duration
                 )

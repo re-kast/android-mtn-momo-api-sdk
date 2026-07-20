@@ -34,6 +34,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
 import io.rekast.sdk.sample.ui.navigation.drawer.Drawer
 import io.rekast.sdk.sample.ui.navigation.topbar.TopBar
@@ -59,10 +60,11 @@ import kotlinx.coroutines.flow.SharedFlow
 fun MomoScaffold(@StringRes titleRes: Int, navController: NavController?, snackStateFlow: SharedFlow<SnackBarComponentConfiguration>, content: @Composable (PaddingValues) -> Unit) {
     val scaffoldState = rememberScaffoldState(rememberDrawerState(DrawerValue.Closed))
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
     var snackBarType by remember { mutableStateOf(SnackBarType.INFO) }
 
     LaunchedEffect(snackStateFlow) {
-        snackStateFlow.hookSnackBar(scaffoldState, onDisplay = { snackBarType = it.type })
+        snackStateFlow.hookSnackBar(scaffoldState, context, onDisplay = { snackBarType = it.type })
     }
 
     Scaffold(

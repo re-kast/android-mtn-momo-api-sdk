@@ -27,7 +27,6 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import io.rekast.sdk.sample.ui.theme.AppTheme
-import kotlin.getValue
 
 /**
  * Fragment that hosts the Settings screen, rendering [SettingsScreen] via Jetpack Compose.

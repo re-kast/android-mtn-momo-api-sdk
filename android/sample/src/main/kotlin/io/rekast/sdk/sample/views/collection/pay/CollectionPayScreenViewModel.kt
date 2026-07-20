@@ -15,6 +15,7 @@
  */
 package io.rekast.sdk.sample.views.collection.pay
 
+import androidx.annotation.StringRes
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -25,6 +26,7 @@ import io.rekast.sdk.model.MomoNotification
 import io.rekast.sdk.model.MomoTransaction
 import io.rekast.sdk.repository.DefaultRepository
 import io.rekast.sdk.repository.data.NetworkResult
+import io.rekast.sdk.sample.R
 import io.rekast.sdk.sample.utils.Constants
 import io.rekast.sdk.sample.utils.CredentialStorage
 import io.rekast.sdk.sample.utils.DispatcherProvider
@@ -188,7 +190,7 @@ class CollectionPayScreenViewModel @Inject constructor(
         viewModelScope.launch(dispatchers.io()) {
             if (credentialStorage.getAccessToken().isBlank()) {
                 Timber.w("Request to pay skipped: access token is blank")
-                emitError("Expired access token! Please refresh the token")
+                emitError(R.string.snackbar_token_expired)
                 return@launch
             }
             showProgressBar.postValue(true)
@@ -204,19 +206,19 @@ class CollectionPayScreenViewModel @Inject constructor(
                 when (submit) {
                     is NetworkResult.Success -> {
                         Timber.d("Request to pay accepted (ref=%s)", referenceId)
-                        emitSuccess("Request to pay submitted successfully")
+                        emitSuccess(R.string.snackbar_request_to_pay_submitted)
                         if (!deliveryNote.value.isNullOrBlank()) sendDeliveryNotification(referenceId, subscriptionKey)
                         fetchStatus(referenceId, subscriptionKey)
                     }
 
                     else -> {
                         Timber.e("Request to pay failed: %s", submit.message)
-                        emitError("Request to pay was not sent. ${submit.message}")
+                        emitError(R.string.snackbar_request_to_pay_failed, submit.message.orEmpty())
                     }
                 }
             } catch (exception: Exception) {
                 Timber.e(exception, "Request to pay failed")
-                emitError("Request to pay was not sent. ${exception.message}")
+                emitError(R.string.snackbar_request_to_pay_failed, exception.message.orEmpty())
             } finally {
                 showProgressBar.postValue(false)
             }
@@ -236,12 +238,12 @@ class CollectionPayScreenViewModel @Inject constructor(
                     runCatching { json.decodeFromString<MomoTransaction>(body) }.getOrNull()
                 }
                 momoTransaction.postValue(transaction)
-                emitSuccess("Request to pay status fetched successfully")
+                emitSuccess(R.string.snackbar_request_to_pay_status_fetched)
             }
 
             else -> {
                 Timber.e("Request to pay status failed: %s", result.message)
-                emitError("Request to pay status not fetched. ${result.message}")
+                emitError(R.string.snackbar_request_to_pay_status_failed, result.message.orEmpty())
             }
         }
     }
@@ -257,11 +259,11 @@ class CollectionPayScreenViewModel @Inject constructor(
             environment = sampleConfig.environment
         ).awaitTerminal()
         when (result) {
-            is NetworkResult.Success -> emitSuccess("Delivery note sent successfully")
+            is NetworkResult.Success -> emitSuccess(R.string.snackbar_delivery_note_sent)
 
             else -> {
                 Timber.e("Delivery note failed: %s", result.message)
-                emitError("Delivery note was not sent. ${result.message}")
+                emitError(R.string.snackbar_delivery_note_failed, result.message.orEmpty())
             }
         }
     }
@@ -291,9 +293,9 @@ class CollectionPayScreenViewModel @Inject constructor(
         return terminal
     }
 
-    private fun emitSuccess(message: String) = emitSnackBarState(SnackBarComponentConfiguration(message = message, type = SnackBarType.SUCCESS))
+    private fun emitSuccess(@StringRes messageResId: Int, vararg args: Any) = emitSnackBarState(SnackBarComponentConfiguration(messageResId = messageResId, messageArgs = args.toList(), type = SnackBarType.SUCCESS))
 
-    private fun emitError(message: String) = emitSnackBarState(SnackBarComponentConfiguration(message = message, type = SnackBarType.ERROR))
+    private fun emitError(@StringRes messageResId: Int, vararg args: Any) = emitSnackBarState(SnackBarComponentConfiguration(messageResId = messageResId, messageArgs = args.toList(), type = SnackBarType.ERROR))
 
     private fun emitSnackBarState(snackBarComponentConfiguration: SnackBarComponentConfiguration) {
         viewModelScope.launch { _snackBarStateFlow.emit(snackBarComponentConfiguration) }

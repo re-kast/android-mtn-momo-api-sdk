@@ -22,6 +22,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import io.rekast.sdk.sample.R
 import io.rekast.sdk.sample.utils.CredentialStorage
 import io.rekast.sdk.sample.utils.SampleConfig
 import io.rekast.sdk.sample.utils.SnackBarComponentConfiguration
@@ -61,7 +62,7 @@ class SettingsScreenViewModel @Inject constructor(@param:ApplicationContext priv
         credentialStorage.clearAll()
         viewModelScope.launch {
             _snackBarStateFlow.emit(
-                SnackBarComponentConfiguration(message = "Stored credentials cleared", type = SnackBarType.INFO)
+                SnackBarComponentConfiguration(messageResId = R.string.snackbar_credentials_cleared, type = SnackBarType.INFO)
             )
         }
     }

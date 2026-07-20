@@ -15,6 +15,7 @@
  */
 package io.rekast.sdk.sample.views.collection.invoice
 
+import androidx.annotation.StringRes
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -24,6 +25,7 @@ import io.rekast.sdk.model.AccountHolder
 import io.rekast.sdk.model.Invoice
 import io.rekast.sdk.repository.DefaultRepository
 import io.rekast.sdk.repository.data.NetworkResult
+import io.rekast.sdk.sample.R
 import io.rekast.sdk.sample.utils.Constants
 import io.rekast.sdk.sample.utils.CredentialStorage
 import io.rekast.sdk.sample.utils.DispatcherProvider
@@ -119,13 +121,13 @@ class InvoiceScreenViewModel @Inject constructor(
             is NetworkResult.Success -> {
                 referenceId.postValue(reference)
                 result.postValue("Invoice created.\nReference: $reference")
-                emitSuccess("Invoice created successfully")
+                emitSuccess(R.string.snackbar_invoice_created)
             }
 
             else -> {
                 Timber.e("Create invoice failed: %s", response.message)
                 result.postValue("Create failed: ${response.message}")
-                emitError("Invoice not created. ${response.message}")
+                emitError(R.string.snackbar_invoice_not_created, response.message.orEmpty())
             }
         }
     }
@@ -135,13 +137,13 @@ class InvoiceScreenViewModel @Inject constructor(
         when (val response = defaultRepository.getInvoiceStatus(sampleConfig.apiVersionV1, reference, subscriptionKey, sampleConfig.environment).awaitTerminal()) {
             is NetworkResult.Success -> {
                 result.postValue(response.response?.source()?.readUtf8().orEmpty().ifBlank { "No status body returned." })
-                emitSuccess("Invoice status fetched successfully")
+                emitSuccess(R.string.snackbar_invoice_status_fetched)
             }
 
             else -> {
                 Timber.e("Invoice status failed: %s", response.message)
                 result.postValue("Status failed: ${response.message}")
-                emitError("Invoice status not fetched. ${response.message}")
+                emitError(R.string.snackbar_invoice_status_failed, response.message.orEmpty())
             }
         }
     }
@@ -151,13 +153,13 @@ class InvoiceScreenViewModel @Inject constructor(
         when (val response = defaultRepository.cancelInvoice(sampleConfig.apiVersionV1, reference, subscriptionKey, sampleConfig.environment).awaitTerminal()) {
             is NetworkResult.Success -> {
                 result.postValue("Invoice $reference cancelled.")
-                emitSuccess("Invoice cancelled successfully")
+                emitSuccess(R.string.snackbar_invoice_cancelled)
             }
 
             else -> {
                 Timber.e("Cancel invoice failed: %s", response.message)
                 result.postValue("Cancel failed: ${response.message}")
-                emitError("Invoice not cancelled. ${response.message}")
+                emitError(R.string.snackbar_invoice_not_cancelled, response.message.orEmpty())
             }
         }
     }
@@ -167,7 +169,7 @@ class InvoiceScreenViewModel @Inject constructor(
         viewModelScope.launch(dispatchers.io()) {
             if (credentialStorage.getAccessToken().isBlank()) {
                 Timber.w("Invoice operation skipped: access token is blank")
-                emitError("Expired access token! Please refresh the token")
+                emitError(R.string.snackbar_token_expired)
                 return@launch
             }
             showProgressBar.postValue(true)
@@ -176,7 +178,7 @@ class InvoiceScreenViewModel @Inject constructor(
             } catch (exception: Exception) {
                 Timber.e(exception, "Invoice operation failed")
                 result.postValue("Error: ${exception.message}")
-                emitError("Operation failed. ${exception.message}")
+                emitError(R.string.snackbar_operation_failed, exception.message.orEmpty())
             } finally {
                 showProgressBar.postValue(false)
             }
@@ -187,7 +189,7 @@ class InvoiceScreenViewModel @Inject constructor(
     private fun withReference(block: suspend (String, String) -> Unit) {
         val reference = referenceId.value
         if (reference.isNullOrBlank()) {
-            emitError("Create an invoice first")
+            emitError(R.string.snackbar_invoice_required_first)
             return
         }
         launchOperation { block(reference, Utils.getProductSubscriptionKeys(ProductType.COLLECTION, sampleConfig)) }
@@ -199,9 +201,9 @@ class InvoiceScreenViewModel @Inject constructor(
         return terminal
     }
 
-    private fun emitSuccess(message: String) = emitSnackBarState(SnackBarComponentConfiguration(message = message, type = SnackBarType.SUCCESS))
+    private fun emitSuccess(@StringRes messageResId: Int, vararg args: Any) = emitSnackBarState(SnackBarComponentConfiguration(messageResId = messageResId, messageArgs = args.toList(), type = SnackBarType.SUCCESS))
 
-    private fun emitError(message: String) = emitSnackBarState(SnackBarComponentConfiguration(message = message, type = SnackBarType.ERROR))
+    private fun emitError(@StringRes messageResId: Int, vararg args: Any) = emitSnackBarState(SnackBarComponentConfiguration(messageResId = messageResId, messageArgs = args.toList(), type = SnackBarType.ERROR))
 
     private fun emitSnackBarState(snackBarComponentConfiguration: SnackBarComponentConfiguration) {
         viewModelScope.launch { _snackBarStateFlow.emit(snackBarComponentConfiguration) }

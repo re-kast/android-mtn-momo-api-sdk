@@ -180,7 +180,7 @@ private fun DrawerSectionHeader(title: String, expanded: Boolean, onToggle: () -
             text = title.uppercase(),
             color = MaterialTheme.colors.secondary,
             fontWeight = FontWeight.Bold,
-            fontSize = with(LocalDensity.current) { dimensionResource(id = R.dimen.spacing_medium).toSp() }
+            fontSize = with(LocalDensity.current) { dimensionResource(id = R.dimen.font_size_section_header).toSp() }
         )
         Image(
             painter = painterResource(id = R.drawable.expand_more),
