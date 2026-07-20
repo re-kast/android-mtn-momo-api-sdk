@@ -161,7 +161,7 @@ To include the MTN MOMO API SDK in your project, add the following dependency to
 
 ```kotlin
 dependencies {
-    implementation("io.rekast:momo-api-sdk:0.3.0-SNAPSHOT")
+    implementation("io.rekast:momo-api-sdk:1.0.0")
 }
 ```
 
@@ -221,7 +221,7 @@ Each page contains a working Kotlin code snippet followed by a parameter table. 
 Security is a first-class concern for a library that handles Mobile Money credentials and access tokens. Please review the [Security Policy](https://github.com/re-kast/android-mtn-momo-api-sdk/blob/develop/SECURITY.md) for the full details.
 
 - **Reporting a vulnerability**: Report privately via GitHub's **["Report a vulnerability"](https://github.com/re-kast/android-mtn-momo-api-sdk/security)** button — never in a public issue, PR, or discussion. The [Security Policy](https://github.com/re-kast/android-mtn-momo-api-sdk/blob/develop/SECURITY.md) covers what to include and our response timelines.
-- **Supported versions**: Security fixes ship on the latest `0.x` release line only (currently `0.3.x`). Pin an explicit, non-`SNAPSHOT` version in production and upgrade promptly.
+- **Supported versions**: Security fixes ship on the latest release line only (currently `1.0.x`). Pin an explicit, non-`SNAPSHOT` version in production and upgrade promptly.
 - **Automated scanning**: Every change is analysed with [CodeQL](https://github.com/re-kast/android-mtn-momo-api-sdk/blob/develop/.github/workflows/codeql.yml).
 
 ### Secure Usage Checklist
