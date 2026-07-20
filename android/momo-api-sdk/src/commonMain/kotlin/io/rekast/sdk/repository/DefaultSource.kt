@@ -115,6 +115,7 @@ class DefaultSource @Inject constructor(
      * @param productType The type of product for which to obtain the OAuth2 access token.
      * @param productSubscriptionKey The subscription key for the product.
      * @param environment The API environment (e.g., production, sandbox).
+     * @param backChannelAuthorizationRequestId The `auth_req_id` from a prior bc-authorize call, exchanged for the OAuth2 token.
      * @return A [Response] containing the obtained [io.rekast.sdk.model.authentication.Oauth2AccessToken].
      */
     suspend fun getOauth2AccessToken(productType: String, productSubscriptionKey: String, environment: String, backChannelAuthorizationRequestId: String) = authenticationService.getOauth2AccessToken(
@@ -162,7 +163,7 @@ class DefaultSource @Inject constructor(
     )
 
     /**
-     * Retrieves the account balance for a specified product type. This only works with the [ProductType.COLLECTION]. It seems to break with the other API product type.
+     * Retrieves the account balance for a specified product type. This only works with the [io.rekast.sdk.utils.ProductType.COLLECTION]. It seems to break with the other API product type.
      *
      * @param productType The type of product for which to retrieve the account balance.
      * @param apiVersion The version of the API to use.
@@ -178,7 +179,7 @@ class DefaultSource @Inject constructor(
     )
 
     /**
-     * Retrieves the account balance in a specific currency. This only works with the [ProductType.COLLECTION]. It seems to break with the other API product type.
+     * Retrieves the account balance in a specific currency. This only works with the [io.rekast.sdk.utils.ProductType.COLLECTION]. It seems to break with the other API product type.
      *
      * @param productType The type of product for which to retrieve the account balance.
      * @param apiVersion The version of the API to use.

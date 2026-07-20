@@ -18,8 +18,7 @@ Initiates a debit request against a customer's Mobile Money account.
 ```kotlin
 val transactionUuid = UUID.randomUUID().toString()
 
-val result = defaultRepository.requestToPay(
-    accessToken = credentialStorage.getAccessToken(),
+defaultRepository.requestToPay(
     momoTransaction = MomoTransaction(
         amount = "500",
         currency = "EUR",
@@ -31,17 +30,23 @@ val result = defaultRepository.requestToPay(
     apiVersion = "v1_0",
     productSubscriptionKey = collectionPrimaryKey,
     uuid = transactionUuid
-)
-// result is a Retrofit Response<Unit>; check result.isSuccessful
+).collect { result ->
+    when (result) {
+        is NetworkResult.Success -> { /* accepted (HTTP 202) — poll for status with transactionUuid */ }
+        is NetworkResult.Error   -> { /* handle result.message */ }
+        is NetworkResult.Loading -> { /* show progress */ }
+    }
+}
 ```
 
-| Parameter | Type | Description |
-|---|---|---|
-| `accessToken` | `String` | Bearer access token from `CredentialStorage` |
-| `momoTransaction` | `MomoTransaction` | Payment details (amount, currency, payer, messages) |
-| `apiVersion` | `String` | API version, e.g. `"v1_0"` |
-| `productSubscriptionKey` | `String` | Collection primary subscription key |
-| `uuid` | `String` | Unique reference ID — save this to poll for status |
+Authentication is handled automatically by the SDK's interceptors — you never pass an access token. Every `DefaultRepository` method returns a `Flow<NetworkResult<T>>`; collect it inside a coroutine scope.
+
+| Parameter                | Type              | Description                                         |
+|--------------------------|-------------------|-----------------------------------------------------|
+| `momoTransaction`        | `MomoTransaction` | Payment details (amount, currency, payer, messages) |
+| `apiVersion`             | `String`          | API version, e.g. `"v1_0"`                          |
+| `productSubscriptionKey` | `String`          | Collection primary subscription key                 |
+| `uuid`                   | `String`          | Unique reference ID — save this to poll for status  |
 
 ---
 
@@ -50,20 +55,24 @@ val result = defaultRepository.requestToPay(
 Polls the status of a previously initiated `requestToPay` call.
 
 ```kotlin
-val response = defaultRepository.requestToPayTransactionStatus(
+defaultRepository.requestToPayTransactionStatus(
     referenceId = transactionUuid,
     apiVersion = "v1_0",
-    productSubscriptionKey = collectionPrimaryKey,
-    accessToken = credentialStorage.getAccessToken()
-)
+    productSubscriptionKey = collectionPrimaryKey
+).collect { result ->
+    when (result) {
+        is NetworkResult.Success -> { /* parse the status from result.response */ }
+        is NetworkResult.Error   -> { /* handle result.message */ }
+        is NetworkResult.Loading -> { /* show progress */ }
+    }
+}
 ```
 
-| Parameter | Type | Description |
-|---|---|---|
-| `referenceId` | `String` | UUID used when calling `requestToPay` |
-| `apiVersion` | `String` | API version, e.g. `"v1_0"` |
-| `productSubscriptionKey` | `String` | Collection primary subscription key |
-| `accessToken` | `String` | Bearer access token |
+| Parameter                | Type     | Description                           |
+|--------------------------|----------|---------------------------------------|
+| `referenceId`            | `String` | UUID used when calling `requestToPay` |
+| `apiVersion`             | `String` | API version, e.g. `"v1_0"`            |
+| `productSubscriptionKey` | `String` | Collection primary subscription key   |
 
 ---
 
@@ -74,8 +83,7 @@ Initiates a credit request to a customer's Mobile Money account.
 ```kotlin
 val transactionUuid = UUID.randomUUID().toString()
 
-val result = defaultRepository.requestToWithdraw(
-    accessToken = credentialStorage.getAccessToken(),
+defaultRepository.requestToWithdraw(
     momoTransaction = MomoTransaction(
         amount = "200",
         currency = "EUR",
@@ -87,36 +95,45 @@ val result = defaultRepository.requestToWithdraw(
     apiVersion = "v2_0",
     productSubscriptionKey = collectionPrimaryKey,
     uuid = transactionUuid
-)
+).collect { result ->
+    when (result) {
+        is NetworkResult.Success -> { /* accepted (HTTP 202) — poll for status with transactionUuid */ }
+        is NetworkResult.Error   -> { /* handle result.message */ }
+        is NetworkResult.Loading -> { /* show progress */ }
+    }
+}
 ```
 
-| Parameter | Type | Description |
-|---|---|---|
-| `accessToken` | `String` | Bearer access token |
-| `momoTransaction` | `MomoTransaction` | Transaction details |
-| `apiVersion` | `String` | API version, e.g. `"v2_0"` |
-| `productSubscriptionKey` | `String` | Collection primary subscription key |
-| `uuid` | `String` | Unique reference ID |
+| Parameter                | Type              | Description                         |
+|--------------------------|-------------------|-------------------------------------|
+| `momoTransaction`        | `MomoTransaction` | Transaction details                 |
+| `apiVersion`             | `String`          | API version, e.g. `"v2_0"`          |
+| `productSubscriptionKey` | `String`          | Collection primary subscription key |
+| `uuid`                   | `String`          | Unique reference ID                 |
 
 ---
 
 ## Request to Withdraw — Transaction Status
 
 ```kotlin
-val response = defaultRepository.requestToWithdrawTransactionStatus(
+defaultRepository.requestToWithdrawTransactionStatus(
     referenceId = transactionUuid,
     apiVersion = "v2_0",
-    productSubscriptionKey = collectionPrimaryKey,
-    accessToken = credentialStorage.getAccessToken()
-)
+    productSubscriptionKey = collectionPrimaryKey
+).collect { result ->
+    when (result) {
+        is NetworkResult.Success -> { /* parse the status from result.response */ }
+        is NetworkResult.Error   -> { /* handle result.message */ }
+        is NetworkResult.Loading -> { /* show progress */ }
+    }
+}
 ```
 
-| Parameter | Type | Description |
-|---|---|---|
-| `referenceId` | `String` | UUID used when calling `requestToWithdraw` |
-| `apiVersion` | `String` | API version, e.g. `"v2_0"` |
-| `productSubscriptionKey` | `String` | Collection primary subscription key |
-| `accessToken` | `String` | Bearer access token |
+| Parameter                | Type     | Description                                |
+|--------------------------|----------|--------------------------------------------|
+| `referenceId`            | `String` | UUID used when calling `requestToWithdraw` |
+| `apiVersion`             | `String` | API version, e.g. `"v2_0"`                 |
+| `productSubscriptionKey` | `String` | Collection primary subscription key        |
 
 ---
 
@@ -126,6 +143,7 @@ Sends a delivery notification to the payer after a successful `requestToPay`.
 
 ```kotlin
 defaultRepository.requestToPayDeliveryNotification(
+    productType = ProductType.COLLECTION.productType,
     apiVersion = "v1_0",
     referenceId = transactionUuid,
     momoNotification = MomoNotification(notificationMessage = "Your payment was received."),
@@ -140,13 +158,44 @@ defaultRepository.requestToPayDeliveryNotification(
 }
 ```
 
-| Parameter | Type | Description |
-|---|---|---|
-| `apiVersion` | `String` | API version, e.g. `"v1_0"` |
-| `referenceId` | `String` | UUID of the original `requestToPay` |
-| `momoNotification` | `MomoNotification` | Notification message body |
-| `productSubscriptionKey` | `String` | Collection primary subscription key |
-| `environment` | `String` | `"sandbox"` or `"production"` |
+| Parameter                | Type               | Description                                                                    |
+|--------------------------|--------------------|--------------------------------------------------------------------------------|
+| `productType`            | `String`           | Product initiating the notification, e.g. `ProductType.COLLECTION.productType` |
+| `apiVersion`             | `String`           | API version, e.g. `"v1_0"`                                                     |
+| `referenceId`            | `String`           | UUID of the original `requestToPay`                                            |
+| `momoNotification`       | `MomoNotification` | Notification message body                                                      |
+| `productSubscriptionKey` | `String`           | Collection primary subscription key                                            |
+| `environment`            | `String`           | `"sandbox"` or `"production"`                                                  |
+
+---
+
+## Request to Withdraw Delivery Notification
+
+Sends a delivery notification to the payer after a successful `requestToWithdraw`.
+
+```kotlin
+defaultRepository.requestToWithdrawDeliveryNotification(
+    apiVersion = "v1_0",
+    referenceId = transactionUuid,
+    momoNotification = MomoNotification(notificationMessage = "Your withdrawal was processed."),
+    productSubscriptionKey = collectionPrimaryKey,
+    environment = "sandbox"
+).collect { result ->
+    when (result) {
+        is NetworkResult.Success -> { /* notification sent */ }
+        is NetworkResult.Error   -> { /* failed */ }
+        is NetworkResult.Loading -> { /* in progress */ }
+    }
+}
+```
+
+| Parameter                | Type               | Description                              |
+|--------------------------|--------------------|------------------------------------------|
+| `apiVersion`             | `String`           | API version, e.g. `"v1_0"`               |
+| `referenceId`            | `String`           | UUID of the original `requestToWithdraw` |
+| `momoNotification`       | `MomoNotification` | Notification message body                |
+| `productSubscriptionKey` | `String`           | Collection primary subscription key      |
+| `environment`            | `String`           | `"sandbox"` or `"production"`            |
 
 ---
 
@@ -178,13 +227,13 @@ defaultRepository.createInvoice(
 }
 ```
 
-| Parameter | Type | Description |
-|---|---|---|
-| `apiVersion` | `String` | API version, e.g. `"v1_0"` |
-| `invoice` | `Invoice` | Invoice details including amount, currency, payer, and payee |
-| `uuid` | `String` | Unique reference ID for the invoice |
-| `productSubscriptionKey` | `String` | Collection primary subscription key |
-| `environment` | `String` | `"sandbox"` or `"production"` |
+| Parameter                | Type      | Description                                                  |
+|--------------------------|-----------|--------------------------------------------------------------|
+| `apiVersion`             | `String`  | API version, e.g. `"v1_0"`                                   |
+| `invoice`                | `Invoice` | Invoice details including amount, currency, payer, and payee |
+| `uuid`                   | `String`  | Unique reference ID for the invoice                          |
+| `productSubscriptionKey` | `String`  | Collection primary subscription key                          |
+| `environment`            | `String`  | `"sandbox"` or `"production"`                                |
 
 ---
 
@@ -207,12 +256,12 @@ defaultRepository.getInvoiceStatus(
 }
 ```
 
-| Parameter | Type | Description |
-|---|---|---|
-| `apiVersion` | `String` | API version |
-| `referenceId` | `String` | UUID used when calling `createInvoice` |
-| `productSubscriptionKey` | `String` | Collection primary subscription key |
-| `environment` | `String` | `"sandbox"` or `"production"` |
+| Parameter                | Type     | Description                            |
+|--------------------------|----------|----------------------------------------|
+| `apiVersion`             | `String` | API version                            |
+| `referenceId`            | `String` | UUID used when calling `createInvoice` |
+| `productSubscriptionKey` | `String` | Collection primary subscription key    |
+| `environment`            | `String` | `"sandbox"` or `"production"`          |
 
 ---
 
@@ -235,12 +284,12 @@ defaultRepository.cancelInvoice(
 }
 ```
 
-| Parameter | Type | Description |
-|---|---|---|
-| `apiVersion` | `String` | API version |
-| `referenceId` | `String` | UUID of the invoice to cancel |
+| Parameter                | Type     | Description                         |
+|--------------------------|----------|-------------------------------------|
+| `apiVersion`             | `String` | API version                         |
+| `referenceId`            | `String` | UUID of the invoice to cancel       |
 | `productSubscriptionKey` | `String` | Collection primary subscription key |
-| `environment` | `String` | `"sandbox"` or `"production"` |
+| `environment`            | `String` | `"sandbox"` or `"production"`       |
 
 ---
 
@@ -269,13 +318,13 @@ defaultRepository.createPreApproval(
 }
 ```
 
-| Parameter | Type | Description |
-|---|---|---|
-| `apiVersion` | `String` | API version |
-| `preApproval` | `PreApproval` | Payer details, currency, message, and validity duration in seconds |
-| `uuid` | `String` | Unique reference ID |
-| `productSubscriptionKey` | `String` | Collection primary subscription key |
-| `environment` | `String` | `"sandbox"` or `"production"` |
+| Parameter                | Type          | Description                                                        |
+|--------------------------|---------------|--------------------------------------------------------------------|
+| `apiVersion`             | `String`      | API version                                                        |
+| `preApproval`            | `PreApproval` | Payer details, currency, message, and validity duration in seconds |
+| `uuid`                   | `String`      | Unique reference ID                                                |
+| `productSubscriptionKey` | `String`      | Collection primary subscription key                                |
+| `environment`            | `String`      | `"sandbox"` or `"production"`                                      |
 
 ---
 
@@ -292,12 +341,12 @@ defaultRepository.getPreApprovalStatus(
 ).collect { result -> /* ... */ }
 ```
 
-| Parameter | Type | Description |
-|---|---|---|
-| `apiVersion` | `String` | API version |
-| `referenceId` | `String` | UUID used when calling `createPreApproval` |
-| `productSubscriptionKey` | `String` | Collection primary subscription key |
-| `environment` | `String` | `"sandbox"` or `"production"` |
+| Parameter                | Type     | Description                                |
+|--------------------------|----------|--------------------------------------------|
+| `apiVersion`             | `String` | API version                                |
+| `referenceId`            | `String` | UUID used when calling `createPreApproval` |
+| `productSubscriptionKey` | `String` | Collection primary subscription key        |
+| `environment`            | `String` | `"sandbox"` or `"production"`              |
 
 ---
 
@@ -314,9 +363,9 @@ defaultRepository.cancelPreApproval(
 ).collect { result -> /* ... */ }
 ```
 
-| Parameter | Type | Description |
-|---|---|---|
-| `apiVersion` | `String` | API version |
-| `referenceId` | `String` | UUID of the pre-approval to cancel |
+| Parameter                | Type     | Description                         |
+|--------------------------|----------|-------------------------------------|
+| `apiVersion`             | `String` | API version                         |
+| `referenceId`            | `String` | UUID of the pre-approval to cancel  |
 | `productSubscriptionKey` | `String` | Collection primary subscription key |
-| `environment` | `String` | `"sandbox"` or `"production"` |
+| `environment`            | `String` | `"sandbox"` or `"production"`       |

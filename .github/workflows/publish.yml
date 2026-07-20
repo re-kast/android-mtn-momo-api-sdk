@@ -10,10 +10,18 @@ concurrency:
   group: publish-${{ github.ref }}
   cancel-in-progress: true
 
+# Restrict the GITHUB_TOKEN to read-only by default; the publish job elevates as needed.
+permissions:
+  contents: read
+
 jobs:
   publish:
     name: Publish to Maven Central
     runs-on: ubuntu-latest
+    # contents:write creates the GitHub release; packages:write publishes to GitHub Packages.
+    permissions:
+      contents: write
+      packages: write
 
     steps:
       - name: Checkout

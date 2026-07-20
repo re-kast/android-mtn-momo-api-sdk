@@ -54,6 +54,7 @@ import retrofit2.Response
  * @property defaultSource The source for handling API calls related to user management and authentication.
  * @property disbursementsService The service for disbursement-related API calls.
  * @property collection The service for collection-related API calls.
+ * @property config The API configuration supplying the base URL, API user ID, environment, and API version.
  */
 @Singleton
 class DefaultRepository @Inject constructor(private val defaultSource: DefaultSource, private val disbursementsService: DisbursementsService, private val collection: CollectionService, private val config: ApiConfig) :
@@ -111,7 +112,7 @@ class DefaultRepository @Inject constructor(private val defaultSource: DefaultSo
      *
      * @param productSubscriptionKey The subscription key for the product.
      * @param productType The type of product for which to obtain the access token.
-     * @return A [Response] containing the obtained [AccessToken].
+     * @return A [Flow] emitting a [NetworkResult] containing the obtained [AccessToken].
      */
     fun getAccessToken(productSubscriptionKey: String, productType: String): Flow<NetworkResult<AccessToken>> =
         executeApiCall { defaultSource.getAccessToken(productType = productType, productSubscriptionKey = productSubscriptionKey) }
@@ -269,17 +270,17 @@ class DefaultRepository @Inject constructor(private val defaultSource: DefaultSo
     }
 
     /**
-     * Initiates a request-to-pay directly via the Collection service.
+     * Initiates a request-to-pay via the Collection service, prompting the payer to approve a debit.
      *
-     * @param accessToken The bearer access token used to authenticate the request.
      * @param momoTransaction The transaction payload containing amount, currency, and party details.
      * @param apiVersion The API version to target (e.g., v1_0 or v2_0).
      * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Collection product.
      * @param uuid A UUID V4 used as the X-Reference-Id to uniquely identify this request.
-     * @return A [retrofit2.Response] with an empty body; HTTP 202 indicates the request was accepted.
+     * @return A [Flow] emitting a [NetworkResult] with an empty [Unit] body on success (HTTP 202).
      */
-    suspend fun requestToPay(accessToken: String, momoTransaction: MomoTransaction, apiVersion: String, productSubscriptionKey: String, uuid: String): Response<Unit> =
+    fun requestToPay(momoTransaction: MomoTransaction, apiVersion: String, productSubscriptionKey: String, uuid: String): Flow<NetworkResult<Unit>> = executeApiCall {
         collection.requestToPay(momoTransaction, apiVersion, productSubscriptionKey, config.environment, uuid)
+    }
 
     /**
      * Retrieves the status of a previously initiated request-to-pay transaction.
@@ -287,24 +288,24 @@ class DefaultRepository @Inject constructor(private val defaultSource: DefaultSo
      * @param referenceId The UUID V4 reference ID used when calling [requestToPay].
      * @param apiVersion The API version to target (e.g., v1_0 or v2_0).
      * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Collection product.
-     * @param accessToken The bearer access token used to authenticate the request.
-     * @return A [retrofit2.Response] whose body contains the transaction status as a [ResponseBody].
+     * @return A [Flow] emitting a [NetworkResult] whose body contains the transaction status as a [ResponseBody].
      */
-    suspend fun requestToPayTransactionStatus(referenceId: String, apiVersion: String, productSubscriptionKey: String, accessToken: String): Response<ResponseBody> =
+    fun requestToPayTransactionStatus(referenceId: String, apiVersion: String, productSubscriptionKey: String): Flow<NetworkResult<ResponseBody>> = executeApiCall {
         collection.requestToPayTransactionStatus(referenceId, apiVersion, productSubscriptionKey, config.environment)
+    }
 
     /**
-     * Initiates a request-to-withdraw directly via the Collection service.
+     * Initiates a request-to-withdraw via the Collection service, prompting the payer to approve a debit.
      *
-     * @param accessToken The bearer access token used to authenticate the request.
      * @param momoTransaction The transaction payload containing amount, currency, and party details.
      * @param apiVersion The API version to target (e.g., v1_0 or v2_0).
      * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Collection product.
      * @param uuid A UUID V4 used as the X-Reference-Id to uniquely identify this request.
-     * @return A [retrofit2.Response] with an empty body; HTTP 202 indicates the request was accepted.
+     * @return A [Flow] emitting a [NetworkResult] with an empty [Unit] body on success (HTTP 202).
      */
-    suspend fun requestToWithdraw(accessToken: String, momoTransaction: MomoTransaction, apiVersion: String, productSubscriptionKey: String, uuid: String): Response<Unit> =
+    fun requestToWithdraw(momoTransaction: MomoTransaction, apiVersion: String, productSubscriptionKey: String, uuid: String): Flow<NetworkResult<Unit>> = executeApiCall {
         collection.requestToWithdraw(momoTransaction, apiVersion, productSubscriptionKey, config.environment, uuid)
+    }
 
     /**
      * Retrieves the status of a previously initiated request-to-withdraw transaction.
@@ -312,24 +313,24 @@ class DefaultRepository @Inject constructor(private val defaultSource: DefaultSo
      * @param referenceId The UUID V4 reference ID used when calling [requestToWithdraw].
      * @param apiVersion The API version to target (e.g., v1_0 or v2_0).
      * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Collection product.
-     * @param accessToken The bearer access token used to authenticate the request.
-     * @return A [retrofit2.Response] whose body contains the withdrawal status as a [ResponseBody].
+     * @return A [Flow] emitting a [NetworkResult] whose body contains the withdrawal status as a [ResponseBody].
      */
-    suspend fun requestToWithdrawTransactionStatus(referenceId: String, apiVersion: String, productSubscriptionKey: String, accessToken: String): Response<ResponseBody> =
+    fun requestToWithdrawTransactionStatus(referenceId: String, apiVersion: String, productSubscriptionKey: String): Flow<NetworkResult<ResponseBody>> = executeApiCall {
         collection.requestToWithdrawTransactionStatus(referenceId, apiVersion, productSubscriptionKey, config.environment)
+    }
 
     /**
-     * Initiates a deposit directly via the Disbursements service.
+     * Initiates a deposit via the Disbursements service, sending funds to the payee.
      *
-     * @param accessToken The bearer access token used to authenticate the request.
      * @param momoTransaction The transaction payload containing amount, currency, and payee details.
      * @param apiVersion The API version to target (e.g., v1_0 or v2_0).
      * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Disbursements product.
      * @param uuid A UUID V4 used as the X-Reference-Id to uniquely identify this request.
-     * @return A [retrofit2.Response] with an empty body; HTTP 202 indicates the request was accepted.
+     * @return A [Flow] emitting a [NetworkResult] with an empty [Unit] body on success (HTTP 202).
      */
-    suspend fun deposit(accessToken: String, momoTransaction: MomoTransaction, apiVersion: String, productSubscriptionKey: String, uuid: String): Response<Unit> =
+    fun deposit(momoTransaction: MomoTransaction, apiVersion: String, productSubscriptionKey: String, uuid: String): Flow<NetworkResult<Unit>> = executeApiCall {
         disbursementsService.deposit(momoTransaction, apiVersion, productSubscriptionKey, config.environment, uuid)
+    }
 
     /**
      * Retrieves the status of a previously initiated deposit transaction.
@@ -337,24 +338,24 @@ class DefaultRepository @Inject constructor(private val defaultSource: DefaultSo
      * @param referenceId The UUID V4 reference ID used when calling [deposit].
      * @param apiVersion The API version to target (e.g., v1_0 or v2_0).
      * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Disbursements product.
-     * @param accessToken The bearer access token used to authenticate the request.
-     * @return A [retrofit2.Response] whose body contains the deposit status as a [ResponseBody].
+     * @return A [Flow] emitting a [NetworkResult] whose body contains the deposit status as a [ResponseBody].
      */
-    suspend fun getDepositStatus(referenceId: String, apiVersion: String, productSubscriptionKey: String, accessToken: String): Response<ResponseBody> =
+    fun getDepositStatus(referenceId: String, apiVersion: String, productSubscriptionKey: String): Flow<NetworkResult<ResponseBody>> = executeApiCall {
         disbursementsService.getDepositStatus(referenceId, apiVersion, productSubscriptionKey, config.environment)
+    }
 
     /**
-     * Initiates a refund directly via the Disbursements service.
+     * Initiates a refund via the Disbursements service, reversing a previous transaction.
      *
-     * @param accessToken The bearer access token used to authenticate the request.
      * @param momoTransaction The transaction payload; set [MomoTransaction.referenceIdToRefund] to the original transaction ID.
      * @param apiVersion The API version to target (e.g., v1_0 or v2_0).
      * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Disbursements product.
      * @param uuid A UUID V4 used as the X-Reference-Id to uniquely identify this request.
-     * @return A [retrofit2.Response] with an empty body; HTTP 202 indicates the request was accepted.
+     * @return A [Flow] emitting a [NetworkResult] with an empty [Unit] body on success (HTTP 202).
      */
-    suspend fun refund(accessToken: String, momoTransaction: MomoTransaction, apiVersion: String, productSubscriptionKey: String, uuid: String): Response<Unit> =
+    fun refund(momoTransaction: MomoTransaction, apiVersion: String, productSubscriptionKey: String, uuid: String): Flow<NetworkResult<Unit>> = executeApiCall {
         disbursementsService.refund(momoTransaction, apiVersion, productSubscriptionKey, config.environment, uuid)
+    }
 
     /**
      * Retrieves the status of a previously initiated refund transaction.
@@ -362,11 +363,11 @@ class DefaultRepository @Inject constructor(private val defaultSource: DefaultSo
      * @param referenceId The UUID V4 reference ID used when calling [refund].
      * @param apiVersion The API version to target (e.g., v1_0 or v2_0).
      * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Disbursements product.
-     * @param accessToken The bearer access token used to authenticate the request.
-     * @return A [retrofit2.Response] whose body contains the refund status as a [ResponseBody].
+     * @return A [Flow] emitting a [NetworkResult] whose body contains the refund status as a [ResponseBody].
      */
-    suspend fun getRefundStatus(referenceId: String, apiVersion: String, productSubscriptionKey: String, accessToken: String): Response<ResponseBody> =
+    fun getRefundStatus(referenceId: String, apiVersion: String, productSubscriptionKey: String): Flow<NetworkResult<ResponseBody>> = executeApiCall {
         disbursementsService.getRefundStatus(referenceId, apiVersion, productSubscriptionKey, config.environment)
+    }
 
     /**
      * Initiates a backchannel (CIBA) authorization request.

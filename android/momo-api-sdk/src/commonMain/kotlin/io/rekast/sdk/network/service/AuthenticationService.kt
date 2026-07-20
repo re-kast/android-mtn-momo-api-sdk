@@ -102,6 +102,8 @@ interface AuthenticationService {
      * @param productType The type of product for which to obtain the OAuth2 access token.
      * @param productSubscriptionKey The subscription key for the product.
      * @param environment The target environment (e.g., production, sandbox).
+     * @param grantType The OAuth2 grant type; defaults to the CIBA grant (`urn:openid:params:grant-type:ciba`).
+     * @param authReqId The `auth_req_id` from a prior [bcAuthorize] call, exchanged for the OAuth2 token.
      * @return A [Response] containing the obtained [Oauth2AccessToken].
      */
     @FormUrlEncoded

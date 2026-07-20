@@ -27,6 +27,11 @@ object Constants {
         const val COLLECTION_SERVICE_REQUEST_TO_WITHDRAW = "CollectionService | Request To Withdraw"
         const val DISBURSEMENT_DEPOSIT = "Disbursement | Deposit"
         const val DISBURSEMENT_REFUND = "Disbursement | Refund"
+        const val COLLECTION_INVOICE = "Collection | Invoice"
+        const val COLLECTION_PRE_APPROVAL = "Collection | Pre-Approval"
+        const val REMITTANCE_CASH_TRANSFER = "Remittance | Cash Transfer"
+        const val SETUP = "Setup & Config"
+        const val SETTINGS = "Settings"
     }
 
     /** Default currency used for sandbox API transactions. */

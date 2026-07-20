@@ -91,6 +91,7 @@ dokka {
 dependencies {
     dokka(project(":momo-api-sdk"))
     dokka(project(":sample"))
+    dokka(project(":app"))
 }
 ```
 

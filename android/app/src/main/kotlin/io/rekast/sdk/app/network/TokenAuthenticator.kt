@@ -31,7 +31,7 @@ import timber.log.Timber
  * OkHttp [okhttp3.Authenticator] that automatically refreshes the Bearer access token
  * whenever a 401 Unauthorized response is received from a Bearer-protected endpoint.
  *
- * On a 401 the authenticator:
+ * On a 401 from a **regular Bearer endpoint** the authenticator:
  * 1. Verifies the failed request was using Bearer auth (skips Basic-Auth or unauthenticated requests).
  * 2. Guards against infinite retry loops (max 1 retry per request).
  * 3. Calls the MTN MoMo token endpoint via a **dedicated [AuthenticationService]** backed by
@@ -41,6 +41,14 @@ import timber.log.Timber
  *    and saves it to [CredentialStorage].
  * 6. Returns the original request without modification — the [io.rekast.sdk.network.interceptor.auth.AccessTokenInterceptor]
  *    will read the new token from storage and attach the correct header on the retry pass.
+ *
+ * On a 401 from an **OAuth2 (consent) resource endpoint** — one whose path contains the
+ * [Constants.EndpointPaths.OAUTH2] segment but not the [Constants.EndpointPaths.TOKEN] segment, e.g.
+ * `/{productType}/oauth2/{apiVersion}/userinfo` — it refreshes only the OAuth2 consent token
+ * (bc-authorize → oauth2/token) and retries, since those endpoints are authenticated with the
+ * consent token rather than the regular Bearer token. The OAuth2 token endpoint
+ * (`/{productType}/oauth2/token/`) is treated as a regular Bearer endpoint — it mints the consent
+ * token and must not itself be authenticated with it.
  *
  * @param storage Encrypted credential store; used to read the API key and save refreshed tokens.
  * @param authService Token-refresh-only [AuthenticationService] backed by a Basic-Auth-only client.
@@ -77,9 +85,23 @@ class TokenAuthenticator(
         route: Route?,
         response: Response
     ): Request? {
-        // Only handle responses to Bearer-authenticated requests.
-        val authHeader = response.request.header(Constants.Headers.AUTHORIZATION) ?: return null
-        if (!authHeader.startsWith(Constants.TokenTypes.BEARER)) return null
+        // OAuth2 (consent) resource endpoints — e.g. /{productType}/oauth2/{apiVersion}/userinfo —
+        // are authenticated with the OAuth2 consent token, not the regular API-user Bearer token.
+        // The OAuth2 token endpoint (/{productType}/oauth2/token/) is excluded: it mints the consent
+        // token and is Bearer-authenticated, so a 401 there is a regular-token refresh, not a
+        // consent-token refresh.
+        val pathSegments = response.request.url.pathSegments
+        val isOauth2Endpoint =
+            pathSegments.contains(Constants.EndpointPaths.OAUTH2) &&
+                !pathSegments.contains(Constants.EndpointPaths.TOKEN)
+
+        // Only handle responses to Bearer-authenticated requests. OAuth2 endpoints are exempt from
+        // this check: they may legitimately have gone out with no Authorization header when the
+        // consent token was missing or expired, and still need a consent-token refresh.
+        if (!isOauth2Endpoint) {
+            val authHeader = response.request.header(Constants.Headers.AUTHORIZATION) ?: return null
+            if (!authHeader.startsWith(Constants.TokenTypes.BEARER)) return null
+        }
 
         // Stop after the first retry to avoid infinite 401 loops.
         if (retryCount(response) >= 1) return null
@@ -106,23 +128,19 @@ class TokenAuthenticator(
             return null
         }
 
+        if (isOauth2Endpoint) {
+            // The regular Bearer token is irrelevant here — refresh only the OAuth2 consent token
+            // and retry so the AccessTokenInterceptor re-attaches the fresh consent token.
+            if (!refreshConsentToken(productType, subscriptionKey)) return null
+            Timber.d("TokenAuthenticator: OAuth2 consent token refreshed successfully")
+            return response.request
+        }
+
         val newToken = refreshToken(productType, subscriptionKey) ?: return null
         storage.saveAccessToken(newToken)
 
         if (storage.getOauthAccessToken().isBlank()) {
-            var authReqId = storage.getBackChannelAuthorizationRequestId()
-            if (authReqId.isBlank()) {
-                val loginHint = storage.getLoginHint()
-                if (loginHint.isNotBlank()) {
-                    authReqId = refreshBackChannelAuthorization(productType, subscriptionKey, loginHint) ?: ""
-                } else {
-                    Timber.w("TokenAuthenticator: login hint missing, cannot refresh bc-authorize")
-                }
-            }
-            if (authReqId.isNotBlank()) {
-                val newOauthToken = refreshOauthToken(productType, subscriptionKey, authReqId)
-                if (newOauthToken != null) storage.saveOauthAccessToken(newOauthToken)
-            }
+            refreshConsentToken(productType, subscriptionKey)
         }
 
         Timber.d("TokenAuthenticator: token refreshed successfully")
@@ -130,6 +148,37 @@ class TokenAuthenticator(
         // Return the original request unchanged — the AccessTokenInterceptor will re-attach
         // the fresh Bearer token from storage on the retry pass.
         return response.request
+    }
+
+    /**
+     * Refreshes the OAuth2 (consent) access token and persists it to [CredentialStorage].
+     *
+     * Obtains an `auth_req_id` first — reusing the stored one, or requesting a fresh one via
+     * bc-authorize when the stored one is blank and a login hint is available — then exchanges it
+     * for a new OAuth2 token at the token endpoint.
+     *
+     * @param productType The product type extracted from the original request URL.
+     * @param subscriptionKey The `Ocp-Apim-Subscription-Key` from the original request.
+     * @return `true` if a new OAuth2 token was obtained and saved, `false` otherwise.
+     */
+    private fun refreshConsentToken(
+        productType: String,
+        subscriptionKey: String
+    ): Boolean {
+        var authReqId = storage.getBackChannelAuthorizationRequestId()
+        if (authReqId.isBlank()) {
+            val loginHint = storage.getLoginHint()
+            if (loginHint.isNotBlank()) {
+                authReqId = refreshBackChannelAuthorization(productType, subscriptionKey, loginHint) ?: ""
+            } else {
+                Timber.w("TokenAuthenticator: login hint missing, cannot refresh bc-authorize")
+            }
+        }
+        if (authReqId.isBlank()) return false
+
+        val newOauthToken = refreshOauthToken(productType, subscriptionKey, authReqId) ?: return false
+        storage.saveOauthAccessToken(newOauthToken)
+        return true
     }
 
     /**

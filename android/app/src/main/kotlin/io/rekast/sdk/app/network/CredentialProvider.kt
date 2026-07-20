@@ -22,7 +22,7 @@ import io.rekast.sdk.sample.utils.SampleConfig
 /**
  * App implementation of [CredentialProvider].
  *
- * Reads credentials from [CredentialStorage] (backed by [EncryptedSharedPreferences]) so that the
+ * Reads credentials from [CredentialStorage] (backed by `EncryptedSharedPreferences`) so that the
  * SDK's interceptors always receive the most recent values without the SDK needing to store or
  * manage credentials itself.
  *
@@ -57,4 +57,11 @@ class CredentialProvider(
      * it has expired or has not yet been obtained.
      */
     override fun getAccessToken(): String = storage.getAccessToken()
+
+    /**
+     * Returns the current OAuth2 (consent) access token from [CredentialStorage], or an empty
+     * string if it has expired or has not yet been obtained. Used to authenticate OAuth2 endpoints
+     * such as `GET /{productType}/oauth2/{apiVersion}/userinfo`.
+     */
+    override fun getOauthAccessToken(): String = storage.getOauthAccessToken()
 }

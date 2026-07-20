@@ -90,11 +90,11 @@ The MTN MOMO SDK is based on the **MVVM (Model-View-ViewModel)** architecture an
 
 The project consists of three modules:
 
-| Module | Plugin | Purpose |
-|---|---|---|
-| `momo-api-sdk` | `com.android.kotlin.multiplatform.library` (KMP) | Core SDK — network layer, repository, models, interceptors. Published to Maven Central. |
-| `sample` | `com.android.library` | UI layer — Activities, Fragments, ViewModels, Compose screens. Depends on `momo-api-sdk`. |
-| `app` | `com.android.application` | Thin application shell — wires Hilt DI modules (`NetworkModule`, `AppModule`), provides `BuildConfig` values from `local.properties` via the Secrets Gradle Plugin, and declares the `Application` class. |
+| Module         | Plugin                                           | Purpose                                                                                                                                                                                                   |
+|----------------|--------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `momo-api-sdk` | `com.android.kotlin.multiplatform.library` (KMP) | Core SDK — network layer, repository, models, interceptors. Published to Maven Central.                                                                                                                   |
+| `sample`       | `com.android.library`                            | UI layer — Activities, Fragments, ViewModels, Compose screens. Depends on `momo-api-sdk`.                                                                                                                 |
+| `app`          | `com.android.application`                        | Thin application shell — wires Hilt DI modules (`NetworkModule`, `AppModule`), provides `BuildConfig` values from `local.properties` via the Secrets Gradle Plugin, and declares the `Application` class. |
 
 This separation is required by AGP 9.x: the `kotlin.multiplatform` plugin is incompatible with `com.android.application` in the same module, so the application entry point lives in `app` while the SDK and UI code are in separate library modules.
 

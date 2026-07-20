@@ -15,32 +15,68 @@
  */
 package io.rekast.sdk.sample.views.disbursement.deposit
 
-import android.content.Context
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkObject
+import io.mockk.unmockkObject
+import io.mockk.verify
 import io.rekast.sdk.repository.DefaultRepository
+import io.rekast.sdk.repository.data.NetworkResult
+import io.rekast.sdk.sample.utils.CredentialStorage
+import io.rekast.sdk.sample.utils.DispatcherProvider
 import io.rekast.sdk.sample.utils.SampleConfig
+import io.rekast.sdk.sample.utils.Utils
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.ResponseBody.Companion.toResponseBody
+import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class DisbursementDepositScreenViewModelTest {
 
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
+    private val testDispatcher = UnconfinedTestDispatcher()
+    private val testDispatcherProvider = object : DispatcherProvider {
+        override fun io(): CoroutineDispatcher = testDispatcher
+    }
     private val mockRepository = mockk<DefaultRepository>(relaxed = true)
-    private val mockContext = mockk<Context>(relaxed = true)
+    private val mockStorage = mockk<CredentialStorage>(relaxed = true)
     private val mockConfig = mockk<SampleConfig>(relaxed = true)
 
     private lateinit var viewModel: DisbursementDepositScreenViewModel
 
     @Before
     fun setUp() {
-        viewModel = DisbursementDepositScreenViewModel(mockRepository, mockContext, mockConfig)
+        Dispatchers.setMain(testDispatcher)
+        mockkObject(Utils)
+        every { mockStorage.getAccessToken() } returns "test-access-token"
+        every { Utils.getProductSubscriptionKeys(any(), any()) } returns "test-subscription-key"
+        every { mockConfig.apiVersionV1 } returns "v1_0"
+        every { mockConfig.environment } returns "sandbox"
+        viewModel = DisbursementDepositScreenViewModel(mockRepository, mockStorage, testDispatcherProvider, mockConfig)
+    }
+
+    @After
+    fun tearDown() {
+        unmockkObject(Utils)
+        Dispatchers.resetMain()
     }
 
     @Test
@@ -104,5 +140,92 @@ class DisbursementDepositScreenViewModelTest {
     fun `onReferenceIdToRefundUpdated updates referenceIdToRefund LiveData`() {
         viewModel.onReferenceIdToRefundUpdated("REF-ABC-001")
         assertEquals("REF-ABC-001", viewModel.referenceIdToRefund.value)
+    }
+
+    /** Verifies deposit submits, polls status, posts the transaction, and clears the progress bar. */
+    @Test
+    fun `deposit submits then fetches status and posts transaction`() = runTest {
+        every { mockRepository.deposit(any(), any(), any(), any()) } returns flowOf(NetworkResult.Success(Unit))
+        every { mockRepository.getDepositStatus(any(), any(), any()) } returns
+            flowOf(
+                NetworkResult.Success(
+                    """{"amount":"100","currency":"EUR","externalId":"ext-1","payerMessage":"msg","payeeNote":"note","status":"SUCCESSFUL"}"""
+                        .toResponseBody("application/json".toMediaType())
+                )
+            )
+
+        viewModel.onPhoneNumberUpdated("256700000000")
+        viewModel.onAmountUpdated("100")
+        viewModel.deposit()
+
+        verify { mockRepository.deposit(any(), any(), any(), any()) }
+        verify { mockRepository.getDepositStatus(any(), any(), any()) }
+        assertNotNull(viewModel.momoTransaction.value)
+        assertFalse(viewModel.showProgressBar.value!!)
+    }
+
+    /** Verifies deposit skips the network call and stays idle when the access token is blank. */
+    @Test
+    fun `deposit does not call repository when access token is blank`() = runTest {
+        every { mockStorage.getAccessToken() } returns ""
+
+        viewModel.deposit()
+
+        verify(exactly = 0) { mockRepository.deposit(any(), any(), any(), any()) }
+        assertFalse(viewModel.showProgressBar.value!!)
+    }
+
+    /** A submit error does not poll for status and leaves the transaction null. */
+    @Test
+    fun `deposit error path does not fetch status`() = runTest {
+        every { mockRepository.deposit(any(), any(), any(), any()) } returns flowOf(NetworkResult.Error("boom"))
+
+        viewModel.onPhoneNumberUpdated("256700000000")
+        viewModel.onAmountUpdated("100")
+        viewModel.deposit()
+
+        verify(exactly = 0) { mockRepository.getDepositStatus(any(), any(), any()) }
+        assertNull(viewModel.momoTransaction.value)
+        assertFalse(viewModel.showProgressBar.value!!)
+    }
+
+    /** An exception during submit is caught and the progress bar is cleared. */
+    @Test
+    fun `deposit exception path clears progress bar`() = runTest {
+        every { mockRepository.deposit(any(), any(), any(), any()) } throws RuntimeException("network down")
+
+        viewModel.onPhoneNumberUpdated("256700000000")
+        viewModel.onAmountUpdated("100")
+        viewModel.deposit()
+
+        assertNull(viewModel.momoTransaction.value)
+        assertFalse(viewModel.showProgressBar.value!!)
+    }
+
+    /** A status error after a successful submit leaves the transaction null. */
+    @Test
+    fun `deposit status error leaves transaction null`() = runTest {
+        every { mockRepository.deposit(any(), any(), any(), any()) } returns flowOf(NetworkResult.Success(Unit))
+        every { mockRepository.getDepositStatus(any(), any(), any()) } returns flowOf(NetworkResult.Error("status boom"))
+
+        viewModel.onPhoneNumberUpdated("256700000000")
+        viewModel.onAmountUpdated("100")
+        viewModel.deposit()
+
+        assertNull(viewModel.momoTransaction.value)
+    }
+
+    /** A status body that cannot be parsed posts a null transaction rather than crashing. */
+    @Test
+    fun `deposit status with unparseable body posts null transaction`() = runTest {
+        every { mockRepository.deposit(any(), any(), any(), any()) } returns flowOf(NetworkResult.Success(Unit))
+        every { mockRepository.getDepositStatus(any(), any(), any()) } returns
+            flowOf(NetworkResult.Success("not-json".toResponseBody("application/json".toMediaType())))
+
+        viewModel.onPhoneNumberUpdated("256700000000")
+        viewModel.onAmountUpdated("100")
+        viewModel.deposit()
+
+        assertNull(viewModel.momoTransaction.value)
     }
 }

@@ -70,4 +70,44 @@ sealed class NavigationDrawerItem(var route: Int, var icon: Int, var title: Stri
             R.drawable.savings,
             Constants.NavigationTitle.DISBURSEMENT_REFUND
         )
+
+    /** Navigates to the Collection Invoice screen. */
+    object CollectionInvoice :
+        NavigationDrawerItem(
+            R.id.invoiceScreenFragment,
+            R.drawable.account_balance,
+            Constants.NavigationTitle.COLLECTION_INVOICE
+        )
+
+    /** Navigates to the Collection Pre-Approval screen. */
+    object CollectionPreApproval :
+        NavigationDrawerItem(
+            R.id.preApprovalScreenFragment,
+            R.drawable.paid,
+            Constants.NavigationTitle.COLLECTION_PRE_APPROVAL
+        )
+
+    /** Navigates to the Remittance Cash Transfer screen. */
+    object RemittanceCashTransfer :
+        NavigationDrawerItem(
+            R.id.cashTransferScreenFragment,
+            R.drawable.currency_exchange,
+            Constants.NavigationTitle.REMITTANCE_CASH_TRANSFER
+        )
+
+    /** Navigates to the Setup & Config screen showing credential provisioning status. */
+    object Setup :
+        NavigationDrawerItem(
+            R.id.setupScreenFragment,
+            R.drawable.account_balance,
+            Constants.NavigationTitle.SETUP
+        )
+
+    /** Navigates to the Settings screen showing environment, product keys, and app info. */
+    object Settings :
+        NavigationDrawerItem(
+            R.id.settingsScreenFragment,
+            R.drawable.tune,
+            Constants.NavigationTitle.SETTINGS
+        )
 }

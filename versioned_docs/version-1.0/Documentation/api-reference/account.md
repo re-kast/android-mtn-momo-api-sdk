@@ -44,13 +44,13 @@ defaultRepository.getAccountBalance(
 ).collect { result -> /* ... */ }
 ```
 
-| Parameter | Type | Description |
-|---|---|---|
-| `productType` | `String` | Product type string |
-| `apiVersion` | `String` | API version, e.g. `"v1_0"` |
-| `currency` | `String?` | ISO-4217 currency code, or `null` for the default currency |
-| `productSubscriptionKey` | `String` | Primary subscription key for the product |
-| `environment` | `String` | `"sandbox"` or `"production"` |
+| Parameter                | Type      | Description                                                |
+|--------------------------|-----------|------------------------------------------------------------|
+| `productType`            | `String`  | Product type string                                        |
+| `apiVersion`             | `String`  | API version, e.g. `"v1_0"`                                 |
+| `currency`               | `String?` | ISO-4217 currency code, or `null` for the default currency |
+| `productSubscriptionKey` | `String`  | Primary subscription key for the product                   |
+| `environment`            | `String`  | `"sandbox"` or `"production"`                              |
 
 ---
 
@@ -77,31 +77,31 @@ defaultRepository.getBasicUserInfo(
 }
 ```
 
-| Parameter | Type | Description |
-|---|---|---|
-| `productType` | `String` | Product type string |
-| `apiVersion` | `String` | API version |
-| `accountHolder` | `String` | MSISDN of the account holder |
-| `productSubscriptionKey` | `String` | Primary subscription key |
-| `environment` | `String` | `"sandbox"` or `"production"` |
+| Parameter                | Type     | Description                   |
+|--------------------------|----------|-------------------------------|
+| `productType`            | `String` | Product type string           |
+| `apiVersion`             | `String` | API version                   |
+| `accountHolder`          | `String` | MSISDN of the account holder  |
+| `productSubscriptionKey` | `String` | Primary subscription key      |
+| `environment`            | `String` | `"sandbox"` or `"production"` |
 
 ---
 
 ## Get User Info With Consent
 
-Retrieves full profile information for the authenticated subscriber. Requires a valid OAuth2 access token (the subscriber must have approved via the CIBA flow).
+Retrieves full profile information for the authenticated subscriber. This is an OAuth2 **consent resource** endpoint (`/{productType}/oauth2/{apiVersion}/userinfo`): it requires a valid OAuth2 consent token (the subscriber must have approved via the CIBA flow). The SDK attaches that consent token automatically — see [Authentication](./authentication) for how the consent token is provisioned.
 
 ```kotlin
 defaultRepository.getUserInfoWithConsent(
-    productType = ProductType.COLLECTION.productType,
+    productType = ProductType.REMITTANCE.productType,
     apiVersion = "v1_0",
-    productSubscriptionKey = collectionPrimaryKey,
+    productSubscriptionKey = remittancePrimaryKey,
     environment = "sandbox"
 ).collect { result ->
     when (result) {
         is NetworkResult.Success -> {
             val info = result.response
-            // info.sub, info.name, info.phoneNumber, info.email, etc.
+            // info.name, info.email, info.phonenumber, info.address?.country, info.creditScore, ...
         }
         is NetworkResult.Error   -> { /* failed */ }
         is NetworkResult.Loading -> { /* in progress */ }
@@ -109,12 +109,35 @@ defaultRepository.getUserInfoWithConsent(
 }
 ```
 
-| Parameter | Type | Description |
-|---|---|---|
-| `productType` | `String` | Product type string |
-| `apiVersion` | `String` | API version |
-| `productSubscriptionKey` | `String` | Primary subscription key |
-| `environment` | `String` | `"sandbox"` or `"production"` |
+| Parameter                | Type     | Description                                                                                                                  |
+|--------------------------|----------|------------------------------------------------------------------------------------------------------------------------------|
+| `productType`            | `String` | Product type string. Use the product whose subscription key you have provisioned (e.g. `ProductType.REMITTANCE.productType`) |
+| `apiVersion`             | `String` | API version                                                                                                                  |
+| `productSubscriptionKey` | `String` | Primary subscription key                                                                                                     |
+| `environment`            | `String` | `"sandbox"` or `"production"`                                                                                                |
+
+**`UserInfoWithConsent` response fields**
+
+Only `sub` and `name` are always present; every other field is optional (nullable) and is simply omitted when the API does not return it.
+
+| Field                                              | Type       | Description                                                                                         |
+|----------------------------------------------------|------------|-----------------------------------------------------------------------------------------------------|
+| `sub`                                              | `String`   | Subject identifier for the user                                                                     |
+| `name`                                             | `String`   | Full name                                                                                           |
+| `givenName` / `familyName` / `middleName`          | `String?`  | Name parts                                                                                          |
+| `birthDate`                                        | `String?`  | Date of birth                                                                                       |
+| `gender`                                           | `String?`  | Gender                                                                                              |
+| `locale`                                           | `String?`  | Locale, e.g. `sv_SE`                                                                                |
+| `email`                                            | `String?`  | Email address                                                                                       |
+| `emailVerified`                                    | `Boolean?` | Whether the email is verified                                                                       |
+| `phonenumber`                                      | `String?`  | Phone number (`phone_number`)                                                                       |
+| `phoneNumberVerified`                              | `Boolean?` | Whether the phone number is verified                                                                |
+| `address`                                          | `Address?` | Nested address object (`formatted`, `streetAddress`, `postalCode`, `locality`, `region`, `country`) |
+| `creditScore`                                      | `Int?`     | Credit score                                                                                        |
+| `active`                                           | `Boolean?` | Whether the account is active                                                                       |
+| `countryOfBirth` / `regionOfBirth` / `cityOfBirth` | `String?`  | Birthplace                                                                                          |
+| `occupation` / `employerName`                      | `String?`  | Employment details                                                                                  |
+| `identificationType` / `identificationValue`       | `String?`  | Identification document type and number                                                             |
 
 ---
 
@@ -138,10 +161,10 @@ defaultRepository.validateAccountHolderStatus(
 }
 ```
 
-| Parameter | Type | Description |
-|---|---|---|
-| `productType` | `String` | Product type string |
-| `apiVersion` | `String` | API version |
-| `accountHolder` | `AccountHolder` | Account identifier — `partyIdType` is typically `"MSISDN"` |
-| `productSubscriptionKey` | `String` | Primary subscription key |
-| `environment` | `String` | `"sandbox"` or `"production"` |
+| Parameter                | Type            | Description                                                |
+|--------------------------|-----------------|------------------------------------------------------------|
+| `productType`            | `String`        | Product type string                                        |
+| `apiVersion`             | `String`        | API version                                                |
+| `accountHolder`          | `AccountHolder` | Account identifier — `partyIdType` is typically `"MSISDN"` |
+| `productSubscriptionKey` | `String`        | Primary subscription key                                   |
+| `environment`            | `String`        | `"sandbox"` or `"production"`                              |

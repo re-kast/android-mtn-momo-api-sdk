@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.rekast.sdk.sample.views.remittance
+package io.rekast.sdk.sample.views.collection.invoice
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -32,21 +32,16 @@ import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import io.rekast.sdk.sample.ui.theme.AppTheme
 import io.rekast.sdk.sample.views.MainViewModel
-import kotlin.getValue
 
 /**
- * Fragment that hosts the Remittance Transfer screen, rendering [RemittanceScreen] via Jetpack Compose.
+ * Fragment that hosts the Collection Invoice screen, rendering [InvoiceScreen] via Jetpack Compose.
  */
 @ExperimentalMaterialApi
 @AndroidEntryPoint
-class RemittanceScreenFragment : Fragment() {
-    private val remittanceScreenViewModel by viewModels<RemittanceScreenViewModel>()
+class InvoiceScreenFragment : Fragment() {
+    private val invoiceScreenViewModel by viewModels<InvoiceScreenViewModel>()
     private val mainViewModel by activityViewModels<MainViewModel>()
 
-    /**
-     * Inflates the Remittance Transfer screen Compose hierarchy, wiring up [RemittanceScreen]
-     * with its ViewModel, NavController, and snackbar state.
-     */
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val navController = findNavController()
         return ComposeView(requireContext()).apply {
@@ -54,21 +49,15 @@ class RemittanceScreenFragment : Fragment() {
             setContent {
                 AppTheme {
                     val isBootstrapComplete by mainViewModel.isBootstrapComplete.collectAsState()
-                    val vmShowProgressBar by remittanceScreenViewModel.showProgressBar.observeAsState(false)
-                    RemittanceScreen(
+                    val vmShowProgressBar by invoiceScreenViewModel.showProgressBar.observeAsState(false)
+                    InvoiceScreen(
                         navController = navController,
-                        snackStateFlow = remittanceScreenViewModel.snackBarStateFlow,
+                        snackStateFlow = invoiceScreenViewModel.snackBarStateFlow,
                         showProgressBar = !isBootstrapComplete || vmShowProgressBar,
-                        remittanceScreenViewModel = remittanceScreenViewModel,
-                        momoTransaction = remittanceScreenViewModel.momoTransaction
+                        viewModel = invoiceScreenViewModel
                     )
                 }
             }
         }
-    }
-
-    /** Reserved for future per-resume lifecycle operations. */
-    override fun onResume() {
-        super.onResume()
     }
 }

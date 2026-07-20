@@ -338,4 +338,138 @@ class MainViewModelTest {
         coVerify { mockStorage.saveAccessToken(accessToken) }
         coVerify { mockRepository.getOauthAccessToken(any(), any(), any(), any()) }
     }
+
+    /**
+     * Verifies the bootstrap chain tolerates a [NetworkResult.Loading] emission from
+     * [DefaultRepository.checkApiUser] (raw flow) before its terminal result — the Loading branch of
+     * the flatMapLatest mapper must simply forward the emission.
+     */
+    @Test
+    fun `checkUser tolerates a Loading emission from checkApiUser`() = runTest {
+        coEvery { mockRepository.checkApiUser(any(), any()) } returns flowOf(
+            NetworkResult.Loading(),
+            NetworkResult.Success(ApiUser(targetEnvironment = "sandbox"))
+        )
+        coEvery { mockRepository.createApiKey(any(), any()) } returns flowOf(NetworkResult.Error("Failed"))
+
+        viewModel.checkUser()
+
+        coVerify { mockRepository.checkApiUser(any(), any()) }
+        coVerify { mockRepository.createApiKey(any(), any()) }
+    }
+
+    /**
+     * Verifies that an exception while persisting the freshly created API key is caught and marks
+     * the bootstrap complete rather than propagating.
+     */
+    @Test
+    fun `checkUser handles exception while saving API key`() = runTest {
+        every { mockStorage.getApiKey() } returns ""
+        every { mockStorage.saveApiKey(any()) } throws RuntimeException("keystore failure")
+        coEvery { mockRepository.checkApiUser(any(), any()) } returns flowOf(
+            NetworkResult.Success(ApiUser(targetEnvironment = "sandbox"))
+        )
+        coEvery { mockRepository.createApiKey(any(), any()) } returns flowOf(
+            NetworkResult.Success(ApiKey(apiKey = "new-api-key"))
+        )
+
+        viewModel.checkUser()
+
+        coVerify { mockStorage.saveApiKey("new-api-key") }
+        coVerify(exactly = 0) { mockRepository.getAccessToken(any(), any()) }
+    }
+
+    /**
+     * Verifies that an exception while persisting the freshly fetched access token is caught and
+     * marks the bootstrap complete rather than propagating.
+     */
+    @Test
+    fun `checkUser handles exception while saving access token`() = runTest {
+        every { mockStorage.getApiKey() } returns "stored-api-key"
+        every { mockStorage.getAccessToken() } returns ""
+        every { mockStorage.saveAccessToken(any()) } throws RuntimeException("keystore failure")
+        coEvery { mockRepository.checkApiUser(any(), any()) } returns flowOf(
+            NetworkResult.Success(ApiUser(targetEnvironment = "sandbox"))
+        )
+        coEvery { mockRepository.getAccessToken(any(), any()) } returns flowOf(
+            NetworkResult.Success(AccessToken(accessToken = "new-token", tokenType = "Bearer", expiresIn = 3600))
+        )
+
+        viewModel.checkUser()
+
+        coVerify { mockStorage.saveAccessToken(any()) }
+        coVerify(exactly = 0) { mockRepository.bcAuthorize(any(), any(), any(), any(), any()) }
+    }
+
+    /**
+     * Verifies that [MainViewModel.bcAuthorize] completes the bootstrap (without chaining onward)
+     * when the bc-authorize call returns an error.
+     */
+    @Test
+    fun `bcAuthorize completes bootstrap on error`() = runTest {
+        coEvery { mockRepository.bcAuthorize(any(), any(), any(), any(), any()) } returns flowOf(
+            NetworkResult.Error("bc-authorize failed")
+        )
+
+        viewModel.bcAuthorize()
+
+        coVerify { mockRepository.bcAuthorize(any(), any(), any(), any(), any()) }
+        coVerify(exactly = 0) { mockRepository.getOauthAccessToken(any(), any(), any(), any()) }
+    }
+
+    /**
+     * Verifies that an exception while persisting the OAuth2 token is caught — the bootstrap still
+     * completes without propagating the failure.
+     */
+    @Test
+    fun `checkUser handles exception while saving oauth token`() = runTest {
+        val oauthToken = Oauth2AccessToken(
+            accessToken = "new-oauth-tok",
+            tokenType = "Bearer",
+            expiresIn = 3600,
+            scope = "profile",
+            refreshToken = "refresh",
+            refreshTokenExpiredIn = 7200
+        )
+        every { mockStorage.getApiKey() } returns "stored-api-key"
+        every { mockStorage.getAccessToken() } returns "valid-token"
+        every { mockStorage.getOauthAccessToken() } returns ""
+        every { mockStorage.getBackChannelAuthorizationRequestId() } returns "stored-auth-req-id"
+        every { mockStorage.saveOauthAccessToken(any()) } throws RuntimeException("keystore failure")
+        coEvery { mockRepository.checkApiUser(any(), any()) } returns flowOf(
+            NetworkResult.Success(ApiUser(targetEnvironment = "sandbox"))
+        )
+        coEvery { mockRepository.getOauthAccessToken(any(), any(), any(), any()) } returns flowOf(
+            NetworkResult.Success(oauthToken)
+        )
+
+        viewModel.checkUser()
+
+        coVerify { mockStorage.saveOauthAccessToken(oauthToken) }
+    }
+
+    /**
+     * Verifies the terminal `else` of the OAuth2 step: when the OAuth2 token is missing, an
+     * `auth_req_id` is present, but the Bearer access token is blank, the bootstrap simply
+     * completes without exchanging a token.
+     */
+    @Test
+    fun `checkUser completes when reaching oauth step without an access token`() = runTest {
+        every { mockStorage.getApiKey() } returns ""
+        every { mockStorage.getAccessToken() } returns ""
+        every { mockStorage.getOauthAccessToken() } returns ""
+        every { mockStorage.getBackChannelAuthorizationRequestId() } returns "stored-auth-req-id"
+        coEvery { mockRepository.checkApiUser(any(), any()) } returns flowOf(
+            NetworkResult.Success(ApiUser(targetEnvironment = "sandbox"))
+        )
+        coEvery { mockRepository.createApiKey(any(), any()) } returns flowOf(
+            NetworkResult.Success(ApiKey(apiKey = "new-api-key"))
+        )
+
+        viewModel.checkUser()
+
+        // Reached getOauthAccessToken via the getAccessToken else-branch (apiKey blank), then fell
+        // through to the terminal else because the access token is blank — no token exchange.
+        coVerify(exactly = 0) { mockRepository.getOauthAccessToken(any(), any(), any(), any()) }
+    }
 }

@@ -15,26 +15,28 @@
  */
 package io.rekast.sdk.sample.ui.components.general
 
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.res.colorResource
-import io.rekast.sdk.sample.R
+import io.rekast.sdk.sample.ui.theme.dividerColor
 
 /**
- * Returns a [TextFieldColors] configuration for text fields throughout the sample application.
+ * Returns a theme-aware [TextFieldColors] configuration for text fields throughout the sample
+ * application. Container and indicator colors resolve from [MaterialTheme] so fields render
+ * correctly in both light and dark mode while keeping the MTN accent for focus and cursor.
  *
- * - Focused border/indicator: `accent_primary`
- * - Unfocused border/indicator: `accent_secondary`
- * - Focused container background: `white`
- * - Unfocused container background: `whiteish`
- * - Cursor: `accent_primary`
+ * - Focused indicator & cursor: the theme accent (MTN yellow in dark, MTN blue in light)
+ * - Unfocused indicator: a muted divider color
+ * - Container background: the theme surface
  */
 @Composable
 fun textFieldDefaultsComponent(): TextFieldColors = TextFieldDefaults.colors(
-    focusedIndicatorColor = colorResource(id = R.color.accent_primary),
-    unfocusedIndicatorColor = colorResource(id = R.color.accent_secondary),
-    focusedContainerColor = colorResource(id = R.color.white),
-    unfocusedContainerColor = colorResource(id = R.color.whiteish),
-    cursorColor = colorResource(id = R.color.accent_primary)
+    focusedIndicatorColor = MaterialTheme.colors.secondary,
+    unfocusedIndicatorColor = dividerColor,
+    focusedContainerColor = MaterialTheme.colors.surface,
+    unfocusedContainerColor = MaterialTheme.colors.surface,
+    focusedTextColor = MaterialTheme.colors.onSurface,
+    unfocusedTextColor = MaterialTheme.colors.onSurface,
+    cursorColor = MaterialTheme.colors.secondary
 )

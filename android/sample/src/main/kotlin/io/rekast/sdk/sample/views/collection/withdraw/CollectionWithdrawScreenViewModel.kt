@@ -15,30 +15,58 @@
  */
 package io.rekast.sdk.sample.views.collection.withdraw
 
-import android.content.Context
+import androidx.annotation.StringRes
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
+import io.rekast.sdk.model.AccountHolder
+import io.rekast.sdk.model.MomoNotification
 import io.rekast.sdk.model.MomoTransaction
 import io.rekast.sdk.repository.DefaultRepository
+import io.rekast.sdk.repository.data.NetworkResult
+import io.rekast.sdk.sample.R
 import io.rekast.sdk.sample.utils.Constants
+import io.rekast.sdk.sample.utils.CredentialStorage
+import io.rekast.sdk.sample.utils.DispatcherProvider
 import io.rekast.sdk.sample.utils.SampleConfig
 import io.rekast.sdk.sample.utils.SnackBarComponentConfiguration
+import io.rekast.sdk.sample.utils.SnackBarType
+import io.rekast.sdk.sample.utils.Utils
+import io.rekast.sdk.utils.AccountHolderType
+import io.rekast.sdk.utils.ProductType
+import java.util.UUID
 import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.Json
+import timber.log.Timber
 
 /**
- * ViewModel for the Collection Request-to-Withdraw screen, managing form field state and the
- * resulting [MomoTransaction] after a withdrawal request.
+ * ViewModel for the Collection Request-to-Withdraw screen.
+ *
+ * On submit it runs the full Collection request-to-withdraw flow against the SDK:
+ * 1. `requestToWithdraw` — asks the payer to approve a withdrawal from their wallet (HTTP 202).
+ * 2. An optional `requestToWithdrawDeliveryNotification` when a delivery note is provided.
+ * 3. `requestToWithdrawTransactionStatus` — polls the outcome and posts it to [momoTransaction].
+ *
+ * The screen shows the input form while [momoTransaction] is null and the result once it is set.
+ * Authentication is handled automatically by the SDK's interceptor/authenticator, so the ViewModel
+ * only guards on the presence of an access token before starting.
  */
 @HiltViewModel
-class CollectionWithdrawScreenViewModel @Inject constructor(private val defaultRepository: DefaultRepository, @param:ApplicationContext private val context: Context, private val sampleConfig: SampleConfig) : ViewModel() {
+class CollectionWithdrawScreenViewModel @Inject constructor(
+    private val defaultRepository: DefaultRepository,
+    private val credentialStorage: CredentialStorage,
+    private val dispatchers: DispatcherProvider,
+    private val sampleConfig: SampleConfig
+) : ViewModel() {
+    private val json = Json { ignoreUnknownKeys = true }
+
     /** Controls whether the circular progress indicator is shown instead of the form. */
     val showProgressBar = MutableLiveData(false)
 
@@ -148,170 +176,125 @@ class CollectionWithdrawScreenViewModel @Inject constructor(private val defaultR
     /**
      * Updates the reference ID to refund field value.
      *
-     * @param deliveryNote The new reference ID to refund string.
+     * @param referenceIdToRefund The new reference ID to refund string.
      */
-    fun onReferenceIdToRefundUpdated(deliveryNote: String) {
-        _referenceIdToRefund.value = deliveryNote
+    fun onReferenceIdToRefundUpdated(referenceIdToRefund: String) {
+        _referenceIdToRefund.value = referenceIdToRefund
     }
 
-/*    fun requestToWithdraw() {
-        showProgressBar.postValue(true)
-        if (phoneNumber.value!!.isNotEmpty() && financialId.value!!.isNotEmpty() &&
-            amount.value!!.isNotEmpty() && payerMessage.value!!.isNotEmpty() &&
-            payerNote.value!!.isNotEmpty()
-        ) {
-            val accessToken = context?.let { Utils.getAccessToken(it) }
-            val creditTransaction = createRequestToWithdrawTransaction()
-            val transactionUuid = Settings().generateUUID()
-            if (StringUtils.isNotBlank(accessToken)) {
-                accessToken?.let {
-                    momoAPi?.requestToWithdraw(
-                        it,
-                        creditTransaction,
-                        BuildConfig.MOMO_API_VERSION_V2,
-                        Settings().getProductSubscriptionKeys(ProductType.COLLECTION),
-                        transactionUuid
-                    ) { momoAPIResult ->
-                        when (momoAPIResult) {
-                            is MomoResponse.Success -> {
-                                requestToPayDeliveryNotification(
-                                    transactionUuid
-                                )
-                                requestToWithdrawTransactionStatus(transactionUuid)
-                                showProgressBar.postValue(false)
-                                emitSnackBarState(
-                                    SnackBarComponentConfiguration(
-                                        message = "Request to withdraw sent successfully"
-                                    )
-                                )
-                            }
-                            is MomoResponse.Failure -> {
-                                val momoAPIException = momoAPIResult.momoException
-                                showProgressBar.postValue(false)
-                                emitSnackBarState(
-                                    SnackBarComponentConfiguration(
-                                        message = "${momoAPIException!!.message} Request to withdraw wasn't sent!"
-                                    )
-                                )
-                            }
-                        }
+    /**
+     * Submits a Collection request-to-withdraw, optionally sends a delivery note, then polls the status
+     * and posts the resulting [MomoTransaction] to [momoTransaction].
+     */
+    fun requestToWithdraw() {
+        viewModelScope.launch(dispatchers.io()) {
+            if (credentialStorage.getAccessToken().isBlank()) {
+                Timber.w("Request to withdraw skipped: access token is blank")
+                emitError(R.string.snackbar_token_expired)
+                return@launch
+            }
+            showProgressBar.postValue(true)
+            try {
+                val referenceId = UUID.randomUUID().toString()
+                val subscriptionKey = Utils.getProductSubscriptionKeys(ProductType.COLLECTION, sampleConfig)
+                val submit = defaultRepository.requestToWithdraw(
+                    momoTransaction = buildTransaction(),
+                    apiVersion = sampleConfig.apiVersionV1,
+                    productSubscriptionKey = subscriptionKey,
+                    uuid = referenceId
+                ).awaitTerminal()
+                when (submit) {
+                    is NetworkResult.Success -> {
+                        Timber.d("Request to withdraw accepted (ref=%s)", referenceId)
+                        emitSuccess(R.string.snackbar_request_to_withdraw_submitted)
+                        if (!deliveryNote.value.isNullOrBlank()) sendDeliveryNotification(referenceId, subscriptionKey)
+                        fetchStatus(referenceId, subscriptionKey)
+                    }
+
+                    else -> {
+                        Timber.e("Request to withdraw failed: %s", submit.message)
+                        emitError(R.string.snackbar_request_to_withdraw_failed, submit.message.orEmpty())
                     }
                 }
-            } else {
+            } catch (exception: Exception) {
+                Timber.e(exception, "Request to withdraw failed")
+                emitError(R.string.snackbar_request_to_withdraw_failed, exception.message.orEmpty())
+            } finally {
                 showProgressBar.postValue(false)
-                emitSnackBarState(
-                    SnackBarComponentConfiguration(
-                        message = "Expired access token! Please refresh the token"
-                    )
-                )
             }
         }
     }
 
-    private fun requestToWithdrawTransactionStatus(referenceId: String) {
-        val accessToken = context?.let { Utils.getAccessToken(it) }
-        if (StringUtils.isNotBlank(accessToken)) {
-            accessToken?.let {
-                momoAPi?.requestToWithdrawTransactionStatus(
-                    referenceId,
-                    BuildConfig.MOMO_API_VERSION_V1,
-                    Settings().getProductSubscriptionKeys(ProductType.COLLECTION),
-                    it
-                ) { momoAPIResult ->
-                    when (momoAPIResult) {
-                        is MomoResponse.Success -> {
-                            val requestToWithdrawStatusFetch =
-                                Gson().fromJson(momoAPIResult.value!!.source().readUtf8(), MomoTransaction::class.java)
-                            momoTransaction = MutableLiveData(requestToWithdrawStatusFetch)
-                            showProgressBar.postValue(false)
-                            emitSnackBarState(
-                                SnackBarComponentConfiguration(
-                                    message = "Request to withdraw status fetched successfully"
-                                )
-                            )
-                        }
-                        is MomoResponse.Failure -> {
-                            showProgressBar.postValue(false)
-                            val momoAPIException = momoAPIResult.momoException
-                            emitSnackBarState(
-                                SnackBarComponentConfiguration(
-                                    message = "${momoAPIException!!.message} Request to withdraw status not fetch!"
-                                )
-                            )
-                        }
-                    }
+    /** Polls the request-to-withdraw status and posts the decoded transaction to [momoTransaction]. */
+    private suspend fun fetchStatus(referenceId: String, subscriptionKey: String) {
+        val result = defaultRepository.requestToWithdrawTransactionStatus(
+            referenceId = referenceId,
+            apiVersion = sampleConfig.apiVersionV1,
+            productSubscriptionKey = subscriptionKey
+        ).awaitTerminal()
+        when (result) {
+            is NetworkResult.Success -> {
+                val transaction = result.response?.source()?.readUtf8()?.let { body ->
+                    runCatching { json.decodeFromString<MomoTransaction>(body) }.getOrNull()
                 }
+                momoTransaction.postValue(transaction)
+                emitSuccess(R.string.snackbar_request_to_withdraw_status_fetched)
             }
-        } else {
-            showProgressBar.postValue(false)
-            emitSnackBarState(
-                SnackBarComponentConfiguration(
-                    message = "Expired access token! Please refresh the token"
-                )
-            )
+
+            else -> {
+                Timber.e("Request to withdraw status failed: %s", result.message)
+                emitError(R.string.snackbar_request_to_withdraw_status_failed, result.message.orEmpty())
+            }
         }
     }
 
-    private fun createRequestToWithdrawTransaction(): MomoTransaction {
-        return MomoTransaction(
-            amount.value!!.toString(),
-            Constants.SANDBOX_CURRENCY,
-            financialId.value!!.toString(),
-            RandomStringUtils.randomAlphanumeric(Constants.STRING_LENGTH),
-            null,
-            AccountHolder(AccountHolderType.MSISDN.name, phoneNumber.value!!.toString()),
-            payerMessage.value!!.toString(),
-            payerNote.value!!.toString(),
-            null,
-            null
-        )
+    /** Sends a delivery notification to the payer for the given request-to-withdraw reference. */
+    private suspend fun sendDeliveryNotification(referenceId: String, subscriptionKey: String) {
+        val result = defaultRepository.requestToWithdrawDeliveryNotification(
+            apiVersion = sampleConfig.apiVersionV1,
+            referenceId = referenceId,
+            momoNotification = MomoNotification(notificationMessage = deliveryNote.value.orEmpty()),
+            productSubscriptionKey = subscriptionKey,
+            environment = sampleConfig.environment
+        ).awaitTerminal()
+        when (result) {
+            is NetworkResult.Success -> emitSuccess(R.string.snackbar_delivery_note_sent)
+
+            else -> {
+                Timber.e("Delivery note failed: %s", result.message)
+                emitError(R.string.snackbar_delivery_note_failed, result.message.orEmpty())
+            }
+        }
     }
 
-    private fun requestToPayDeliveryNotification(referenceId: String) {
-        val accessToken = context?.let { Utils.getAccessToken(it) }
-        val momoNotification = MomoNotification(
-            notificationMessage = deliveryNote.value!!.toString()
-        )
-        if (StringUtils.isNotBlank(accessToken) &&
-            Settings().checkNotificationMessageLength(momoNotification.notificationMessage)
-        ) {
-            accessToken?.let {
-                momoAPi?.requestToPayDeliveryNotification(
-                    momoNotification,
-                    referenceId,
-                    BuildConfig.MOMO_API_VERSION_V1,
-                    ProductType.COLLECTION.productType,
-                    Settings().getProductSubscriptionKeys(ProductType.COLLECTION),
-                    it
-                ) { momoAPIResult ->
-                    when (momoAPIResult) {
-                        is MomoResponse.Success -> {
-                            emitSnackBarState(
-                                SnackBarComponentConfiguration(
-                                    message = "Request to pay delivery note sent successfully"
-                                )
-                            )
-                        }
-                        is MomoResponse.Failure -> {
-                            val momoAPIException = momoAPIResult.momoException
-                            emitSnackBarState(
-                                SnackBarComponentConfiguration(
-                                    message = "${momoAPIException!!.message} Delivery note was not sent!"
-                                )
-                            )
-                        }
-                    }
-                }
-            }
-        } else {
-            showProgressBar.postValue(false)
-            emitSnackBarState(
-                SnackBarComponentConfiguration(
-                    message = "Expired access token! Please refresh the token"
-                )
-            )
-        }
-    }*/
+    /** Builds the request-to-withdraw payload from the current form values. */
+    private fun buildTransaction() = MomoTransaction(
+        amount = amount.value.orEmpty(),
+        currency = Constants.SANDBOX_CURRENCY,
+        financialTransactionId = financialId.value?.ifBlank { null },
+        externalId = UUID.randomUUID().toString(),
+        payee = null,
+        payer = AccountHolder(partyIdType = AccountHolderType.MSISDN.accountHolderType, partyId = phoneNumber.value.orEmpty()),
+        payerMessage = payerMessage.value.orEmpty(),
+        payeeNote = payerNote.value.orEmpty(),
+        status = null,
+        reason = null,
+        referenceIdToRefund = null
+    )
+
+    /**
+     * Collects this result [Flow] to completion and returns its terminal (non-[NetworkResult.Loading])
+     * emission, so a suspend caller can await the flow's final success or error.
+     */
+    private suspend fun <T> Flow<NetworkResult<T>>.awaitTerminal(): NetworkResult<T> {
+        var terminal: NetworkResult<T> = NetworkResult.Error("No response received")
+        collect { emission -> if (emission !is NetworkResult.Loading) terminal = emission }
+        return terminal
+    }
+
+    private fun emitSuccess(@StringRes messageResId: Int, vararg args: Any) = emitSnackBarState(SnackBarComponentConfiguration(messageResId = messageResId, messageArgs = args.toList(), type = SnackBarType.SUCCESS))
+
+    private fun emitError(@StringRes messageResId: Int, vararg args: Any) = emitSnackBarState(SnackBarComponentConfiguration(messageResId = messageResId, messageArgs = args.toList(), type = SnackBarType.ERROR))
 
     private fun emitSnackBarState(snackBarComponentConfiguration: SnackBarComponentConfiguration) {
         viewModelScope.launch { _snackBarStateFlow.emit(snackBarComponentConfiguration) }

@@ -27,14 +27,20 @@ Generate an HTML report for interactive browsing or an XML report for CI consump
 # sample is a plain Android library — reports use the debug build variant.
 ./gradlew :sample:koverHtmlReportDebug
 ./gradlew :sample:koverXmlReportDebug
+
+# app hosts the DI / network wiring (Hilt modules, TokenAuthenticator, CredentialProvider)
+# and is a plain Android app module — reports also use the debug build variant.
+./gradlew :app:koverHtmlReportDebug
+./gradlew :app:koverXmlReportDebug
 ```
 
 Reports are written to:
 
-| Module | HTML | XML |
-|---|---|---|
+| Module         | HTML                                                              | XML                                                          |
+|----------------|-------------------------------------------------------------------|--------------------------------------------------------------|
 | `momo-api-sdk` | `android/momo-api-sdk/build/reports/kover/htmlAndroid/index.html` | `android/momo-api-sdk/build/reports/kover/reportAndroid.xml` |
-| `sample` | `android/sample/build/reports/kover/htmlDebug/index.html` | `android/sample/build/reports/kover/reportDebug.xml` |
+| `sample`       | `android/sample/build/reports/kover/htmlDebug/index.html`         | `android/sample/build/reports/kover/reportDebug.xml`         |
+| `app`          | `android/app/build/reports/kover/htmlDebug/index.html`            | `android/app/build/reports/kover/reportDebug.xml`            |
 
 ### Kover configuration
 
@@ -58,11 +64,11 @@ kover {
 }
 ```
 
-CI runs coverage for both modules and uploads both reports to Codecov. Run the per-module tasks locally to inspect coverage for each module individually.
+CI runs coverage for all three modules (`momo-api-sdk`, `sample`, and `app`) and uploads each report to Codecov under its own flag (`momo-api-sdk`, `sample`, `app`), so every module gets an isolated coverage status check. Run the per-module tasks locally to inspect coverage for each module individually.
 
 ## Unit Tests
 
-Unit tests are a critical component of our testing strategy, as they allow us to verify the functionality of individual components in isolation. These tests are organized within two main modules: the [momo-api-sdk](https://github.com/re-kast/android-mtn-momo-api-sdk/tree/develop/android/momo-api-sdk/src/test/) and the [sample](https://github.com/re-kast/android-mtn-momo-api-sdk/tree/develop/android/sample/src/test) modules. Developers can run these tests locally to validate their changes before submitting a pull request. Additionally, these unit tests are automatically executed through GitHub Actions whenever a pull request is submitted. It is imperative that all unit tests pass successfully for a pull request to be merged, ensuring that new changes do not break existing functionality.
+Unit tests are a critical component of our testing strategy, as they allow us to verify the functionality of individual components in isolation. These tests are organized within three main modules: the [momo-api-sdk](https://github.com/re-kast/android-mtn-momo-api-sdk/tree/develop/android/momo-api-sdk/src/test/), the [sample](https://github.com/re-kast/android-mtn-momo-api-sdk/tree/develop/android/sample/src/test), and the [app](https://github.com/re-kast/android-mtn-momo-api-sdk/tree/develop/android/app/src/test) modules. Developers can run these tests locally to validate their changes before submitting a pull request. Additionally, these unit tests are automatically executed through GitHub Actions whenever a pull request is submitted. It is imperative that all unit tests pass successfully for a pull request to be merged, ensuring that new changes do not break existing functionality.
 
 ## User Interface and Integration Tests
 
