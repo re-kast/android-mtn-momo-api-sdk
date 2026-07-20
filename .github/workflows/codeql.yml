@@ -21,13 +21,8 @@ jobs:
   analyze:
     name: Analyze (${{ matrix.language }})
     runs-on: ubuntu-latest
-    env:
-      # The project builds with a Kotlin version newer than the CodeQL extractor officially
-      # supports. Without this opt-in the traced build aborts with "Kotlin version ... is too
-      # recent". Extraction may skip constructs from the unsupported version, but the scan runs.
-      CODEQL_EXTRACTOR_KOTLIN_ALLOW_UNSUPPORTED_VERSION: 'true'
     # Least-privilege for CodeQL: write scan results to the Security tab, read code and
-    # workflow-run metadata.
+    # workflow-run metadata. No other scopes are required for build-mode "none".
     permissions:
       security-events: write
       actions: read
@@ -39,66 +34,23 @@ jobs:
           # Scans the GitHub Actions workflow files themselves (e.g. missing permissions blocks).
           - language: actions
             build-mode: none
-          # Scans the Kotlin/Java SDK, sample, and app sources. Kotlin cannot be reliably
-          # extracted with build-mode "none", so we drive an explicit Gradle build that
-          # CodeQL traces (see the guarded "java-kotlin only" steps below).
-          - language: java-kotlin
-            build-mode: manual
           # Scans the Docusaurus config and any other JS/TS tooling (node_modules excluded).
           - language: javascript-typescript
             build-mode: none
+          # NOTE: java-kotlin is intentionally omitted. The project builds with Kotlin 2.4.10,
+          # which the CodeQL extractor does not support yet: build-mode "none" extracts no Kotlin,
+          # and a traced ("manual") build aborts with "Kotlin version 2.4.10 is too recent"
+          # (the ALLOW_UNSUPPORTED_VERSION opt-in does not stretch that far). Re-add the entry
+          # once CodeQL ships support for Kotlin 2.4.x — see gradle/libs.versions.toml.
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Set up JDK 17
-        if: matrix.language == 'java-kotlin'
-        uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-          cache: gradle
 
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:
           languages: ${{ matrix.language }}
           build-mode: ${{ matrix.build-mode }}
-
-      # --- java-kotlin only: the manual build CodeQL traces to extract the Kotlin/Java sources ---
-      - name: Create local.properties
-        if: matrix.language == 'java-kotlin'
-        working-directory: android
-        run: |
-          cat <<'EOF' > local.properties
-          MOMO_BASE_URL="https://sandbox.momodeveloper.mtn.com/"
-          MOMO_PROVIDER_CALLBACK_HOST="localhost"
-          MOMO_COLLECTION_PRIMARY_KEY="placeholder"
-          MOMO_COLLECTION_SECONDARY_KEY="placeholder"
-          MOMO_REMITTANCE_PRIMARY_KEY="placeholder"
-          MOMO_REMITTANCE_SECONDARY_KEY="placeholder"
-          MOMO_DISBURSEMENTS_PRIMARY_KEY="placeholder"
-          MOMO_DISBURSEMENTS_SECONDARY_KEY="placeholder"
-          MOMO_API_USER_ID="placeholder"
-          MOMO_ENVIRONMENT="sandbox"
-          MOMO_API_VERSION_V1="v1_0"
-          MOMO_API_VERSION_V2="v2_0"
-          EOF
-
-      - name: Create keystore.properties
-        if: matrix.language == 'java-kotlin'
-        run: touch keystore.properties
-        working-directory: android
-
-      - name: Grant execute permission for gradlew
-        if: matrix.language == 'java-kotlin'
-        run: chmod +x gradlew
-        working-directory: android
-
-      - name: Build for CodeQL
-        if: matrix.language == 'java-kotlin'
-        run: ./gradlew assembleDebug --no-daemon
-        working-directory: android
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
