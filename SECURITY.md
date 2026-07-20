@@ -10,16 +10,13 @@ what to expect after you report, and how to configure the SDK securely.
 
 ## Supported Versions
 
-The SDK is pre-1.0 and still evolving, so security fixes land on the **latest published
-minor line only**. Older lines do not receive back-ported patches — upgrade to the newest
-release to stay covered. When we reach 1.0 this table will move to the standard "current +
-previous minor" model.
+Security fixes land on the **latest published minor line**. Older minor lines do not
+receive back-ported patches — upgrade to the newest release to stay covered.
 
-| Version          | Supported          | Notes                                                  |
-|------------------|--------------------|--------------------------------------------------------|
-| `0.3.x`          | :white_check_mark: | Current release line — receives all security fixes     |
-| `0.3.x-SNAPSHOT` | :warning:          | Pre-release; fixes land here first, not for production |
-| `< 0.3`          | :x:                | Unsupported — please upgrade                           |
+| Version   | Supported          | Notes                                              |
+|-----------|--------------------|----------------------------------------------------|
+| `1.0.x`   | :white_check_mark: | Current release line — receives all security fixes |
+| `< 1.0`   | :x:                | Unsupported — please upgrade                       |
 
 Releases are published to Maven Central. Always pin an explicit, non-`SNAPSHOT` version in
 production builds and update promptly when a security release is announced.
