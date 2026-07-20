@@ -21,6 +21,11 @@ jobs:
   analyze:
     name: Analyze (${{ matrix.language }})
     runs-on: ubuntu-latest
+    env:
+      # The project builds with a Kotlin version newer than the CodeQL extractor officially
+      # supports. Without this opt-in the traced build aborts with "Kotlin version ... is too
+      # recent". Extraction may skip constructs from the unsupported version, but the scan runs.
+      CODEQL_EXTRACTOR_KOTLIN_ALLOW_UNSUPPORTED_VERSION: 'true'
     # Least-privilege for CodeQL: write scan results to the Security tab, read code and
     # workflow-run metadata.
     permissions:
