@@ -191,15 +191,32 @@ defaultRepository.someApi(...).collect { result ->
 
 The available API groups are:
 
-| Group              | Description                                                                              |
-|--------------------|------------------------------------------------------------------------------------------|
-| **Authentication** | Provision API user, API key, Bearer token, and OAuth2 token via the CIBA flow            |
-| **Collection**     | Request to Pay, Request to Withdraw, invoices, pre-approvals, and delivery notifications |
-| **Disbursements**  | Transfers, deposits, refunds, cash transfers, and delivery notifications                 |
-| **Remittance**     | Cross-border transfers and transfer status                                               |
-| **Account**        | Account balance, basic user info, user info with consent, and account holder validation  |
+| Group              | Description                                                                                        |
+|--------------------|----------------------------------------------------------------------------------------------------|
+| **Authentication** | Provision API user, API key, Bearer token, and OAuth2 token via the CIBA flow                      |
+| **Collection**     | Request to Pay, Request to Withdraw, payments, invoices, pre-approvals, and delivery notifications |
+| **Disbursements**  | Transfers, deposits, refunds, cash transfers, and delivery notifications                           |
+| **Remittance**     | Cross-border transfers and transfer status                                                         |
+| **Account**        | Account balance, basic user info, user info with consent, and account holder validation            |
 
 For full code examples and parameter descriptions for every API, see the [Library Usage](https://mtn-momo-sdk.rekast.io/Documentation/api-reference) section of the documentation.
+
+### Status responses
+
+Status queries deserialize the response into a typed model (collected as `Flow<NetworkResult<T>>`):
+
+- Each transaction status query returns its own typed model, all sharing a `status` field of type `StatusTypes` (`PENDING`, `SUCCESSFUL`, `FAILED`, …) and a `reason`/`errorReason` of type `ErrorResponse` (`code` + `message`):
+  - `requestToPayTransactionStatus` → `RequestToPayStatus`
+  - `requestToWithdrawTransactionStatus` → `RequestToWithdrawStatus`
+  - `getTransferStatus` → `TransferStatus`
+  - `getDepositStatus` → `DepositStatus`
+  - `getRefundStatus` → `RefundStatus`
+  - `getCashTransferStatus` → `CashTransferStatus`
+- `validateAccountHolderStatus` returns `AccountHolderStatus`.
+- `getApprovedPreApprovals` returns `ApprovedPreApprovals` (a `preApprovalDetails` list of `PreApprovalDetails`, with `status` a `StatusTypes` enum and `frequency` a `FrequencyTypes` enum).
+- `getPreApprovalStatus` returns `PreApprovalStatus`.
+- `getPaymentStatus` returns `PaymentStatus` (with a `StatusTypes` enum status).
+- `getInvoiceStatus` returns `InvoiceStatus` (with a `StatusTypes` enum status, plus reused `ErrorResponse` and `Party`).
 
 ## Sample App
 

@@ -7,6 +7,8 @@ sidebar_label: Authentication
 
 The authentication flow provisions all credentials needed before any product API can be called. Every step is exposed as a `Flow<NetworkResult<T>>` except where noted; collect the flow inside a coroutine scope and handle `Loading`, `Success`, and `Error` states.
 
+> **Environment is automatic.** You set the target environment once during SDK setup — `ApiConfig.environment`, which is sourced from `MOMO_ENVIRONMENT` in `local.properties`. The SDK's `EnvironmentInterceptor` adds the required `X-Target-Environment` header on every request (including the token-refresh bootstrap), so **environment is never a per-call parameter**.
+
 The recommended sequence is:
 
 1. [Check / Create API User](#1-check--create-api-user)
@@ -107,7 +109,7 @@ Exchanges the API key for a short-lived Bearer access token. Requires Basic Auth
 ```kotlin
 defaultRepository.getAccessToken(
     productSubscriptionKey = remittancePrimaryKey,
-    productType = ProductType.REMITTANCE.productType
+    productType = ProductTypes.REMITTANCE.productType
 ).collect { result ->
     when (result) {
         is NetworkResult.Success -> {
@@ -119,10 +121,10 @@ defaultRepository.getAccessToken(
 }
 ```
 
-| Parameter                | Type     | Description                                                    |
-|--------------------------|----------|----------------------------------------------------------------|
-| `productSubscriptionKey` | `String` | Remittance primary subscription key                            |
-| `productType`            | `String` | Product type string, e.g. `ProductType.REMITTANCE.productType` |
+| Parameter                | Type     | Description                                                     |
+|--------------------------|----------|-----------------------------------------------------------------|
+| `productSubscriptionKey` | `String` | Remittance primary subscription key                             |
+| `productType`            | `String` | Product type string, e.g. `ProductTypes.REMITTANCE.productType` |
 
 ---
 
@@ -140,11 +142,10 @@ val bcAuthorizeRequest = BcAuthorizeRequest(
 )
 
 defaultRepository.bcAuthorize(
-    productType = ProductType.REMITTANCE.productType,
+    productType = ProductTypes.REMITTANCE.productType,
     apiVersion = "v1_0",
     bcAuthorizeRequest = bcAuthorizeRequest,
-    productSubscriptionKey = remittancePrimaryKey,
-    environment = "sandbox"
+    productSubscriptionKey = remittancePrimaryKey
 ).collect { result ->
     when (result) {
         is NetworkResult.Success -> {
@@ -162,13 +163,12 @@ defaultRepository.bcAuthorize(
 }
 ```
 
-| Parameter                | Type                 | Description                                                    |
-|--------------------------|----------------------|----------------------------------------------------------------|
-| `productType`            | `String`             | Product type string, e.g. `ProductType.REMITTANCE.productType` |
-| `apiVersion`             | `String`             | API version, e.g. `"v1_0"`                                     |
-| `bcAuthorizeRequest`     | `BcAuthorizeRequest` | Login hint, scope, and access type                             |
-| `productSubscriptionKey` | `String`             | Remittance primary subscription key                            |
-| `environment`            | `String`             | Target environment: `"sandbox"` or `"production"`              |
+| Parameter                | Type                 | Description                                                     |
+|--------------------------|----------------------|-----------------------------------------------------------------|
+| `productType`            | `String`             | Product type string, e.g. `ProductTypes.REMITTANCE.productType` |
+| `apiVersion`             | `String`             | API version, e.g. `"v1_0"`                                      |
+| `bcAuthorizeRequest`     | `BcAuthorizeRequest` | Login hint, scope, and access type                              |
+| `productSubscriptionKey` | `String`             | Remittance primary subscription key                             |
 
 **`BcAuthorizeRequest` fields**
 
@@ -186,9 +186,8 @@ Exchanges the stored `auth_req_id` for an OAuth2 access token. Requires a valid 
 
 ```kotlin
 defaultRepository.getOauthAccessToken(
-    productType = ProductType.REMITTANCE.productType,
+    productType = ProductTypes.REMITTANCE.productType,
     productSubscriptionKey = remittancePrimaryKey,
-    environment = "sandbox",
     backChannelAuthorizationRequestId = storedAuthReqId
 ).collect { result ->
     when (result) {
@@ -205,5 +204,4 @@ defaultRepository.getOauthAccessToken(
 |-------------------------------------|----------|-------------------------------------------------------------|
 | `productType`                       | `String` | Product type string                                         |
 | `productSubscriptionKey`            | `String` | Remittance primary subscription key                         |
-| `environment`                       | `String` | Target environment: `"sandbox"` or `"production"`           |
 | `backChannelAuthorizationRequestId` | `String` | `auth_req_id` returned by `bcAuthorize` — must not be blank |

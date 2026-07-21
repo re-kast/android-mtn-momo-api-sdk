@@ -16,16 +16,32 @@
 package io.rekast.sdk.repository
 
 import io.rekast.sdk.model.AccountBalance
-import io.rekast.sdk.model.AccountHolder
-import io.rekast.sdk.model.BackChannelAuthorize
+import io.rekast.sdk.model.AccountHolderStatus
+import io.rekast.sdk.model.ApprovedPreApprovals
 import io.rekast.sdk.model.BasicUserInfo
 import io.rekast.sdk.model.BcAuthorizeRequest
+import io.rekast.sdk.model.BcAuthorizeResponse
 import io.rekast.sdk.model.CashTransfer
+import io.rekast.sdk.model.CashTransferStatus
+import io.rekast.sdk.model.Deposit
+import io.rekast.sdk.model.DepositStatus
 import io.rekast.sdk.model.Invoice
-import io.rekast.sdk.model.MomoNotification
-import io.rekast.sdk.model.MomoTransaction
+import io.rekast.sdk.model.InvoiceStatus
+import io.rekast.sdk.model.Notifications
+import io.rekast.sdk.model.Party
+import io.rekast.sdk.model.Payment
+import io.rekast.sdk.model.PaymentStatus
 import io.rekast.sdk.model.PreApproval
+import io.rekast.sdk.model.PreApprovalStatus
 import io.rekast.sdk.model.ProviderCallBackHost
+import io.rekast.sdk.model.Refund
+import io.rekast.sdk.model.RefundStatus
+import io.rekast.sdk.model.RequestToPay
+import io.rekast.sdk.model.RequestToPayStatus
+import io.rekast.sdk.model.RequestToWithdraw
+import io.rekast.sdk.model.RequestToWithdrawStatus
+import io.rekast.sdk.model.Transfer
+import io.rekast.sdk.model.TransferStatus
 import io.rekast.sdk.model.UserInfoWithConsent
 import io.rekast.sdk.model.authentication.AccessToken
 import io.rekast.sdk.model.authentication.ApiKey
@@ -127,19 +143,18 @@ class DefaultRepository @Inject constructor(private val defaultSource: DefaultSo
      *
      * @param productType The type of product for which to obtain the OAuth2 access token.
      * @param productSubscriptionKey The subscription key for the product.
-     * @param environment The target environment (e.g., sandbox or production).
      * @param backChannelAuthorizationRequestId The `auth_req_id` returned by a prior [bcAuthorize]
      *   call. Must not be blank.
      * @return A `Flow` emitting [NetworkResult.Error] immediately if [backChannelAuthorizationRequestId]
      *   is blank, otherwise emitting [NetworkResult.Loading] then a terminal [NetworkResult.Success]
      *   or [NetworkResult.Error] from the network call.
      */
-    fun getOauthAccessToken(productType: String, productSubscriptionKey: String, environment: String, backChannelAuthorizationRequestId: String): Flow<NetworkResult<Oauth2AccessToken>> {
+    fun getOauthAccessToken(productType: String, productSubscriptionKey: String, backChannelAuthorizationRequestId: String): Flow<NetworkResult<Oauth2AccessToken>> {
         if (backChannelAuthorizationRequestId.isBlank()) {
             return flow { emit(NetworkResult.Error("backChannelAuthorizationRequestId must not be blank — call bcAuthorize() first")) }
         }
         return executeApiCall {
-            defaultSource.getOauth2AccessToken(productType = productType, productSubscriptionKey = productSubscriptionKey, environment = environment, backChannelAuthorizationRequestId = backChannelAuthorizationRequestId)
+            defaultSource.getOauth2AccessToken(productType = productType, productSubscriptionKey = productSubscriptionKey, backChannelAuthorizationRequestId = backChannelAuthorizationRequestId)
         }
     }
 
@@ -150,11 +165,10 @@ class DefaultRepository @Inject constructor(private val defaultSource: DefaultSo
      * @param apiVersion The version of the API to use.
      * @param accountHolder The MSISDN or other identifier for the account holder.
      * @param productSubscriptionKey The subscription key for the product.
-     * @param environment The target environment (e.g., sandbox or production).
      * @return A `Flow` emitting a [NetworkResult] containing the [BasicUserInfo] of the specified user.
      */
-    fun getBasicUserInfo(productType: String, apiVersion: String, accountHolder: String, productSubscriptionKey: String, environment: String): Flow<NetworkResult<BasicUserInfo>> = executeApiCall {
-        defaultSource.getBasicUserInfo(productType = productType, apiVersion = apiVersion, accountHolder = accountHolder, productSubscriptionKey = productSubscriptionKey, environment = environment)
+    fun getBasicUserInfo(productType: String, apiVersion: String, accountHolder: String, productSubscriptionKey: String): Flow<NetworkResult<BasicUserInfo>> = executeApiCall {
+        defaultSource.getBasicUserInfo(productType = productType, apiVersion = apiVersion, accountHolder = accountHolder, productSubscriptionKey = productSubscriptionKey)
     }
 
     /**
@@ -163,11 +177,10 @@ class DefaultRepository @Inject constructor(private val defaultSource: DefaultSo
      * @param productType The type of product for which to retrieve the user information.
      * @param apiVersion The version of the API to use.
      * @param productSubscriptionKey The subscription key for the product.
-     * @param environment The target environment (e.g., sandbox or production).
      * @return A `Flow` emitting a [NetworkResult] containing the [UserInfoWithConsent] of the user.
      */
-    fun getUserInfoWithConsent(productType: String, apiVersion: String, productSubscriptionKey: String, environment: String): Flow<NetworkResult<UserInfoWithConsent>> = executeApiCall {
-        defaultSource.getUserInfoWithConsent(productType = productType, apiVersion = apiVersion, productSubscriptionKey = productSubscriptionKey, environment = environment)
+    fun getUserInfoWithConsent(productType: String, apiVersion: String, productSubscriptionKey: String): Flow<NetworkResult<UserInfoWithConsent>> = executeApiCall {
+        defaultSource.getUserInfoWithConsent(productType = productType, apiVersion = apiVersion, productSubscriptionKey = productSubscriptionKey)
     }
 
     /**
@@ -175,39 +188,36 @@ class DefaultRepository @Inject constructor(private val defaultSource: DefaultSo
      *
      * @param productType The type of product for which to validate the account holder.
      * @param apiVersion The version of the API to use.
-     * @param accountHolder The account holder details (ID and type) to validate.
+     * @param party The account holder details (ID and type) to validate.
      * @param productSubscriptionKey The subscription key for the product.
-     * @param environment The target environment (e.g., sandbox or production).
-     * @return A `Flow` emitting a [NetworkResult] with the raw validation result as a `ResponseBody`.
+     * @return A `Flow` emitting a [NetworkResult] whose body is the parsed [AccountHolderStatus] (`{"result": <bool>}`).
      */
-    fun validateAccountHolderStatus(productType: String, apiVersion: String, accountHolder: AccountHolder, productSubscriptionKey: String, environment: String): Flow<NetworkResult<ResponseBody>> = executeApiCall {
-        defaultSource.validateAccountHolderStatus(productType, apiVersion = apiVersion, accountHolder = accountHolder, productSubscriptionKey = productSubscriptionKey, environment = environment)
+    fun validateAccountHolderStatus(productType: String, apiVersion: String, party: Party, productSubscriptionKey: String): Flow<NetworkResult<AccountHolderStatus>> = executeApiCall {
+        defaultSource.validateAccountHolderStatus(productType, apiVersion = apiVersion, party = party, productSubscriptionKey = productSubscriptionKey)
     }
 
     /**
      * Retrieves the account balance, optionally filtered by currency.
      *
-     * Currently only works reliably with [io.rekast.sdk.utils.ProductType.COLLECTION].
+     * Currently only works reliably with [io.rekast.sdk.utils.ProductTypes.COLLECTION].
      * Use EUR as the currency value when testing on the sandbox environment.
      *
      * @param productType The type of product for which to get the account balance.
      * @param apiVersion The version of the API to use.
      * @param currency An optional ISO currency code; when provided, the balance is returned for that currency only.
      * @param productSubscriptionKey The subscription key for the product.
-     * @param environment The target environment (e.g., sandbox or production).
      * @return A `Flow` emitting a [NetworkResult] containing the [AccountBalance].
      */
-    fun getAccountBalance(productType: String, apiVersion: String, currency: String?, productSubscriptionKey: String, environment: String): Flow<NetworkResult<AccountBalance>> = executeApiCall {
+    fun getAccountBalance(productType: String, apiVersion: String, currency: String?, productSubscriptionKey: String): Flow<NetworkResult<AccountBalance>> = executeApiCall {
         if (!currency.isNullOrBlank()) {
             defaultSource.getAccountBalanceInSpecificCurrency(
                 productType = productType,
                 apiVersion = apiVersion,
                 currency = currency,
-                productSubscriptionKey = productSubscriptionKey,
-                environment = environment
+                productSubscriptionKey = productSubscriptionKey
             )
         } else {
-            defaultSource.getAccountBalance(productType = productType, apiVersion = apiVersion, productSubscriptionKey = productSubscriptionKey, environment = environment)
+            defaultSource.getAccountBalance(productType = productType, apiVersion = apiVersion, productSubscriptionKey = productSubscriptionKey)
         }
     }
 
@@ -216,14 +226,13 @@ class DefaultRepository @Inject constructor(private val defaultSource: DefaultSo
      *
      * @param productType The type of product for the transfer.
      * @param apiVersion The version of the API to use.
-     * @param momoTransaction The transaction details including amount, currency, and party information.
+     * @param transfer The transfer details including amount, currency, and party information.
      * @param uuid A UUID V4 used as the X-Reference-Id to uniquely identify this request.
      * @param productSubscriptionKey The subscription key for the product.
-     * @param environment The target environment (e.g., sandbox or production).
      * @return A `Flow` emitting a [NetworkResult] with an empty [Unit] body on success.
      */
-    fun transfer(productType: String, apiVersion: String, momoTransaction: MomoTransaction, uuid: String, productSubscriptionKey: String, environment: String): Flow<NetworkResult<Unit>> = executeApiCall {
-        defaultSource.transfer(productType = productType, apiVersion = apiVersion, momoTransaction = momoTransaction, uuid = uuid, productSubscriptionKey = productSubscriptionKey, environment = environment)
+    fun transfer(productType: String, apiVersion: String, transfer: Transfer, uuid: String, productSubscriptionKey: String): Flow<NetworkResult<Unit>> = executeApiCall {
+        defaultSource.transfer(productType = productType, apiVersion = apiVersion, transfer = transfer, uuid = uuid, productSubscriptionKey = productSubscriptionKey)
     }
 
     /**
@@ -233,11 +242,10 @@ class DefaultRepository @Inject constructor(private val defaultSource: DefaultSo
      * @param apiVersion The version of the API to use.
      * @param referenceId The UUID V4 reference ID used when calling [transfer].
      * @param productSubscriptionKey The subscription key for the product.
-     * @param environment The target environment (e.g., sandbox or production).
-     * @return A `Flow` emitting a [NetworkResult] with the transfer status as a `ResponseBody`.
+     * @return A `Flow` emitting a [NetworkResult] whose body is the parsed [TransferStatus].
      */
-    fun getTransferStatus(productType: String, apiVersion: String, referenceId: String, productSubscriptionKey: String, environment: String): Flow<NetworkResult<ResponseBody>> = executeApiCall {
-        defaultSource.getTransferStatus(productType = productType, apiVersion = apiVersion, referenceId = referenceId, productSubscriptionKey = productSubscriptionKey, environment = environment)
+    fun getTransferStatus(productType: String, apiVersion: String, referenceId: String, productSubscriptionKey: String): Flow<NetworkResult<TransferStatus>> = executeApiCall {
+        defaultSource.getTransferStatus(productType = productType, apiVersion = apiVersion, referenceId = referenceId, productSubscriptionKey = productSubscriptionKey)
     }
 
     /**
@@ -246,40 +254,31 @@ class DefaultRepository @Inject constructor(private val defaultSource: DefaultSo
      * @param productType The type of product for the notification.
      * @param apiVersion The version of the API to use.
      * @param referenceId The UUID V4 reference ID of the original request-to-pay transaction.
-     * @param momoNotification The notification payload containing the message to deliver.
+     * @param notifications The notification payload containing the message to deliver.
      * @param productSubscriptionKey The subscription key for the product.
-     * @param environment The target environment (e.g., sandbox or production).
      * @return A `Flow` emitting a [NetworkResult] with the raw result as a `ResponseBody`.
      */
-    fun requestToPayDeliveryNotification(
-        productType: String,
-        apiVersion: String,
-        referenceId: String,
-        momoNotification: MomoNotification,
-        productSubscriptionKey: String,
-        environment: String
-    ): Flow<NetworkResult<ResponseBody>> = executeApiCall {
+    fun requestToPayDeliveryNotification(productType: String, apiVersion: String, referenceId: String, notifications: Notifications, productSubscriptionKey: String): Flow<NetworkResult<ResponseBody>> = executeApiCall {
         defaultSource.requestToPayDeliveryNotification(
             productType = productType,
             apiVersion = apiVersion,
             referenceId = referenceId,
-            momoNotification = momoNotification,
-            productSubscriptionKey = productSubscriptionKey,
-            environment = environment
+            notifications = notifications,
+            productSubscriptionKey = productSubscriptionKey
         )
     }
 
     /**
      * Initiates a request-to-pay via the Collection service, prompting the payer to approve a debit.
      *
-     * @param momoTransaction The transaction payload containing amount, currency, and party details.
+     * @param requestToPay The request-to-pay payload containing amount, currency, and party details.
      * @param apiVersion The API version to target (e.g., v1_0 or v2_0).
      * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Collection product.
      * @param uuid A UUID V4 used as the X-Reference-Id to uniquely identify this request.
      * @return A `Flow` emitting a [NetworkResult] with an empty [Unit] body on success (HTTP 202).
      */
-    fun requestToPay(momoTransaction: MomoTransaction, apiVersion: String, productSubscriptionKey: String, uuid: String): Flow<NetworkResult<Unit>> = executeApiCall {
-        collection.requestToPay(momoTransaction, apiVersion, productSubscriptionKey, config.environment, uuid)
+    fun requestToPay(requestToPay: RequestToPay, apiVersion: String, productSubscriptionKey: String, uuid: String): Flow<NetworkResult<Unit>> = executeApiCall {
+        collection.requestToPay(requestToPay, apiVersion, productSubscriptionKey, uuid)
     }
 
     /**
@@ -288,23 +287,23 @@ class DefaultRepository @Inject constructor(private val defaultSource: DefaultSo
      * @param referenceId The UUID V4 reference ID used when calling [requestToPay].
      * @param apiVersion The API version to target (e.g., v1_0 or v2_0).
      * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Collection product.
-     * @return A `Flow` emitting a [NetworkResult] whose body contains the transaction status as a `ResponseBody`.
+     * @return A `Flow` emitting a [NetworkResult] whose body is the parsed [RequestToPayStatus].
      */
-    fun requestToPayTransactionStatus(referenceId: String, apiVersion: String, productSubscriptionKey: String): Flow<NetworkResult<ResponseBody>> = executeApiCall {
-        collection.requestToPayTransactionStatus(referenceId, apiVersion, productSubscriptionKey, config.environment)
+    fun requestToPayTransactionStatus(referenceId: String, apiVersion: String, productSubscriptionKey: String): Flow<NetworkResult<RequestToPayStatus>> = executeApiCall {
+        collection.requestToPayTransactionStatus(referenceId, apiVersion, productSubscriptionKey)
     }
 
     /**
      * Initiates a request-to-withdraw via the Collection service, prompting the payer to approve a debit.
      *
-     * @param momoTransaction The transaction payload containing amount, currency, and party details.
+     * @param requestToWithdraw The request-to-withdraw payload containing amount, currency, and party details.
      * @param apiVersion The API version to target (e.g., v1_0 or v2_0).
      * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Collection product.
      * @param uuid A UUID V4 used as the X-Reference-Id to uniquely identify this request.
      * @return A `Flow` emitting a [NetworkResult] with an empty [Unit] body on success (HTTP 202).
      */
-    fun requestToWithdraw(momoTransaction: MomoTransaction, apiVersion: String, productSubscriptionKey: String, uuid: String): Flow<NetworkResult<Unit>> = executeApiCall {
-        collection.requestToWithdraw(momoTransaction, apiVersion, productSubscriptionKey, config.environment, uuid)
+    fun requestToWithdraw(requestToWithdraw: RequestToWithdraw, apiVersion: String, productSubscriptionKey: String, uuid: String): Flow<NetworkResult<Unit>> = executeApiCall {
+        collection.requestToWithdraw(requestToWithdraw, apiVersion, productSubscriptionKey, uuid)
     }
 
     /**
@@ -313,23 +312,23 @@ class DefaultRepository @Inject constructor(private val defaultSource: DefaultSo
      * @param referenceId The UUID V4 reference ID used when calling [requestToWithdraw].
      * @param apiVersion The API version to target (e.g., v1_0 or v2_0).
      * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Collection product.
-     * @return A `Flow` emitting a [NetworkResult] whose body contains the withdrawal status as a `ResponseBody`.
+     * @return A `Flow` emitting a [NetworkResult] whose body is the parsed [RequestToWithdrawStatus].
      */
-    fun requestToWithdrawTransactionStatus(referenceId: String, apiVersion: String, productSubscriptionKey: String): Flow<NetworkResult<ResponseBody>> = executeApiCall {
-        collection.requestToWithdrawTransactionStatus(referenceId, apiVersion, productSubscriptionKey, config.environment)
+    fun requestToWithdrawTransactionStatus(referenceId: String, apiVersion: String, productSubscriptionKey: String): Flow<NetworkResult<RequestToWithdrawStatus>> = executeApiCall {
+        collection.requestToWithdrawTransactionStatus(referenceId, apiVersion, productSubscriptionKey)
     }
 
     /**
      * Initiates a deposit via the Disbursements service, sending funds to the payee.
      *
-     * @param momoTransaction The transaction payload containing amount, currency, and payee details.
+     * @param deposit The deposit payload containing amount, currency, and payee details.
      * @param apiVersion The API version to target (e.g., v1_0 or v2_0).
      * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Disbursements product.
      * @param uuid A UUID V4 used as the X-Reference-Id to uniquely identify this request.
      * @return A `Flow` emitting a [NetworkResult] with an empty [Unit] body on success (HTTP 202).
      */
-    fun deposit(momoTransaction: MomoTransaction, apiVersion: String, productSubscriptionKey: String, uuid: String): Flow<NetworkResult<Unit>> = executeApiCall {
-        disbursementsService.deposit(momoTransaction, apiVersion, productSubscriptionKey, config.environment, uuid)
+    fun deposit(deposit: Deposit, apiVersion: String, productSubscriptionKey: String, uuid: String): Flow<NetworkResult<Unit>> = executeApiCall {
+        disbursementsService.deposit(deposit, apiVersion, productSubscriptionKey, uuid)
     }
 
     /**
@@ -338,23 +337,23 @@ class DefaultRepository @Inject constructor(private val defaultSource: DefaultSo
      * @param referenceId The UUID V4 reference ID used when calling [deposit].
      * @param apiVersion The API version to target (e.g., v1_0 or v2_0).
      * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Disbursements product.
-     * @return A `Flow` emitting a [NetworkResult] whose body contains the deposit status as a `ResponseBody`.
+     * @return A `Flow` emitting a [NetworkResult] whose body is the parsed [DepositStatus].
      */
-    fun getDepositStatus(referenceId: String, apiVersion: String, productSubscriptionKey: String): Flow<NetworkResult<ResponseBody>> = executeApiCall {
-        disbursementsService.getDepositStatus(referenceId, apiVersion, productSubscriptionKey, config.environment)
+    fun getDepositStatus(referenceId: String, apiVersion: String, productSubscriptionKey: String): Flow<NetworkResult<DepositStatus>> = executeApiCall {
+        disbursementsService.getDepositStatus(referenceId, apiVersion, productSubscriptionKey)
     }
 
     /**
      * Initiates a refund via the Disbursements service, reversing a previous transaction.
      *
-     * @param momoTransaction The transaction payload; set [MomoTransaction.referenceIdToRefund] to the original transaction ID.
+     * @param refund The refund payload; set [Refund.referenceIdToRefund] to the original transaction ID.
      * @param apiVersion The API version to target (e.g., v1_0 or v2_0).
      * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Disbursements product.
      * @param uuid A UUID V4 used as the X-Reference-Id to uniquely identify this request.
      * @return A `Flow` emitting a [NetworkResult] with an empty [Unit] body on success (HTTP 202).
      */
-    fun refund(momoTransaction: MomoTransaction, apiVersion: String, productSubscriptionKey: String, uuid: String): Flow<NetworkResult<Unit>> = executeApiCall {
-        disbursementsService.refund(momoTransaction, apiVersion, productSubscriptionKey, config.environment, uuid)
+    fun refund(refund: Refund, apiVersion: String, productSubscriptionKey: String, uuid: String): Flow<NetworkResult<Unit>> = executeApiCall {
+        disbursementsService.refund(refund, apiVersion, productSubscriptionKey, uuid)
     }
 
     /**
@@ -363,10 +362,10 @@ class DefaultRepository @Inject constructor(private val defaultSource: DefaultSo
      * @param referenceId The UUID V4 reference ID used when calling [refund].
      * @param apiVersion The API version to target (e.g., v1_0 or v2_0).
      * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Disbursements product.
-     * @return A `Flow` emitting a [NetworkResult] whose body contains the refund status as a `ResponseBody`.
+     * @return A `Flow` emitting a [NetworkResult] whose body is the parsed [RefundStatus].
      */
-    fun getRefundStatus(referenceId: String, apiVersion: String, productSubscriptionKey: String): Flow<NetworkResult<ResponseBody>> = executeApiCall {
-        disbursementsService.getRefundStatus(referenceId, apiVersion, productSubscriptionKey, config.environment)
+    fun getRefundStatus(referenceId: String, apiVersion: String, productSubscriptionKey: String): Flow<NetworkResult<RefundStatus>> = executeApiCall {
+        disbursementsService.getRefundStatus(referenceId, apiVersion, productSubscriptionKey)
     }
 
     /**
@@ -376,16 +375,14 @@ class DefaultRepository @Inject constructor(private val defaultSource: DefaultSo
      * @param apiVersion The version of the API (e.g., v1_0).
      * @param bcAuthorizeRequest The authorization request parameters.
      * @param productSubscriptionKey The subscription key for the product.
-     * @param environment The target environment (e.g., sandbox or production).
-     * @return A `Flow` emitting a [NetworkResult] containing the [BackChannelAuthorize] with the authorization request details.
+     * @return A `Flow` emitting a [NetworkResult] containing the [BcAuthorizeResponse] with the authorization request details.
      */
-    fun bcAuthorize(productType: String, apiVersion: String, bcAuthorizeRequest: BcAuthorizeRequest, productSubscriptionKey: String, environment: String): Flow<NetworkResult<BackChannelAuthorize>> = executeApiCall {
+    fun bcAuthorize(productType: String, apiVersion: String, bcAuthorizeRequest: BcAuthorizeRequest, productSubscriptionKey: String): Flow<NetworkResult<BcAuthorizeResponse>> = executeApiCall {
         defaultSource.bcAuthorize(
             productType = productType,
             apiVersion = apiVersion,
             bcAuthorizeRequest = bcAuthorizeRequest,
-            productSubscriptionKey = productSubscriptionKey,
-            environment = environment
+            productSubscriptionKey = productSubscriptionKey
         )
     }
 
@@ -399,16 +396,49 @@ class DefaultRepository @Inject constructor(private val defaultSource: DefaultSo
      * @param invoice The invoice payload containing amount, currency, and optional payer details.
      * @param uuid A UUID V4 used as the X-Reference-Id; reuse this same ID when calling [getInvoiceStatus].
      * @param productSubscriptionKey The subscription key for the Collection product.
-     * @param environment The target environment (e.g., sandbox or production).
      * @return A `Flow` emitting a [NetworkResult] with an empty [Unit] body on success (HTTP 202).
      */
-    fun createInvoice(apiVersion: String, invoice: Invoice, uuid: String, productSubscriptionKey: String, environment: String): Flow<NetworkResult<Unit>> = executeApiCall {
+    fun createInvoice(apiVersion: String, invoice: Invoice, uuid: String, productSubscriptionKey: String): Flow<NetworkResult<Unit>> = executeApiCall {
         defaultSource.createInvoice(
             invoice = invoice,
             apiVersion = apiVersion,
             productSubscriptionKey = productSubscriptionKey,
-            environment = environment,
             uuid = uuid
+        )
+    }
+
+    /**
+     * Creates a Collection payment (V2). Poll [getPaymentStatus] with the same [uuid] as the
+     * reference ID to check the outcome.
+     *
+     * @param apiVersion The API version to target; use `v2_0` for this endpoint.
+     * @param payment The payment payload (amount/currency, references, notes, and options).
+     * @param uuid A UUID V4 used as the X-Reference-Id; reuse this same ID when calling [getPaymentStatus].
+     * @param productSubscriptionKey The subscription key for the Collection product.
+     * @return A `Flow` emitting a [NetworkResult] with an empty [Unit] body on success (HTTP 202).
+     */
+    fun createPayment(apiVersion: String, payment: Payment, uuid: String, productSubscriptionKey: String): Flow<NetworkResult<Unit>> = executeApiCall {
+        defaultSource.createPayment(
+            payment = payment,
+            apiVersion = apiVersion,
+            productSubscriptionKey = productSubscriptionKey,
+            uuid = uuid
+        )
+    }
+
+    /**
+     * Retrieves the current status of a previously created Collection payment.
+     *
+     * @param apiVersion The API version to target; use `v2_0` for this endpoint.
+     * @param referenceId The UUID V4 reference ID used when calling [createPayment].
+     * @param productSubscriptionKey The subscription key for the Collection product.
+     * @return A `Flow` emitting a [NetworkResult] whose body is the parsed [PaymentStatus].
+     */
+    fun getPaymentStatus(apiVersion: String, referenceId: String, productSubscriptionKey: String): Flow<NetworkResult<PaymentStatus>> = executeApiCall {
+        defaultSource.getPaymentStatus(
+            referenceId = referenceId,
+            apiVersion = apiVersion,
+            productSubscriptionKey = productSubscriptionKey
         )
     }
 
@@ -418,33 +448,36 @@ class DefaultRepository @Inject constructor(private val defaultSource: DefaultSo
      * @param apiVersion The version of the API to use.
      * @param referenceId The UUID V4 reference ID used when calling [createInvoice].
      * @param productSubscriptionKey The subscription key for the Collection product.
-     * @param environment The target environment (e.g., sandbox or production).
      * @return A `Flow` emitting a [NetworkResult] whose body contains the invoice status as a `ResponseBody`.
      */
-    fun getInvoiceStatus(apiVersion: String, referenceId: String, productSubscriptionKey: String, environment: String): Flow<NetworkResult<ResponseBody>> = executeApiCall {
+    fun getInvoiceStatus(apiVersion: String, referenceId: String, productSubscriptionKey: String): Flow<NetworkResult<InvoiceStatus>> = executeApiCall {
         defaultSource.getInvoiceStatus(
             referenceId = referenceId,
             apiVersion = apiVersion,
-            productSubscriptionKey = productSubscriptionKey,
-            environment = environment
+            productSubscriptionKey = productSubscriptionKey
         )
     }
 
     /**
      * Cancels a pending Collection invoice before it is paid or expires.
      *
+     * The invoice being cancelled is identified by [externalId] in the request body.
+     *
      * @param apiVersion The version of the API to use.
-     * @param referenceId The UUID V4 reference ID used when calling [createInvoice].
+     * @param referenceId Per MTN: the UUID of the transaction used to get the result — uniquely identifies this invoice cancellation (URL path).
+     * @param externalId The `externalId` sent when the invoice was created, echoed in the cancellation body.
+     * @param uuid The `X-Reference-Id` header. Per MTN: the UUID V4 resource ID of the transaction, used
+     *   e.g. for validating the status of the request.
      * @param productSubscriptionKey The subscription key for the Collection product.
-     * @param environment The target environment (e.g., sandbox or production).
      * @return A `Flow` emitting a [NetworkResult] with an empty [Unit] body on success.
      */
-    fun cancelInvoice(apiVersion: String, referenceId: String, productSubscriptionKey: String, environment: String): Flow<NetworkResult<Unit>> = executeApiCall {
+    fun cancelInvoice(apiVersion: String, referenceId: String, externalId: String, uuid: String, productSubscriptionKey: String): Flow<NetworkResult<Unit>> = executeApiCall {
         defaultSource.cancelInvoice(
             referenceId = referenceId,
             apiVersion = apiVersion,
-            productSubscriptionKey = productSubscriptionKey,
-            environment = environment
+            externalId = externalId,
+            uuid = uuid,
+            productSubscriptionKey = productSubscriptionKey
         )
     }
 
@@ -456,15 +489,13 @@ class DefaultRepository @Inject constructor(private val defaultSource: DefaultSo
      * @param preApproval The pre-approval payload containing the payer, currency, and validity duration.
      * @param uuid A UUID V4 used as the X-Reference-Id; reuse this same ID when calling [getPreApprovalStatus].
      * @param productSubscriptionKey The subscription key for the Collection product.
-     * @param environment The target environment (e.g., sandbox or production).
      * @return A `Flow` emitting a [NetworkResult] with an empty [Unit] body on success (HTTP 202).
      */
-    fun createPreApproval(apiVersion: String, preApproval: PreApproval, uuid: String, productSubscriptionKey: String, environment: String): Flow<NetworkResult<Unit>> = executeApiCall {
+    fun createPreApproval(apiVersion: String, preApproval: PreApproval, uuid: String, productSubscriptionKey: String): Flow<NetworkResult<Unit>> = executeApiCall {
         defaultSource.createPreApproval(
             preApproval = preApproval,
             apiVersion = apiVersion,
             productSubscriptionKey = productSubscriptionKey,
-            environment = environment,
             uuid = uuid
         )
     }
@@ -475,15 +506,13 @@ class DefaultRepository @Inject constructor(private val defaultSource: DefaultSo
      * @param apiVersion The version of the API to use.
      * @param referenceId The UUID V4 reference ID used when calling [createPreApproval].
      * @param productSubscriptionKey The subscription key for the Collection product.
-     * @param environment The target environment (e.g., sandbox or production).
-     * @return A `Flow` emitting a [NetworkResult] whose body contains the pre-approval status as a `ResponseBody`.
+     * @return A `Flow` emitting a [NetworkResult] whose body is the parsed [PreApprovalStatus].
      */
-    fun getPreApprovalStatus(apiVersion: String, referenceId: String, productSubscriptionKey: String, environment: String): Flow<NetworkResult<ResponseBody>> = executeApiCall {
+    fun getPreApprovalStatus(apiVersion: String, referenceId: String, productSubscriptionKey: String): Flow<NetworkResult<PreApprovalStatus>> = executeApiCall {
         defaultSource.getPreApprovalStatus(
             referenceId = referenceId,
             apiVersion = apiVersion,
-            productSubscriptionKey = productSubscriptionKey,
-            environment = environment
+            productSubscriptionKey = productSubscriptionKey
         )
     }
 
@@ -498,15 +527,13 @@ class DefaultRepository @Inject constructor(private val defaultSource: DefaultSo
      * @param cashTransfer The cash transfer payload including recipient, amounts, and optional KYC fields.
      * @param uuid A UUID V4 used as the X-Reference-Id; reuse this same ID when calling [getCashTransferStatus].
      * @param productSubscriptionKey The subscription key for the Remittance product.
-     * @param environment The target environment (e.g., sandbox or production).
      * @return A `Flow` emitting a [NetworkResult] with an empty [Unit] body on success (HTTP 202).
      */
-    fun cashTransfer(apiVersion: String, cashTransfer: CashTransfer, uuid: String, productSubscriptionKey: String, environment: String): Flow<NetworkResult<Unit>> = executeApiCall {
+    fun cashTransfer(apiVersion: String, cashTransfer: CashTransfer, uuid: String, productSubscriptionKey: String): Flow<NetworkResult<Unit>> = executeApiCall {
         defaultSource.cashTransfer(
             cashTransfer = cashTransfer,
             apiVersion = apiVersion,
             productSubscriptionKey = productSubscriptionKey,
-            environment = environment,
             uuid = uuid
         )
     }
@@ -517,15 +544,13 @@ class DefaultRepository @Inject constructor(private val defaultSource: DefaultSo
      * @param apiVersion The API version to target; use `v2_0` for this endpoint.
      * @param referenceId The UUID V4 reference ID used when calling [cashTransfer].
      * @param productSubscriptionKey The subscription key for the Remittance product.
-     * @param environment The target environment (e.g., sandbox or production).
-     * @return A `Flow` emitting a [NetworkResult] whose body contains the cash transfer status as a `ResponseBody`.
+     * @return A `Flow` emitting a [NetworkResult] whose body is the parsed [CashTransferStatus].
      */
-    fun getCashTransferStatus(apiVersion: String, referenceId: String, productSubscriptionKey: String, environment: String): Flow<NetworkResult<ResponseBody>> = executeApiCall {
+    fun getCashTransferStatus(apiVersion: String, referenceId: String, productSubscriptionKey: String): Flow<NetworkResult<CashTransferStatus>> = executeApiCall {
         defaultSource.getCashTransferStatus(
             referenceId = referenceId,
             apiVersion = apiVersion,
-            productSubscriptionKey = productSubscriptionKey,
-            environment = environment
+            productSubscriptionKey = productSubscriptionKey
         )
     }
 
@@ -536,15 +561,13 @@ class DefaultRepository @Inject constructor(private val defaultSource: DefaultSo
      * @param apiVersion The version of the API to use.
      * @param referenceId The UUID V4 reference ID used when calling [createPreApproval].
      * @param productSubscriptionKey The subscription key for the Collection product.
-     * @param environment The target environment (e.g., sandbox or production).
      * @return A `Flow` emitting a [NetworkResult] with an empty [Unit] body on success.
      */
-    fun cancelPreApproval(apiVersion: String, referenceId: String, productSubscriptionKey: String, environment: String): Flow<NetworkResult<Unit>> = executeApiCall {
+    fun cancelPreApproval(apiVersion: String, referenceId: String, productSubscriptionKey: String): Flow<NetworkResult<Unit>> = executeApiCall {
         defaultSource.cancelPreApproval(
             referenceId = referenceId,
             apiVersion = apiVersion,
-            productSubscriptionKey = productSubscriptionKey,
-            environment = environment
+            productSubscriptionKey = productSubscriptionKey
         )
     }
 
@@ -555,37 +578,15 @@ class DefaultRepository @Inject constructor(private val defaultSource: DefaultSo
      * @param accountHolderIdType The type of the account holder identifier (e.g., MSISDN).
      * @param accountHolderId The account holder identifier of the payer whose pre-approvals to list.
      * @param productSubscriptionKey The subscription key for the Collection product.
-     * @param environment The target environment (e.g., sandbox or production).
-     * @return A `Flow` emitting a [NetworkResult] whose body contains the approved pre-approvals as a `ResponseBody`.
+     * @return A `Flow` emitting a [NetworkResult] whose body is the parsed [ApprovedPreApprovals]
+     *   (a `preApprovalDetails` list of [io.rekast.sdk.model.PreApprovalDetails]).
      */
-    fun getApprovedPreApprovals(apiVersion: String, accountHolderIdType: String, accountHolderId: String, productSubscriptionKey: String, environment: String): Flow<NetworkResult<ResponseBody>> = executeApiCall {
+    fun getApprovedPreApprovals(apiVersion: String, accountHolderIdType: String, accountHolderId: String, productSubscriptionKey: String): Flow<NetworkResult<ApprovedPreApprovals>> = executeApiCall {
         defaultSource.getApprovedPreApprovals(
             accountHolderIdType = accountHolderIdType,
             accountHolderId = accountHolderId,
             apiVersion = apiVersion,
-            productSubscriptionKey = productSubscriptionKey,
-            environment = environment
+            productSubscriptionKey = productSubscriptionKey
         )
     }
-
-    /**
-     * Sends a delivery notification to the payer for an existing request-to-withdraw transaction.
-     *
-     * @param apiVersion The version of the API to use.
-     * @param referenceId The UUID V4 reference ID of the original request-to-withdraw transaction.
-     * @param momoNotification The notification payload containing the message to deliver.
-     * @param productSubscriptionKey The subscription key for the Collection product.
-     * @param environment The target environment (e.g., sandbox or production).
-     * @return A `Flow` emitting a [NetworkResult] with the raw result as a `ResponseBody`.
-     */
-    fun requestToWithdrawDeliveryNotification(apiVersion: String, referenceId: String, momoNotification: MomoNotification, productSubscriptionKey: String, environment: String): Flow<NetworkResult<ResponseBody>> =
-        executeApiCall {
-            defaultSource.requestToWithdrawDeliveryNotification(
-                apiVersion = apiVersion,
-                referenceId = referenceId,
-                momoNotification = momoNotification,
-                productSubscriptionKey = productSubscriptionKey,
-                environment = environment
-            )
-        }
 }

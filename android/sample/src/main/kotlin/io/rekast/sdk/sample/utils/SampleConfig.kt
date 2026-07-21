@@ -32,6 +32,8 @@ package io.rekast.sdk.sample.utils
  * @property remittanceSecondaryKey Secondary subscription key for the Remittance product.
  * @property disbursementsPrimaryKey Primary subscription key for the Disbursements product.
  * @property disbursementsSecondaryKey Secondary subscription key for the Disbursements product.
+ * @property callbackBaseUrl Base URL for transaction callbacks; each initiation operation's path
+ *   segment is appended to it to form the `X-Callback-Url`. Empty disables callbacks (the default).
  */
 data class SampleConfig(
     val apiVersionV1: String,
@@ -44,5 +46,6 @@ data class SampleConfig(
     val remittancePrimaryKey: String,
     val remittanceSecondaryKey: String,
     val disbursementsPrimaryKey: String,
-    val disbursementsSecondaryKey: String
+    val disbursementsSecondaryKey: String,
+    val callbackBaseUrl: String = ""
 )

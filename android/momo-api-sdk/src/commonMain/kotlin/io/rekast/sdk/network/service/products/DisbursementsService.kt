@@ -15,9 +15,11 @@
  */
 package io.rekast.sdk.network.service.products
 
-import io.rekast.sdk.model.MomoTransaction
+import io.rekast.sdk.model.Deposit
+import io.rekast.sdk.model.DepositStatus
+import io.rekast.sdk.model.Refund
+import io.rekast.sdk.model.RefundStatus
 import io.rekast.sdk.utils.Constants
-import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -34,19 +36,34 @@ sealed interface DisbursementsService : CommonService {
     /**
      * Initiates a deposit, pushing funds to the specified payee account.
      *
-     * @param momoTransaction The transaction payload containing amount, currency, and party details.
+     * @param deposit The deposit payload containing amount, currency, and party details.
      * @param apiVersion The API version to target (e.g., v1_0 or v2_0).
      * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Disbursements product.
-     * @param environment The target environment (e.g., sandbox or production).
      * @param uuid A UUID V4 used as the X-Reference-Id to uniquely identify this request.
      * @return A `Response` with an empty body; HTTP 202 indicates the request was accepted.
      */
     @POST(Constants.EndPoints.DEPOSIT)
     suspend fun deposit(
-        @Body momoTransaction: MomoTransaction,
+        @Body deposit: Deposit,
         @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
         @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
-        @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String,
+        @Header(Constants.Headers.X_REFERENCE_ID) uuid: String
+    ): Response<Unit>
+
+    /**
+     * Initiates a refund for a previously completed transaction.
+     *
+     * @param refund The refund payload; set [Refund.referenceIdToRefund] to the original transaction ID.
+     * @param apiVersion The API version to target (e.g., v1_0 or v2_0).
+     * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Disbursements product.
+     * @param uuid A UUID V4 used as the X-Reference-Id to uniquely identify this request.
+     * @return A `Response` with an empty body; HTTP 202 indicates the request was accepted.
+     */
+    @POST(Constants.EndPoints.REFUND)
+    suspend fun refund(
+        @Body refund: Refund,
+        @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
+        @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
         @Header(Constants.Headers.X_REFERENCE_ID) uuid: String
     ): Response<Unit>
 
@@ -56,35 +73,14 @@ sealed interface DisbursementsService : CommonService {
      * @param referenceId The UUID V4 reference ID used when calling [deposit].
      * @param apiVersion The API version to target (e.g., v1_0 or v2_0).
      * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Disbursements product.
-     * @param environment The target environment (e.g., sandbox or production).
-     * @return A `Response` whose body contains the deposit status as a `ResponseBody`.
+     * @return A `Response` whose body is the parsed [DepositStatus].
      */
     @GET(Constants.EndPoints.DEPOSIT_STATUS)
     suspend fun getDepositStatus(
         @Path(Constants.EndpointPaths.REFERENCE_ID) referenceId: String,
         @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
-        @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
-        @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String
-    ): Response<ResponseBody>
-
-    /**
-     * Initiates a refund for a previously completed transaction.
-     *
-     * @param momoTransaction The transaction payload; set [MomoTransaction.referenceIdToRefund] to the original transaction ID.
-     * @param apiVersion The API version to target (e.g., v1_0 or v2_0).
-     * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Disbursements product.
-     * @param environment The target environment (e.g., sandbox or production).
-     * @param uuid A UUID V4 used as the X-Reference-Id to uniquely identify this request.
-     * @return A `Response` with an empty body; HTTP 202 indicates the request was accepted.
-     */
-    @POST(Constants.EndPoints.REFUND)
-    suspend fun refund(
-        @Body momoTransaction: MomoTransaction,
-        @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
-        @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
-        @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String,
-        @Header(Constants.Headers.X_REFERENCE_ID) uuid: String
-    ): Response<Unit>
+        @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String
+    ): Response<DepositStatus>
 
     /**
      * Retrieves the status of a previously initiated refund request.
@@ -92,14 +88,12 @@ sealed interface DisbursementsService : CommonService {
      * @param referenceId The UUID V4 reference ID used when calling [refund].
      * @param apiVersion The API version to target (e.g., v1_0 or v2_0).
      * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Disbursements product.
-     * @param environment The target environment (e.g., sandbox or production).
-     * @return A `Response` whose body contains the refund status as a `ResponseBody`.
+     * @return A `Response` whose body is the parsed [RefundStatus].
      */
     @GET(Constants.EndPoints.REFUND_STATUS)
     suspend fun getRefundStatus(
         @Path(Constants.EndpointPaths.REFERENCE_ID) referenceId: String,
         @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
-        @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
-        @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String
-    ): Response<ResponseBody>
+        @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String
+    ): Response<RefundStatus>
 }

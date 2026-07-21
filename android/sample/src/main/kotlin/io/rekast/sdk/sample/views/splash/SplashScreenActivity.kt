@@ -26,8 +26,8 @@ import androidx.compose.material.ExperimentalMaterialApi
 import dagger.hilt.android.AndroidEntryPoint
 import io.rekast.sdk.sample.ui.theme.AppTheme
 import io.rekast.sdk.sample.utils.applyWindowInsetListener
-import io.rekast.sdk.sample.views.MainActivity
-import io.rekast.sdk.sample.views.MainViewModel
+import io.rekast.sdk.sample.views.main.MainActivity
+import io.rekast.sdk.sample.views.main.MainViewModel
 
 /**
  * Entry-point activity that displays the [SplashScreen] for 3 seconds before launching

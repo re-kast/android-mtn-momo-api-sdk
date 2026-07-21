@@ -232,8 +232,7 @@ class TokenAuthenticator(
                         loginHint = loginHint,
                         scope = Constants.FormFields.CIBA_SCOPE,
                         accessType = Constants.FormFields.CIBA_ACCESS_TYPE,
-                        productSubscriptionKey = subscriptionKey,
-                        environment = config.environment
+                        productSubscriptionKey = subscriptionKey
                     )
                 }
             if (response.isSuccessful) {
@@ -267,7 +266,7 @@ class TokenAuthenticator(
         try {
             val response =
                 runBlocking {
-                    authService.getOauth2AccessToken(productType, subscriptionKey, config.environment, authReqId = authReqId)
+                    authService.getOauth2AccessToken(productType, subscriptionKey, authReqId = authReqId)
                 }
             if (response.isSuccessful) {
                 response.body()

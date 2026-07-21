@@ -21,6 +21,7 @@ import io.mockk.mockk
 import io.mockk.mockkObject
 import io.mockk.unmockkObject
 import io.mockk.verify
+import io.rekast.sdk.model.RequestToWithdrawStatus
 import io.rekast.sdk.repository.DefaultRepository
 import io.rekast.sdk.repository.data.NetworkResult
 import io.rekast.sdk.sample.utils.CredentialStorage
@@ -37,7 +38,6 @@ import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.ResponseBody
 import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -87,8 +87,8 @@ class CollectionWithdrawScreenViewModelTest {
     }
 
     @Test
-    fun `initial state has null momoTransaction`() {
-        assertNull(viewModel.momoTransaction.value)
+    fun `initial state has null transaction`() {
+        assertNull(viewModel.requestToWithdrawStatus.value)
     }
 
     @Test
@@ -98,7 +98,6 @@ class CollectionWithdrawScreenViewModelTest {
         assertEquals("", viewModel.amount.value)
         assertEquals("", viewModel.payerMessage.value)
         assertEquals("", viewModel.payerNote.value)
-        assertEquals("", viewModel.deliveryNote.value)
         assertEquals("", viewModel.referenceIdToRefund.value)
     }
 
@@ -133,12 +132,6 @@ class CollectionWithdrawScreenViewModelTest {
     }
 
     @Test
-    fun `onDeliveryNoteUpdated updates deliveryNote LiveData`() {
-        viewModel.onDeliveryNoteUpdated("Test delivery note")
-        assertEquals("Test delivery note", viewModel.deliveryNote.value)
-    }
-
-    @Test
     fun `onReferenceIdToRefundUpdated updates referenceIdToRefund LiveData`() {
         viewModel.onReferenceIdToRefundUpdated("REF-ABC-001")
         assertEquals("REF-ABC-001", viewModel.referenceIdToRefund.value)
@@ -149,12 +142,7 @@ class CollectionWithdrawScreenViewModelTest {
     fun `requestToWithdraw submits then fetches status and posts transaction`() = runTest {
         every { mockRepository.requestToWithdraw(any(), any(), any(), any()) } returns flowOf(NetworkResult.Success(Unit))
         every { mockRepository.requestToWithdrawTransactionStatus(any(), any(), any()) } returns
-            flowOf(
-                NetworkResult.Success(
-                    """{"amount":"100","currency":"EUR","externalId":"ext-1","payerMessage":"msg","payeeNote":"note","status":"SUCCESSFUL"}"""
-                        .toResponseBody("application/json".toMediaType())
-                )
-            )
+            flowOf(NetworkResult.Success(sampleTransaction()))
 
         viewModel.onPhoneNumberUpdated("256700000000")
         viewModel.onAmountUpdated("100")
@@ -162,7 +150,7 @@ class CollectionWithdrawScreenViewModelTest {
 
         verify { mockRepository.requestToWithdraw(any(), any(), any(), any()) }
         verify { mockRepository.requestToWithdrawTransactionStatus(any(), any(), any()) }
-        assertNotNull(viewModel.momoTransaction.value)
+        assertNotNull(viewModel.requestToWithdrawStatus.value)
         assertFalse(viewModel.showProgressBar.value!!)
     }
 
@@ -187,7 +175,7 @@ class CollectionWithdrawScreenViewModelTest {
         viewModel.requestToWithdraw()
 
         verify(exactly = 0) { mockRepository.requestToWithdrawTransactionStatus(any(), any(), any()) }
-        assertNull(viewModel.momoTransaction.value)
+        assertNull(viewModel.requestToWithdrawStatus.value)
         assertFalse(viewModel.showProgressBar.value!!)
     }
 
@@ -200,25 +188,8 @@ class CollectionWithdrawScreenViewModelTest {
         viewModel.onAmountUpdated("100")
         viewModel.requestToWithdraw()
 
-        assertNull(viewModel.momoTransaction.value)
+        assertNull(viewModel.requestToWithdrawStatus.value)
         assertFalse(viewModel.showProgressBar.value!!)
-    }
-
-    /** A non-blank delivery note triggers the delivery-notification call after a successful submit. */
-    @Test
-    fun `requestToWithdraw with delivery note sends delivery notification`() = runTest {
-        every { mockRepository.requestToWithdraw(any(), any(), any(), any()) } returns flowOf(NetworkResult.Success(Unit))
-        every { mockRepository.requestToWithdrawDeliveryNotification(any(), any(), any(), any(), any()) } returns
-            flowOf(NetworkResult.Success("ok".toResponseBody("text/plain".toMediaType())))
-        every { mockRepository.requestToWithdrawTransactionStatus(any(), any(), any()) } returns
-            flowOf(NetworkResult.Success("{}".toResponseBody("application/json".toMediaType())))
-
-        viewModel.onPhoneNumberUpdated("256700000000")
-        viewModel.onAmountUpdated("100")
-        viewModel.onDeliveryNoteUpdated("Delivered")
-        viewModel.requestToWithdraw()
-
-        verify { mockRepository.requestToWithdrawDeliveryNotification(any(), any(), any(), any(), any()) }
     }
 
     /** A status error after a successful submit leaves the transaction null. */
@@ -231,47 +202,7 @@ class CollectionWithdrawScreenViewModelTest {
         viewModel.onAmountUpdated("100")
         viewModel.requestToWithdraw()
 
-        assertNull(viewModel.momoTransaction.value)
-    }
-
-    /** A status body that cannot be parsed posts a null transaction rather than crashing. */
-    @Test
-    fun `requestToWithdraw status with unparseable body posts null transaction`() = runTest {
-        every { mockRepository.requestToWithdraw(any(), any(), any(), any()) } returns flowOf(NetworkResult.Success(Unit))
-        every { mockRepository.requestToWithdrawTransactionStatus(any(), any(), any()) } returns
-            flowOf(NetworkResult.Success("not-json".toResponseBody("application/json".toMediaType())))
-
-        viewModel.onPhoneNumberUpdated("256700000000")
-        viewModel.onAmountUpdated("100")
-        viewModel.requestToWithdraw()
-
-        assertNull(viewModel.momoTransaction.value)
-    }
-
-    /**
-     * When a delivery note is present, a failed delivery notification is handled gracefully
-     * (error branch) without blocking the subsequent status poll.
-     */
-    @Test
-    fun `requestToWithdraw with delivery note handles failed delivery notification`() = runTest {
-        every { mockRepository.requestToWithdraw(any(), any(), any(), any()) } returns flowOf(NetworkResult.Success(Unit))
-        every { mockRepository.requestToWithdrawTransactionStatus(any(), any(), any()) } returns
-            flowOf(
-                NetworkResult.Success(
-                    """{"amount":"100","currency":"EUR","externalId":"ext-1","payerMessage":"msg","payeeNote":"note","status":"SUCCESSFUL"}"""
-                        .toResponseBody("application/json".toMediaType())
-                )
-            )
-        every { mockRepository.requestToWithdrawDeliveryNotification(any(), any(), any(), any(), any()) } returns
-            flowOf(NetworkResult.Error("delivery failed"))
-
-        viewModel.onPhoneNumberUpdated("256700000000")
-        viewModel.onAmountUpdated("100")
-        viewModel.onDeliveryNoteUpdated("Please deliver")
-        viewModel.requestToWithdraw()
-
-        verify { mockRepository.requestToWithdrawDeliveryNotification(any(), any(), any(), any(), any()) }
-        assertFalse(viewModel.showProgressBar.value!!)
+        assertNull(viewModel.requestToWithdrawStatus.value)
     }
 
     /** A leading Loading emission is ignored and the terminal Success is used to complete the flow. */
@@ -280,19 +211,13 @@ class CollectionWithdrawScreenViewModelTest {
         every { mockRepository.requestToWithdraw(any(), any(), any(), any()) } returns
             flowOf(NetworkResult.Loading(), NetworkResult.Success(Unit))
         every { mockRepository.requestToWithdrawTransactionStatus(any(), any(), any()) } returns
-            flowOf(
-                NetworkResult.Loading(),
-                NetworkResult.Success(
-                    """{"amount":"100","currency":"EUR","externalId":"ext-1","payerMessage":"msg","payeeNote":"note","status":"SUCCESSFUL"}"""
-                        .toResponseBody("application/json".toMediaType())
-                )
-            )
+            flowOf(NetworkResult.Loading(), NetworkResult.Success(sampleTransaction()))
 
         viewModel.onPhoneNumberUpdated("256700000000")
         viewModel.onAmountUpdated("100")
         viewModel.requestToWithdraw()
 
-        assertNotNull(viewModel.momoTransaction.value)
+        assertNotNull(viewModel.requestToWithdrawStatus.value)
     }
 
     /** A non-blank financial ID exercises the ifBlank branch that keeps the value in the payload. */
@@ -300,7 +225,7 @@ class CollectionWithdrawScreenViewModelTest {
     fun `requestToWithdraw with non-blank financial id completes`() = runTest {
         every { mockRepository.requestToWithdraw(any(), any(), any(), any()) } returns flowOf(NetworkResult.Success(Unit))
         every { mockRepository.requestToWithdrawTransactionStatus(any(), any(), any()) } returns
-            flowOf(NetworkResult.Success("{}".toResponseBody("application/json".toMediaType())))
+            flowOf(NetworkResult.Success(sampleTransaction()))
 
         viewModel.onPhoneNumberUpdated("256700000000")
         viewModel.onAmountUpdated("100")
@@ -320,7 +245,7 @@ class CollectionWithdrawScreenViewModelTest {
         viewModel.onAmountUpdated("100")
         viewModel.requestToWithdraw()
 
-        assertNull(viewModel.momoTransaction.value)
+        assertNull(viewModel.requestToWithdrawStatus.value)
         assertFalse(viewModel.showProgressBar.value!!)
     }
 
@@ -330,12 +255,20 @@ class CollectionWithdrawScreenViewModelTest {
         every { mockRepository.requestToWithdraw(any(), any(), any(), any()) } returns flowOf(NetworkResult.Success(Unit))
         @Suppress("UNCHECKED_CAST")
         every { mockRepository.requestToWithdrawTransactionStatus(any(), any(), any()) } returns
-            (flowOf(NetworkResult.Success(null)) as Flow<NetworkResult<ResponseBody>>)
+            (flowOf(NetworkResult.Success(null)) as Flow<NetworkResult<RequestToWithdrawStatus>>)
 
         viewModel.onPhoneNumberUpdated("256700000000")
         viewModel.onAmountUpdated("100")
         viewModel.requestToWithdraw()
 
-        assertNull(viewModel.momoTransaction.value)
+        assertNull(viewModel.requestToWithdrawStatus.value)
     }
+
+    private fun sampleTransaction() = RequestToWithdrawStatus(
+        amount = "100",
+        currency = "EUR",
+        externalId = "ext-1",
+        payerMessage = "msg",
+        payeeNote = "note"
+    )
 }

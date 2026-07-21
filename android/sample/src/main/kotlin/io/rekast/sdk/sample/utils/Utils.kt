@@ -15,7 +15,7 @@
  */
 package io.rekast.sdk.sample.utils
 
-import io.rekast.sdk.utils.ProductType
+import io.rekast.sdk.utils.ProductTypes
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -40,13 +40,13 @@ object Utils {
     /**
      * Retrieves the product subscription key for the specified product type.
      *
-     * @param productType The MTN MOMO API product type.
+     * @param productTypes The MTN MOMO API product type.
      * @param config The sample app runtime configuration.
      * @return The corresponding product subscription key.
      */
-    fun getProductSubscriptionKeys(productType: ProductType, config: SampleConfig): String = when (productType) {
-        ProductType.COLLECTION -> config.collectionPrimaryKey.ifBlank { config.collectionSecondaryKey }
-        ProductType.REMITTANCE -> config.remittancePrimaryKey.ifBlank { config.remittanceSecondaryKey }
-        ProductType.DISBURSEMENTS -> config.disbursementsPrimaryKey.ifBlank { config.disbursementsSecondaryKey }
+    fun getProductSubscriptionKeys(productTypes: ProductTypes, config: SampleConfig): String = when (productTypes) {
+        ProductTypes.COLLECTION -> config.collectionPrimaryKey.ifBlank { config.collectionSecondaryKey }
+        ProductTypes.REMITTANCE -> config.remittancePrimaryKey.ifBlank { config.remittanceSecondaryKey }
+        ProductTypes.DISBURSEMENTS -> config.disbursementsPrimaryKey.ifBlank { config.disbursementsSecondaryKey }
     }
 }

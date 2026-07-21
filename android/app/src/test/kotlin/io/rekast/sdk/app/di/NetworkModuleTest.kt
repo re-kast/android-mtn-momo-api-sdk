@@ -17,15 +17,19 @@ package io.rekast.sdk.app.di
 
 import io.mockk.mockk
 import io.rekast.sdk.app.network.TokenAuthenticator
+import io.rekast.sdk.model.PaymentStatus
 import io.rekast.sdk.network.service.AuthenticationService
 import io.rekast.sdk.network.service.products.CollectionService
 import io.rekast.sdk.network.service.products.CommonService
 import io.rekast.sdk.network.service.products.DisbursementsService
 import io.rekast.sdk.network.service.products.RemittanceService
 import io.rekast.sdk.utils.ApiConfig
+import io.rekast.sdk.utils.StatusTypes
+import kotlinx.serialization.decodeFromString
 import okhttp3.logging.HttpLoggingInterceptor
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -61,13 +65,31 @@ class NetworkModuleTest {
 
     /**
      * Verifies that [NetworkModule.provideJson] returns a [kotlinx.serialization.json.Json]
-     * instance configured with `ignoreUnknownKeys = true` so that forward-compatible API
-     * responses do not throw on unrecognised fields.
+     * instance configured with `ignoreUnknownKeys = true` (forward-compatible with unrecognised
+     * fields) and `coerceInputValues = true` (resilient to unrecognised enum values).
      */
     @Test
-    fun `provideJson returns Json with ignoreUnknownKeys true`() {
+    fun `provideJson returns Json with ignoreUnknownKeys and coerceInputValues true`() {
         val json = NetworkModule.provideJson()
         assertTrue(json.configuration.ignoreUnknownKeys)
+        assertTrue(json.configuration.coerceInputValues)
+    }
+
+    /**
+     * Verifies the `coerceInputValues` hardening end-to-end: a payload carrying an enum value the SDK
+     * does not model (an unknown `reason`) coerces that field to its `null` default instead of throwing,
+     * while the known fields still deserialize.
+     */
+    @Test
+    fun `provideJson coerces an unknown enum value to null`() {
+        val json = NetworkModule.provideJson()
+        val raw = """{ "referenceId": "ref-1", "status": "SUCCESSFUL", "reason": "SOME_BRAND_NEW_REASON" }"""
+
+        val result = json.decodeFromString<PaymentStatus>(raw)
+
+        assertEquals("ref-1", result.referenceId)
+        assertEquals(StatusTypes.SUCCESSFUL, result.status)
+        assertNull(result.reason)
     }
 
     /**

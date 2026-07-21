@@ -15,14 +15,13 @@
  */
 package io.rekast.sdk.sample.views.remittance.remittance
 
-import androidx.annotation.StringRes
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.rekast.sdk.model.AccountHolder
-import io.rekast.sdk.model.MomoTransaction
+import io.rekast.sdk.model.Party
+import io.rekast.sdk.model.Transfer
+import io.rekast.sdk.model.TransferStatus
 import io.rekast.sdk.repository.DefaultRepository
 import io.rekast.sdk.repository.data.NetworkResult
 import io.rekast.sdk.sample.R
@@ -30,22 +29,13 @@ import io.rekast.sdk.sample.utils.Constants
 import io.rekast.sdk.sample.utils.CredentialStorage
 import io.rekast.sdk.sample.utils.DispatcherProvider
 import io.rekast.sdk.sample.utils.SampleConfig
-import io.rekast.sdk.sample.utils.SnackBarComponentConfiguration
-import io.rekast.sdk.sample.utils.SnackBarType
 import io.rekast.sdk.sample.utils.Utils
-import io.rekast.sdk.sample.utils.bodyText
 import io.rekast.sdk.sample.utils.valueOrEmpty
-import io.rekast.sdk.sample.utils.valueOrNullIfBlank
-import io.rekast.sdk.utils.AccountHolderType
-import io.rekast.sdk.utils.ProductType
-import java.util.UUID
+import io.rekast.sdk.sample.views.BaseScreenViewModel
+import io.rekast.sdk.utils.PartyTypes
+import io.rekast.sdk.utils.ProductTypes
 import javax.inject.Inject
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
-import kotlinx.serialization.json.Json
 import timber.log.Timber
 
 /**
@@ -53,9 +43,9 @@ import timber.log.Timber
  *
  * On submit it runs the full Remittance transfer flow against the SDK:
  * 1. `transfer` — sends money to the payee (HTTP 202).
- * 2. `getTransferStatus` — polls the outcome and posts it to [momoTransaction].
+ * 2. `getTransferStatus` — polls the outcome and posts it to [transferStatus].
  *
- * The screen shows the input form while [momoTransaction] is null and the result once it is set.
+ * The screen shows the input form while [transferStatus] is null and the result once it is set.
  * Authentication is handled automatically by the SDK's interceptor/authenticator, so the ViewModel
  * only guards on the presence of an access token before starting.
  */
@@ -65,18 +55,10 @@ class RemittanceScreenViewModel @Inject constructor(
     private val credentialStorage: CredentialStorage,
     private val dispatchers: DispatcherProvider,
     private val sampleConfig: SampleConfig
-) : ViewModel() {
-    private val json = Json { ignoreUnknownKeys = true }
+) : BaseScreenViewModel() {
 
-    /** Controls whether the circular progress indicator is shown instead of the form. */
-    val showProgressBar = MutableLiveData(false)
-
-    /** Holds the completed [MomoTransaction] returned by the API; null while no request has succeeded. */
-    var momoTransaction: MutableLiveData<MomoTransaction?> = MutableLiveData(null)
-    private val _snackBarStateFlow = MutableSharedFlow<SnackBarComponentConfiguration>()
-
-    /** Flow of [SnackBarComponentConfiguration] events to be displayed as snackbars. */
-    val snackBarStateFlow: SharedFlow<SnackBarComponentConfiguration> = _snackBarStateFlow.asSharedFlow()
+    /** Holds the [TransferStatus] returned by the API; null while no request has succeeded. */
+    var transferStatus: MutableLiveData<TransferStatus?> = MutableLiveData(null)
 
     private val _phoneNumber = MutableLiveData(Constants.EMPTY_STRING)
 
@@ -185,7 +167,7 @@ class RemittanceScreenViewModel @Inject constructor(
 
     /**
      * Submits a Remittance transfer, then polls the status and posts the resulting
-     * [MomoTransaction] to [momoTransaction].
+     * [TransferStatus] to [transferStatus].
      */
     fun transferRemittance() {
         viewModelScope.launch(dispatchers.io()) {
@@ -196,15 +178,14 @@ class RemittanceScreenViewModel @Inject constructor(
             }
             showProgressBar.postValue(true)
             try {
-                val referenceId = UUID.randomUUID().toString()
-                val subscriptionKey = Utils.getProductSubscriptionKeys(ProductType.REMITTANCE, sampleConfig)
+                val referenceId = generateUuid()
+                val subscriptionKey = Utils.getProductSubscriptionKeys(ProductTypes.REMITTANCE, sampleConfig)
                 val submit = defaultRepository.transfer(
-                    productType = ProductType.REMITTANCE.productType,
+                    productType = ProductTypes.REMITTANCE.productType,
                     apiVersion = sampleConfig.apiVersionV1,
-                    momoTransaction = buildTransaction(),
+                    transfer = buildTransfer(),
                     uuid = referenceId,
-                    productSubscriptionKey = subscriptionKey,
-                    environment = sampleConfig.environment
+                    productSubscriptionKey = subscriptionKey
                 ).awaitTerminal()
                 when (submit) {
                     is NetworkResult.Success -> {
@@ -227,21 +208,17 @@ class RemittanceScreenViewModel @Inject constructor(
         }
     }
 
-    /** Polls the transfer status and posts the decoded transaction to [momoTransaction]. */
+    /** Polls the transfer status and posts the decoded transaction to [transferStatus]. */
     private suspend fun fetchStatus(referenceId: String, subscriptionKey: String) {
         val result = defaultRepository.getTransferStatus(
-            productType = ProductType.REMITTANCE.productType,
+            productType = ProductTypes.REMITTANCE.productType,
             apiVersion = sampleConfig.apiVersionV1,
             referenceId = referenceId,
-            productSubscriptionKey = subscriptionKey,
-            environment = sampleConfig.environment
+            productSubscriptionKey = subscriptionKey
         ).awaitTerminal()
         when (result) {
             is NetworkResult.Success -> {
-                val transaction = result.bodyText()?.let { body ->
-                    runCatching { json.decodeFromString<MomoTransaction>(body) }.getOrNull()
-                }
-                momoTransaction.postValue(transaction)
+                transferStatus.postValue(result.response)
                 emitSuccess(R.string.snackbar_remittance_status_fetched)
             }
 
@@ -253,35 +230,12 @@ class RemittanceScreenViewModel @Inject constructor(
     }
 
     /** Builds the transfer payload from the current form values. */
-    private fun buildTransaction() = MomoTransaction(
+    private fun buildTransfer() = Transfer(
         amount = amount.valueOrEmpty(),
         currency = Constants.SANDBOX_CURRENCY,
-        financialTransactionId = financialId.valueOrNullIfBlank(),
-        externalId = UUID.randomUUID().toString(),
-        payee = AccountHolder(partyIdType = AccountHolderType.MSISDN.accountHolderType, partyId = phoneNumber.valueOrEmpty()),
-        payer = null,
+        externalId = generateUuid(),
+        payee = Party(partyIdType = PartyTypes.MSISDN, partyId = phoneNumber.valueOrEmpty()),
         payerMessage = payerMessage.valueOrEmpty(),
-        payeeNote = payerNote.valueOrEmpty(),
-        status = null,
-        reason = null,
-        referenceIdToRefund = null
+        payeeNote = payerNote.valueOrEmpty()
     )
-
-    /**
-     * Collects this result [Flow] to completion and returns its terminal (non-[NetworkResult.Loading])
-     * emission, so a suspend caller can await the flow's final success or error.
-     */
-    private suspend fun <T> Flow<NetworkResult<T>>.awaitTerminal(): NetworkResult<T> {
-        var terminal: NetworkResult<T> = NetworkResult.Error("No response received")
-        collect { emission -> if (emission !is NetworkResult.Loading) terminal = emission }
-        return terminal
-    }
-
-    private fun emitSuccess(@StringRes messageResId: Int, vararg args: Any) = emitSnackBarState(SnackBarComponentConfiguration(messageResId = messageResId, messageArgs = args.toList(), type = SnackBarType.SUCCESS))
-
-    private fun emitError(@StringRes messageResId: Int, vararg args: Any) = emitSnackBarState(SnackBarComponentConfiguration(messageResId = messageResId, messageArgs = args.toList(), type = SnackBarType.ERROR))
-
-    private fun emitSnackBarState(snackBarComponentConfiguration: SnackBarComponentConfiguration) {
-        viewModelScope.launch { _snackBarStateFlow.emit(snackBarComponentConfiguration) }
-    }
 }

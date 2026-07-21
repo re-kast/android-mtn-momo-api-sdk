@@ -15,6 +15,8 @@
  */
 package io.rekast.sdk.repository.data
 
+import io.rekast.sdk.model.ErrorResponse
+import kotlinx.serialization.json.Json
 import retrofit2.Response
 
 /**
@@ -24,6 +26,8 @@ import retrofit2.Response
  * wrapped in a [NetworkResult]. It handles both successful responses and errors.
  */
 abstract class DataResponse {
+
+    private val errorJson = Json { ignoreUnknownKeys = true }
 
     /**
      * Safely makes an API call and returns the result.
@@ -44,11 +48,31 @@ abstract class DataResponse {
                 body?.let {
                     return NetworkResult.Success(body)
                 }
+                return error("${response.code()} ${response.message()}")
             }
-            return error("${response.code()} ${response.message()}")
+            return error(errorMessage(response.code(), response.message(), response.errorBody()?.string()))
         } catch (e: Exception) {
             return error(e.message ?: e.toString())
         }
+    }
+
+    /**
+     * Builds a human-readable error string that always includes the HTTP status code and, when the
+     * server returned an error body, the server's own message.
+     *
+     * The MoMo API returns error bodies like `{"code":"...","message":"..."}`. When the body parses
+     * as an [ErrorResponse] the `code: message` pair is appended; otherwise the raw body text is used
+     * so nothing the server sent is ever silently discarded.
+     */
+    private fun errorMessage(code: Int, reasonPhrase: String, errorBody: String?): String {
+        val status = "$code $reasonPhrase"
+        val detail = errorBody?.takeIf { it.isNotBlank() }?.let { body ->
+            runCatching { errorJson.decodeFromString(ErrorResponse.serializer(), body) }
+                .getOrNull()
+                ?.let { parsed -> "${parsed.code}: ${parsed.message}" }
+                ?: body
+        }
+        return if (detail.isNullOrBlank()) status else "$status - $detail"
     }
 
     /**

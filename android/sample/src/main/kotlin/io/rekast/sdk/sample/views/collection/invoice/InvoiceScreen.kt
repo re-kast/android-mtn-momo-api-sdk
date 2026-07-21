@@ -26,6 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -38,6 +39,8 @@ import io.rekast.sdk.sample.ui.components.general.MomoScaffold
 import io.rekast.sdk.sample.ui.components.screens.LabeledField
 import io.rekast.sdk.sample.ui.components.screens.OperationActionButton
 import io.rekast.sdk.sample.ui.components.screens.OperationConsole
+import io.rekast.sdk.sample.ui.theme.DangerColor
+import io.rekast.sdk.sample.ui.theme.InfoColor
 import io.rekast.sdk.sample.utils.Constants
 import io.rekast.sdk.sample.utils.SnackBarComponentConfiguration
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -62,6 +65,7 @@ fun InvoiceScreen(navController: NavController?, snackStateFlow: SharedFlow<Snac
             val amount by viewModel.amount.observeAsState(Constants.EMPTY_STRING)
             val currency by viewModel.currency.observeAsState(Constants.SANDBOX_CURRENCY)
             val payerMsisdn by viewModel.payerMsisdn.observeAsState(Constants.EMPTY_STRING)
+            val payeeMsisdn by viewModel.payeeMsisdn.observeAsState(Constants.EMPTY_STRING)
             val validityDuration by viewModel.validityDuration.observeAsState(Constants.EMPTY_STRING)
             val description by viewModel.description.observeAsState(Constants.EMPTY_STRING)
             val referenceId by viewModel.referenceId.observeAsState()
@@ -79,29 +83,31 @@ fun InvoiceScreen(navController: NavController?, snackStateFlow: SharedFlow<Snac
                         LabeledField(stringResource(R.string.label_amount), amount, viewModel::onAmountChanged, keyboardType = KeyboardType.Number)
                         LabeledField(stringResource(R.string.label_currency), currency, viewModel::onCurrencyChanged)
                         LabeledField(stringResource(R.string.label_payer_msisdn), payerMsisdn, viewModel::onPayerMsisdnChanged, keyboardType = KeyboardType.Phone)
+                        LabeledField(stringResource(R.string.label_payee_msisdn), payeeMsisdn, viewModel::onPayeeMsisdnChanged, keyboardType = KeyboardType.Phone)
                         LabeledField(stringResource(R.string.label_validity_seconds), validityDuration, viewModel::onValidityDurationChanged, keyboardType = KeyboardType.Number)
                         LabeledField(stringResource(R.string.label_description), description, viewModel::onDescriptionChanged)
                         Spacer(modifier = Modifier.height(12.dp))
                         OperationActionButton(
                             text = stringResource(R.string.action_create),
                             onClick = viewModel::createInvoice,
-                            enabled = amount.isNotBlank() && payerMsisdn.isNotBlank()
+                            enabled = amount.isNotBlank() && payerMsisdn.isNotBlank() && payeeMsisdn.isNotBlank()
                         )
                         Spacer(modifier = Modifier.height(8.dp))
-                        Row(modifier = Modifier.padding(top = 4.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            OperationActionButton(
-                                text = stringResource(R.string.action_check_status),
-                                onClick = viewModel::checkStatus,
-                                enabled = !referenceId.isNullOrBlank(),
-                                modifier = Modifier.weight(1f)
-                            )
-                            OperationActionButton(
-                                text = stringResource(R.string.action_cancel),
-                                onClick = viewModel::cancelInvoice,
-                                enabled = !referenceId.isNullOrBlank(),
-                                modifier = Modifier.weight(1f)
-                            )
-                        }
+                        OperationActionButton(
+                            text = stringResource(R.string.action_check_status),
+                            onClick = viewModel::checkStatus,
+                            enabled = !referenceId.isNullOrBlank(),
+                            backgroundColor = InfoColor,
+                            contentColor = Color.White
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        OperationActionButton(
+                            text = stringResource(R.string.action_cancel),
+                            onClick = viewModel::cancelInvoice,
+                            enabled = !referenceId.isNullOrBlank(),
+                            backgroundColor = DangerColor,
+                            contentColor = Color.White
+                        )
                     }
                 }
                 item { OperationConsole(result = result, hint = stringResource(R.string.console_hint)) }
