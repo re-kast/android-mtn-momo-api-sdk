@@ -96,7 +96,7 @@
   <div class="cover ">
     <h1 class="cover"><span>cancel</span><wbr><span><span>Invoice</span></span></h1>
   </div>
-  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":sample/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="cancel-invoice.html"><span class="token function">cancelInvoice</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><p class="paragraph">Cancels the previously created invoice.</p></div></div>
+  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":sample/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="cancel-invoice.html"><span class="token function">cancelInvoice</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><p class="paragraph">Cancels the previously created invoice. The invoice is identified by the <code class="lang-kotlin">externalId</code> sent at creation (reused here); the path reference and the <code class="lang-kotlin">X-Reference-Id</code> header are two independent fresh UUIDs generated for this cancellation request.</p></div></div>
 </div>
     <div class="footer">
         <div class="footer--container">

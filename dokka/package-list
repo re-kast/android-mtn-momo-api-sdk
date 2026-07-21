@@ -11,6 +11,7 @@ io.rekast.sdk.model
 io.rekast.sdk.model.authentication
 io.rekast.sdk.network.interceptor
 io.rekast.sdk.network.interceptor.auth
+io.rekast.sdk.network.interceptor.headers
 io.rekast.sdk.network.interfaces
 io.rekast.sdk.network.service
 io.rekast.sdk.network.service.products
@@ -37,6 +38,7 @@ io.rekast.sdk.sample.views.collection.withdraw
 io.rekast.sdk.sample.views.disbursement.deposit
 io.rekast.sdk.sample.views.disbursement.refund
 io.rekast.sdk.sample.views.home
+io.rekast.sdk.sample.views.main
 io.rekast.sdk.sample.views.remittance.cashtransfer
 io.rekast.sdk.sample.views.remittance.remittance
 io.rekast.sdk.sample.views.settings
