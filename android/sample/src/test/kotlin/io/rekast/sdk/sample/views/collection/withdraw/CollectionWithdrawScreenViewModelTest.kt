@@ -98,7 +98,6 @@ class CollectionWithdrawScreenViewModelTest {
         assertEquals("", viewModel.amount.value)
         assertEquals("", viewModel.payerMessage.value)
         assertEquals("", viewModel.payerNote.value)
-        assertEquals("", viewModel.deliveryNote.value)
         assertEquals("", viewModel.referenceIdToRefund.value)
     }
 
@@ -130,12 +129,6 @@ class CollectionWithdrawScreenViewModelTest {
     fun `onPayerNoteUpdated updates payerNote LiveData`() {
         viewModel.onPayerNoteUpdated("Test payer note")
         assertEquals("Test payer note", viewModel.payerNote.value)
-    }
-
-    @Test
-    fun `onDeliveryNoteUpdated updates deliveryNote LiveData`() {
-        viewModel.onDeliveryNoteUpdated("Test delivery note")
-        assertEquals("Test delivery note", viewModel.deliveryNote.value)
     }
 
     @Test
@@ -199,23 +192,6 @@ class CollectionWithdrawScreenViewModelTest {
         assertFalse(viewModel.showProgressBar.value!!)
     }
 
-    /** A non-blank delivery note triggers the delivery-notification call after a successful submit. */
-    @Test
-    fun `requestToWithdraw with delivery note sends delivery notification`() = runTest {
-        every { mockRepository.requestToWithdraw(any(), any(), any(), any()) } returns flowOf(NetworkResult.Success(Unit))
-        every { mockRepository.requestToWithdrawDeliveryNotification(any(), any(), any(), any(), any()) } returns
-            flowOf(NetworkResult.Success("ok".toResponseBody("text/plain".toMediaType())))
-        every { mockRepository.requestToWithdrawTransactionStatus(any(), any(), any()) } returns
-            flowOf(NetworkResult.Success(sampleTransaction()))
-
-        viewModel.onPhoneNumberUpdated("256700000000")
-        viewModel.onAmountUpdated("100")
-        viewModel.onDeliveryNoteUpdated("Delivered")
-        viewModel.requestToWithdraw()
-
-        verify { mockRepository.requestToWithdrawDeliveryNotification(any(), any(), any(), any(), any()) }
-    }
-
     /** A status error after a successful submit leaves the transaction null. */
     @Test
     fun `requestToWithdraw status error leaves transaction null`() = runTest {
@@ -227,27 +203,6 @@ class CollectionWithdrawScreenViewModelTest {
         viewModel.requestToWithdraw()
 
         assertNull(viewModel.requestToWithdrawStatus.value)
-    }
-
-    /**
-     * When a delivery note is present, a failed delivery notification is handled gracefully
-     * (error branch) without blocking the subsequent status poll.
-     */
-    @Test
-    fun `requestToWithdraw with delivery note handles failed delivery notification`() = runTest {
-        every { mockRepository.requestToWithdraw(any(), any(), any(), any()) } returns flowOf(NetworkResult.Success(Unit))
-        every { mockRepository.requestToWithdrawTransactionStatus(any(), any(), any()) } returns
-            flowOf(NetworkResult.Success(sampleTransaction()))
-        every { mockRepository.requestToWithdrawDeliveryNotification(any(), any(), any(), any(), any()) } returns
-            flowOf(NetworkResult.Error("delivery failed"))
-
-        viewModel.onPhoneNumberUpdated("256700000000")
-        viewModel.onAmountUpdated("100")
-        viewModel.onDeliveryNoteUpdated("Please deliver")
-        viewModel.requestToWithdraw()
-
-        verify { mockRepository.requestToWithdrawDeliveryNotification(any(), any(), any(), any(), any()) }
-        assertFalse(viewModel.showProgressBar.value!!)
     }
 
     /** A leading Loading emission is ignored and the terminal Success is used to complete the flow. */

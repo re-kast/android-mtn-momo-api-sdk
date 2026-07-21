@@ -203,7 +203,7 @@ class CollectionPayScreenViewModelTest {
     @Test
     fun `requestToPay with delivery note sends delivery notification`() = runTest {
         every { mockRepository.requestToPay(any(), any(), any(), any()) } returns flowOf(NetworkResult.Success(Unit))
-        every { mockRepository.requestToPayDeliveryNotification(any(), any(), any(), any(), any(), any()) } returns
+        every { mockRepository.requestToPayDeliveryNotification(any(), any(), any(), any(), any()) } returns
             flowOf(NetworkResult.Success("ok".toResponseBody("text/plain".toMediaType())))
         every { mockRepository.requestToPayTransactionStatus(any(), any(), any()) } returns
             flowOf(NetworkResult.Success(sampleTransaction()))
@@ -213,7 +213,7 @@ class CollectionPayScreenViewModelTest {
         viewModel.onDeliveryNoteUpdated("Delivered")
         viewModel.requestToPay()
 
-        verify { mockRepository.requestToPayDeliveryNotification(any(), any(), any(), any(), any(), any()) }
+        verify { mockRepository.requestToPayDeliveryNotification(any(), any(), any(), any(), any()) }
     }
 
     /** A status error after a successful submit leaves the transaction null. */
@@ -238,7 +238,7 @@ class CollectionPayScreenViewModelTest {
         every { mockRepository.requestToPay(any(), any(), any(), any()) } returns flowOf(NetworkResult.Success(Unit))
         every { mockRepository.requestToPayTransactionStatus(any(), any(), any()) } returns
             flowOf(NetworkResult.Success(sampleTransaction()))
-        every { mockRepository.requestToPayDeliveryNotification(any(), any(), any(), any(), any(), any()) } returns
+        every { mockRepository.requestToPayDeliveryNotification(any(), any(), any(), any(), any()) } returns
             flowOf(NetworkResult.Error("delivery failed"))
 
         viewModel.onPhoneNumberUpdated("256700000000")
@@ -246,7 +246,7 @@ class CollectionPayScreenViewModelTest {
         viewModel.onDeliveryNoteUpdated("Please deliver")
         viewModel.requestToPay()
 
-        verify { mockRepository.requestToPayDeliveryNotification(any(), any(), any(), any(), any(), any()) }
+        verify { mockRepository.requestToPayDeliveryNotification(any(), any(), any(), any(), any()) }
         assertFalse(viewModel.showProgressBar.value!!)
     }
 
@@ -256,7 +256,7 @@ class CollectionPayScreenViewModelTest {
         every { mockRepository.requestToPay(any(), any(), any(), any()) } returns flowOf(NetworkResult.Success(Unit))
         every { mockRepository.requestToPayTransactionStatus(any(), any(), any()) } returns
             flowOf(NetworkResult.Success(sampleTransaction()))
-        every { mockRepository.requestToPayDeliveryNotification(any(), any(), any(), any(), any(), any()) } returns
+        every { mockRepository.requestToPayDeliveryNotification(any(), any(), any(), any(), any()) } returns
             flowOf(NetworkResult.Success("ok".toResponseBody("text/plain".toMediaType())))
 
         viewModel.onPhoneNumberUpdated("256700000000")
@@ -264,7 +264,7 @@ class CollectionPayScreenViewModelTest {
         viewModel.onDeliveryNoteUpdated("Please deliver")
         viewModel.requestToPay()
 
-        verify { mockRepository.requestToPayDeliveryNotification(any(), any(), any(), any(), any(), any()) }
+        verify { mockRepository.requestToPayDeliveryNotification(any(), any(), any(), any(), any()) }
         assertNotNull(viewModel.requestToPayStatus.value)
     }
 

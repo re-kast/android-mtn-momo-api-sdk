@@ -49,4 +49,21 @@ interface CredentialProvider {
      * on OAuth2 endpoints. Defaults to an empty string for implementations that do not use consent flows.
      */
     fun getOauthAccessToken(): String = ""
+
+    /**
+     * Returns the callback URL attached as the `X-Callback-Url` header for a given transaction-initiation
+     * [operation], or an empty string to send no callback header for that operation.
+     *
+     * [operation] is the endpoint's path segment — one of `requesttopay`, `requesttowithdraw`,
+     * `deposit`, `refund`, `transfer`, `cashtransfer`, `invoice`, `payment`, `preapproval` — allowing
+     * implementations to return a different callback URL per operation (or a single shared URL by
+     * ignoring the argument).
+     *
+     * MTN posts the transaction result to this URL once the operation completes; the host must be
+     * registered/allowed for the API user. Defaults to an empty string (no callback) so the header is
+     * opt-in — implementations return a configured URL only when they want callbacks.
+     *
+     * @param operation The initiation endpoint's path segment (e.g. `"requesttopay"`).
+     */
+    fun getCallbackUrl(operation: String): String = ""
 }

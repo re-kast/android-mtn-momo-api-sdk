@@ -108,13 +108,13 @@ class PaymentScreenViewModelTest {
     @Test
     fun `createPayment stores reference id and builds payload on success`() = runTest {
         val payload = slot<Payment>()
-        every { mockRepository.createPayment(any(), capture(payload), any(), any(), any()) } returns flowOf(NetworkResult.Success(Unit))
+        every { mockRepository.createPayment(any(), capture(payload), any(), any()) } returns flowOf(NetworkResult.Success(Unit))
 
         viewModel.onAmountChanged("100")
         viewModel.onCustomerReferenceChanged("+46070911111")
         viewModel.createPayment()
 
-        verify { mockRepository.createPayment(any(), any(), any(), any(), any()) }
+        verify { mockRepository.createPayment(any(), any(), any(), any()) }
         assertNotNull(viewModel.referenceId.value)
         assertEquals("100", payload.captured.money?.amount)
         assertEquals("EUR", payload.captured.money?.currency)
@@ -126,7 +126,7 @@ class PaymentScreenViewModelTest {
     @Test
     fun `createPayment defaults blank currency to sandbox currency`() = runTest {
         val payload = slot<Payment>()
-        every { mockRepository.createPayment(any(), capture(payload), any(), any(), any()) } returns flowOf(NetworkResult.Success(Unit))
+        every { mockRepository.createPayment(any(), capture(payload), any(), any()) } returns flowOf(NetworkResult.Success(Unit))
 
         viewModel.onAmountChanged("100")
         viewModel.onCurrencyChanged("")
@@ -138,7 +138,7 @@ class PaymentScreenViewModelTest {
     /** A create error posts a failure message and leaves no reference id. */
     @Test
     fun `createPayment error path posts failure result`() = runTest {
-        every { mockRepository.createPayment(any(), any(), any(), any(), any()) } returns flowOf(NetworkResult.Error("bad"))
+        every { mockRepository.createPayment(any(), any(), any(), any()) } returns flowOf(NetworkResult.Error("bad"))
 
         viewModel.onAmountChanged("100")
         viewModel.createPayment()
@@ -150,7 +150,7 @@ class PaymentScreenViewModelTest {
     /** An exception is caught and surfaced in the console. */
     @Test
     fun `createPayment exception path posts error result`() = runTest {
-        every { mockRepository.createPayment(any(), any(), any(), any(), any()) } throws RuntimeException("kaboom")
+        every { mockRepository.createPayment(any(), any(), any(), any()) } throws RuntimeException("kaboom")
 
         viewModel.onAmountChanged("100")
         viewModel.createPayment()
@@ -165,7 +165,7 @@ class PaymentScreenViewModelTest {
 
         viewModel.createPayment()
 
-        verify(exactly = 0) { mockRepository.createPayment(any(), any(), any(), any(), any()) }
+        verify(exactly = 0) { mockRepository.createPayment(any(), any(), any(), any()) }
     }
 
     /** Status is a no-op until a payment has been created. */
@@ -173,7 +173,7 @@ class PaymentScreenViewModelTest {
     fun `checkStatus does nothing without a reference id`() = runTest {
         viewModel.checkStatus()
 
-        verify(exactly = 0) { mockRepository.getPaymentStatus(any(), any(), any(), any()) }
+        verify(exactly = 0) { mockRepository.getPaymentStatus(any(), any(), any()) }
     }
 
     /** A parsed status payload is printed via its string representation. */
@@ -181,7 +181,7 @@ class PaymentScreenViewModelTest {
     fun `checkStatus prints the status payload`() = runTest {
         viewModel.referenceId.value = "ref-1"
         val status = PaymentStatus(referenceId = "ref-1", status = StatusTypes.SUCCESSFUL)
-        every { mockRepository.getPaymentStatus(any(), any(), any(), any()) } returns
+        every { mockRepository.getPaymentStatus(any(), any(), any()) } returns
             flowOf(NetworkResult.Success(status))
 
         viewModel.checkStatus()
@@ -194,7 +194,7 @@ class PaymentScreenViewModelTest {
     fun `checkStatus with null body reports no status body`() = runTest {
         viewModel.referenceId.value = "ref-1"
         @Suppress("UNCHECKED_CAST")
-        every { mockRepository.getPaymentStatus(any(), any(), any(), any()) } returns
+        every { mockRepository.getPaymentStatus(any(), any(), any()) } returns
             (flowOf(NetworkResult.Success(null)) as Flow<NetworkResult<PaymentStatus>>)
 
         viewModel.checkStatus()
@@ -206,7 +206,7 @@ class PaymentScreenViewModelTest {
     @Test
     fun `checkStatus error path posts failure result`() = runTest {
         viewModel.referenceId.value = "ref-1"
-        every { mockRepository.getPaymentStatus(any(), any(), any(), any()) } returns flowOf(NetworkResult.Error("nope"))
+        every { mockRepository.getPaymentStatus(any(), any(), any()) } returns flowOf(NetworkResult.Error("nope"))
 
         viewModel.checkStatus()
 
@@ -216,7 +216,7 @@ class PaymentScreenViewModelTest {
     /** A leading Loading emission is ignored and the terminal Success is used. */
     @Test
     fun `createPayment ignores loading emission before terminal success`() = runTest {
-        every { mockRepository.createPayment(any(), any(), any(), any(), any()) } returns
+        every { mockRepository.createPayment(any(), any(), any(), any()) } returns
             flowOf(NetworkResult.Loading(), NetworkResult.Success(Unit))
 
         viewModel.onAmountChanged("100")

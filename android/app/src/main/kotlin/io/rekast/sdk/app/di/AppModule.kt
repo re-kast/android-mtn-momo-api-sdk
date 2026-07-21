@@ -68,6 +68,7 @@ object AppModule {
             remittancePrimaryKey = BuildConfig.MOMO_REMITTANCE_PRIMARY_KEY,
             remittanceSecondaryKey = BuildConfig.MOMO_REMITTANCE_SECONDARY_KEY,
             disbursementsPrimaryKey = BuildConfig.MOMO_DISBURSEMENTS_PRIMARY_KEY,
-            disbursementsSecondaryKey = BuildConfig.MOMO_DISBURSEMENTS_SECONDARY_KEY
+            disbursementsSecondaryKey = BuildConfig.MOMO_DISBURSEMENTS_SECONDARY_KEY,
+            callbackBaseUrl = BuildConfig.MOMO_CALLBACK_BASE_URL
         )
 }

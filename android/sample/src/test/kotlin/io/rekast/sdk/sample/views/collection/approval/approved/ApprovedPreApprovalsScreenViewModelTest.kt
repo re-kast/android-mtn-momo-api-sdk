@@ -107,13 +107,13 @@ class ApprovedPreApprovalsScreenViewModelTest {
     /** A successful fetch populates the approvals list and reports the count. */
     @Test
     fun `getApprovedPreApprovals populates the list on success`() = runTest {
-        every { mockRepository.getApprovedPreApprovals(any(), any(), any(), any(), any()) } returns
+        every { mockRepository.getApprovedPreApprovals(any(), any(), any(), any()) } returns
             flowOf(NetworkResult.Success(ApprovedPreApprovals(listOf(approval("1"), approval("2")))))
 
         viewModel.onAccountHolderIdChanged("256700000000")
         viewModel.getApprovedPreApprovals()
 
-        verify { mockRepository.getApprovedPreApprovals(any(), any(), any(), any(), any()) }
+        verify { mockRepository.getApprovedPreApprovals(any(), any(), any(), any()) }
         assertEquals(2, viewModel.approvals.value!!.size)
         assertEquals("2 approved pre-approval(s) found.", viewModel.result.value)
         assertFalse(viewModel.showProgressBar.value!!)
@@ -122,7 +122,7 @@ class ApprovedPreApprovalsScreenViewModelTest {
     /** An empty result reports the placeholder and leaves the list empty. */
     @Test
     fun `getApprovedPreApprovals with empty result reports placeholder`() = runTest {
-        every { mockRepository.getApprovedPreApprovals(any(), any(), any(), any(), any()) } returns
+        every { mockRepository.getApprovedPreApprovals(any(), any(), any(), any()) } returns
             flowOf(NetworkResult.Success(ApprovedPreApprovals(emptyList())))
 
         viewModel.onAccountHolderIdChanged("256700000000")
@@ -135,7 +135,7 @@ class ApprovedPreApprovalsScreenViewModelTest {
     /** A fetch error clears the list and reports the failure. */
     @Test
     fun `getApprovedPreApprovals error clears the list`() = runTest {
-        every { mockRepository.getApprovedPreApprovals(any(), any(), any(), any(), any()) } returns flowOf(NetworkResult.Error("nope"))
+        every { mockRepository.getApprovedPreApprovals(any(), any(), any(), any()) } returns flowOf(NetworkResult.Error("nope"))
 
         viewModel.onAccountHolderIdChanged("256700000000")
         viewModel.getApprovedPreApprovals()
@@ -147,7 +147,7 @@ class ApprovedPreApprovalsScreenViewModelTest {
     /** An exception is caught and surfaced in the console. */
     @Test
     fun `getApprovedPreApprovals exception path posts error result`() = runTest {
-        every { mockRepository.getApprovedPreApprovals(any(), any(), any(), any(), any()) } throws RuntimeException("kaboom")
+        every { mockRepository.getApprovedPreApprovals(any(), any(), any(), any()) } throws RuntimeException("kaboom")
 
         viewModel.onAccountHolderIdChanged("256700000000")
         viewModel.getApprovedPreApprovals()
@@ -164,15 +164,15 @@ class ApprovedPreApprovalsScreenViewModelTest {
         viewModel.onAccountHolderIdChanged("256700000000")
         viewModel.getApprovedPreApprovals()
 
-        verify(exactly = 0) { mockRepository.getApprovedPreApprovals(any(), any(), any(), any(), any()) }
+        verify(exactly = 0) { mockRepository.getApprovedPreApprovals(any(), any(), any(), any()) }
     }
 
     /** Cancelling a pre-approval drops just that entry from the list. */
     @Test
     fun `cancelPreApproval removes the cancelled entry on success`() = runTest {
-        every { mockRepository.getApprovedPreApprovals(any(), any(), any(), any(), any()) } returns
+        every { mockRepository.getApprovedPreApprovals(any(), any(), any(), any()) } returns
             flowOf(NetworkResult.Success(ApprovedPreApprovals(listOf(approval("1"), approval("2")))))
-        every { mockRepository.cancelPreApproval(any(), any(), any(), any()) } returns flowOf(NetworkResult.Success(Unit))
+        every { mockRepository.cancelPreApproval(any(), any(), any()) } returns flowOf(NetworkResult.Success(Unit))
 
         viewModel.onAccountHolderIdChanged("256700000000")
         viewModel.getApprovedPreApprovals()
@@ -185,9 +185,9 @@ class ApprovedPreApprovalsScreenViewModelTest {
     /** A cancel error leaves the list unchanged and reports the failure. */
     @Test
     fun `cancelPreApproval error keeps the list and posts failure`() = runTest {
-        every { mockRepository.getApprovedPreApprovals(any(), any(), any(), any(), any()) } returns
+        every { mockRepository.getApprovedPreApprovals(any(), any(), any(), any()) } returns
             flowOf(NetworkResult.Success(ApprovedPreApprovals(listOf(approval("1")))))
-        every { mockRepository.cancelPreApproval(any(), any(), any(), any()) } returns flowOf(NetworkResult.Error("cant"))
+        every { mockRepository.cancelPreApproval(any(), any(), any()) } returns flowOf(NetworkResult.Error("cant"))
 
         viewModel.onAccountHolderIdChanged("256700000000")
         viewModel.getApprovedPreApprovals()
@@ -200,7 +200,7 @@ class ApprovedPreApprovalsScreenViewModelTest {
     /** A leading Loading emission is ignored and the terminal Success is used. */
     @Test
     fun `getApprovedPreApprovals ignores loading emission before terminal success`() = runTest {
-        every { mockRepository.getApprovedPreApprovals(any(), any(), any(), any(), any()) } returns
+        every { mockRepository.getApprovedPreApprovals(any(), any(), any(), any()) } returns
             flowOf(NetworkResult.Loading(), NetworkResult.Success(ApprovedPreApprovals(listOf(approval("1")))))
 
         viewModel.onAccountHolderIdChanged("256700000000")

@@ -99,13 +99,13 @@ class PreApprovalScreenViewModelTest {
     /** Verifies createPreApproval calls the repository, stores a reference ID, and clears the progress bar. */
     @Test
     fun `createPreApproval stores reference id on success`() = runTest {
-        every { mockRepository.createPreApproval(any(), any(), any(), any(), any()) } returns flowOf(NetworkResult.Success(Unit))
+        every { mockRepository.createPreApproval(any(), any(), any(), any()) } returns flowOf(NetworkResult.Success(Unit))
 
         viewModel.onPayerMsisdnChanged("256700000000")
         viewModel.onValidityTimeChanged("60")
         viewModel.createPreApproval()
 
-        verify { mockRepository.createPreApproval(any(), any(), any(), any(), any()) }
+        verify { mockRepository.createPreApproval(any(), any(), any(), any()) }
         assertNotNull(viewModel.referenceId.value)
         assertNotNull(viewModel.result.value)
         assertFalse(viewModel.showProgressBar.value!!)
@@ -118,7 +118,7 @@ class PreApprovalScreenViewModelTest {
 
         viewModel.createPreApproval()
 
-        verify(exactly = 0) { mockRepository.createPreApproval(any(), any(), any(), any(), any()) }
+        verify(exactly = 0) { mockRepository.createPreApproval(any(), any(), any(), any()) }
     }
 
     /** Verifies checkStatus is a no-op (no repository call) until a pre-approval has been created. */
@@ -126,7 +126,7 @@ class PreApprovalScreenViewModelTest {
     fun `checkStatus does nothing without a reference id`() = runTest {
         viewModel.checkStatus()
 
-        verify(exactly = 0) { mockRepository.getPreApprovalStatus(any(), any(), any(), any()) }
+        verify(exactly = 0) { mockRepository.getPreApprovalStatus(any(), any(), any()) }
     }
 
     @Test
@@ -150,7 +150,7 @@ class PreApprovalScreenViewModelTest {
     /** A create error posts a failure message and leaves no reference ID. */
     @Test
     fun `createPreApproval error path posts failure result`() = runTest {
-        every { mockRepository.createPreApproval(any(), any(), any(), any(), any()) } returns flowOf(NetworkResult.Error("bad"))
+        every { mockRepository.createPreApproval(any(), any(), any(), any()) } returns flowOf(NetworkResult.Error("bad"))
 
         viewModel.onPayerMsisdnChanged("256700000000")
         viewModel.createPreApproval()
@@ -162,7 +162,7 @@ class PreApprovalScreenViewModelTest {
     /** An exception during an operation is caught and surfaced in the console. */
     @Test
     fun `createPreApproval exception path posts error result`() = runTest {
-        every { mockRepository.createPreApproval(any(), any(), any(), any(), any()) } throws RuntimeException("kaboom")
+        every { mockRepository.createPreApproval(any(), any(), any(), any()) } throws RuntimeException("kaboom")
 
         viewModel.onPayerMsisdnChanged("256700000000")
         viewModel.createPreApproval()
@@ -174,7 +174,7 @@ class PreApprovalScreenViewModelTest {
     @Test
     fun `createPreApproval defaults blank validity time to zero`() = runTest {
         val payload = slot<PreApproval>()
-        every { mockRepository.createPreApproval(any(), capture(payload), any(), any(), any()) } returns flowOf(NetworkResult.Success(Unit))
+        every { mockRepository.createPreApproval(any(), capture(payload), any(), any()) } returns flowOf(NetworkResult.Success(Unit))
 
         viewModel.onPayerMsisdnChanged("256700000000")
         viewModel.createPreApproval()
@@ -186,7 +186,7 @@ class PreApprovalScreenViewModelTest {
     @Test
     fun `checkStatus error path posts failure result`() = runTest {
         viewModel.referenceId.value = "ref-1"
-        every { mockRepository.getPreApprovalStatus(any(), any(), any(), any()) } returns flowOf(NetworkResult.Error("nope"))
+        every { mockRepository.getPreApprovalStatus(any(), any(), any()) } returns flowOf(NetworkResult.Error("nope"))
 
         viewModel.checkStatus()
 
@@ -199,7 +199,7 @@ class PreApprovalScreenViewModelTest {
      */
     @Test
     fun `createPreApproval with blank currency and message set succeeds`() = runTest {
-        every { mockRepository.createPreApproval(any(), any(), any(), any(), any()) } returns flowOf(NetworkResult.Success(Unit))
+        every { mockRepository.createPreApproval(any(), any(), any(), any()) } returns flowOf(NetworkResult.Success(Unit))
 
         viewModel.onPayerMsisdnChanged("256700000000")
         viewModel.onPayerCurrencyChanged("")
@@ -213,7 +213,7 @@ class PreApprovalScreenViewModelTest {
     /** An exception carrying no message is caught and surfaced with an empty detail. */
     @Test
     fun `createPreApproval exception with null message posts error result`() = runTest {
-        every { mockRepository.createPreApproval(any(), any(), any(), any(), any()) } throws RuntimeException()
+        every { mockRepository.createPreApproval(any(), any(), any(), any()) } throws RuntimeException()
 
         viewModel.onPayerMsisdnChanged("256700000000")
         viewModel.createPreApproval()
@@ -227,7 +227,7 @@ class PreApprovalScreenViewModelTest {
     fun `checkStatus with non-blank body prints payload`() = runTest {
         viewModel.referenceId.value = "ref-1"
         val status = PreApprovalStatus(status = StatusTypes.PENDING)
-        every { mockRepository.getPreApprovalStatus(any(), any(), any(), any()) } returns
+        every { mockRepository.getPreApprovalStatus(any(), any(), any()) } returns
             flowOf(NetworkResult.Success(status))
 
         viewModel.checkStatus()
@@ -240,7 +240,7 @@ class PreApprovalScreenViewModelTest {
     fun `checkStatus with null body reports no status body`() = runTest {
         viewModel.referenceId.value = "ref-1"
         @Suppress("UNCHECKED_CAST")
-        every { mockRepository.getPreApprovalStatus(any(), any(), any(), any()) } returns
+        every { mockRepository.getPreApprovalStatus(any(), any(), any()) } returns
             (flowOf(NetworkResult.Success(null)) as Flow<NetworkResult<PreApprovalStatus>>)
 
         viewModel.checkStatus()
@@ -251,7 +251,7 @@ class PreApprovalScreenViewModelTest {
     /** A leading Loading emission is ignored and the terminal Success is used to complete the flow. */
     @Test
     fun `createPreApproval ignores loading emission before terminal success`() = runTest {
-        every { mockRepository.createPreApproval(any(), any(), any(), any(), any()) } returns
+        every { mockRepository.createPreApproval(any(), any(), any(), any()) } returns
             flowOf(NetworkResult.Loading(), NetworkResult.Success(Unit))
 
         viewModel.onPayerMsisdnChanged("256700000000")

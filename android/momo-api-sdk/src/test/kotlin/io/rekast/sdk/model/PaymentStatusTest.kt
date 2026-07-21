@@ -15,6 +15,7 @@
  */
 package io.rekast.sdk.model
 
+import io.rekast.sdk.utils.ApiErrorResponses
 import io.rekast.sdk.utils.StatusTypes
 import kotlinx.serialization.json.Json
 import org.junit.Assert.assertEquals
@@ -26,7 +27,7 @@ class PaymentStatusTest {
     private val json = Json { ignoreUnknownKeys = true }
     private val jsonWithDefaults = Json { encodeDefaults = true }
 
-    /** Verifies all fields map, including the typed [StatusTypes] enum and reused [ErrorResponse]. */
+    /** Verifies all fields map, including the typed [StatusTypes] enum and the `reason` string. */
     @Test
     fun `PaymentStatus maps all fields including the status enum and reason`() {
         val raw = """
@@ -34,15 +35,14 @@ class PaymentStatusTest {
               "referenceId": "ref-1",
               "status": "SUCCESSFUL",
               "financialTransactionId": "ftx-1",
-              "reason": { "code": "PAYEE_NOT_FOUND", "message": "payee missing" }
+              "reason": "PAYEE_NOT_FOUND"
             }
         """.trimIndent()
         val result = json.decodeFromString<PaymentStatus>(raw)
         assertEquals("ref-1", result.referenceId)
         assertEquals(StatusTypes.SUCCESSFUL, result.status)
         assertEquals("ftx-1", result.financialTransactionId)
-        assertEquals("PAYEE_NOT_FOUND", result.reason?.code)
-        assertEquals("payee missing", result.reason?.message)
+        assertEquals(ApiErrorResponses.PAYEE_NOT_FOUND, result.reason)
     }
 
     /** An empty object deserializes with all fields null (every field is optional). */
@@ -60,7 +60,7 @@ class PaymentStatusTest {
             referenceId = "ref-1",
             status = StatusTypes.PENDING,
             financialTransactionId = "ftx-1",
-            reason = ErrorResponse(code = "PAYEE_NOT_FOUND", message = "x")
+            reason = ApiErrorResponses.PAYEE_NOT_FOUND
         )
         assertEquals(original, jsonWithDefaults.decodeFromString<PaymentStatus>(jsonWithDefaults.encodeToString(original)))
     }

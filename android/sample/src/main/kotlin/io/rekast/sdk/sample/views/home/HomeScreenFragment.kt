@@ -34,7 +34,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import io.rekast.sdk.sample.ui.theme.AppTheme
-import io.rekast.sdk.sample.views.MainViewModel
+import io.rekast.sdk.sample.views.main.MainViewModel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
@@ -45,7 +45,7 @@ import kotlinx.coroutines.launch
  * Data fetching is gated on [MainViewModel.isBootstrapComplete]: on each resume the fragment waits
  * for the first `true` emission before calling any [HomeScreenViewModel] method. This prevents the
  * home API calls from racing against the credential bootstrap sequence initiated by
- * [io.rekast.sdk.sample.views.MainActivity.onResume]. On subsequent resumes where credentials are
+ * [io.rekast.sdk.sample.views.main.MainActivity.onResume]. On subsequent resumes where credentials are
  * already cached, bootstrap completes in milliseconds and the calls fire immediately.
  *
  * Credentials are no longer pushed into the SDK from here — the [io.rekast.sdk.network.interfaces.CredentialProvider]

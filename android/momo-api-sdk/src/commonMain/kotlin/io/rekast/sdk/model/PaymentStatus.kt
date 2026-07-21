@@ -15,6 +15,7 @@
  */
 package io.rekast.sdk.model
 
+import io.rekast.sdk.utils.ApiErrorResponses
 import io.rekast.sdk.utils.StatusTypes
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -22,19 +23,18 @@ import kotlinx.serialization.Serializable
 /**
  * Represents the status of a Collection payment, returned by `getPaymentStatus`.
  *
- * [status] is the typed [StatusTypes] enum, and [reason] reuses [ErrorResponse] (`code` and
- * `message`) rather than redeclaring that shape. Every field is optional so partial payloads never
- * break deserialization.
+ * [status] is the typed [StatusTypes] enum and [reason] is the typed [ApiErrorResponses] enum. Every
+ * field is optional so partial payloads never break deserialization.
  *
  * @property referenceId The reference id for this payment.
  * @property status The payment lifecycle status.
  * @property financialTransactionId A transaction id associated with this payment.
- * @property reason The failure reason (`code` and `message`) when the payment did not succeed.
+ * @property reason The failure reason ([ApiErrorResponses], e.g. `PAYEE_NOT_FOUND`) when the payment did not succeed.
  */
 @Serializable
 data class PaymentStatus(
     @SerialName("referenceId") val referenceId: String? = null,
     @SerialName("status") val status: StatusTypes? = null,
     @SerialName("financialTransactionId") val financialTransactionId: String? = null,
-    @SerialName("reason") val reason: ErrorResponse? = null
+    @SerialName("reason") val reason: ApiErrorResponses? = null
 )

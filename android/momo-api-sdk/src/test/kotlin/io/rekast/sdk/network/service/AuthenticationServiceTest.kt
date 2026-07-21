@@ -61,12 +61,11 @@ class AuthenticationServiceTest {
         override suspend fun getApiUser(apiVersion: String, apiUser: String, productSubscriptionKey: String): Response<ApiUser> = err()
         override suspend fun createApiKey(apiVersion: String, apiUser: String, productSubscriptionKey: String): Response<ApiKey> = err()
         override suspend fun getAccessToken(productType: String, productSubscriptionKey: String): Response<AccessToken> = err()
-        override suspend fun getOauth2AccessToken(productType: String, productSubscriptionKey: String, environment: String, grantType: String, authReqId: String): Response<Oauth2AccessToken> {
+        override suspend fun getOauth2AccessToken(productType: String, productSubscriptionKey: String, grantType: String, authReqId: String): Response<Oauth2AccessToken> {
             lastGrantType = grantType
             return err()
         }
-        override suspend fun bcAuthorize(productType: String, apiVersion: String, loginHint: String, scope: String, accessType: String, productSubscriptionKey: String, environment: String): Response<BcAuthorizeResponse> =
-            err()
+        override suspend fun bcAuthorize(productType: String, apiVersion: String, loginHint: String, scope: String, accessType: String, productSubscriptionKey: String): Response<BcAuthorizeResponse> = err()
     }
 
     /**
@@ -81,7 +80,6 @@ class AuthenticationServiceTest {
         service.getOauth2AccessToken(
             productType = "collection",
             productSubscriptionKey = "sub-key",
-            environment = "sandbox",
             authReqId = "auth-req-001"
         )
 

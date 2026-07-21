@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.rekast.sdk.sample.views
+package io.rekast.sdk.sample.views.main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -52,9 +52,9 @@ import timber.log.Timber
  * tokens are refreshed automatically by `io.rekast.sdk.app.network.TokenAuthenticator` on 401 — no
  * manual re-bootstrap is needed after first launch.
  *
- * Each step uses a cold [kotlinx.coroutines.flow.Flow] from [io.rekast.sdk.repository.DefaultRepository].
- * Flows emit [io.rekast.sdk.repository.data.NetworkResult.Loading] first, then a terminal
- * [io.rekast.sdk.repository.data.NetworkResult.Success] or [io.rekast.sdk.repository.data.NetworkResult.Error].
+ * Each step uses a cold [kotlinx.coroutines.flow.Flow] from [DefaultRepository].
+ * Flows emit [NetworkResult.Loading] first, then a terminal
+ * [NetworkResult.Success] or [NetworkResult.Error].
  *
  * [isBootstrapComplete] is a [StateFlow] that becomes `true` when the bootstrap chain terminates —
  * either because all steps succeeded or because a step failed with no further retry. Observers
@@ -84,7 +84,7 @@ open class MainViewModel @Inject constructor(
     /**
      * Checks whether the API user exists and, if not, creates it — then advances to [createApiKey].
      *
-     * Uses [kotlinx.coroutines.flow.flatMapLatest] to flatten the check → create sequence into a
+     * Uses [flatMapLatest] to flatten the check → create sequence into a
      * single flow without nesting `.collect` calls:
      * - `checkApiUser` Success → passes through; the outer `.collect` calls [createApiKey].
      * - `checkApiUser` Error → switches the active inner flow to `createApiUser`; the outer
@@ -139,7 +139,7 @@ open class MainViewModel @Inject constructor(
      * set to `true` to unblock any waiting observers, and [getAccessToken] is not called. The user
      * will remain without credentials until [checkUser] is invoked again.
      *
-     * Uses the [io.rekast.sdk.utils.ProductTypes.REMITTANCE] subscription key, matching the token
+     * Uses the [ProductTypes.REMITTANCE] subscription key, matching the token
      * that will be obtained in [getAccessToken].
      */
     private fun createApiKey() {
@@ -229,7 +229,7 @@ open class MainViewModel @Inject constructor(
      * prompt to the subscriber's phone. Once the user approves on-device, the `auth_req_id`
      * can be exchanged for an OAuth2 access token via [getOauthAccessToken].
      *
-     * Uses a hardcoded [io.rekast.sdk.model.BcAuthorizeRequest] with `loginHint = "ID:563667/MSISDN"`,
+     * Uses a hardcoded [BcAuthorizeRequest] with `loginHint = "ID:563667/MSISDN"`,
      * `scope = "all_info"`, and `accessType = "offline"`.
      *
      * On success, both [CredentialStorage.saveBackChannelAuthorizationRequestId] (with its expiry)
@@ -253,8 +253,7 @@ open class MainViewModel @Inject constructor(
                 productType = ProductTypes.REMITTANCE.productType,
                 apiVersion = sampleConfig.apiVersionV1,
                 bcAuthorizeRequest = bcAuthorizeRequest,
-                productSubscriptionKey = productTypes,
-                environment = sampleConfig.environment
+                productSubscriptionKey = productTypes
             ).collect { result ->
                 when (result) {
                     is NetworkResult.Success -> {
@@ -315,7 +314,6 @@ open class MainViewModel @Inject constructor(
                     defaultRepository.getOauthAccessToken(
                         productType = ProductTypes.REMITTANCE.productType,
                         productSubscriptionKey = productTypes,
-                        environment = sampleConfig.environment,
                         backChannelAuthorizationRequestId = backChannelAuthorizationRequestId
                     ).collect { result ->
                         when (result) {

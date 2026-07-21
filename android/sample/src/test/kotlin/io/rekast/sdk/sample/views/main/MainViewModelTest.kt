@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.rekast.sdk.sample.views
+package io.rekast.sdk.sample.views.main
 
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -81,7 +81,13 @@ class MainViewModelTest {
         every { mockStorage.getApiKey() } returns ""
         every { mockStorage.getAccessToken() } returns ""
         every { mockStorage.getOauthAccessToken() } returns ""
-        viewModel = MainViewModel(mockRepository, mockStorage, mockSettings, testDispatcherProvider, mockSampleConfig)
+        viewModel = MainViewModel(
+            mockRepository,
+            mockStorage,
+            mockSettings,
+            testDispatcherProvider,
+            mockSampleConfig
+        )
     }
 
     @After
@@ -246,14 +252,14 @@ class MainViewModelTest {
         coEvery { mockRepository.checkApiUser(any(), any()) } returns flowOf(
             NetworkResult.Success(ApiUser(targetEnvironment = "sandbox"))
         )
-        coEvery { mockRepository.getOauthAccessToken(any(), any(), any(), any()) } returns flowOf(
+        coEvery { mockRepository.getOauthAccessToken(any(), any(), any()) } returns flowOf(
             NetworkResult.Error("Failed")
         )
 
         viewModel.checkUser()
 
         coVerify(exactly = 0) { mockRepository.getAccessToken(any(), any()) }
-        coVerify { mockRepository.getOauthAccessToken(any(), any(), any(), any()) }
+        coVerify { mockRepository.getOauthAccessToken(any(), any(), any()) }
     }
 
     /**
@@ -269,13 +275,13 @@ class MainViewModelTest {
         coEvery { mockRepository.checkApiUser(any(), any()) } returns flowOf(
             NetworkResult.Success(ApiUser(targetEnvironment = "sandbox"))
         )
-        coEvery { mockRepository.getOauthAccessToken(any(), any(), any(), any()) } returns flowOf(
+        coEvery { mockRepository.getOauthAccessToken(any(), any(), any()) } returns flowOf(
             NetworkResult.Error("Failed")
         )
 
         viewModel.checkUser()
 
-        coVerify { mockRepository.getOauthAccessToken(any(), any(), any(), any()) }
+        coVerify { mockRepository.getOauthAccessToken(any(), any(), any()) }
     }
 
     /**
@@ -293,7 +299,7 @@ class MainViewModelTest {
 
         viewModel.checkUser()
 
-        coVerify(exactly = 0) { mockRepository.getOauthAccessToken(any(), any(), any(), any()) }
+        coVerify(exactly = 0) { mockRepository.getOauthAccessToken(any(), any(), any()) }
     }
 
     /**
@@ -317,7 +323,7 @@ class MainViewModelTest {
         coEvery { mockRepository.checkApiUser(any(), any()) } returns flowOf(
             NetworkResult.Success(ApiUser(targetEnvironment = "sandbox"))
         )
-        coEvery { mockRepository.getOauthAccessToken(any(), any(), any(), any()) } returns flowOf(
+        coEvery { mockRepository.getOauthAccessToken(any(), any(), any()) } returns flowOf(
             NetworkResult.Success(oauthToken)
         )
 
@@ -346,17 +352,17 @@ class MainViewModelTest {
         )
         // If the blank-authReqId branch fires first, bcAuthorize() is called. Mock it to succeed
         // so the flow continues through to getOauthAccessToken (which requires a stored authReqId).
-        coEvery { mockRepository.bcAuthorize(any(), any(), any(), any(), any()) } returns flowOf(
+        coEvery { mockRepository.bcAuthorize(any(), any(), any(), any()) } returns flowOf(
             NetworkResult.Success(BcAuthorizeResponse(authReqId = "auth-req-001", interval = 5, expiresIn = 300))
         )
-        coEvery { mockRepository.getOauthAccessToken(any(), any(), any(), any()) } returns flowOf(
+        coEvery { mockRepository.getOauthAccessToken(any(), any(), any()) } returns flowOf(
             NetworkResult.Error("Failed")
         )
 
         viewModel.checkUser()
 
         coVerify { mockStorage.saveAccessToken(accessToken) }
-        coVerify { mockRepository.getOauthAccessToken(any(), any(), any(), any()) }
+        coVerify { mockRepository.getOauthAccessToken(any(), any(), any()) }
     }
 
     /**
@@ -418,7 +424,7 @@ class MainViewModelTest {
         viewModel.checkUser()
 
         coVerify { mockStorage.saveAccessToken(any()) }
-        coVerify(exactly = 0) { mockRepository.bcAuthorize(any(), any(), any(), any(), any()) }
+        coVerify(exactly = 0) { mockRepository.bcAuthorize(any(), any(), any(), any()) }
     }
 
     /**
@@ -427,14 +433,14 @@ class MainViewModelTest {
      */
     @Test
     fun `bcAuthorize completes bootstrap on error`() = runTest {
-        coEvery { mockRepository.bcAuthorize(any(), any(), any(), any(), any()) } returns flowOf(
+        coEvery { mockRepository.bcAuthorize(any(), any(), any(), any()) } returns flowOf(
             NetworkResult.Error("bc-authorize failed")
         )
 
         viewModel.bcAuthorize()
 
-        coVerify { mockRepository.bcAuthorize(any(), any(), any(), any(), any()) }
-        coVerify(exactly = 0) { mockRepository.getOauthAccessToken(any(), any(), any(), any()) }
+        coVerify { mockRepository.bcAuthorize(any(), any(), any(), any()) }
+        coVerify(exactly = 0) { mockRepository.getOauthAccessToken(any(), any(), any()) }
     }
 
     /**
@@ -459,7 +465,7 @@ class MainViewModelTest {
         coEvery { mockRepository.checkApiUser(any(), any()) } returns flowOf(
             NetworkResult.Success(ApiUser(targetEnvironment = "sandbox"))
         )
-        coEvery { mockRepository.getOauthAccessToken(any(), any(), any(), any()) } returns flowOf(
+        coEvery { mockRepository.getOauthAccessToken(any(), any(), any()) } returns flowOf(
             NetworkResult.Success(oauthToken)
         )
 
@@ -490,6 +496,6 @@ class MainViewModelTest {
 
         // Reached getOauthAccessToken via the getAccessToken else-branch (apiKey blank), then fell
         // through to the terminal else because the access token is blank — no token exchange.
-        coVerify(exactly = 0) { mockRepository.getOauthAccessToken(any(), any(), any(), any()) }
+        coVerify(exactly = 0) { mockRepository.getOauthAccessToken(any(), any(), any()) }
     }
 }
