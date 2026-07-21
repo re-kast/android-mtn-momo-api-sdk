@@ -19,10 +19,13 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import io.rekast.sdk.app.BuildConfig
 import io.rekast.sdk.app.network.TokenAuthenticator
 import io.rekast.sdk.network.interceptor.UnsafeOkHttpClient
 import io.rekast.sdk.network.interceptor.auth.AccessTokenInterceptor
 import io.rekast.sdk.network.interceptor.auth.BasicAuthenticationInterceptor
+import io.rekast.sdk.network.interceptor.headers.CallbackUrlInterceptor
+import io.rekast.sdk.network.interceptor.headers.EnvironmentInterceptor
 import io.rekast.sdk.network.interfaces.CredentialProvider
 import io.rekast.sdk.network.service.AuthenticationService
 import io.rekast.sdk.network.service.products.CollectionService
@@ -89,6 +92,7 @@ object NetworkModule {
             OkHttpClient
                 .Builder()
                 .addInterceptor(BasicAuthenticationInterceptor(credentialProvider))
+                .addInterceptor(EnvironmentInterceptor(config.environment))
                 .build()
         return Retrofit
             .Builder()
@@ -122,10 +126,14 @@ object NetworkModule {
     fun provideJson(): Json = Json { ignoreUnknownKeys = true }
 
     /**
-     * Provides the singleton [OkHttpClient] wired with:
-     * - Logging interceptor
+     * Provides the singleton [OkHttpClient] wired with (in chain order):
      * - [BasicAuthenticationInterceptor] (adds Basic Auth when no access token is present)
      * - [AccessTokenInterceptor] (adds Bearer token when one is available)
+     * - [EnvironmentInterceptor] (adds the `X-Target-Environment` header, except on auth-bootstrap endpoints)
+     * - [CallbackUrlInterceptor] (adds the `X-Callback-Url` header to transaction-initiation POSTs
+     *   when a callback URL is configured)
+     * - Logging interceptor (debug builds only; added last so it logs the fully-assembled request,
+     *   including the Authorization header attached by the interceptors above)
      * - [TokenAuthenticator] (refreshes the token automatically on 401)
      */
     @Provides
@@ -138,13 +146,21 @@ object NetworkModule {
     ): OkHttpClient {
         val builder =
             if (config.baseUrl.startsWith("https")) {
-                OkHttpClient.Builder().addInterceptor(httpLoggingInterceptor)
+                OkHttpClient.Builder()
             } else {
-                UnsafeOkHttpClient().unsafeOkHttpClient.addInterceptor(httpLoggingInterceptor)
+                UnsafeOkHttpClient().unsafeOkHttpClient
             }
 
         builder.addInterceptor(BasicAuthenticationInterceptor(credentialProvider))
         builder.addInterceptor(AccessTokenInterceptor(credentialProvider))
+        builder.addInterceptor(EnvironmentInterceptor(config.environment))
+        builder.addInterceptor(CallbackUrlInterceptor(credentialProvider))
+        // Debug builds only: added last (innermost) so it logs the fully-assembled request, including
+        // the Authorization header attached by the auth interceptors above. Guarded by BuildConfig.DEBUG
+        // so bearer/basic credentials never land in production logs.
+        if (BuildConfig.DEBUG) {
+            builder.addInterceptor(httpLoggingInterceptor)
+        }
         builder.authenticator { route, response -> tokenAuthenticator.authenticate(route, response) }
 
         val settings = Settings()

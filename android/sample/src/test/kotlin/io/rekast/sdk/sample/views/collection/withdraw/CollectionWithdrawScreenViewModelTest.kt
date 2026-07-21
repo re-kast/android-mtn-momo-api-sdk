@@ -203,7 +203,7 @@ class CollectionWithdrawScreenViewModelTest {
     @Test
     fun `requestToWithdraw with delivery note sends delivery notification`() = runTest {
         every { mockRepository.requestToWithdraw(any(), any(), any(), any()) } returns flowOf(NetworkResult.Success(Unit))
-        every { mockRepository.requestToWithdrawDeliveryNotification(any(), any(), any(), any(), any()) } returns
+        every { mockRepository.requestToWithdrawDeliveryNotification(any(), any(), any(), any()) } returns
             flowOf(NetworkResult.Success("ok".toResponseBody("text/plain".toMediaType())))
         every { mockRepository.requestToWithdrawTransactionStatus(any(), any(), any()) } returns
             flowOf(NetworkResult.Success(sampleTransaction()))
@@ -213,7 +213,7 @@ class CollectionWithdrawScreenViewModelTest {
         viewModel.onDeliveryNoteUpdated("Delivered")
         viewModel.requestToWithdraw()
 
-        verify { mockRepository.requestToWithdrawDeliveryNotification(any(), any(), any(), any(), any()) }
+        verify { mockRepository.requestToWithdrawDeliveryNotification(any(), any(), any(), any()) }
     }
 
     /** A status error after a successful submit leaves the transaction null. */
@@ -238,7 +238,7 @@ class CollectionWithdrawScreenViewModelTest {
         every { mockRepository.requestToWithdraw(any(), any(), any(), any()) } returns flowOf(NetworkResult.Success(Unit))
         every { mockRepository.requestToWithdrawTransactionStatus(any(), any(), any()) } returns
             flowOf(NetworkResult.Success(sampleTransaction()))
-        every { mockRepository.requestToWithdrawDeliveryNotification(any(), any(), any(), any(), any()) } returns
+        every { mockRepository.requestToWithdrawDeliveryNotification(any(), any(), any(), any()) } returns
             flowOf(NetworkResult.Error("delivery failed"))
 
         viewModel.onPhoneNumberUpdated("256700000000")
@@ -246,7 +246,7 @@ class CollectionWithdrawScreenViewModelTest {
         viewModel.onDeliveryNoteUpdated("Please deliver")
         viewModel.requestToWithdraw()
 
-        verify { mockRepository.requestToWithdrawDeliveryNotification(any(), any(), any(), any(), any()) }
+        verify { mockRepository.requestToWithdrawDeliveryNotification(any(), any(), any(), any()) }
         assertFalse(viewModel.showProgressBar.value!!)
     }
 

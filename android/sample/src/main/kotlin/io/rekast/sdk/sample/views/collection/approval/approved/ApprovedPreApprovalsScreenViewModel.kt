@@ -33,6 +33,7 @@ import io.rekast.sdk.sample.utils.SnackBarComponentConfiguration
 import io.rekast.sdk.sample.utils.SnackBarType
 import io.rekast.sdk.sample.utils.Utils
 import io.rekast.sdk.sample.utils.valueOrEmpty
+import io.rekast.sdk.sample.views.BaseScreenViewModel
 import io.rekast.sdk.utils.PartyTypes
 import io.rekast.sdk.utils.ProductTypes
 import javax.inject.Inject
@@ -54,15 +55,7 @@ class ApprovedPreApprovalsScreenViewModel @Inject constructor(
     private val credentialStorage: CredentialStorage,
     private val dispatchers: DispatcherProvider,
     private val sampleConfig: SampleConfig
-) : ViewModel() {
-
-    /** Controls whether the circular progress indicator is shown. */
-    val showProgressBar = MutableLiveData(false)
-
-    private val _snackBarStateFlow = MutableSharedFlow<SnackBarComponentConfiguration>()
-
-    /** Flow of snackbar events to be displayed. */
-    val snackBarStateFlow: SharedFlow<SnackBarComponentConfiguration> = _snackBarStateFlow.asSharedFlow()
+) : BaseScreenViewModel() {
 
     /** Console output describing the outcome of the last operation. */
     val result = MutableLiveData<String?>(null)
@@ -83,11 +76,10 @@ class ApprovedPreApprovalsScreenViewModel @Inject constructor(
         val subscriptionKey = Utils.getProductSubscriptionKeys(ProductTypes.COLLECTION, sampleConfig)
         when (
             val response = defaultRepository.getApprovedPreApprovals(
-                sampleConfig.apiVersionV2,
+                sampleConfig.apiVersionV1,
                 PartyTypes.MSISDN.name,
                 accountHolderId.valueOrEmpty(),
-                subscriptionKey,
-                sampleConfig.environment
+                subscriptionKey
             ).awaitTerminal()
         ) {
             is NetworkResult.Success -> {
@@ -109,7 +101,7 @@ class ApprovedPreApprovalsScreenViewModel @Inject constructor(
     /** Cancels a single pre-approval by its [preApprovalId] and drops it from [approvals] on success. */
     fun cancelPreApproval(preApprovalId: String) = launchOperation {
         val subscriptionKey = Utils.getProductSubscriptionKeys(ProductTypes.COLLECTION, sampleConfig)
-        when (val response = defaultRepository.cancelPreApproval(sampleConfig.apiVersionV1, preApprovalId, subscriptionKey, sampleConfig.environment).awaitTerminal()) {
+        when (val response = defaultRepository.cancelPreApproval(sampleConfig.apiVersionV1, preApprovalId, subscriptionKey).awaitTerminal()) {
             is NetworkResult.Success -> {
                 _approvals.postValue(_approvals.value.orEmpty().filterNot { it.preApprovalId == preApprovalId })
                 result.postValue("Pre-approval $preApprovalId cancelled.")
@@ -143,19 +135,5 @@ class ApprovedPreApprovalsScreenViewModel @Inject constructor(
                 showProgressBar.postValue(false)
             }
         }
-    }
-
-    private suspend fun <T> Flow<NetworkResult<T>>.awaitTerminal(): NetworkResult<T> {
-        var terminal: NetworkResult<T> = NetworkResult.Error("No response received")
-        collect { emission -> if (emission !is NetworkResult.Loading) terminal = emission }
-        return terminal
-    }
-
-    private fun emitSuccess(@StringRes messageResId: Int, vararg args: Any) = emitSnackBarState(SnackBarComponentConfiguration(messageResId = messageResId, messageArgs = args.toList(), type = SnackBarType.SUCCESS))
-
-    private fun emitError(@StringRes messageResId: Int, vararg args: Any) = emitSnackBarState(SnackBarComponentConfiguration(messageResId = messageResId, messageArgs = args.toList(), type = SnackBarType.ERROR))
-
-    private fun emitSnackBarState(snackBarComponentConfiguration: SnackBarComponentConfiguration) {
-        viewModelScope.launch { _snackBarStateFlow.emit(snackBarComponentConfiguration) }
     }
 }

@@ -43,7 +43,6 @@ sealed interface RemittanceService : CommonService {
      * @param cashTransfer The cash transfer payload including recipient, amounts, and optional KYC fields.
      * @param apiVersion The API version to target (e.g., v2_0).
      * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Remittance product.
-     * @param environment The target environment (e.g., sandbox or production).
      * @param uuid A UUID V4 used as the X-Reference-Id to uniquely identify this request.
      * @return A `Response` with an empty body; HTTP 202 indicates the transfer was accepted.
      */
@@ -52,7 +51,6 @@ sealed interface RemittanceService : CommonService {
         @Body cashTransfer: CashTransfer,
         @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
         @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
-        @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String,
         @Header(Constants.Headers.X_REFERENCE_ID) uuid: String
     ): Response<Unit>
 
@@ -62,14 +60,12 @@ sealed interface RemittanceService : CommonService {
      * @param referenceId The UUID V4 reference ID used when calling [cashTransfer].
      * @param apiVersion The API version to target (e.g., v2_0).
      * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Remittance product.
-     * @param environment The target environment (e.g., sandbox or production).
      * @return A `Response` whose body is the parsed [CashTransferStatus].
      */
     @GET(Constants.EndPoints.CASH_TRANSFER_STATUS)
     suspend fun getCashTransferStatus(
         @Path(Constants.EndpointPaths.REFERENCE_ID) referenceId: String,
         @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
-        @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
-        @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String
+        @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String
     ): Response<CashTransferStatus>
 }

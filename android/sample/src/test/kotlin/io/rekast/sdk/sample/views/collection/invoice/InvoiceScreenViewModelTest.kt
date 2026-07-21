@@ -103,13 +103,13 @@ class InvoiceScreenViewModelTest {
     /** Verifies createInvoice calls the repository, stores a reference ID, and clears the progress bar. */
     @Test
     fun `createInvoice stores reference id on success`() = runTest {
-        every { mockRepository.createInvoice(any(), any(), any(), any(), any()) } returns flowOf(NetworkResult.Success(Unit))
+        every { mockRepository.createInvoice(any(), any(), any(), any()) } returns flowOf(NetworkResult.Success(Unit))
 
         viewModel.onAmountChanged("100")
         viewModel.onPayerMsisdnChanged("256700000000")
         viewModel.createInvoice()
 
-        verify { mockRepository.createInvoice(any(), any(), any(), any(), any()) }
+        verify { mockRepository.createInvoice(any(), any(), any(), any()) }
         assertNotNull(viewModel.referenceId.value)
         assertNotNull(viewModel.result.value)
         assertFalse(viewModel.showProgressBar.value!!)
@@ -122,7 +122,7 @@ class InvoiceScreenViewModelTest {
 
         viewModel.createInvoice()
 
-        verify(exactly = 0) { mockRepository.createInvoice(any(), any(), any(), any(), any()) }
+        verify(exactly = 0) { mockRepository.createInvoice(any(), any(), any(), any()) }
     }
 
     /** Verifies checkStatus is a no-op (no repository call) until an invoice has been created. */
@@ -130,14 +130,14 @@ class InvoiceScreenViewModelTest {
     fun `checkStatus does nothing without a reference id`() = runTest {
         viewModel.checkStatus()
 
-        verify(exactly = 0) { mockRepository.getInvoiceStatus(any(), any(), any(), any()) }
+        verify(exactly = 0) { mockRepository.getInvoiceStatus(any(), any(), any()) }
     }
 
     /** Verifies checkStatus fetches and prints the status once an invoice exists. */
     @Test
     fun `checkStatus fetches status after create`() = runTest {
-        every { mockRepository.createInvoice(any(), any(), any(), any(), any()) } returns flowOf(NetworkResult.Success(Unit))
-        every { mockRepository.getInvoiceStatus(any(), any(), any(), any()) } returns
+        every { mockRepository.createInvoice(any(), any(), any(), any()) } returns flowOf(NetworkResult.Success(Unit))
+        every { mockRepository.getInvoiceStatus(any(), any(), any()) } returns
             flowOf(NetworkResult.Success(InvoiceStatus(status = StatusTypes.PENDING)))
 
         viewModel.onAmountChanged("100")
@@ -145,7 +145,7 @@ class InvoiceScreenViewModelTest {
         viewModel.createInvoice()
         viewModel.checkStatus()
 
-        verify { mockRepository.getInvoiceStatus(any(), any(), any(), any()) }
+        verify { mockRepository.getInvoiceStatus(any(), any(), any()) }
         assertNotNull(viewModel.result.value)
     }
 
@@ -170,7 +170,7 @@ class InvoiceScreenViewModelTest {
     /** A create error posts a failure message and leaves no reference ID. */
     @Test
     fun `createInvoice error path posts failure result`() = runTest {
-        every { mockRepository.createInvoice(any(), any(), any(), any(), any()) } returns flowOf(NetworkResult.Error("bad"))
+        every { mockRepository.createInvoice(any(), any(), any(), any()) } returns flowOf(NetworkResult.Error("bad"))
 
         viewModel.onAmountChanged("100")
         viewModel.onPayerMsisdnChanged("256700000000")
@@ -184,7 +184,7 @@ class InvoiceScreenViewModelTest {
     /** An exception during an operation is caught and surfaced in the console. */
     @Test
     fun `createInvoice exception path posts error result`() = runTest {
-        every { mockRepository.createInvoice(any(), any(), any(), any(), any()) } throws RuntimeException("kaboom")
+        every { mockRepository.createInvoice(any(), any(), any(), any()) } throws RuntimeException("kaboom")
 
         viewModel.onAmountChanged("100")
         viewModel.onPayerMsisdnChanged("256700000000")
@@ -198,7 +198,7 @@ class InvoiceScreenViewModelTest {
     @Test
     fun `checkStatus error path posts failure result`() = runTest {
         viewModel.referenceId.value = "ref-1"
-        every { mockRepository.getInvoiceStatus(any(), any(), any(), any()) } returns flowOf(NetworkResult.Error("nope"))
+        every { mockRepository.getInvoiceStatus(any(), any(), any()) } returns flowOf(NetworkResult.Error("nope"))
 
         viewModel.checkStatus()
 
@@ -209,7 +209,7 @@ class InvoiceScreenViewModelTest {
     @Test
     fun `cancelInvoice success posts cancelled result`() = runTest {
         viewModel.referenceId.value = "ref-1"
-        every { mockRepository.cancelInvoice(any(), any(), any(), any()) } returns flowOf(NetworkResult.Success(Unit))
+        every { mockRepository.cancelInvoice(any(), any(), any()) } returns flowOf(NetworkResult.Success(Unit))
 
         viewModel.cancelInvoice()
 
@@ -220,7 +220,7 @@ class InvoiceScreenViewModelTest {
     @Test
     fun `cancelInvoice error posts failure result`() = runTest {
         viewModel.referenceId.value = "ref-1"
-        every { mockRepository.cancelInvoice(any(), any(), any(), any()) } returns flowOf(NetworkResult.Error("cant"))
+        every { mockRepository.cancelInvoice(any(), any(), any()) } returns flowOf(NetworkResult.Error("cant"))
 
         viewModel.cancelInvoice()
 
@@ -232,7 +232,7 @@ class InvoiceScreenViewModelTest {
     fun `cancelInvoice without reference does nothing`() = runTest {
         viewModel.cancelInvoice()
 
-        verify(exactly = 0) { mockRepository.cancelInvoice(any(), any(), any(), any()) }
+        verify(exactly = 0) { mockRepository.cancelInvoice(any(), any(), any()) }
     }
 
     /** Cancel is skipped when the access token is blank. */
@@ -243,7 +243,7 @@ class InvoiceScreenViewModelTest {
 
         viewModel.cancelInvoice()
 
-        verify(exactly = 0) { mockRepository.cancelInvoice(any(), any(), any(), any()) }
+        verify(exactly = 0) { mockRepository.cancelInvoice(any(), any(), any()) }
     }
 
     /**
@@ -252,7 +252,7 @@ class InvoiceScreenViewModelTest {
      */
     @Test
     fun `createInvoice with blank currency and optional fields set succeeds`() = runTest {
-        every { mockRepository.createInvoice(any(), any(), any(), any(), any()) } returns flowOf(NetworkResult.Success(Unit))
+        every { mockRepository.createInvoice(any(), any(), any(), any()) } returns flowOf(NetworkResult.Success(Unit))
 
         viewModel.onAmountChanged("100")
         viewModel.onPayerMsisdnChanged("256700000000")
@@ -268,7 +268,7 @@ class InvoiceScreenViewModelTest {
     /** An exception carrying no message is caught and surfaced with an empty detail. */
     @Test
     fun `createInvoice exception with null message posts error result`() = runTest {
-        every { mockRepository.createInvoice(any(), any(), any(), any(), any()) } throws RuntimeException()
+        every { mockRepository.createInvoice(any(), any(), any(), any()) } throws RuntimeException()
 
         viewModel.onAmountChanged("100")
         viewModel.onPayerMsisdnChanged("256700000000")
@@ -283,7 +283,7 @@ class InvoiceScreenViewModelTest {
     fun `checkStatus with null body reports no status body`() = runTest {
         viewModel.referenceId.value = "ref-1"
         @Suppress("UNCHECKED_CAST")
-        every { mockRepository.getInvoiceStatus(any(), any(), any(), any()) } returns
+        every { mockRepository.getInvoiceStatus(any(), any(), any()) } returns
             (flowOf(NetworkResult.Success(null)) as Flow<NetworkResult<InvoiceStatus>>)
 
         viewModel.checkStatus()
@@ -294,7 +294,7 @@ class InvoiceScreenViewModelTest {
     /** A leading Loading emission is ignored and the terminal Success is used to complete the flow. */
     @Test
     fun `createInvoice ignores loading emission before terminal success`() = runTest {
-        every { mockRepository.createInvoice(any(), any(), any(), any(), any()) } returns
+        every { mockRepository.createInvoice(any(), any(), any(), any()) } returns
             flowOf(NetworkResult.Loading(), NetworkResult.Success(Unit))
 
         viewModel.onAmountChanged("100")

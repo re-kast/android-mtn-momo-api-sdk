@@ -162,11 +162,8 @@
         android:id="@+id/settingsScreenFragment"
         android:name="io.rekast.sdk.sample.views.settings.SettingsScreenFragment"
         android:label="@string/settings_screen" />
-    <navigation android:id="@+id/navigation"
-        app:startDestination="@id/paymentScreenFragment">
-        <fragment
-            android:id="@+id/paymentScreenFragment"
-            android:name="io.rekast.sdk.sample.views.collection.payment.PaymentScreenFragment"
-            android:label="@string/payment_screen" />
-    </navigation>
+    <fragment
+        android:id="@+id/paymentScreenFragment"
+        android:name="io.rekast.sdk.sample.views.collection.payment.PaymentScreenFragment"
+        android:label="@string/payment_screen" />
 </navigation>

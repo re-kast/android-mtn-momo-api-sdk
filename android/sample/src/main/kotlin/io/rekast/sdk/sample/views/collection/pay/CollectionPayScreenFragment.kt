@@ -31,7 +31,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import io.rekast.sdk.sample.ui.theme.AppTheme
-import io.rekast.sdk.sample.views.MainViewModel
+import io.rekast.sdk.sample.views.main.MainViewModel
 
 /**
  * Fragment that hosts the Collection Request-to-Pay screen, rendering [CollectionScreen] via Jetpack Compose.

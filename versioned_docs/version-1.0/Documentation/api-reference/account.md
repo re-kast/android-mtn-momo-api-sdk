@@ -7,6 +7,8 @@ sidebar_label: Account
 
 Account APIs retrieve subscriber information and validate account status. They are shared across all product types (Collection, Disbursements, Remittance) — pass the appropriate `productType` and `productSubscriptionKey` for the product you are using.
 
+> **Environment and cross-cutting headers are automatic.** You set the target environment once during SDK setup — `ApiConfig.environment`, which is sourced from `MOMO_ENVIRONMENT` in `local.properties`. On every request the SDK's `EnvironmentInterceptor` adds the required `X-Target-Environment` header, so **environment is never a per-call parameter**. Authentication headers (`Authorization`) are attached the same way by the SDK's interceptors.
+
 ---
 
 ## Get Account Balance
@@ -18,8 +20,7 @@ defaultRepository.getAccountBalance(
     productType = ProductTypes.COLLECTION.productType,
     apiVersion = "v1_0",
     currency = null,           // null returns balance in the account's default currency
-    productSubscriptionKey = collectionPrimaryKey,
-    environment = "sandbox"
+    productSubscriptionKey = collectionPrimaryKey
 ).collect { result ->
     when (result) {
         is NetworkResult.Success -> {
@@ -39,8 +40,7 @@ defaultRepository.getAccountBalance(
     productType = ProductTypes.REMITTANCE.productType,
     apiVersion = "v1_0",
     currency = "EUR",
-    productSubscriptionKey = remittancePrimaryKey,
-    environment = "sandbox"
+    productSubscriptionKey = remittancePrimaryKey
 ).collect { result -> /* ... */ }
 ```
 
@@ -50,7 +50,6 @@ defaultRepository.getAccountBalance(
 | `apiVersion`             | `String`  | API version, e.g. `"v1_0"`                                 |
 | `currency`               | `String?` | ISO-4217 currency code, or `null` for the default currency |
 | `productSubscriptionKey` | `String`  | Primary subscription key for the product                   |
-| `environment`            | `String`  | `"sandbox"` or `"production"`                              |
 
 ---
 
@@ -63,8 +62,7 @@ defaultRepository.getBasicUserInfo(
     productType = ProductTypes.COLLECTION.productType,
     apiVersion = "v1_0",
     accountHolder = "256770000000",   // MSISDN
-    productSubscriptionKey = collectionPrimaryKey,
-    environment = "sandbox"
+    productSubscriptionKey = collectionPrimaryKey
 ).collect { result ->
     when (result) {
         is NetworkResult.Success -> {
@@ -83,7 +81,6 @@ defaultRepository.getBasicUserInfo(
 | `apiVersion`             | `String` | API version                   |
 | `accountHolder`          | `String` | MSISDN of the account holder  |
 | `productSubscriptionKey` | `String` | Primary subscription key      |
-| `environment`            | `String` | `"sandbox"` or `"production"` |
 
 ---
 
@@ -95,8 +92,7 @@ Retrieves full profile information for the authenticated subscriber. This is an 
 defaultRepository.getUserInfoWithConsent(
     productType = ProductTypes.REMITTANCE.productType,
     apiVersion = "v1_0",
-    productSubscriptionKey = remittancePrimaryKey,
-    environment = "sandbox"
+    productSubscriptionKey = remittancePrimaryKey
 ).collect { result ->
     when (result) {
         is NetworkResult.Success -> {
@@ -109,12 +105,11 @@ defaultRepository.getUserInfoWithConsent(
 }
 ```
 
-| Parameter                | Type     | Description                                                                                                                  |
-|--------------------------|----------|------------------------------------------------------------------------------------------------------------------------------|
+| Parameter                | Type     | Description                                                                                                                   |
+|--------------------------|----------|-------------------------------------------------------------------------------------------------------------------------------|
 | `productType`            | `String` | Product type string. Use the product whose subscription key you have provisioned (e.g. `ProductTypes.REMITTANCE.productType`) |
-| `apiVersion`             | `String` | API version                                                                                                                  |
-| `productSubscriptionKey` | `String` | Primary subscription key                                                                                                     |
-| `environment`            | `String` | `"sandbox"` or `"production"`                                                                                                |
+| `apiVersion`             | `String` | API version                                                                                                                   |
+| `productSubscriptionKey` | `String` | Primary subscription key                                                                                                      |
 
 **`UserInfoWithConsent` response fields**
 
@@ -150,8 +145,7 @@ defaultRepository.validateAccountHolderStatus(
     productType = ProductTypes.COLLECTION.productType,
     apiVersion = "v1_0",
     party = Party(partyIdType = PartyTypes.MSISDN, partyId = "256770000000"),
-    productSubscriptionKey = collectionPrimaryKey,
-    environment = "sandbox"
+    productSubscriptionKey = collectionPrimaryKey
 ).collect { result ->
     when (result) {
         is NetworkResult.Success -> { /* account is active */ }
@@ -161,10 +155,9 @@ defaultRepository.validateAccountHolderStatus(
 }
 ```
 
-| Parameter                | Type            | Description                                                |
-|--------------------------|-----------------|------------------------------------------------------------|
-| `productType`            | `String`        | Product type string                                        |
-| `apiVersion`             | `String`        | API version                                                |
-| `party`                  | `Party`         | Account identifier; `partyIdType` is a `PartyTypes` enum (e.g. `MSISDN`)   |
-| `productSubscriptionKey` | `String`        | Primary subscription key                                   |
-| `environment`            | `String`        | `"sandbox"` or `"production"`                              |
+| Parameter                | Type     | Description                                                              |
+|--------------------------|----------|--------------------------------------------------------------------------|
+| `productType`            | `String` | Product type string                                                      |
+| `apiVersion`             | `String` | API version                                                              |
+| `party`                  | `Party`  | Account identifier; `partyIdType` is a `PartyTypes` enum (e.g. `MSISDN`) |
+| `productSubscriptionKey` | `String` | Primary subscription key                                                 |

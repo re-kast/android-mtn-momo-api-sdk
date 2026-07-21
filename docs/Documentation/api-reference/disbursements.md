@@ -9,6 +9,8 @@ Disbursements APIs let you send money to Mobile Money accounts (transfers), cred
 
 Authentication is handled automatically by the SDK's interceptors — you never pass an access token. Every `DefaultRepository` method returns a `Flow<NetworkResult<T>>`; collect it inside a coroutine scope. Cross-border cash transfers live under [Remittance](./remittance).
 
+> **Environment and cross-cutting headers are automatic.** You set the target environment once during SDK setup — `ApiConfig.environment`, which is sourced from `MOMO_ENVIRONMENT` in `local.properties`. On every request the SDK's `EnvironmentInterceptor` adds the required `X-Target-Environment` header, so **environment is never a per-call parameter**. Authentication headers (`Authorization`) are attached the same way, and transaction-initiation endpoints additionally receive an optional `X-Callback-Url` header. See [Callbacks](./callbacks) for details.
+
 ---
 
 ## Transfer
@@ -28,8 +30,7 @@ defaultRepository.transfer(
         payeeNote = "March salary"
     ),
     uuid = UUID.randomUUID().toString(),
-    productSubscriptionKey = disbursementsPrimaryKey,
-    environment = "sandbox"
+    productSubscriptionKey = disbursementsPrimaryKey
 ).collect { result ->
     when (result) {
         is NetworkResult.Success -> { /* transfer initiated */ }
@@ -39,14 +40,13 @@ defaultRepository.transfer(
 }
 ```
 
-| Parameter                | Type              | Description                                                      |
-|--------------------------|-------------------|------------------------------------------------------------------|
-| `productType`            | `String`          | Product type string, e.g. `ProductTypes.DISBURSEMENTS.productType` |
-| `apiVersion`             | `String`          | API version, e.g. `"v1_0"`                                       |
-| `transfer`               | `Transfer`        | Transfer details (amount, currency, payee, messages)             |
-| `uuid`                   | `String`          | Unique reference ID — save this to poll for status               |
-| `productSubscriptionKey` | `String`          | Disbursements primary subscription key                           |
-| `environment`            | `String`          | `"sandbox"` or `"production"`                                    |
+| Parameter                | Type       | Description                                                        |
+|--------------------------|------------|--------------------------------------------------------------------|
+| `productType`            | `String`   | Product type string, e.g. `ProductTypes.DISBURSEMENTS.productType` |
+| `apiVersion`             | `String`   | API version, e.g. `"v1_0"`                                         |
+| `transfer`               | `Transfer` | Transfer details (amount, currency, payee, messages)               |
+| `uuid`                   | `String`   | Unique reference ID — save this to poll for status                 |
+| `productSubscriptionKey` | `String`   | Disbursements primary subscription key                             |
 
 ---
 
@@ -59,8 +59,7 @@ defaultRepository.getTransferStatus(
     productType = ProductTypes.DISBURSEMENTS.productType,
     apiVersion = "v1_0",
     referenceId = transferUuid,
-    productSubscriptionKey = disbursementsPrimaryKey,
-    environment = "sandbox"
+    productSubscriptionKey = disbursementsPrimaryKey
 ).collect { result ->
     when (result) {
         is NetworkResult.Success -> { /* parse result.response */ }
@@ -76,7 +75,6 @@ defaultRepository.getTransferStatus(
 | `apiVersion`             | `String` | API version                            |
 | `referenceId`            | `String` | UUID used when calling `transfer`      |
 | `productSubscriptionKey` | `String` | Disbursements primary subscription key |
-| `environment`            | `String` | `"sandbox"` or `"production"`          |
 
 Returns `Flow<NetworkResult<TransferStatus>>` — `TransferStatus` carries `amount`, `currency`, `financialTransactionId`, `externalId`, a `payee` (`Party`), `payerMessage`, `payeeNote`, a `status` of type `StatusTypes` (`PENDING`, `SUCCESSFUL`, `FAILED`), and a `reason` (`ErrorResponse` — `code` + `message`).
 

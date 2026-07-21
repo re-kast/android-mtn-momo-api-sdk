@@ -35,9 +35,9 @@ import io.rekast.sdk.sample.utils.SnackBarComponentConfiguration
 import io.rekast.sdk.sample.utils.SnackBarType
 import io.rekast.sdk.sample.utils.Utils
 import io.rekast.sdk.sample.utils.valueOrEmpty
+import io.rekast.sdk.sample.views.BaseScreenViewModel
 import io.rekast.sdk.utils.PartyTypes
 import io.rekast.sdk.utils.ProductTypes
-import java.util.UUID
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -63,17 +63,10 @@ class RemittanceScreenViewModel @Inject constructor(
     private val credentialStorage: CredentialStorage,
     private val dispatchers: DispatcherProvider,
     private val sampleConfig: SampleConfig
-) : ViewModel() {
-
-    /** Controls whether the circular progress indicator is shown instead of the form. */
-    val showProgressBar = MutableLiveData(false)
+) : BaseScreenViewModel() {
 
     /** Holds the [TransferStatus] returned by the API; null while no request has succeeded. */
     var transferStatus: MutableLiveData<TransferStatus?> = MutableLiveData(null)
-    private val _snackBarStateFlow = MutableSharedFlow<SnackBarComponentConfiguration>()
-
-    /** Flow of [SnackBarComponentConfiguration] events to be displayed as snackbars. */
-    val snackBarStateFlow: SharedFlow<SnackBarComponentConfiguration> = _snackBarStateFlow.asSharedFlow()
 
     private val _phoneNumber = MutableLiveData(Constants.EMPTY_STRING)
 
@@ -193,15 +186,14 @@ class RemittanceScreenViewModel @Inject constructor(
             }
             showProgressBar.postValue(true)
             try {
-                val referenceId = UUID.randomUUID().toString()
+                val referenceId = generateUuid()
                 val subscriptionKey = Utils.getProductSubscriptionKeys(ProductTypes.REMITTANCE, sampleConfig)
                 val submit = defaultRepository.transfer(
                     productType = ProductTypes.REMITTANCE.productType,
                     apiVersion = sampleConfig.apiVersionV1,
                     transfer = buildTransaction(),
                     uuid = referenceId,
-                    productSubscriptionKey = subscriptionKey,
-                    environment = sampleConfig.environment
+                    productSubscriptionKey = subscriptionKey
                 ).awaitTerminal()
                 when (submit) {
                     is NetworkResult.Success -> {
@@ -230,8 +222,7 @@ class RemittanceScreenViewModel @Inject constructor(
             productType = ProductTypes.REMITTANCE.productType,
             apiVersion = sampleConfig.apiVersionV1,
             referenceId = referenceId,
-            productSubscriptionKey = subscriptionKey,
-            environment = sampleConfig.environment
+            productSubscriptionKey = subscriptionKey
         ).awaitTerminal()
         when (result) {
             is NetworkResult.Success -> {
@@ -250,27 +241,9 @@ class RemittanceScreenViewModel @Inject constructor(
     private fun buildTransaction() = Transfer(
         amount = amount.valueOrEmpty(),
         currency = Constants.SANDBOX_CURRENCY,
-        externalId = UUID.randomUUID().toString(),
+        externalId = generateUuid(),
         payee = Party(partyIdType = PartyTypes.MSISDN, partyId = phoneNumber.valueOrEmpty()),
         payerMessage = payerMessage.valueOrEmpty(),
         payeeNote = payerNote.valueOrEmpty()
     )
-
-    /**
-     * Collects this result [Flow] to completion and returns its terminal (non-[NetworkResult.Loading])
-     * emission, so a suspend caller can await the flow's final success or error.
-     */
-    private suspend fun <T> Flow<NetworkResult<T>>.awaitTerminal(): NetworkResult<T> {
-        var terminal: NetworkResult<T> = NetworkResult.Error("No response received")
-        collect { emission -> if (emission !is NetworkResult.Loading) terminal = emission }
-        return terminal
-    }
-
-    private fun emitSuccess(@StringRes messageResId: Int, vararg args: Any) = emitSnackBarState(SnackBarComponentConfiguration(messageResId = messageResId, messageArgs = args.toList(), type = SnackBarType.SUCCESS))
-
-    private fun emitError(@StringRes messageResId: Int, vararg args: Any) = emitSnackBarState(SnackBarComponentConfiguration(messageResId = messageResId, messageArgs = args.toList(), type = SnackBarType.ERROR))
-
-    private fun emitSnackBarState(snackBarComponentConfiguration: SnackBarComponentConfiguration) {
-        viewModelScope.launch { _snackBarStateFlow.emit(snackBarComponentConfiguration) }
-    }
 }

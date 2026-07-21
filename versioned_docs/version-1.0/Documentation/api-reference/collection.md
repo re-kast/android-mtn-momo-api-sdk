@@ -9,6 +9,8 @@ Collection APIs let you request payments from customers, check transaction statu
 
 All flows require a valid Bearer access token and OAuth2 token stored in `CredentialStorage`. The SDK's `TokenAuthenticator` refreshes expired tokens automatically on 401 responses.
 
+> **Environment and cross-cutting headers are automatic.** You set the target environment once during SDK setup — `ApiConfig.environment`, which is sourced from `MOMO_ENVIRONMENT` in `local.properties`. On every request the SDK's `EnvironmentInterceptor` adds the required `X-Target-Environment` header, so **environment is never a per-call parameter**. Authentication headers (`Authorization`) are attached the same way by the auth interceptors, and transaction-initiation endpoints additionally receive an optional `X-Callback-Url` header. See [Callbacks](./callbacks) for how to configure callback URLs.
+
 ---
 
 ## Request to Pay
@@ -153,8 +155,7 @@ defaultRepository.requestToPayDeliveryNotification(
     apiVersion = "v1_0",
     referenceId = transactionUuid,
     notifications = Notifications(notificationMessage = "Your payment was received."),
-    productSubscriptionKey = collectionPrimaryKey,
-    environment = "sandbox"
+    productSubscriptionKey = collectionPrimaryKey
 ).collect { result ->
     when (result) {
         is NetworkResult.Success -> { /* notification sent */ }
@@ -171,7 +172,6 @@ defaultRepository.requestToPayDeliveryNotification(
 | `referenceId`            | `String`        | UUID of the original `requestToPay`                                             |
 | `notifications`          | `Notifications` | Notification message body (`notificationMessage`)                               |
 | `productSubscriptionKey` | `String`        | Collection primary subscription key                                             |
-| `environment`            | `String`        | `"sandbox"` or `"production"`                                                   |
 
 ---
 
@@ -184,8 +184,7 @@ defaultRepository.requestToWithdrawDeliveryNotification(
     apiVersion = "v1_0",
     referenceId = transactionUuid,
     notifications = Notifications(notificationMessage = "Your withdrawal was processed."),
-    productSubscriptionKey = collectionPrimaryKey,
-    environment = "sandbox"
+    productSubscriptionKey = collectionPrimaryKey
 ).collect { result ->
     when (result) {
         is NetworkResult.Success -> { /* notification sent */ }
@@ -195,13 +194,12 @@ defaultRepository.requestToWithdrawDeliveryNotification(
 }
 ```
 
-| Parameter                | Type            | Description                              |
-|--------------------------|-----------------|------------------------------------------|
-| `apiVersion`             | `String`        | API version, e.g. `"v1_0"`               |
-| `referenceId`            | `String`        | UUID of the original `requestToWithdraw` |
+| Parameter                | Type            | Description                                       |
+|--------------------------|-----------------|---------------------------------------------------|
+| `apiVersion`             | `String`        | API version, e.g. `"v1_0"`                        |
+| `referenceId`            | `String`        | UUID of the original `requestToWithdraw`          |
 | `notifications`          | `Notifications` | Notification message body (`notificationMessage`) |
-| `productSubscriptionKey` | `String`        | Collection primary subscription key      |
-| `environment`            | `String`        | `"sandbox"` or `"production"`            |
+| `productSubscriptionKey` | `String`        | Collection primary subscription key               |
 
 ---
 
@@ -222,8 +220,7 @@ defaultRepository.createInvoice(
         description = "Invoice for service #99"
     ),
     uuid = UUID.randomUUID().toString(),
-    productSubscriptionKey = collectionPrimaryKey,
-    environment = "sandbox"
+    productSubscriptionKey = collectionPrimaryKey
 ).collect { result ->
     when (result) {
         is NetworkResult.Success -> { /* invoice created */ }
@@ -239,7 +236,6 @@ defaultRepository.createInvoice(
 | `invoice`                | `Invoice` | Invoice details including amount, currency, payer, and payee |
 | `uuid`                   | `String`  | Unique reference ID for the invoice                          |
 | `productSubscriptionKey` | `String`  | Collection primary subscription key                          |
-| `environment`            | `String`  | `"sandbox"` or `"production"`                                |
 
 ---
 
@@ -251,8 +247,7 @@ Retrieves the current status of an invoice.
 defaultRepository.getInvoiceStatus(
     apiVersion = "v1_0",
     referenceId = invoiceUuid,
-    productSubscriptionKey = collectionPrimaryKey,
-    environment = "sandbox"
+    productSubscriptionKey = collectionPrimaryKey
 ).collect { result ->
     when (result) {
         is NetworkResult.Success -> { /* parse result.response */ }
@@ -267,7 +262,6 @@ defaultRepository.getInvoiceStatus(
 | `apiVersion`             | `String` | API version                            |
 | `referenceId`            | `String` | UUID used when calling `createInvoice` |
 | `productSubscriptionKey` | `String` | Collection primary subscription key    |
-| `environment`            | `String` | `"sandbox"` or `"production"`          |
 
 Returns `Flow<NetworkResult<InvoiceStatus>>` — `InvoiceStatus` carries `referenceId`, `externalId`, `amount`, `currency`, a `status` of type `StatusTypes` (`CREATED`, `PENDING`, `SUCCESSFUL`, `FAILED`), `paymentReference`, `invoiceId`, `expiryDateTime`, `payeeFirstName`, `payeeLastName`, an `errorReason` (`ErrorResponse` — `code` + `message`), an `intendedPayer` (`Party`), and `description`.
 
@@ -281,8 +275,7 @@ Cancels an active invoice.
 defaultRepository.cancelInvoice(
     apiVersion = "v1_0",
     referenceId = invoiceUuid,
-    productSubscriptionKey = collectionPrimaryKey,
-    environment = "sandbox"
+    productSubscriptionKey = collectionPrimaryKey
 ).collect { result ->
     when (result) {
         is NetworkResult.Success -> { /* invoice cancelled */ }
@@ -297,7 +290,6 @@ defaultRepository.cancelInvoice(
 | `apiVersion`             | `String` | API version                         |
 | `referenceId`            | `String` | UUID of the invoice to cancel       |
 | `productSubscriptionKey` | `String` | Collection primary subscription key |
-| `environment`            | `String` | `"sandbox"` or `"production"`       |
 
 ---
 
@@ -315,8 +307,7 @@ defaultRepository.createPreApproval(
         validityTime = 3600
     ),
     uuid = UUID.randomUUID().toString(),
-    productSubscriptionKey = collectionPrimaryKey,
-    environment = "sandbox"
+    productSubscriptionKey = collectionPrimaryKey
 ).collect { result ->
     when (result) {
         is NetworkResult.Success -> { /* pre-approval created */ }
@@ -332,7 +323,6 @@ defaultRepository.createPreApproval(
 | `preApproval`            | `PreApproval` | Payer details, currency, message, and validity duration in seconds |
 | `uuid`                   | `String`      | Unique reference ID                                                |
 | `productSubscriptionKey` | `String`      | Collection primary subscription key                                |
-| `environment`            | `String`      | `"sandbox"` or `"production"`                                      |
 
 ---
 
@@ -344,8 +334,7 @@ Checks the status of a pre-approval.
 defaultRepository.getPreApprovalStatus(
     apiVersion = "v1_0",
     referenceId = preApprovalUuid,
-    productSubscriptionKey = collectionPrimaryKey,
-    environment = "sandbox"
+    productSubscriptionKey = collectionPrimaryKey
 ).collect { result -> /* ... */ }
 ```
 
@@ -354,7 +343,6 @@ defaultRepository.getPreApprovalStatus(
 | `apiVersion`             | `String` | API version                                |
 | `referenceId`            | `String` | UUID used when calling `createPreApproval` |
 | `productSubscriptionKey` | `String` | Collection primary subscription key        |
-| `environment`            | `String` | `"sandbox"` or `"production"`              |
 
 `getPreApprovalStatus(...)` returns `Flow<NetworkResult<PreApprovalStatus>>` (`payer`, `payerCurrency`, `payerMessage`, a `status` of type `StatusTypes` (`PENDING`, `SUCCESSFUL`, `FAILED`), `expirationDateTime`, and a `reason` of `code` + `message`).
 
@@ -368,8 +356,7 @@ Cancels an active pre-approval.
 defaultRepository.cancelPreApproval(
     apiVersion = "v1_0",
     referenceId = preApprovalUuid,
-    productSubscriptionKey = collectionPrimaryKey,
-    environment = "sandbox"
+    productSubscriptionKey = collectionPrimaryKey
 ).collect { result -> /* ... */ }
 ```
 
@@ -378,7 +365,6 @@ defaultRepository.cancelPreApproval(
 | `apiVersion`             | `String` | API version                         |
 | `referenceId`            | `String` | UUID of the pre-approval to cancel  |
 | `productSubscriptionKey` | `String` | Collection primary subscription key |
-| `environment`            | `String` | `"sandbox"` or `"production"`       |
 
 ---
 
@@ -391,18 +377,16 @@ defaultRepository.getApprovedPreApprovals(
     apiVersion = "v2_0",
     accountHolderIdType = "MSISDN",
     accountHolderId = "256774290781",
-    productSubscriptionKey = collectionPrimaryKey,
-    environment = "sandbox"
+    productSubscriptionKey = collectionPrimaryKey
 ).collect { result -> /* ... */ }
 ```
 
-| Parameter                | Type     | Description                                     |
-|--------------------------|----------|-------------------------------------------------|
-| `apiVersion`             | `String` | API version                                     |
-| `accountHolderIdType`    | `String` | Account holder identifier type (e.g. `MSISDN`)  |
+| Parameter                | Type     | Description                                       |
+|--------------------------|----------|---------------------------------------------------|
+| `apiVersion`             | `String` | API version                                       |
+| `accountHolderIdType`    | `String` | Account holder identifier type (e.g. `MSISDN`)    |
 | `accountHolderId`        | `String` | Account holder identifier whose approvals to list |
-| `productSubscriptionKey` | `String` | Collection primary subscription key             |
-| `environment`            | `String` | `"sandbox"` or `"production"`                   |
+| `productSubscriptionKey` | `String` | Collection primary subscription key               |
 
 `getApprovedPreApprovals(...)` returns `Flow<NetworkResult<ApprovedPreApprovals>>`, whose `preApprovalDetails` is a list of `PreApprovalDetails` (`preApprovalId`, `toFri`, `fromFri`, `fromCurrency`, `createdTime`, a `status` `StatusTypes` enum, `message`, and optional `approvedTime`, `expiryTime`, a `frequency` `FrequencyTypes` enum, `startDate`, `lastUsedDate`, `offer`, `externalId`, `maxDebitAmount`).
 
@@ -429,8 +413,7 @@ defaultRepository.createPayment(
         includeSenderCharges = false
     ),
     uuid = paymentUuid,
-    productSubscriptionKey = collectionPrimaryKey,
-    environment = "sandbox"
+    productSubscriptionKey = collectionPrimaryKey
 ).collect { result -> /* ... */ }
 ```
 
@@ -440,7 +423,8 @@ defaultRepository.createPayment(
 | `payment`                | `Payment` | Amount/currency (`Money`), references, and notes   |
 | `uuid`                   | `String`  | Unique reference ID — save this to poll for status |
 | `productSubscriptionKey` | `String`  | Collection primary subscription key                |
-| `environment`            | `String`  | `"sandbox"` or `"production"`                      |
+
+To receive a callback when the payment completes, return a callback URL from `CredentialProvider.getCallbackUrl(operation)` (the `operation` is the endpoint path segment, e.g. `"payment"`, so you can vary the URL per operation); the SDK's `CallbackUrlInterceptor` then attaches it as the `X-Callback-Url` header to this and the other transaction-initiation endpoints. It is omitted when the returned URL is blank.
 
 ---
 
@@ -452,8 +436,7 @@ Checks the status of a previously created payment.
 defaultRepository.getPaymentStatus(
     apiVersion = "v2_0",
     referenceId = paymentUuid,
-    productSubscriptionKey = collectionPrimaryKey,
-    environment = "sandbox"
+    productSubscriptionKey = collectionPrimaryKey
 ).collect { result -> /* ... */ }
 ```
 
@@ -462,6 +445,5 @@ defaultRepository.getPaymentStatus(
 | `apiVersion`             | `String` | API version, e.g. `"v2_0"`             |
 | `referenceId`            | `String` | UUID used when calling `createPayment` |
 | `productSubscriptionKey` | `String` | Collection primary subscription key    |
-| `environment`            | `String` | `"sandbox"` or `"production"`          |
 
 `getPaymentStatus(...)` returns `Flow<NetworkResult<PaymentStatus>>` (`referenceId`, a `status` of type `StatusTypes` (`CREATED`, `PENDING`, `SUCCESSFUL`, `FAILED`), `financialTransactionId`, and a `reason` of `code` + `message`).

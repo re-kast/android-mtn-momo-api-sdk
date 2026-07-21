@@ -39,7 +39,6 @@ sealed interface DisbursementsService : CommonService {
      * @param deposit The deposit payload containing amount, currency, and party details.
      * @param apiVersion The API version to target (e.g., v1_0 or v2_0).
      * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Disbursements product.
-     * @param environment The target environment (e.g., sandbox or production).
      * @param uuid A UUID V4 used as the X-Reference-Id to uniquely identify this request.
      * @return A `Response` with an empty body; HTTP 202 indicates the request was accepted.
      */
@@ -48,7 +47,6 @@ sealed interface DisbursementsService : CommonService {
         @Body deposit: Deposit,
         @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
         @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
-        @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String,
         @Header(Constants.Headers.X_REFERENCE_ID) uuid: String
     ): Response<Unit>
 
@@ -58,7 +56,6 @@ sealed interface DisbursementsService : CommonService {
      * @param refund The refund payload; set [Refund.referenceIdToRefund] to the original transaction ID.
      * @param apiVersion The API version to target (e.g., v1_0 or v2_0).
      * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Disbursements product.
-     * @param environment The target environment (e.g., sandbox or production).
      * @param uuid A UUID V4 used as the X-Reference-Id to uniquely identify this request.
      * @return A `Response` with an empty body; HTTP 202 indicates the request was accepted.
      */
@@ -67,7 +64,6 @@ sealed interface DisbursementsService : CommonService {
         @Body refund: Refund,
         @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
         @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
-        @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String,
         @Header(Constants.Headers.X_REFERENCE_ID) uuid: String
     ): Response<Unit>
 
@@ -77,15 +73,13 @@ sealed interface DisbursementsService : CommonService {
      * @param referenceId The UUID V4 reference ID used when calling [deposit].
      * @param apiVersion The API version to target (e.g., v1_0 or v2_0).
      * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Disbursements product.
-     * @param environment The target environment (e.g., sandbox or production).
      * @return A `Response` whose body is the parsed [DepositStatus].
      */
     @GET(Constants.EndPoints.DEPOSIT_STATUS)
     suspend fun getDepositStatus(
         @Path(Constants.EndpointPaths.REFERENCE_ID) referenceId: String,
         @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
-        @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
-        @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String
+        @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String
     ): Response<DepositStatus>
 
     /**
@@ -94,14 +88,12 @@ sealed interface DisbursementsService : CommonService {
      * @param referenceId The UUID V4 reference ID used when calling [refund].
      * @param apiVersion The API version to target (e.g., v1_0 or v2_0).
      * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Disbursements product.
-     * @param environment The target environment (e.g., sandbox or production).
      * @return A `Response` whose body is the parsed [RefundStatus].
      */
     @GET(Constants.EndPoints.REFUND_STATUS)
     suspend fun getRefundStatus(
         @Path(Constants.EndpointPaths.REFERENCE_ID) referenceId: String,
         @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
-        @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
-        @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String
+        @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String
     ): Response<RefundStatus>
 }

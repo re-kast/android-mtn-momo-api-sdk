@@ -16,7 +16,6 @@
 package io.rekast.sdk.sample.views.home
 
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.rekast.sdk.model.AccountBalance
@@ -33,14 +32,12 @@ import io.rekast.sdk.sample.utils.SampleConfig
 import io.rekast.sdk.sample.utils.SnackBarComponentConfiguration
 import io.rekast.sdk.sample.utils.SnackBarType
 import io.rekast.sdk.sample.utils.Utils
+import io.rekast.sdk.sample.views.BaseScreenViewModel
 import io.rekast.sdk.utils.PartyTypes
 import io.rekast.sdk.utils.ProductTypes
 import io.rekast.sdk.utils.Settings
 import javax.inject.Inject
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -65,7 +62,7 @@ import timber.log.Timber
  *
  * The whole pipeline is guarded by a single check on [CredentialStorage.getAccessToken]: if no valid
  * token is present the load is skipped and an error snackbar is shown. In normal operation the access
- * token is provisioned by [io.rekast.sdk.sample.views.MainViewModel] on first launch and refreshed
+ * token is provisioned by [io.rekast.sdk.sample.views.main.MainViewModel] on first launch and refreshed
  * automatically by `TokenAuthenticator` on 401.
  */
 @HiltViewModel
@@ -75,14 +72,7 @@ class HomeScreenViewModel @Inject constructor(
     private val settings: Settings,
     private val dispatchers: DispatcherProvider,
     private val sampleConfig: SampleConfig
-) : ViewModel() {
-    /** Controls whether the circular progress indicator is shown on the Home screen. */
-    val showProgressBar = MutableLiveData(false)
-
-    private val _snackBarStateFlow = MutableSharedFlow<SnackBarComponentConfiguration>()
-
-    /** Flow of [SnackBarComponentConfiguration] events to be displayed as snackbars. */
-    val snackBarStateFlow: SharedFlow<SnackBarComponentConfiguration> = _snackBarStateFlow.asSharedFlow()
+) : BaseScreenViewModel() {
 
     /** Holds the fetched [BasicUserInfo] for the authenticated user; null until the API responds. */
     var basicUserInfo: MutableLiveData<BasicUserInfo?> = MutableLiveData(null)
@@ -141,8 +131,7 @@ class HomeScreenViewModel @Inject constructor(
         val result = defaultRepository.getUserInfoWithConsent(
             productType = ProductTypes.REMITTANCE.productType,
             apiVersion = sampleConfig.apiVersionV1,
-            productSubscriptionKey = Utils.getProductSubscriptionKeys(ProductTypes.REMITTANCE, sampleConfig),
-            environment = sampleConfig.environment
+            productSubscriptionKey = Utils.getProductSubscriptionKeys(ProductTypes.REMITTANCE, sampleConfig)
         ).awaitTerminal()
 
         return when (result) {
@@ -180,8 +169,7 @@ class HomeScreenViewModel @Inject constructor(
             productType = ProductTypes.REMITTANCE.productType,
             apiVersion = sampleConfig.apiVersionV1,
             accountHolder = accountHolder,
-            productSubscriptionKey = Utils.getProductSubscriptionKeys(ProductTypes.REMITTANCE, sampleConfig),
-            environment = sampleConfig.environment
+            productSubscriptionKey = Utils.getProductSubscriptionKeys(ProductTypes.REMITTANCE, sampleConfig)
         ).awaitTerminal()
 
         when (result) {
@@ -223,8 +211,7 @@ class HomeScreenViewModel @Inject constructor(
             productType = ProductTypes.REMITTANCE.productType,
             apiVersion = sampleConfig.apiVersionV1,
             party = holder,
-            productSubscriptionKey = Utils.getProductSubscriptionKeys(ProductTypes.REMITTANCE, sampleConfig),
-            environment = sampleConfig.environment
+            productSubscriptionKey = Utils.getProductSubscriptionKeys(ProductTypes.REMITTANCE, sampleConfig)
         ).awaitTerminal()
 
         when (result) {
@@ -269,8 +256,7 @@ class HomeScreenViewModel @Inject constructor(
             productType = ProductTypes.COLLECTION.productType,
             apiVersion = sampleConfig.apiVersionV1,
             currency = "",
-            productSubscriptionKey = Utils.getProductSubscriptionKeys(ProductTypes.COLLECTION, sampleConfig),
-            environment = sampleConfig.environment
+            productSubscriptionKey = Utils.getProductSubscriptionKeys(ProductTypes.COLLECTION, sampleConfig)
         ).awaitTerminal()
 
         when (result) {
@@ -296,21 +282,6 @@ class HomeScreenViewModel @Inject constructor(
                 )
             }
         }
-    }
-
-    /**
-     * Collects this result [Flow] to completion and returns the terminal (non-[NetworkResult.Loading])
-     * emission, so a caller can `await` the flow's final [NetworkResult.Success] or [NetworkResult.Error].
-     * Returns a synthetic [NetworkResult.Error] if the flow completes without a terminal emission.
-     */
-    private suspend fun <T> Flow<NetworkResult<T>>.awaitTerminal(): NetworkResult<T> {
-        var terminal: NetworkResult<T> = NetworkResult.Error("No response received")
-        collect { emission -> if (emission !is NetworkResult.Loading) terminal = emission }
-        return terminal
-    }
-
-    private fun emitSnackBarState(snackBarComponentConfiguration: SnackBarComponentConfiguration) {
-        viewModelScope.launch { _snackBarStateFlow.emit(snackBarComponentConfiguration) }
     }
 
     private companion object {

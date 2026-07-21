@@ -42,9 +42,9 @@ object Constants {
         const val OCP_APIM_SUBSCRIPTION_KEY = "Ocp-Apim-Subscription-Key"
 
         /**
-         * The header key for the Momo callback URL.
+         * The header key for the optional callback URL to notify once the operation completes.
          */
-        const val X_MOMO_CALLBACK_URL = "X-MomoCallback-Url"
+        const val X_CALLBACK_URL = "X-Callback-Url"
 
         /**
          * The header key for the reference ID.

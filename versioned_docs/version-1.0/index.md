@@ -220,12 +220,29 @@ Each page contains a working Kotlin code snippet followed by a parameter table. 
 
 Status queries deserialize the response into a typed model (collected as `Flow<NetworkResult<T>>`):
 
-- `requestToPayTransactionStatus`, `requestToWithdrawTransactionStatus`, `getTransferStatus`, `getDepositStatus`, `getRefundStatus`, and `getCashTransferStatus` return `Transaction`.
+- Each transaction status query returns its own typed model, all sharing a `status` field of type `StatusTypes` (`PENDING`, `SUCCESSFUL`, `FAILED`, …) and a `reason`/`errorReason` of type `ErrorResponse` (`code` + `message`):
+  - `requestToPayTransactionStatus` → `RequestToPayStatus`
+  - `requestToWithdrawTransactionStatus` → `RequestToWithdrawStatus`
+  - `getTransferStatus` → `TransferStatus`
+  - `getDepositStatus` → `DepositStatus`
+  - `getRefundStatus` → `RefundStatus`
+  - `getCashTransferStatus` → `CashTransferStatus`
 - `validateAccountHolderStatus` returns `AccountHolderStatus`.
 - `getApprovedPreApprovals` returns `ApprovedPreApprovals` (a `preApprovalDetails` list of `PreApprovalDetails`, with `status` a `StatusTypes` enum and `frequency` a `FrequencyTypes` enum).
 - `getPreApprovalStatus` returns `PreApprovalStatus`.
 - `getPaymentStatus` returns `PaymentStatus` (with a `StatusTypes` enum status).
 - `getInvoiceStatus` returns `InvoiceStatus` (with a `StatusTypes` enum status, plus reused `ErrorResponse` and `Party`).
+
+## Sample App
+
+The `sample` module is a Jetpack Compose application that exercises every SDK operation against the MTN MoMo sandbox. Its navigation drawer groups the screens into collapsible sections:
+
+- **General** — **Home** (profile, account status, and balance), **Setup & Config** (the live credential-provisioning status the bootstrap flow normally fills in invisibly, plus a *Re-run Setup* action), and **Settings** (environment, product subscription keys with a show/hide toggle, app build info, and a *Clear stored credentials* action).
+- **Collection** — Request to Pay, Request to Withdraw, Invoice, and Pre-Approval.
+- **Disbursement** — Deposit and Refund.
+- **Remittance** — Transfer and Cash Transfer (V2).
+
+Credentials are provisioned automatically on first launch (see [Credential Bootstrap](#credential-bootstrap)); the **Setup & Config** screen surfaces that otherwise-invisible flow so you can watch each credential appear.
 
 ## Security
 

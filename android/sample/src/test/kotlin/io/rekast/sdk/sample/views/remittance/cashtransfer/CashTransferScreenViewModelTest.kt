@@ -102,13 +102,13 @@ class CashTransferScreenViewModelTest {
     /** Verifies sendCashTransfer calls the repository, stores a reference ID, and clears the progress bar. */
     @Test
     fun `sendCashTransfer stores reference id on success`() = runTest {
-        every { mockRepository.cashTransfer(any(), any(), any(), any(), any()) } returns flowOf(NetworkResult.Success(Unit))
+        every { mockRepository.cashTransfer(any(), any(), any(), any()) } returns flowOf(NetworkResult.Success(Unit))
 
         viewModel.onAmountChanged("100")
         viewModel.onPayeeMsisdnChanged("256700000000")
         viewModel.sendCashTransfer()
 
-        verify { mockRepository.cashTransfer(any(), any(), any(), any(), any()) }
+        verify { mockRepository.cashTransfer(any(), any(), any(), any()) }
         assertNotNull(viewModel.referenceId.value)
         assertNotNull(viewModel.result.value)
         assertFalse(viewModel.showProgressBar.value!!)
@@ -121,7 +121,7 @@ class CashTransferScreenViewModelTest {
 
         viewModel.sendCashTransfer()
 
-        verify(exactly = 0) { mockRepository.cashTransfer(any(), any(), any(), any(), any()) }
+        verify(exactly = 0) { mockRepository.cashTransfer(any(), any(), any(), any()) }
     }
 
     /** Verifies checkStatus is a no-op (no repository call) until a cash transfer has been sent. */
@@ -129,7 +129,7 @@ class CashTransferScreenViewModelTest {
     fun `checkStatus does nothing without a reference id`() = runTest {
         viewModel.checkStatus()
 
-        verify(exactly = 0) { mockRepository.getCashTransferStatus(any(), any(), any(), any()) }
+        verify(exactly = 0) { mockRepository.getCashTransferStatus(any(), any(), any()) }
     }
 
     @Test
@@ -165,7 +165,7 @@ class CashTransferScreenViewModelTest {
     /** A send error posts a failure message and leaves no reference ID. */
     @Test
     fun `sendCashTransfer error path posts failure result`() = runTest {
-        every { mockRepository.cashTransfer(any(), any(), any(), any(), any()) } returns flowOf(NetworkResult.Error("bad"))
+        every { mockRepository.cashTransfer(any(), any(), any(), any()) } returns flowOf(NetworkResult.Error("bad"))
 
         viewModel.onAmountChanged("100")
         viewModel.onPayeeMsisdnChanged("256700000000")
@@ -178,7 +178,7 @@ class CashTransferScreenViewModelTest {
     /** An exception during an operation is caught and surfaced in the console. */
     @Test
     fun `sendCashTransfer exception path posts error result`() = runTest {
-        every { mockRepository.cashTransfer(any(), any(), any(), any(), any()) } throws RuntimeException("kaboom")
+        every { mockRepository.cashTransfer(any(), any(), any(), any()) } throws RuntimeException("kaboom")
 
         viewModel.onAmountChanged("100")
         viewModel.onPayeeMsisdnChanged("256700000000")
@@ -191,7 +191,7 @@ class CashTransferScreenViewModelTest {
     @Test
     fun `checkStatus error path posts failure result`() = runTest {
         viewModel.referenceId.value = "ref-1"
-        every { mockRepository.getCashTransferStatus(any(), any(), any(), any()) } returns flowOf(NetworkResult.Error("nope"))
+        every { mockRepository.getCashTransferStatus(any(), any(), any()) } returns flowOf(NetworkResult.Error("nope"))
 
         viewModel.checkStatus()
 
@@ -204,7 +204,7 @@ class CashTransferScreenViewModelTest {
      */
     @Test
     fun `sendCashTransfer with blank currency and names set succeeds`() = runTest {
-        every { mockRepository.cashTransfer(any(), any(), any(), any(), any()) } returns flowOf(NetworkResult.Success(Unit))
+        every { mockRepository.cashTransfer(any(), any(), any(), any()) } returns flowOf(NetworkResult.Success(Unit))
 
         viewModel.onAmountChanged("100")
         viewModel.onPayeeMsisdnChanged("256700000000")
@@ -220,7 +220,7 @@ class CashTransferScreenViewModelTest {
     /** An exception carrying no message is caught and surfaced with an empty detail. */
     @Test
     fun `sendCashTransfer exception with null message posts error result`() = runTest {
-        every { mockRepository.cashTransfer(any(), any(), any(), any(), any()) } throws RuntimeException()
+        every { mockRepository.cashTransfer(any(), any(), any(), any()) } throws RuntimeException()
 
         viewModel.onAmountChanged("100")
         viewModel.onPayeeMsisdnChanged("256700000000")
@@ -235,7 +235,7 @@ class CashTransferScreenViewModelTest {
     fun `checkStatus with non-blank body prints payload`() = runTest {
         viewModel.referenceId.value = "ref-1"
         val cashTransferStatus = CashTransferStatus(amount = "100", currency = "EUR", externalId = "ext-1", payerMessage = "msg", payeeNote = "note")
-        every { mockRepository.getCashTransferStatus(any(), any(), any(), any()) } returns
+        every { mockRepository.getCashTransferStatus(any(), any(), any()) } returns
             flowOf(NetworkResult.Success(cashTransferStatus))
 
         viewModel.checkStatus()
@@ -248,7 +248,7 @@ class CashTransferScreenViewModelTest {
     fun `checkStatus with null body reports no status body`() = runTest {
         viewModel.referenceId.value = "ref-1"
         @Suppress("UNCHECKED_CAST")
-        every { mockRepository.getCashTransferStatus(any(), any(), any(), any()) } returns
+        every { mockRepository.getCashTransferStatus(any(), any(), any()) } returns
             (flowOf(NetworkResult.Success(null)) as Flow<NetworkResult<CashTransferStatus>>)
 
         viewModel.checkStatus()
@@ -259,7 +259,7 @@ class CashTransferScreenViewModelTest {
     /** A leading Loading emission is ignored and the terminal Success is used to complete the flow. */
     @Test
     fun `sendCashTransfer ignores loading emission before terminal success`() = runTest {
-        every { mockRepository.cashTransfer(any(), any(), any(), any(), any()) } returns
+        every { mockRepository.cashTransfer(any(), any(), any(), any()) } returns
             flowOf(NetworkResult.Loading(), NetworkResult.Success(Unit))
 
         viewModel.onAmountChanged("100")

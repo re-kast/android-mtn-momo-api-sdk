@@ -86,7 +86,6 @@ interface AuthenticationService {
      *
      * @param productType The type of product for which to obtain the OAuth2 access token.
      * @param productSubscriptionKey The subscription key for the product.
-     * @param environment The target environment (e.g., production, sandbox).
      * @param grantType The OAuth2 grant type; defaults to the CIBA grant (`urn:openid:params:grant-type:ciba`).
      * @param authReqId The `auth_req_id` from a prior [bcAuthorize] call, exchanged for the OAuth2 token.
      * @return A `Response` containing the obtained [Oauth2AccessToken].
@@ -96,7 +95,6 @@ interface AuthenticationService {
     suspend fun getOauth2AccessToken(
         @Path(Constants.EndpointPaths.PRODUCT_TYPE) productType: String,
         @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
-        @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String,
         @Field(Constants.FormFields.GRANT_TYPE) grantType: String = Constants.FormFields.CIBA_GRANT_TYPE,
         @Field(Constants.FormFields.BACK_CHANNEL_AUTHORIZATION_REQUEST_ID) authReqId: String
     ): Response<Oauth2AccessToken>
@@ -113,7 +111,6 @@ interface AuthenticationService {
      * @param scope The OAuth2 scope being requested (e.g., `profile openid`).
      * @param accessType The access type for the token (`online` or `offline`). Defaults to `online`.
      * @param productSubscriptionKey The subscription key for the product.
-     * @param environment The target environment (e.g., sandbox or production).
      * @return A `Response` containing the [BcAuthorizeResponse] with the authorization request details.
      */
     @FormUrlEncoded
@@ -124,8 +121,7 @@ interface AuthenticationService {
         @Field(Constants.FormFields.LOGIN_HINT) loginHint: String,
         @Field(Constants.FormFields.SCOPE) scope: String,
         @Field(Constants.FormFields.ACCESS_TYPE) accessType: String,
-        @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
-        @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String
+        @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String
     ): Response<BcAuthorizeResponse>
 
     /**

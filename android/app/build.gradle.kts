@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.ksp)
@@ -23,7 +25,21 @@ plugins {
 
 secrets {
     ignoreList.add("sdk.*")
+    // Owned by the buildConfigField below (with an empty default), so the Secrets plugin must not
+    // also generate it — otherwise the field is declared twice.
+    ignoreList.add("MOMO_CALLBACK_BASE_URL")
 }
+
+// Optional base URL for MTN MoMo transaction callbacks, read from local.properties
+// (key MOMO_CALLBACK_BASE_URL) with an empty default so callbacks stay off unless configured.
+// Surrounding quotes (if a value like "" is set in local.properties) are stripped.
+val momoCallbackBaseUrl: String =
+    run {
+        val props = Properties()
+        val file = rootProject.file("local.properties")
+        if (file.exists()) file.inputStream().use { props.load(it) }
+        props.getProperty("MOMO_CALLBACK_BASE_URL", "").trim('"')
+    }
 
 android {
     namespace = "io.rekast.sdk.app"
@@ -37,6 +53,8 @@ android {
         versionName = "0.0.1"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
+
+        buildConfigField("String", "MOMO_CALLBACK_BASE_URL", "\"$momoCallbackBaseUrl\"")
     }
 
     compileOptions {

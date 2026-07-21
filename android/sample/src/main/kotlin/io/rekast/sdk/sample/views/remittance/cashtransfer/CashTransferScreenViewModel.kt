@@ -35,9 +35,9 @@ import io.rekast.sdk.sample.utils.SnackBarType
 import io.rekast.sdk.sample.utils.Utils
 import io.rekast.sdk.sample.utils.valueOrEmpty
 import io.rekast.sdk.sample.utils.valueOrNullIfBlank
+import io.rekast.sdk.sample.views.BaseScreenViewModel
 import io.rekast.sdk.utils.PartyTypes
 import io.rekast.sdk.utils.ProductTypes
-import java.util.UUID
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -59,15 +59,7 @@ class CashTransferScreenViewModel @Inject constructor(
     private val credentialStorage: CredentialStorage,
     private val dispatchers: DispatcherProvider,
     private val sampleConfig: SampleConfig
-) : ViewModel() {
-
-    /** Controls whether the circular progress indicator is shown. */
-    val showProgressBar = MutableLiveData(false)
-
-    private val _snackBarStateFlow = MutableSharedFlow<SnackBarComponentConfiguration>()
-
-    /** Flow of snackbar events to be displayed. */
-    val snackBarStateFlow: SharedFlow<SnackBarComponentConfiguration> = _snackBarStateFlow.asSharedFlow()
+) : BaseScreenViewModel() {
 
     /** The reference ID of the last cash transfer; enables the status action. */
     val referenceId = MutableLiveData<String?>(null)
@@ -119,19 +111,19 @@ class CashTransferScreenViewModel @Inject constructor(
 
     /** Sends a cash transfer with a fresh reference ID and stores that ID for the status action. */
     fun sendCashTransfer() = launchOperation {
-        val reference = UUID.randomUUID().toString()
+        val reference = generateUuid()
         val subscriptionKey = Utils.getProductSubscriptionKeys(ProductTypes.REMITTANCE, sampleConfig)
         val cashTransfer = CashTransfer(
             amount = amount.valueOrEmpty(),
             currency = currency.valueOrEmpty().ifBlank { Constants.SANDBOX_CURRENCY },
-            externalId = UUID.randomUUID().toString(),
+            externalId = generateUuid(),
             payee = Party(partyIdType = PartyTypes.MSISDN, partyId = payeeMsisdn.valueOrEmpty()),
             payerMessage = payerMessage.valueOrEmpty(),
             payeeNote = payeeNote.valueOrEmpty(),
             payerFirstName = payerFirstName.valueOrNullIfBlank(),
             payerSurName = payerSurName.valueOrNullIfBlank()
         )
-        when (val response = defaultRepository.cashTransfer(sampleConfig.apiVersionV1, cashTransfer, reference, subscriptionKey, sampleConfig.environment).awaitTerminal()) {
+        when (val response = defaultRepository.cashTransfer(sampleConfig.apiVersionV1, cashTransfer, reference, subscriptionKey).awaitTerminal()) {
             is NetworkResult.Success -> {
                 referenceId.postValue(reference)
                 result.postValue("Cash transfer sent.\nReference: $reference")
@@ -148,7 +140,7 @@ class CashTransferScreenViewModel @Inject constructor(
 
     /** Fetches the status of the previously sent cash transfer and prints the raw payload. */
     fun checkStatus() = withReference { reference, subscriptionKey ->
-        when (val response = defaultRepository.getCashTransferStatus(sampleConfig.apiVersionV1, reference, subscriptionKey, sampleConfig.environment).awaitTerminal()) {
+        when (val response = defaultRepository.getCashTransferStatus(sampleConfig.apiVersionV1, reference, subscriptionKey).awaitTerminal()) {
             is NetworkResult.Success -> {
                 result.postValue(response.response?.toString() ?: "No status body returned.")
                 emitSuccess(R.string.snackbar_cash_transfer_status_fetched)
@@ -191,19 +183,5 @@ class CashTransferScreenViewModel @Inject constructor(
             return
         }
         launchOperation { block(reference, Utils.getProductSubscriptionKeys(ProductTypes.REMITTANCE, sampleConfig)) }
-    }
-
-    private suspend fun <T> Flow<NetworkResult<T>>.awaitTerminal(): NetworkResult<T> {
-        var terminal: NetworkResult<T> = NetworkResult.Error("No response received")
-        collect { emission -> if (emission !is NetworkResult.Loading) terminal = emission }
-        return terminal
-    }
-
-    private fun emitSuccess(@StringRes messageResId: Int, vararg args: Any) = emitSnackBarState(SnackBarComponentConfiguration(messageResId = messageResId, messageArgs = args.toList(), type = SnackBarType.SUCCESS))
-
-    private fun emitError(@StringRes messageResId: Int, vararg args: Any) = emitSnackBarState(SnackBarComponentConfiguration(messageResId = messageResId, messageArgs = args.toList(), type = SnackBarType.ERROR))
-
-    private fun emitSnackBarState(snackBarComponentConfiguration: SnackBarComponentConfiguration) {
-        viewModelScope.launch { _snackBarStateFlow.emit(snackBarComponentConfiguration) }
     }
 }

@@ -115,14 +115,12 @@ class DefaultSource @Inject constructor(
      *
      * @param productType The type of product for which to obtain the OAuth2 access token.
      * @param productSubscriptionKey The subscription key for the product.
-     * @param environment The API environment (e.g., production, sandbox).
      * @param backChannelAuthorizationRequestId The `auth_req_id` from a prior bc-authorize call, exchanged for the OAuth2 token.
      * @return A `Response` containing the obtained [io.rekast.sdk.model.authentication.Oauth2AccessToken].
      */
-    suspend fun getOauth2AccessToken(productType: String, productSubscriptionKey: String, environment: String, backChannelAuthorizationRequestId: String) = authenticationService.getOauth2AccessToken(
+    suspend fun getOauth2AccessToken(productType: String, productSubscriptionKey: String, backChannelAuthorizationRequestId: String) = authenticationService.getOauth2AccessToken(
         productType = productType,
         productSubscriptionKey = productSubscriptionKey,
-        environment = environment,
         authReqId = backChannelAuthorizationRequestId
     )
 
@@ -133,15 +131,13 @@ class DefaultSource @Inject constructor(
      * @param apiVersion The version of the API to use.
      * @param accountHolder The identifier for the account holder.
      * @param productSubscriptionKey The subscription key for the product.
-     * @param environment The API environment (e.g., production, sandbox).
      * @return A `Response` containing the [io.rekast.sdk.model.BasicUserInfo] of the specified user.
      */
-    suspend fun getBasicUserInfo(productType: String, apiVersion: String, accountHolder: String, productSubscriptionKey: String, environment: String) = commonService.getBasicUserInfo(
+    suspend fun getBasicUserInfo(productType: String, apiVersion: String, accountHolder: String, productSubscriptionKey: String) = commonService.getBasicUserInfo(
         productType = productType,
         apiVersion = apiVersion,
         accountHolder = accountHolder,
-        productSubscriptionKey = productSubscriptionKey,
-        environment = environment
+        productSubscriptionKey = productSubscriptionKey
     )
 
     /**
@@ -151,16 +147,14 @@ class DefaultSource @Inject constructor(
      * @param apiVersion The version of the API to use.
      * @param party The account holder details.
      * @param productSubscriptionKey The subscription key for the product.
-     * @param environment The API environment (e.g., production, sandbox).
      * @return A `Response` containing the parsed [io.rekast.sdk.model.AccountHolderStatus].
      */
-    suspend fun validateAccountHolderStatus(productType: String, apiVersion: String, party: Party, productSubscriptionKey: String, environment: String) = commonService.validateAccountHolderStatus(
+    suspend fun validateAccountHolderStatus(productType: String, apiVersion: String, party: Party, productSubscriptionKey: String) = commonService.validateAccountHolderStatus(
         productType = productType,
         apiVersion = apiVersion,
         accountHolderId = party.partyId,
         accountHolderType = party.partyIdType.partyType,
-        productSubscriptionKey = productSubscriptionKey,
-        environment = environment
+        productSubscriptionKey = productSubscriptionKey
     )
 
     /**
@@ -169,14 +163,12 @@ class DefaultSource @Inject constructor(
      * @param productType The type of product for which to retrieve the account balance.
      * @param apiVersion The version of the API to use.
      * @param productSubscriptionKey The subscription key for the product.
-     * @param environment The API environment (e.g., production, sandbox).
      * @return A `Response` containing the [io.rekast.sdk.model.AccountBalance].
      */
-    suspend fun getAccountBalance(productType: String, apiVersion: String, productSubscriptionKey: String, environment: String) = commonService.getAccountBalance(
+    suspend fun getAccountBalance(productType: String, apiVersion: String, productSubscriptionKey: String) = commonService.getAccountBalance(
         productType = productType,
         apiVersion = apiVersion,
-        productSubscriptionKey = productSubscriptionKey,
-        environment = environment
+        productSubscriptionKey = productSubscriptionKey
     )
 
     /**
@@ -186,15 +178,13 @@ class DefaultSource @Inject constructor(
      * @param apiVersion The version of the API to use.
      * @param currency The currency for which to retrieve the account balance.
      * @param productSubscriptionKey The subscription key for the product.
-     * @param environment The API environment (e.g., production, sandbox).
      * @return A `Response` containing the [io.rekast.sdk.model.AccountBalance].
      */
-    suspend fun getAccountBalanceInSpecificCurrency(productType: String, apiVersion: String, currency: String, productSubscriptionKey: String, environment: String) = commonService.getAccountBalanceInSpecificCurrency(
+    suspend fun getAccountBalanceInSpecificCurrency(productType: String, apiVersion: String, currency: String, productSubscriptionKey: String) = commonService.getAccountBalanceInSpecificCurrency(
         productType = productType,
         apiVersion = apiVersion,
         currency = currency,
-        productSubscriptionKey = productSubscriptionKey,
-        environment = environment
+        productSubscriptionKey = productSubscriptionKey
     )
 
     /**
@@ -203,14 +193,12 @@ class DefaultSource @Inject constructor(
      * @param productType The type of product for which to retrieve the user information.
      * @param apiVersion The version of the API to use.
      * @param productSubscriptionKey The subscription key for the product.
-     * @param environment The API environment (e.g., production, sandbox).
      * @return A `Response` containing the user information with consent.
      */
-    suspend fun getUserInfoWithConsent(productType: String, apiVersion: String, productSubscriptionKey: String, environment: String) = commonService.getUserInfoWithConsent(
+    suspend fun getUserInfoWithConsent(productType: String, apiVersion: String, productSubscriptionKey: String) = commonService.getUserInfoWithConsent(
         productType = productType,
         apiVersion = apiVersion,
-        productSubscriptionKey = productSubscriptionKey,
-        environment = environment
+        productSubscriptionKey = productSubscriptionKey
     )
 
     /**
@@ -221,16 +209,14 @@ class DefaultSource @Inject constructor(
      * @param transfer The transfer details.
      * @param uuid A unique identifier for the request.
      * @param productSubscriptionKey The subscription key for the product.
-     * @param environment The API environment (e.g., production, sandbox).
      * @return A `Response` indicating the result of the transfer.
      */
-    suspend fun transfer(productType: String, apiVersion: String, transfer: Transfer, uuid: String, productSubscriptionKey: String, environment: String) = commonService.transfer(
+    suspend fun transfer(productType: String, apiVersion: String, transfer: Transfer, uuid: String, productSubscriptionKey: String) = commonService.transfer(
         productType = productType,
         apiVersion = apiVersion,
         transfer = transfer,
         uuid = uuid,
-        productSubscriptionKey = productSubscriptionKey,
-        environment = environment
+        productSubscriptionKey = productSubscriptionKey
     )
 
     /**
@@ -240,15 +226,13 @@ class DefaultSource @Inject constructor(
      * @param apiVersion The version of the API to use.
      * @param referenceId The reference ID of the transfer.
      * @param productSubscriptionKey The subscription key for the product.
-     * @param environment The API environment (e.g., production, sandbox).
      * @return A `Response` containing the parsed [io.rekast.sdk.model.TransferStatus] transfer status.
      */
-    suspend fun getTransferStatus(productType: String, apiVersion: String, referenceId: String, productSubscriptionKey: String, environment: String) = commonService.getTransferStatus(
+    suspend fun getTransferStatus(productType: String, apiVersion: String, referenceId: String, productSubscriptionKey: String) = commonService.getTransferStatus(
         productType = productType,
         apiVersion = apiVersion,
         referenceId = referenceId,
-        productSubscriptionKey = productSubscriptionKey,
-        environment = environment
+        productSubscriptionKey = productSubscriptionKey
     )
 
     /**
@@ -259,19 +243,16 @@ class DefaultSource @Inject constructor(
      * @param referenceId The reference ID of the request to pay.
      * @param notifications The notification details.
      * @param productSubscriptionKey The subscription key for the product.
-     * @param environment The API environment (e.g., production, sandbox).
      * @return A `Response` indicating the result of the notification request.
      */
-    suspend fun requestToPayDeliveryNotification(productType: String, apiVersion: String, referenceId: String, notifications: Notifications, productSubscriptionKey: String, environment: String) =
-        commonService.requestToPayDeliveryNotification(
-            productType = productType,
-            apiVersion = apiVersion,
-            referenceId = referenceId,
-            notifications = notifications,
-            notificationMessage = notifications.notificationMessage,
-            productSubscriptionKey = productSubscriptionKey,
-            environment = environment
-        )
+    suspend fun requestToPayDeliveryNotification(productType: String, apiVersion: String, referenceId: String, notifications: Notifications, productSubscriptionKey: String) = commonService.requestToPayDeliveryNotification(
+        productType = productType,
+        apiVersion = apiVersion,
+        referenceId = referenceId,
+        notifications = notifications,
+        notificationMessage = notifications.notificationMessage,
+        productSubscriptionKey = productSubscriptionKey
+    )
 
     /**
      * Initiates a backchannel (CIBA) authorization request.
@@ -280,17 +261,15 @@ class DefaultSource @Inject constructor(
      * @param apiVersion The version of the API (e.g., v1_0).
      * @param bcAuthorizeRequest The authorization request parameters.
      * @param productSubscriptionKey The subscription key for the product.
-     * @param environment The target environment (e.g., sandbox or production).
      * @return A `Response` containing the [io.rekast.sdk.model.BcAuthorizeResponse] with the authorization request details.
      */
-    suspend fun bcAuthorize(productType: String, apiVersion: String, bcAuthorizeRequest: BcAuthorizeRequest, productSubscriptionKey: String, environment: String) = authenticationService.bcAuthorize(
+    suspend fun bcAuthorize(productType: String, apiVersion: String, bcAuthorizeRequest: BcAuthorizeRequest, productSubscriptionKey: String) = authenticationService.bcAuthorize(
         productType = productType,
         apiVersion = apiVersion,
         loginHint = bcAuthorizeRequest.loginHint,
         scope = bcAuthorizeRequest.scope,
         accessType = bcAuthorizeRequest.accessType,
-        productSubscriptionKey = productSubscriptionKey,
-        environment = environment
+        productSubscriptionKey = productSubscriptionKey
     )
 
     /**
@@ -299,15 +278,13 @@ class DefaultSource @Inject constructor(
      * @param invoice The invoice payload containing amount, currency, and optional payer details.
      * @param apiVersion The version of the API to use.
      * @param productSubscriptionKey The subscription key for the Collection product.
-     * @param environment The API environment (e.g., sandbox or production).
      * @param uuid A UUID V4 used as the X-Reference-Id; poll [getInvoiceStatus] with the same ID.
      * @return A `Response` with an empty body; HTTP 202 indicates the invoice was accepted.
      */
-    suspend fun createInvoice(invoice: Invoice, apiVersion: String, productSubscriptionKey: String, environment: String, uuid: String) = collectionService.createInvoice(
+    suspend fun createInvoice(invoice: Invoice, apiVersion: String, productSubscriptionKey: String, uuid: String) = collectionService.createInvoice(
         invoice = invoice,
         apiVersion = apiVersion,
         productSubscriptionKey = productSubscriptionKey,
-        environment = environment,
         uuid = uuid
     )
 
@@ -317,15 +294,13 @@ class DefaultSource @Inject constructor(
      * @param payment The payment payload.
      * @param apiVersion The version of the API to use.
      * @param productSubscriptionKey The subscription key for the Collection product.
-     * @param environment The API environment (e.g., sandbox or production).
      * @param uuid A UUID V4 used as the X-Reference-Id; poll [getPaymentStatus] with the same ID.
      * @return A `Response` with an empty body; HTTP 202 indicates the payment was accepted.
      */
-    suspend fun createPayment(payment: Payment, apiVersion: String, productSubscriptionKey: String, environment: String, uuid: String) = collectionService.createPayment(
+    suspend fun createPayment(payment: Payment, apiVersion: String, productSubscriptionKey: String, uuid: String) = collectionService.createPayment(
         payment = payment,
         apiVersion = apiVersion,
         productSubscriptionKey = productSubscriptionKey,
-        environment = environment,
         uuid = uuid
     )
 
@@ -335,14 +310,12 @@ class DefaultSource @Inject constructor(
      * @param referenceId The UUID V4 reference ID used when calling [createPayment].
      * @param apiVersion The version of the API to use.
      * @param productSubscriptionKey The subscription key for the Collection product.
-     * @param environment The API environment (e.g., sandbox or production).
      * @return A `Response` whose body is the parsed [io.rekast.sdk.model.PaymentStatus].
      */
-    suspend fun getPaymentStatus(referenceId: String, apiVersion: String, productSubscriptionKey: String, environment: String) = collectionService.getPaymentStatus(
+    suspend fun getPaymentStatus(referenceId: String, apiVersion: String, productSubscriptionKey: String) = collectionService.getPaymentStatus(
         referenceId = referenceId,
         apiVersion = apiVersion,
-        productSubscriptionKey = productSubscriptionKey,
-        environment = environment
+        productSubscriptionKey = productSubscriptionKey
     )
 
     /**
@@ -351,14 +324,12 @@ class DefaultSource @Inject constructor(
      * @param referenceId The UUID V4 reference ID used when calling [createInvoice].
      * @param apiVersion The version of the API to use.
      * @param productSubscriptionKey The subscription key for the Collection product.
-     * @param environment The API environment (e.g., sandbox or production).
      * @return A `Response` whose body contains the invoice status details.
      */
-    suspend fun getInvoiceStatus(referenceId: String, apiVersion: String, productSubscriptionKey: String, environment: String) = collectionService.getInvoiceStatus(
+    suspend fun getInvoiceStatus(referenceId: String, apiVersion: String, productSubscriptionKey: String) = collectionService.getInvoiceStatus(
         referenceId = referenceId,
         apiVersion = apiVersion,
-        productSubscriptionKey = productSubscriptionKey,
-        environment = environment
+        productSubscriptionKey = productSubscriptionKey
     )
 
     /**
@@ -367,14 +338,12 @@ class DefaultSource @Inject constructor(
      * @param referenceId The UUID V4 reference ID used when calling [createInvoice].
      * @param apiVersion The version of the API to use.
      * @param productSubscriptionKey The subscription key for the Collection product.
-     * @param environment The API environment (e.g., sandbox or production).
      * @return A `Response` with an empty body; HTTP 200 indicates successful cancellation.
      */
-    suspend fun cancelInvoice(referenceId: String, apiVersion: String, productSubscriptionKey: String, environment: String) = collectionService.cancelInvoice(
+    suspend fun cancelInvoice(referenceId: String, apiVersion: String, productSubscriptionKey: String) = collectionService.cancelInvoice(
         referenceId = referenceId,
         apiVersion = apiVersion,
-        productSubscriptionKey = productSubscriptionKey,
-        environment = environment
+        productSubscriptionKey = productSubscriptionKey
     )
 
     /**
@@ -384,15 +353,13 @@ class DefaultSource @Inject constructor(
      * @param preApproval The pre-approval payload containing the payer, currency, and validity.
      * @param apiVersion The version of the API to use.
      * @param productSubscriptionKey The subscription key for the Collection product.
-     * @param environment The API environment (e.g., sandbox or production).
      * @param uuid A UUID V4 used as the X-Reference-Id; poll [getPreApprovalStatus] with the same ID.
      * @return A `Response` with an empty body; HTTP 202 indicates the pre-approval was accepted.
      */
-    suspend fun createPreApproval(preApproval: PreApproval, apiVersion: String, productSubscriptionKey: String, environment: String, uuid: String) = collectionService.createPreApproval(
+    suspend fun createPreApproval(preApproval: PreApproval, apiVersion: String, productSubscriptionKey: String, uuid: String) = collectionService.createPreApproval(
         preApproval = preApproval,
         apiVersion = apiVersion,
         productSubscriptionKey = productSubscriptionKey,
-        environment = environment,
         uuid = uuid
     )
 
@@ -402,14 +369,12 @@ class DefaultSource @Inject constructor(
      * @param referenceId The UUID V4 reference ID used when calling [createPreApproval].
      * @param apiVersion The version of the API to use.
      * @param productSubscriptionKey The subscription key for the Collection product.
-     * @param environment The API environment (e.g., sandbox or production).
      * @return A `Response` whose body is the parsed [io.rekast.sdk.model.PreApprovalStatus].
      */
-    suspend fun getPreApprovalStatus(referenceId: String, apiVersion: String, productSubscriptionKey: String, environment: String) = collectionService.getPreApprovalStatus(
+    suspend fun getPreApprovalStatus(referenceId: String, apiVersion: String, productSubscriptionKey: String) = collectionService.getPreApprovalStatus(
         referenceId = referenceId,
         apiVersion = apiVersion,
-        productSubscriptionKey = productSubscriptionKey,
-        environment = environment
+        productSubscriptionKey = productSubscriptionKey
     )
 
     /**
@@ -418,15 +383,13 @@ class DefaultSource @Inject constructor(
      * @param cashTransfer The cash transfer payload including recipient and optional payer KYC details.
      * @param apiVersion The version of the API to use (e.g., v2_0).
      * @param productSubscriptionKey The subscription key for the Remittance product.
-     * @param environment The API environment (e.g., sandbox or production).
      * @param uuid A UUID V4 used as the X-Reference-Id; poll [getCashTransferStatus] with the same ID.
      * @return A `Response` with an empty body; HTTP 202 indicates the transfer was accepted.
      */
-    suspend fun cashTransfer(cashTransfer: CashTransfer, apiVersion: String, productSubscriptionKey: String, environment: String, uuid: String) = remittanceService.cashTransfer(
+    suspend fun cashTransfer(cashTransfer: CashTransfer, apiVersion: String, productSubscriptionKey: String, uuid: String) = remittanceService.cashTransfer(
         cashTransfer = cashTransfer,
         apiVersion = apiVersion,
         productSubscriptionKey = productSubscriptionKey,
-        environment = environment,
         uuid = uuid
     )
 
@@ -436,14 +399,12 @@ class DefaultSource @Inject constructor(
      * @param referenceId The UUID V4 reference ID used when calling [cashTransfer].
      * @param apiVersion The version of the API to use (e.g., v2_0).
      * @param productSubscriptionKey The subscription key for the Remittance product.
-     * @param environment The API environment (e.g., sandbox or production).
      * @return A `Response` whose body is the parsed [io.rekast.sdk.model.CashTransferStatus] cash transfer status.
      */
-    suspend fun getCashTransferStatus(referenceId: String, apiVersion: String, productSubscriptionKey: String, environment: String) = remittanceService.getCashTransferStatus(
+    suspend fun getCashTransferStatus(referenceId: String, apiVersion: String, productSubscriptionKey: String) = remittanceService.getCashTransferStatus(
         referenceId = referenceId,
         apiVersion = apiVersion,
-        productSubscriptionKey = productSubscriptionKey,
-        environment = environment
+        productSubscriptionKey = productSubscriptionKey
     )
 
     /**
@@ -452,14 +413,12 @@ class DefaultSource @Inject constructor(
      * @param referenceId The UUID V4 reference ID used when calling [createPreApproval].
      * @param apiVersion The version of the API to use.
      * @param productSubscriptionKey The subscription key for the Collection product.
-     * @param environment The API environment (e.g., sandbox or production).
      * @return A `Response` with an empty body; HTTP 200 indicates successful cancellation.
      */
-    suspend fun cancelPreApproval(referenceId: String, apiVersion: String, productSubscriptionKey: String, environment: String) = collectionService.cancelPreApproval(
+    suspend fun cancelPreApproval(referenceId: String, apiVersion: String, productSubscriptionKey: String) = collectionService.cancelPreApproval(
         referenceId = referenceId,
         apiVersion = apiVersion,
-        productSubscriptionKey = productSubscriptionKey,
-        environment = environment
+        productSubscriptionKey = productSubscriptionKey
     )
 
     /**
@@ -469,15 +428,13 @@ class DefaultSource @Inject constructor(
      * @param accountHolderId The account holder identifier of the payer whose pre-approvals to list.
      * @param apiVersion The version of the API to use.
      * @param productSubscriptionKey The subscription key for the Collection product.
-     * @param environment The API environment (e.g., sandbox or production).
      * @return A `Response` whose body is the parsed [io.rekast.sdk.model.ApprovedPreApprovals].
      */
-    suspend fun getApprovedPreApprovals(accountHolderIdType: String, accountHolderId: String, apiVersion: String, productSubscriptionKey: String, environment: String) = collectionService.getApprovedPreApprovals(
+    suspend fun getApprovedPreApprovals(accountHolderIdType: String, accountHolderId: String, apiVersion: String, productSubscriptionKey: String) = collectionService.getApprovedPreApprovals(
         accountHolderIdType = accountHolderIdType,
         accountHolderId = accountHolderId,
         apiVersion = apiVersion,
-        productSubscriptionKey = productSubscriptionKey,
-        environment = environment
+        productSubscriptionKey = productSubscriptionKey
     )
 
     /**
@@ -487,16 +444,13 @@ class DefaultSource @Inject constructor(
      * @param referenceId The UUID V4 reference ID used when calling requestToWithdraw.
      * @param notifications The notification payload containing the message to deliver.
      * @param productSubscriptionKey The subscription key for the Collection product.
-     * @param environment The API environment (e.g., sandbox or production).
      * @return A `Response` whose body contains the delivery result.
      */
-    suspend fun requestToWithdrawDeliveryNotification(apiVersion: String, referenceId: String, notifications: Notifications, productSubscriptionKey: String, environment: String) =
-        collectionService.requestToWithdrawDeliveryNotification(
-            apiVersion = apiVersion,
-            referenceId = referenceId,
-            notifications = notifications,
-            notificationMessage = notifications.notificationMessage,
-            productSubscriptionKey = productSubscriptionKey,
-            environment = environment
-        )
+    suspend fun requestToWithdrawDeliveryNotification(apiVersion: String, referenceId: String, notifications: Notifications, productSubscriptionKey: String) = collectionService.requestToWithdrawDeliveryNotification(
+        apiVersion = apiVersion,
+        referenceId = referenceId,
+        notifications = notifications,
+        notificationMessage = notifications.notificationMessage,
+        productSubscriptionKey = productSubscriptionKey
+    )
 }

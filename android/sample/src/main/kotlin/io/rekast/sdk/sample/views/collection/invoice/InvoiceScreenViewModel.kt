@@ -35,9 +35,9 @@ import io.rekast.sdk.sample.utils.SnackBarType
 import io.rekast.sdk.sample.utils.Utils
 import io.rekast.sdk.sample.utils.valueOrEmpty
 import io.rekast.sdk.sample.utils.valueOrNullIfBlank
+import io.rekast.sdk.sample.views.BaseScreenViewModel
 import io.rekast.sdk.utils.PartyTypes
 import io.rekast.sdk.utils.ProductTypes
-import java.util.UUID
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -59,15 +59,7 @@ class InvoiceScreenViewModel @Inject constructor(
     private val credentialStorage: CredentialStorage,
     private val dispatchers: DispatcherProvider,
     private val sampleConfig: SampleConfig
-) : ViewModel() {
-
-    /** Controls whether the circular progress indicator is shown. */
-    val showProgressBar = MutableLiveData(false)
-
-    private val _snackBarStateFlow = MutableSharedFlow<SnackBarComponentConfiguration>()
-
-    /** Flow of snackbar events to be displayed. */
-    val snackBarStateFlow: SharedFlow<SnackBarComponentConfiguration> = _snackBarStateFlow.asSharedFlow()
+) : BaseScreenViewModel() {
 
     /** The reference ID of the last created invoice; enables status/cancel actions. */
     val referenceId = MutableLiveData<String?>(null)
@@ -107,17 +99,17 @@ class InvoiceScreenViewModel @Inject constructor(
 
     /** Creates an invoice with a fresh reference ID and stores that ID for status/cancel. */
     fun createInvoice() = launchOperation {
-        val reference = UUID.randomUUID().toString()
+        val reference = generateUuid()
         val subscriptionKey = Utils.getProductSubscriptionKeys(ProductTypes.COLLECTION, sampleConfig)
         val invoice = Invoice(
-            externalId = UUID.randomUUID().toString(),
+            externalId = generateUuid(),
             amount = amount.valueOrEmpty(),
             currency = currency.valueOrEmpty().ifBlank { Constants.SANDBOX_CURRENCY },
             validityDuration = validityDuration.valueOrNullIfBlank(),
             intendedPayer = Party(partyIdType = PartyTypes.MSISDN, partyId = payerMsisdn.valueOrEmpty()),
             description = description.valueOrNullIfBlank()
         )
-        when (val response = defaultRepository.createInvoice(sampleConfig.apiVersionV2, invoice, reference, subscriptionKey, sampleConfig.environment).awaitTerminal()) {
+        when (val response = defaultRepository.createInvoice(sampleConfig.apiVersionV2, invoice, reference, subscriptionKey).awaitTerminal()) {
             is NetworkResult.Success -> {
                 referenceId.postValue(reference)
                 result.postValue("Invoice created.\nReference: $reference")
@@ -134,7 +126,7 @@ class InvoiceScreenViewModel @Inject constructor(
 
     /** Fetches the status of the previously created invoice and prints the parsed payload. */
     fun checkStatus() = withReference { reference, subscriptionKey ->
-        when (val response = defaultRepository.getInvoiceStatus(sampleConfig.apiVersionV2, reference, subscriptionKey, sampleConfig.environment).awaitTerminal()) {
+        when (val response = defaultRepository.getInvoiceStatus(sampleConfig.apiVersionV2, reference, subscriptionKey).awaitTerminal()) {
             is NetworkResult.Success -> {
                 result.postValue(response.response?.toString() ?: "No status body returned.")
                 emitSuccess(R.string.snackbar_invoice_status_fetched)
@@ -150,7 +142,7 @@ class InvoiceScreenViewModel @Inject constructor(
 
     /** Cancels the previously created invoice. */
     fun cancelInvoice() = withReference { reference, subscriptionKey ->
-        when (val response = defaultRepository.cancelInvoice(sampleConfig.apiVersionV2, reference, subscriptionKey, sampleConfig.environment).awaitTerminal()) {
+        when (val response = defaultRepository.cancelInvoice(sampleConfig.apiVersionV2, reference, subscriptionKey).awaitTerminal()) {
             is NetworkResult.Success -> {
                 result.postValue("Invoice $reference cancelled.")
                 emitSuccess(R.string.snackbar_invoice_cancelled)
@@ -193,19 +185,5 @@ class InvoiceScreenViewModel @Inject constructor(
             return
         }
         launchOperation { block(reference, Utils.getProductSubscriptionKeys(ProductTypes.COLLECTION, sampleConfig)) }
-    }
-
-    private suspend fun <T> Flow<NetworkResult<T>>.awaitTerminal(): NetworkResult<T> {
-        var terminal: NetworkResult<T> = NetworkResult.Error("No response received")
-        collect { emission -> if (emission !is NetworkResult.Loading) terminal = emission }
-        return terminal
-    }
-
-    private fun emitSuccess(@StringRes messageResId: Int, vararg args: Any) = emitSnackBarState(SnackBarComponentConfiguration(messageResId = messageResId, messageArgs = args.toList(), type = SnackBarType.SUCCESS))
-
-    private fun emitError(@StringRes messageResId: Int, vararg args: Any) = emitSnackBarState(SnackBarComponentConfiguration(messageResId = messageResId, messageArgs = args.toList(), type = SnackBarType.ERROR))
-
-    private fun emitSnackBarState(snackBarComponentConfiguration: SnackBarComponentConfiguration) {
-        viewModelScope.launch { _snackBarStateFlow.emit(snackBarComponentConfiguration) }
     }
 }

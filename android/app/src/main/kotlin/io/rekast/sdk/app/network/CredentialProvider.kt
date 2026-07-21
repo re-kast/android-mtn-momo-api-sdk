@@ -64,4 +64,17 @@ class CredentialProvider(
      * such as `GET /{productType}/oauth2/{apiVersion}/userinfo`.
      */
     override fun getOauthAccessToken(): String = storage.getOauthAccessToken()
+
+    /**
+     * Returns a per-operation callback URL by appending [operation] to [SampleConfig.callbackBaseUrl],
+     * giving each initiation endpoint its own callback path (e.g. `<base>/requesttopay`,
+     * `<base>/deposit`). Returns an empty string when no base URL is configured, so the
+     * `X-Callback-Url` header is omitted entirely until a callback base URL is set.
+     *
+     * @param operation The initiation endpoint's path segment (e.g. `"requesttopay"`, `"deposit"`).
+     */
+    override fun getCallbackUrl(operation: String): String {
+        val base = sampleConfig.callbackBaseUrl
+        return if (base.isBlank()) "" else "${base.trimEnd('/')}/$operation"
+    }
 }

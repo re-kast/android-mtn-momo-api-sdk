@@ -49,7 +49,6 @@ sealed interface CollectionService : CommonService {
      * @param requestToPay The request-to-pay payload containing amount, currency, and party details.
      * @param apiVersion The API version to target (e.g., v1_0 or v2_0).
      * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Collection product.
-     * @param environment The target environment (e.g., sandbox or production).
      * @param uuid A UUID V4 used as the X-Reference-Id to uniquely identify this request.
      * @return A `Response` with an empty body; HTTP 202 indicates the request was accepted.
      */
@@ -58,7 +57,6 @@ sealed interface CollectionService : CommonService {
         @Body requestToPay: RequestToPay,
         @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
         @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
-        @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String,
         @Header(Constants.Headers.X_REFERENCE_ID) uuid: String
     ): Response<Unit>
 
@@ -68,7 +66,6 @@ sealed interface CollectionService : CommonService {
      * @param requestToWithdraw The request-to-withdraw payload containing amount, currency, and party details.
      * @param apiVersion The API version to target (e.g., v1_0 or v2_0).
      * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Collection product.
-     * @param environment The target environment (e.g., sandbox or production).
      * @param uuid A UUID V4 used as the X-Reference-Id to uniquely identify this request.
      * @return A `Response` with an empty body; HTTP 202 indicates the request was accepted.
      */
@@ -77,7 +74,6 @@ sealed interface CollectionService : CommonService {
         @Body requestToWithdraw: RequestToWithdraw,
         @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
         @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
-        @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String,
         @Header(Constants.Headers.X_REFERENCE_ID) uuid: String
     ): Response<Unit>
 
@@ -90,7 +86,6 @@ sealed interface CollectionService : CommonService {
      * @param invoice The invoice payload containing amount, currency, and optional payer details.
      * @param apiVersion The API version to target (e.g., v1_0 or v2_0).
      * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Collection product.
-     * @param environment The target environment (e.g., sandbox or production).
      * @param uuid A UUID V4 used as the X-Reference-Id; use this same ID to query the invoice status.
      * @return A `Response` with an empty body; HTTP 202 indicates the invoice was accepted.
      */
@@ -99,7 +94,6 @@ sealed interface CollectionService : CommonService {
         @Body invoice: Invoice,
         @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
         @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
-        @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String,
         @Header(Constants.Headers.X_REFERENCE_ID) uuid: String
     ): Response<Unit>
 
@@ -110,7 +104,6 @@ sealed interface CollectionService : CommonService {
      * @param payment The payment payload (amount/currency, references, notes, and options).
      * @param apiVersion The API version to target; use `v2_0` for this endpoint.
      * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Collection product.
-     * @param environment The target environment (e.g., sandbox or production).
      * @param uuid A UUID V4 used as the X-Reference-Id; use this same ID to query the payment status.
      * @return A `Response` with an empty body; HTTP 202 indicates the payment was accepted.
      */
@@ -119,7 +112,6 @@ sealed interface CollectionService : CommonService {
         @Body payment: Payment,
         @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
         @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
-        @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String,
         @Header(Constants.Headers.X_REFERENCE_ID) uuid: String
     ): Response<Unit>
 
@@ -130,7 +122,6 @@ sealed interface CollectionService : CommonService {
      * @param preApproval The pre-approval payload containing the payer, currency, and validity.
      * @param apiVersion The API version to target (e.g., v1_0 or v2_0).
      * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Collection product.
-     * @param environment The target environment (e.g., sandbox or production).
      * @param uuid A UUID V4 used as the X-Reference-Id; use this same ID to query the pre-approval status.
      * @return A `Response` with an empty body; HTTP 202 indicates the pre-approval was accepted.
      */
@@ -139,7 +130,6 @@ sealed interface CollectionService : CommonService {
         @Body preApproval: PreApproval,
         @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
         @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
-        @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String,
         @Header(Constants.Headers.X_REFERENCE_ID) uuid: String
     ): Response<Unit>
 
@@ -151,7 +141,6 @@ sealed interface CollectionService : CommonService {
      * @param notifications The notification payload containing the message to deliver.
      * @param notificationMessage The notification message text (also sent as a header per MTN API spec).
      * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Collection product.
-     * @param environment The target environment (e.g., sandbox or production).
      * @return A `Response` whose body contains the delivery result as a `ResponseBody`.
      */
     @POST(Constants.EndPoints.REQUEST_TO_WITHDRAW_DELIVERY_NOTIFICATION)
@@ -160,8 +149,7 @@ sealed interface CollectionService : CommonService {
         @Path(Constants.EndpointPaths.REFERENCE_ID) referenceId: String,
         @Body notifications: Notifications,
         @Header(Constants.Headers.NOTIFICATION_MESSAGE) notificationMessage: String,
-        @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
-        @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String
+        @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String
     ): Response<ResponseBody>
 
     /**
@@ -170,15 +158,13 @@ sealed interface CollectionService : CommonService {
      * @param referenceId The UUID V4 reference ID used when calling [requestToPay].
      * @param apiVersion The API version to target (e.g., v1_0 or v2_0).
      * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Collection product.
-     * @param environment The target environment (e.g., sandbox or production).
      * @return A `Response` whose body is the parsed [RequestToPayStatus].
      */
     @GET(Constants.EndPoints.REQUEST_TO_PAY_STATUS)
     suspend fun requestToPayTransactionStatus(
         @Path(Constants.EndpointPaths.REFERENCE_ID) referenceId: String,
         @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
-        @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
-        @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String
+        @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String
     ): Response<RequestToPayStatus>
 
     /**
@@ -187,15 +173,13 @@ sealed interface CollectionService : CommonService {
      * @param referenceId The UUID V4 reference ID used when calling [requestToWithdraw].
      * @param apiVersion The API version to target (e.g., v1_0 or v2_0).
      * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Collection product.
-     * @param environment The target environment (e.g., sandbox or production).
      * @return A `Response` whose body is the parsed [RequestToWithdrawStatus].
      */
     @GET(Constants.EndPoints.REQUEST_TO_WITHDRAW_STATUS)
     suspend fun requestToWithdrawTransactionStatus(
         @Path(Constants.EndpointPaths.REFERENCE_ID) referenceId: String,
         @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
-        @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
-        @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String
+        @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String
     ): Response<RequestToWithdrawStatus>
 
     /**
@@ -204,15 +188,13 @@ sealed interface CollectionService : CommonService {
      * @param referenceId The UUID V4 reference ID used when calling [createPayment].
      * @param apiVersion The API version to target; use `v2_0` for this endpoint.
      * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Collection product.
-     * @param environment The target environment (e.g., sandbox or production).
      * @return A `Response` whose body is the parsed [PaymentStatus].
      */
     @GET(Constants.EndPoints.PAYMENT_STATUS)
     suspend fun getPaymentStatus(
         @Path(Constants.EndpointPaths.REFERENCE_ID) referenceId: String,
         @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
-        @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
-        @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String
+        @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String
     ): Response<PaymentStatus>
 
     /**
@@ -221,15 +203,13 @@ sealed interface CollectionService : CommonService {
      * @param referenceId The UUID V4 reference ID used when calling [createInvoice].
      * @param apiVersion The API version to target (e.g., v1_0 or v2_0).
      * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Collection product.
-     * @param environment The target environment (e.g., sandbox or production).
      * @return A `Response` whose body contains the invoice status details as a `ResponseBody`.
      */
     @GET(Constants.EndPoints.INVOICE_STATUS)
     suspend fun getInvoiceStatus(
         @Path(Constants.EndpointPaths.REFERENCE_ID) referenceId: String,
         @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
-        @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
-        @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String
+        @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String
     ): Response<InvoiceStatus>
 
     /**
@@ -238,15 +218,13 @@ sealed interface CollectionService : CommonService {
      * @param referenceId The UUID V4 reference ID used when calling [createPreApproval].
      * @param apiVersion The API version to target (e.g., v1_0 or v2_0).
      * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Collection product.
-     * @param environment The target environment (e.g., sandbox or production).
      * @return A `Response` whose body is the parsed [PreApprovalStatus].
      */
     @GET(Constants.EndPoints.PRE_APPROVAL_STATUS)
     suspend fun getPreApprovalStatus(
         @Path(Constants.EndpointPaths.REFERENCE_ID) referenceId: String,
         @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
-        @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
-        @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String
+        @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String
     ): Response<PreApprovalStatus>
 
     /**
@@ -256,7 +234,6 @@ sealed interface CollectionService : CommonService {
      * @param accountHolderId The account holder identifier of the payer whose pre-approvals to list.
      * @param apiVersion The API version to target (e.g., v1_0 or v2_0).
      * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Collection product.
-     * @param environment The target environment (e.g., sandbox or production).
      * @return A `Response` whose body is the parsed [ApprovedPreApprovals].
      */
     @GET(Constants.EndPoints.GET_APPROVED_PRE_APPROVALS)
@@ -264,8 +241,7 @@ sealed interface CollectionService : CommonService {
         @Path(Constants.EndpointPaths.ACCOUNT_HOLDER_TYPE) accountHolderIdType: String,
         @Path(Constants.EndpointPaths.ACCOUNT_HOLDER_ID) accountHolderId: String,
         @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
-        @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
-        @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String
+        @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String
     ): Response<ApprovedPreApprovals>
 
     /**
@@ -274,15 +250,13 @@ sealed interface CollectionService : CommonService {
      * @param referenceId The UUID V4 reference ID used when calling [createInvoice].
      * @param apiVersion The API version to target (e.g., v1_0 or v2_0).
      * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Collection product.
-     * @param environment The target environment (e.g., sandbox or production).
      * @return A `Response` with an empty body; HTTP 200 indicates successful cancellation.
      */
     @DELETE(Constants.EndPoints.INVOICE_STATUS)
     suspend fun cancelInvoice(
         @Path(Constants.EndpointPaths.REFERENCE_ID) referenceId: String,
         @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
-        @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
-        @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String
+        @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String
     ): Response<Unit>
 
     /**
@@ -292,14 +266,12 @@ sealed interface CollectionService : CommonService {
      * @param referenceId The UUID V4 reference ID used when calling [createPreApproval].
      * @param apiVersion The API version to target (e.g., v1_0 or v2_0).
      * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Collection product.
-     * @param environment The target environment (e.g., sandbox or production).
      * @return A `Response` with an empty body; HTTP 200 indicates successful cancellation.
      */
     @DELETE(Constants.EndPoints.PRE_APPROVAL_STATUS)
     suspend fun cancelPreApproval(
         @Path(Constants.EndpointPaths.REFERENCE_ID) referenceId: String,
         @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
-        @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
-        @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String
+        @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String
     ): Response<Unit>
 }
