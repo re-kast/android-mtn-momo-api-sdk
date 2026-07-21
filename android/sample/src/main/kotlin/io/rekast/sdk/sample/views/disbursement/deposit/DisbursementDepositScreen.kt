@@ -22,11 +22,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.MutableLiveData
 import androidx.navigation.NavController
-import io.rekast.sdk.model.MomoTransaction
+import io.rekast.sdk.model.DepositStatus
 import io.rekast.sdk.sample.R
 import io.rekast.sdk.sample.ui.components.general.CircularProgressBarComponent
 import io.rekast.sdk.sample.ui.components.general.MomoScaffold
-import io.rekast.sdk.sample.ui.components.screens.PaymentDataDisplayComponent
+import io.rekast.sdk.sample.ui.components.screens.DepositStatusDisplayComponent
 import io.rekast.sdk.sample.ui.components.screens.PaymentDataScreenComponent
 import io.rekast.sdk.sample.utils.Constants
 import io.rekast.sdk.sample.utils.SnackBarComponentConfiguration
@@ -36,13 +36,13 @@ import kotlinx.coroutines.flow.asSharedFlow
 
 /**
  * Renders the Disbursement Deposit screen, showing a payment capture form when no transaction
- * result is available, or a transaction summary once a [MomoTransaction] has been returned.
+ * result is available, or a deposit status summary once a [DepositStatus] has been returned.
  *
  * @param navController [NavController] used to navigate between destinations via the drawer.
  * @param snackStateFlow Flow emitting [SnackBarComponentConfiguration] messages to display.
  * @param showProgressBar Whether to display a loading indicator instead of the form; defaults to false.
  * @param disbursementDepositScreenViewModel ViewModel providing form state and callbacks; may be null in previews.
- * @param momoTransaction LiveData holding the completed [MomoTransaction]; null triggers the capture form.
+ * @param depositStatus LiveData holding the completed [DepositStatus]; null triggers the capture form.
  */
 @Composable
 fun DisbursementScreen(
@@ -50,7 +50,7 @@ fun DisbursementScreen(
     snackStateFlow: SharedFlow<SnackBarComponentConfiguration>,
     showProgressBar: Boolean = false,
     disbursementDepositScreenViewModel: DisbursementDepositScreenViewModel?,
-    momoTransaction: MutableLiveData<MomoTransaction?>
+    depositStatus: MutableLiveData<DepositStatus?>
 ) {
     MomoScaffold(
         titleRes = R.string.disbursement_deposit_screen,
@@ -67,7 +67,7 @@ fun DisbursementScreen(
                 val deliveryNote by disbursementDepositScreenViewModel.deliveryNote.observeAsState(Constants.EMPTY_STRING)
                 val referenceIdToRefund by disbursementDepositScreenViewModel.referenceIdToRefund.observeAsState(Constants.EMPTY_STRING)
 
-                if (momoTransaction.value == null) {
+                if (depositStatus.value == null) {
                     PaymentDataScreenComponent(
                         title = stringResource(id = R.string.request_to_deposit_title),
                         submitButtonText = stringResource(id = R.string.send_deposit_submit_button),
@@ -89,9 +89,9 @@ fun DisbursementScreen(
                         onDeliveryNoteUpdated = { disbursementDepositScreenViewModel.onDeliveryNoteUpdated(it) }
                     )
                 } else {
-                    PaymentDataDisplayComponent(
+                    DepositStatusDisplayComponent(
                         title = stringResource(id = R.string.request_to_deposit_title),
-                        momoTransaction = momoTransaction
+                        status = depositStatus
                     )
                 }
             }
@@ -109,6 +109,6 @@ fun DisbursementScreenPreview() {
         snackStateFlow = MutableSharedFlow<SnackBarComponentConfiguration>().asSharedFlow(),
         showProgressBar = false,
         disbursementDepositScreenViewModel = null,
-        momoTransaction = MutableLiveData(null)
+        depositStatus = MutableLiveData(null)
     )
 }

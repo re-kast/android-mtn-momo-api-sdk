@@ -25,13 +25,12 @@ import kotlinx.serialization.Serializable
  * [validityDuration] seconds. The payer is prompted to approve the invoice from their mobile wallet.
  *
  * @property externalId Merchant-assigned reference used to correlate the invoice on the integrator side.
- * @property amount The invoice amount as a string.
+ * @property amount The invoice amount as a string, debited from the payer's account.
  * @property currency The ISO 4217 currency code (e.g., `"EUR"`, `"UGX"`). Use `"EUR"` on sandbox.
  * @property validityDuration Seconds until the invoice expires; defaults to the product's configured TTL when null.
  * @property intendedPayer The [Party] that is expected to pay the invoice; optional.
- * @property payerMessage A short message visible to the payer in their wallet notification.
- * @property payeeNote A note to the payee describing the invoice purpose.
- * @property description Human-readable description of the goods or services being invoiced.
+ * @property payee The [Party] that receives the payment; optional.
+ * @property description Message written to the payer's transaction history describing the invoice.
  */
 @Serializable
 data class Invoice(
@@ -40,7 +39,6 @@ data class Invoice(
     @SerialName("currency") val currency: String,
     @SerialName("validityDuration") val validityDuration: String? = null,
     @SerialName("intendedPayer") val intendedPayer: Party? = null,
-    @SerialName("payerMessage") val payerMessage: String? = null,
-    @SerialName("payeeNote") val payeeNote: String? = null,
+    @SerialName("payee") val payee: Party? = null,
     @SerialName("description") val description: String? = null
 )

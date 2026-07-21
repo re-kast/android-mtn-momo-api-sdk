@@ -57,21 +57,6 @@ interface AuthenticationService {
     ): Response<ApiUser>
 
     /**
-     * Retrieves the details of an existing API user.
-     *
-     * @param apiVersion The version of the API (e.g., v1_0 or v2_0).
-     * @param apiUser The ID of the API user to retrieve.
-     * @param productSubscriptionKey The subscription key for the product.
-     * @return A `Response` containing the requested [ApiUser].
-     */
-    @GET(Constants.EndPoints.GET_API_USER)
-    suspend fun getApiUser(
-        @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
-        @Path(Constants.EndpointPaths.X_REFERENCE_ID) apiUser: String,
-        @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String
-    ): Response<ApiUser>
-
-    /**
      * Creates a new API key for the specified API user.
      *
      * @param apiVersion The version of the API (e.g., v1_0 or v2_0).
@@ -142,4 +127,19 @@ interface AuthenticationService {
         @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
         @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String
     ): Response<BcAuthorizeResponse>
+
+    /**
+     * Retrieves the details of an existing API user.
+     *
+     * @param apiVersion The version of the API (e.g., v1_0 or v2_0).
+     * @param apiUser The ID of the API user to retrieve.
+     * @param productSubscriptionKey The subscription key for the product.
+     * @return A `Response` containing the requested [ApiUser].
+     */
+    @GET(Constants.EndPoints.GET_API_USER)
+    suspend fun getApiUser(
+        @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
+        @Path(Constants.EndpointPaths.X_REFERENCE_ID) apiUser: String,
+        @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String
+    ): Response<ApiUser>
 }

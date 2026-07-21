@@ -21,12 +21,12 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.MutableLiveData
 import androidx.navigation.NavController
-import io.rekast.sdk.model.MomoTransaction
+import io.rekast.sdk.model.RequestToPayStatus
 import io.rekast.sdk.sample.R
 import io.rekast.sdk.sample.ui.components.general.CircularProgressBarComponent
 import io.rekast.sdk.sample.ui.components.general.MomoScaffold
-import io.rekast.sdk.sample.ui.components.screens.PaymentDataDisplayComponent
 import io.rekast.sdk.sample.ui.components.screens.PaymentDataScreenComponent
+import io.rekast.sdk.sample.ui.components.screens.RequestToPayStatusDisplayComponent
 import io.rekast.sdk.sample.utils.Constants
 import io.rekast.sdk.sample.utils.SnackBarComponentConfiguration
 import io.rekast.sdk.sample.utils.annotation.PreviewWithBackgroundExcludeGenerated
@@ -36,13 +36,13 @@ import kotlinx.coroutines.flow.asSharedFlow
 
 /**
  * Renders the Collection Request-to-Pay screen, showing a payment capture form when no transaction
- * result is available, or a transaction summary once a [MomoTransaction] has been returned.
+ * result is available, or a request-to-pay status summary once a [RequestToPayStatus] has been returned.
  *
  * @param navController [NavController] used to navigate between destinations via the drawer.
  * @param snackStateFlow Flow emitting [SnackBarComponentConfiguration] messages to display.
  * @param showProgressBar Whether to display a loading indicator instead of the form; defaults to false.
  * @param collectionPayScreenViewModel ViewModel providing form state and callbacks; may be null in previews.
- * @param momoTransaction LiveData holding the completed [MomoTransaction]; null triggers the capture form.
+ * @param requestToPayStatus LiveData holding the completed [RequestToPayStatus]; null triggers the capture form.
  */
 @Composable
 fun CollectionScreen(
@@ -50,7 +50,7 @@ fun CollectionScreen(
     snackStateFlow: SharedFlow<SnackBarComponentConfiguration>,
     showProgressBar: Boolean = false,
     collectionPayScreenViewModel: CollectionPayScreenViewModel?,
-    momoTransaction: MutableLiveData<MomoTransaction?>
+    requestToPayStatus: MutableLiveData<RequestToPayStatus?>
 ) {
     MomoScaffold(
         titleRes = R.string.collections_pay_screen,
@@ -67,7 +67,7 @@ fun CollectionScreen(
                 val deliveryNote by collectionPayScreenViewModel.deliveryNote.observeAsState(Constants.EMPTY_STRING)
                 val referenceIdToRefund by collectionPayScreenViewModel.referenceIdToRefund.observeAsState(Constants.EMPTY_STRING)
 
-                if (momoTransaction.value == null) {
+                if (requestToPayStatus.value == null) {
                     PaymentDataScreenComponent(
                         title = stringResource(id = R.string.request_to_pay_title),
                         submitButtonText = stringResource(id = R.string.request_payment_submit_button),
@@ -89,9 +89,9 @@ fun CollectionScreen(
                         onDeliveryNoteUpdated = { collectionPayScreenViewModel.onDeliveryNoteUpdated(it) }
                     )
                 } else {
-                    PaymentDataDisplayComponent(
+                    RequestToPayStatusDisplayComponent(
                         title = stringResource(id = R.string.request_to_pay_title),
-                        momoTransaction = momoTransaction
+                        status = requestToPayStatus
                     )
                 }
             }
@@ -109,6 +109,6 @@ fun CollectionScreenPreview() {
         snackStateFlow = MutableSharedFlow<SnackBarComponentConfiguration>().asSharedFlow(),
         showProgressBar = false,
         collectionPayScreenViewModel = null,
-        momoTransaction = MutableLiveData(null)
+        requestToPayStatus = MutableLiveData(null)
     )
 }

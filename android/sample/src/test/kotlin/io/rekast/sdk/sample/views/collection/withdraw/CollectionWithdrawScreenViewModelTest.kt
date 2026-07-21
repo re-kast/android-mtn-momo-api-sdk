@@ -21,7 +21,7 @@ import io.mockk.mockk
 import io.mockk.mockkObject
 import io.mockk.unmockkObject
 import io.mockk.verify
-import io.rekast.sdk.model.MomoTransaction
+import io.rekast.sdk.model.RequestToWithdrawStatus
 import io.rekast.sdk.repository.DefaultRepository
 import io.rekast.sdk.repository.data.NetworkResult
 import io.rekast.sdk.sample.utils.CredentialStorage
@@ -87,8 +87,8 @@ class CollectionWithdrawScreenViewModelTest {
     }
 
     @Test
-    fun `initial state has null momoTransaction`() {
-        assertNull(viewModel.momoTransaction.value)
+    fun `initial state has null transaction`() {
+        assertNull(viewModel.requestToWithdrawStatus.value)
     }
 
     @Test
@@ -157,7 +157,7 @@ class CollectionWithdrawScreenViewModelTest {
 
         verify { mockRepository.requestToWithdraw(any(), any(), any(), any()) }
         verify { mockRepository.requestToWithdrawTransactionStatus(any(), any(), any()) }
-        assertNotNull(viewModel.momoTransaction.value)
+        assertNotNull(viewModel.requestToWithdrawStatus.value)
         assertFalse(viewModel.showProgressBar.value!!)
     }
 
@@ -182,7 +182,7 @@ class CollectionWithdrawScreenViewModelTest {
         viewModel.requestToWithdraw()
 
         verify(exactly = 0) { mockRepository.requestToWithdrawTransactionStatus(any(), any(), any()) }
-        assertNull(viewModel.momoTransaction.value)
+        assertNull(viewModel.requestToWithdrawStatus.value)
         assertFalse(viewModel.showProgressBar.value!!)
     }
 
@@ -195,7 +195,7 @@ class CollectionWithdrawScreenViewModelTest {
         viewModel.onAmountUpdated("100")
         viewModel.requestToWithdraw()
 
-        assertNull(viewModel.momoTransaction.value)
+        assertNull(viewModel.requestToWithdrawStatus.value)
         assertFalse(viewModel.showProgressBar.value!!)
     }
 
@@ -226,7 +226,7 @@ class CollectionWithdrawScreenViewModelTest {
         viewModel.onAmountUpdated("100")
         viewModel.requestToWithdraw()
 
-        assertNull(viewModel.momoTransaction.value)
+        assertNull(viewModel.requestToWithdrawStatus.value)
     }
 
     /**
@@ -262,7 +262,7 @@ class CollectionWithdrawScreenViewModelTest {
         viewModel.onAmountUpdated("100")
         viewModel.requestToWithdraw()
 
-        assertNotNull(viewModel.momoTransaction.value)
+        assertNotNull(viewModel.requestToWithdrawStatus.value)
     }
 
     /** A non-blank financial ID exercises the ifBlank branch that keeps the value in the payload. */
@@ -290,7 +290,7 @@ class CollectionWithdrawScreenViewModelTest {
         viewModel.onAmountUpdated("100")
         viewModel.requestToWithdraw()
 
-        assertNull(viewModel.momoTransaction.value)
+        assertNull(viewModel.requestToWithdrawStatus.value)
         assertFalse(viewModel.showProgressBar.value!!)
     }
 
@@ -300,16 +300,16 @@ class CollectionWithdrawScreenViewModelTest {
         every { mockRepository.requestToWithdraw(any(), any(), any(), any()) } returns flowOf(NetworkResult.Success(Unit))
         @Suppress("UNCHECKED_CAST")
         every { mockRepository.requestToWithdrawTransactionStatus(any(), any(), any()) } returns
-            (flowOf(NetworkResult.Success(null)) as Flow<NetworkResult<MomoTransaction>>)
+            (flowOf(NetworkResult.Success(null)) as Flow<NetworkResult<RequestToWithdrawStatus>>)
 
         viewModel.onPhoneNumberUpdated("256700000000")
         viewModel.onAmountUpdated("100")
         viewModel.requestToWithdraw()
 
-        assertNull(viewModel.momoTransaction.value)
+        assertNull(viewModel.requestToWithdrawStatus.value)
     }
 
-    private fun sampleTransaction() = MomoTransaction(
+    private fun sampleTransaction() = RequestToWithdrawStatus(
         amount = "100",
         currency = "EUR",
         externalId = "ext-1",

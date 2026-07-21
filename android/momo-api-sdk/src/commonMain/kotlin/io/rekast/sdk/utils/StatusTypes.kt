@@ -21,7 +21,7 @@ import kotlinx.serialization.Serializable
  * Enum class representing the possible statuses in the MTN MOMO system.
  *
  * Used as the typed `status` field for transaction-style responses such as
- * [io.rekast.sdk.model.MomoTransaction] and [io.rekast.sdk.model.PaymentStatus], and for
+ * [io.rekast.sdk.model.PaymentStatus] and the operation status models, and for
  * pre-approval responses ([io.rekast.sdk.model.PreApprovalDetails],
  * [io.rekast.sdk.model.PreApprovalStatus]). Each constant corresponds to a specific state.
  */

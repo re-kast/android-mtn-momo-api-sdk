@@ -21,7 +21,7 @@ import io.mockk.mockk
 import io.mockk.mockkObject
 import io.mockk.unmockkObject
 import io.mockk.verify
-import io.rekast.sdk.model.MomoTransaction
+import io.rekast.sdk.model.RefundStatus
 import io.rekast.sdk.repository.DefaultRepository
 import io.rekast.sdk.repository.data.NetworkResult
 import io.rekast.sdk.sample.utils.CredentialStorage
@@ -85,8 +85,8 @@ class DisbursementRefundScreenViewModelTest {
     }
 
     @Test
-    fun `initial state has null momoTransaction`() {
-        assertNull(viewModel.momoTransaction.value)
+    fun `initial state has null transaction`() {
+        assertNull(viewModel.refundStatus.value)
     }
 
     @Test
@@ -156,7 +156,7 @@ class DisbursementRefundScreenViewModelTest {
 
         verify { mockRepository.refund(any(), any(), any(), any()) }
         verify { mockRepository.getRefundStatus(any(), any(), any()) }
-        assertNotNull(viewModel.momoTransaction.value)
+        assertNotNull(viewModel.refundStatus.value)
         assertFalse(viewModel.showProgressBar.value!!)
     }
 
@@ -181,7 +181,7 @@ class DisbursementRefundScreenViewModelTest {
         viewModel.refund()
 
         verify(exactly = 0) { mockRepository.getRefundStatus(any(), any(), any()) }
-        assertNull(viewModel.momoTransaction.value)
+        assertNull(viewModel.refundStatus.value)
         assertFalse(viewModel.showProgressBar.value!!)
     }
 
@@ -194,7 +194,7 @@ class DisbursementRefundScreenViewModelTest {
         viewModel.onAmountUpdated("100")
         viewModel.refund()
 
-        assertNull(viewModel.momoTransaction.value)
+        assertNull(viewModel.refundStatus.value)
         assertFalse(viewModel.showProgressBar.value!!)
     }
 
@@ -208,7 +208,7 @@ class DisbursementRefundScreenViewModelTest {
         viewModel.onAmountUpdated("100")
         viewModel.refund()
 
-        assertNull(viewModel.momoTransaction.value)
+        assertNull(viewModel.refundStatus.value)
     }
 
     /** A leading Loading emission is ignored and the terminal Success is used to complete the flow. */
@@ -223,7 +223,7 @@ class DisbursementRefundScreenViewModelTest {
         viewModel.onAmountUpdated("100")
         viewModel.refund()
 
-        assertNotNull(viewModel.momoTransaction.value)
+        assertNotNull(viewModel.refundStatus.value)
     }
 
     /** A non-blank financial ID exercises the ifBlank branch that keeps the value in the payload. */
@@ -251,7 +251,7 @@ class DisbursementRefundScreenViewModelTest {
         viewModel.onAmountUpdated("100")
         viewModel.refund()
 
-        assertNull(viewModel.momoTransaction.value)
+        assertNull(viewModel.refundStatus.value)
         assertFalse(viewModel.showProgressBar.value!!)
     }
 
@@ -261,16 +261,16 @@ class DisbursementRefundScreenViewModelTest {
         every { mockRepository.refund(any(), any(), any(), any()) } returns flowOf(NetworkResult.Success(Unit))
         @Suppress("UNCHECKED_CAST")
         every { mockRepository.getRefundStatus(any(), any(), any()) } returns
-            (flowOf(NetworkResult.Success(null)) as Flow<NetworkResult<MomoTransaction>>)
+            (flowOf(NetworkResult.Success(null)) as Flow<NetworkResult<RefundStatus>>)
 
         viewModel.onPhoneNumberUpdated("256700000000")
         viewModel.onAmountUpdated("100")
         viewModel.refund()
 
-        assertNull(viewModel.momoTransaction.value)
+        assertNull(viewModel.refundStatus.value)
     }
 
-    private fun sampleTransaction() = MomoTransaction(
+    private fun sampleTransaction() = RefundStatus(
         amount = "100",
         currency = "EUR",
         externalId = "ext-1",

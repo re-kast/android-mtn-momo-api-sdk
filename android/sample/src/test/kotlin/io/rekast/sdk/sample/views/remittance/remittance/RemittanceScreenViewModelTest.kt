@@ -21,7 +21,7 @@ import io.mockk.mockk
 import io.mockk.mockkObject
 import io.mockk.unmockkObject
 import io.mockk.verify
-import io.rekast.sdk.model.MomoTransaction
+import io.rekast.sdk.model.TransferStatus
 import io.rekast.sdk.repository.DefaultRepository
 import io.rekast.sdk.repository.data.NetworkResult
 import io.rekast.sdk.sample.utils.CredentialStorage
@@ -87,8 +87,8 @@ class RemittanceScreenViewModelTest {
     }
 
     @Test
-    fun `initial state has null momoTransaction`() {
-        Assert.assertNull(viewModel.momoTransaction.value)
+    fun `initial state has null transaction`() {
+        Assert.assertNull(viewModel.transferStatus.value)
     }
 
     @Test
@@ -159,7 +159,7 @@ class RemittanceScreenViewModelTest {
 
         verify { mockRepository.transfer(any(), any(), any(), any(), any(), any()) }
         verify { mockRepository.getTransferStatus(any(), any(), any(), any(), any()) }
-        Assert.assertNotNull(viewModel.momoTransaction.value)
+        Assert.assertNotNull(viewModel.transferStatus.value)
         Assert.assertFalse(viewModel.showProgressBar.value!!)
     }
 
@@ -184,7 +184,7 @@ class RemittanceScreenViewModelTest {
         viewModel.transferRemittance()
 
         verify(exactly = 0) { mockRepository.getTransferStatus(any(), any(), any(), any(), any()) }
-        Assert.assertNull(viewModel.momoTransaction.value)
+        Assert.assertNull(viewModel.transferStatus.value)
         Assert.assertFalse(viewModel.showProgressBar.value!!)
     }
 
@@ -197,7 +197,7 @@ class RemittanceScreenViewModelTest {
         viewModel.onAmountUpdated("100")
         viewModel.transferRemittance()
 
-        Assert.assertNull(viewModel.momoTransaction.value)
+        Assert.assertNull(viewModel.transferStatus.value)
         Assert.assertFalse(viewModel.showProgressBar.value!!)
     }
 
@@ -211,7 +211,7 @@ class RemittanceScreenViewModelTest {
         viewModel.onAmountUpdated("100")
         viewModel.transferRemittance()
 
-        Assert.assertNull(viewModel.momoTransaction.value)
+        Assert.assertNull(viewModel.transferStatus.value)
     }
 
     /** A leading Loading emission is ignored and the terminal Success is used to complete the flow. */
@@ -226,7 +226,7 @@ class RemittanceScreenViewModelTest {
         viewModel.onAmountUpdated("100")
         viewModel.transferRemittance()
 
-        Assert.assertNotNull(viewModel.momoTransaction.value)
+        Assert.assertNotNull(viewModel.transferStatus.value)
     }
 
     /** A non-blank financial ID exercises the ifBlank branch that keeps the value in the payload. */
@@ -254,7 +254,7 @@ class RemittanceScreenViewModelTest {
         viewModel.onAmountUpdated("100")
         viewModel.transferRemittance()
 
-        Assert.assertNull(viewModel.momoTransaction.value)
+        Assert.assertNull(viewModel.transferStatus.value)
         Assert.assertFalse(viewModel.showProgressBar.value!!)
     }
 
@@ -264,16 +264,16 @@ class RemittanceScreenViewModelTest {
         every { mockRepository.transfer(any(), any(), any(), any(), any(), any()) } returns flowOf(NetworkResult.Success(Unit))
         @Suppress("UNCHECKED_CAST")
         every { mockRepository.getTransferStatus(any(), any(), any(), any(), any()) } returns
-            (flowOf(NetworkResult.Success(null)) as Flow<NetworkResult<MomoTransaction>>)
+            (flowOf(NetworkResult.Success(null)) as Flow<NetworkResult<TransferStatus>>)
 
         viewModel.onPhoneNumberUpdated("256700000000")
         viewModel.onAmountUpdated("100")
         viewModel.transferRemittance()
 
-        Assert.assertNull(viewModel.momoTransaction.value)
+        Assert.assertNull(viewModel.transferStatus.value)
     }
 
-    private fun sampleTransaction() = MomoTransaction(
+    private fun sampleTransaction() = TransferStatus(
         amount = "100",
         currency = "EUR",
         externalId = "ext-1",

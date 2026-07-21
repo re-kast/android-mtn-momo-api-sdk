@@ -21,12 +21,14 @@ import io.mockk.mockk
 import io.mockk.mockkObject
 import io.mockk.unmockkObject
 import io.mockk.verify
+import io.rekast.sdk.model.InvoiceStatus
 import io.rekast.sdk.repository.DefaultRepository
 import io.rekast.sdk.repository.data.NetworkResult
 import io.rekast.sdk.sample.utils.CredentialStorage
 import io.rekast.sdk.sample.utils.DispatcherProvider
 import io.rekast.sdk.sample.utils.SampleConfig
 import io.rekast.sdk.sample.utils.Utils
+import io.rekast.sdk.utils.StatusTypes
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -36,9 +38,6 @@ import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.ResponseBody
-import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -139,7 +138,7 @@ class InvoiceScreenViewModelTest {
     fun `checkStatus fetches status after create`() = runTest {
         every { mockRepository.createInvoice(any(), any(), any(), any(), any()) } returns flowOf(NetworkResult.Success(Unit))
         every { mockRepository.getInvoiceStatus(any(), any(), any(), any()) } returns
-            flowOf(NetworkResult.Success("""{"status":"PENDING"}""".toResponseBody("application/json".toMediaType())))
+            flowOf(NetworkResult.Success(InvoiceStatus(status = StatusTypes.PENDING)))
 
         viewModel.onAmountChanged("100")
         viewModel.onPayerMsisdnChanged("256700000000")
@@ -204,18 +203,6 @@ class InvoiceScreenViewModelTest {
         viewModel.checkStatus()
 
         assertEquals("Status failed: nope", viewModel.result.value)
-    }
-
-    /** A blank status body reports the placeholder rather than an empty console. */
-    @Test
-    fun `checkStatus with blank body reports no status body`() = runTest {
-        viewModel.referenceId.value = "ref-1"
-        every { mockRepository.getInvoiceStatus(any(), any(), any(), any()) } returns
-            flowOf(NetworkResult.Success("".toResponseBody("application/json".toMediaType())))
-
-        viewModel.checkStatus()
-
-        assertEquals("No status body returned.", viewModel.result.value)
     }
 
     /** Cancel succeeds and reports the cancelled reference. */
@@ -297,7 +284,7 @@ class InvoiceScreenViewModelTest {
         viewModel.referenceId.value = "ref-1"
         @Suppress("UNCHECKED_CAST")
         every { mockRepository.getInvoiceStatus(any(), any(), any(), any()) } returns
-            (flowOf(NetworkResult.Success(null)) as Flow<NetworkResult<ResponseBody>>)
+            (flowOf(NetworkResult.Success(null)) as Flow<NetworkResult<InvoiceStatus>>)
 
         viewModel.checkStatus()
 

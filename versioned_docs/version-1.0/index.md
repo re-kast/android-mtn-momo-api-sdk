@@ -75,7 +75,7 @@ The SDK uses a **pull-based credential model** — it never stores credentials i
 │          ▲                          │                       │
 │          │                          ▼                       │
 │  MainViewModel           SDK Interceptors                   │
-│  (writes credentials)       BasicAuthenticationInterceptor            │
+│  (writes credentials)       BasicAuthenticationInterceptor  │
 │                             AccessTokenInterceptor          │
 │                                     │                       │
 │                             TokenAuthenticator              │
@@ -220,11 +220,12 @@ Each page contains a working Kotlin code snippet followed by a parameter table. 
 
 Status queries deserialize the response into a typed model (collected as `Flow<NetworkResult<T>>`):
 
-- `requestToPayTransactionStatus`, `requestToWithdrawTransactionStatus`, `getTransferStatus`, `getDepositStatus`, `getRefundStatus`, and `getCashTransferStatus` return `MomoTransaction`.
+- `requestToPayTransactionStatus`, `requestToWithdrawTransactionStatus`, `getTransferStatus`, `getDepositStatus`, `getRefundStatus`, and `getCashTransferStatus` return `Transaction`.
 - `validateAccountHolderStatus` returns `AccountHolderStatus`.
-- `getApprovedPreApprovals` returns `ApprovedPreApprovals` (a `preApprovalDetails` list of `PreApprovalDetails`, with `status` a `StatusTypes` enum and `frequency` a `FrequencyType` enum).
+- `getApprovedPreApprovals` returns `ApprovedPreApprovals` (a `preApprovalDetails` list of `PreApprovalDetails`, with `status` a `StatusTypes` enum and `frequency` a `FrequencyTypes` enum).
 - `getPreApprovalStatus` returns `PreApprovalStatus`.
 - `getPaymentStatus` returns `PaymentStatus` (with a `StatusTypes` enum status).
+- `getInvoiceStatus` returns `InvoiceStatus` (with a `StatusTypes` enum status, plus reused `ErrorResponse` and `Party`).
 
 ## Security
 

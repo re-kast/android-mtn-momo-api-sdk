@@ -21,12 +21,12 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.MutableLiveData
 import androidx.navigation.NavController
-import io.rekast.sdk.model.MomoTransaction
+import io.rekast.sdk.model.RequestToWithdrawStatus
 import io.rekast.sdk.sample.R
 import io.rekast.sdk.sample.ui.components.general.CircularProgressBarComponent
 import io.rekast.sdk.sample.ui.components.general.MomoScaffold
-import io.rekast.sdk.sample.ui.components.screens.PaymentDataDisplayComponent
 import io.rekast.sdk.sample.ui.components.screens.PaymentDataScreenComponent
+import io.rekast.sdk.sample.ui.components.screens.RequestToWithdrawStatusDisplayComponent
 import io.rekast.sdk.sample.utils.Constants
 import io.rekast.sdk.sample.utils.SnackBarComponentConfiguration
 import io.rekast.sdk.sample.utils.annotation.PreviewWithBackgroundExcludeGenerated
@@ -36,13 +36,14 @@ import kotlinx.coroutines.flow.asSharedFlow
 
 /**
  * Renders the Collection Request-to-Withdraw screen, showing a payment capture form when no
- * transaction result is available, or a transaction summary once a [MomoTransaction] has been returned.
+ * transaction result is available, or a request-to-withdraw status summary once a
+ * [RequestToWithdrawStatus] has been returned.
  *
  * @param navController [NavController] used to navigate between destinations via the drawer.
  * @param snackStateFlow Flow emitting [SnackBarComponentConfiguration] messages to display.
  * @param showProgressBar Whether to display a loading indicator instead of the form; defaults to false.
  * @param collectionWithdrawScreenViewModel ViewModel providing form state and callbacks; may be null in previews.
- * @param momoTransaction LiveData holding the completed [MomoTransaction]; null triggers the capture form.
+ * @param requestToWithdrawStatus LiveData holding the completed [RequestToWithdrawStatus]; null triggers the capture form.
  */
 @Composable
 fun CollectionScreen(
@@ -50,7 +51,7 @@ fun CollectionScreen(
     snackStateFlow: SharedFlow<SnackBarComponentConfiguration>,
     showProgressBar: Boolean = false,
     collectionWithdrawScreenViewModel: CollectionWithdrawScreenViewModel?,
-    momoTransaction: MutableLiveData<MomoTransaction?>
+    requestToWithdrawStatus: MutableLiveData<RequestToWithdrawStatus?>
 ) {
     MomoScaffold(
         titleRes = R.string.collections_withdraw_screen,
@@ -67,7 +68,7 @@ fun CollectionScreen(
                 val deliveryNote by collectionWithdrawScreenViewModel.deliveryNote.observeAsState(Constants.EMPTY_STRING)
                 val referenceIdToRefund by collectionWithdrawScreenViewModel.referenceIdToRefund.observeAsState(Constants.EMPTY_STRING)
 
-                if (momoTransaction.value == null) {
+                if (requestToWithdrawStatus.value == null) {
                     PaymentDataScreenComponent(
                         title = stringResource(id = R.string.request_to_withdraw_title),
                         submitButtonText = stringResource(id = R.string.request_withdraw_submit_button),
@@ -89,9 +90,9 @@ fun CollectionScreen(
                         onDeliveryNoteUpdated = { collectionWithdrawScreenViewModel.onDeliveryNoteUpdated(it) }
                     )
                 } else {
-                    PaymentDataDisplayComponent(
+                    RequestToWithdrawStatusDisplayComponent(
                         title = stringResource(id = R.string.request_to_withdraw_title),
-                        momoTransaction = momoTransaction
+                        status = requestToWithdrawStatus
                     )
                 }
             }
@@ -109,6 +110,6 @@ fun CollectionScreenPreview() {
         snackStateFlow = MutableSharedFlow<SnackBarComponentConfiguration>().asSharedFlow(),
         showProgressBar = false,
         collectionWithdrawScreenViewModel = null,
-        momoTransaction = MutableLiveData(null)
+        requestToWithdrawStatus = MutableLiveData(null)
     )
 }

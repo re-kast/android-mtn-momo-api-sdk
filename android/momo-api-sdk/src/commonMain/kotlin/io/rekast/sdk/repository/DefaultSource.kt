@@ -18,12 +18,12 @@ package io.rekast.sdk.repository
 import io.rekast.sdk.model.BcAuthorizeRequest
 import io.rekast.sdk.model.CashTransfer
 import io.rekast.sdk.model.Invoice
-import io.rekast.sdk.model.MomoNotification
-import io.rekast.sdk.model.MomoTransaction
+import io.rekast.sdk.model.Notifications
 import io.rekast.sdk.model.Party
 import io.rekast.sdk.model.Payment
 import io.rekast.sdk.model.PreApproval
 import io.rekast.sdk.model.ProviderCallBackHost
+import io.rekast.sdk.model.Transfer
 import io.rekast.sdk.network.service.AuthenticationService
 import io.rekast.sdk.network.service.products.CollectionService
 import io.rekast.sdk.network.service.products.CommonService
@@ -218,16 +218,16 @@ class DefaultSource @Inject constructor(
      *
      * @param productType The type of product for which to initiate the transfer.
      * @param apiVersion The version of the API to use.
-     * @param momoTransaction The transaction details.
+     * @param transfer The transfer details.
      * @param uuid A unique identifier for the request.
      * @param productSubscriptionKey The subscription key for the product.
      * @param environment The API environment (e.g., production, sandbox).
      * @return A `Response` indicating the result of the transfer.
      */
-    suspend fun transfer(productType: String, apiVersion: String, momoTransaction: MomoTransaction, uuid: String, productSubscriptionKey: String, environment: String) = commonService.transfer(
+    suspend fun transfer(productType: String, apiVersion: String, transfer: Transfer, uuid: String, productSubscriptionKey: String, environment: String) = commonService.transfer(
         productType = productType,
         apiVersion = apiVersion,
-        momoTransaction = momoTransaction,
+        transfer = transfer,
         uuid = uuid,
         productSubscriptionKey = productSubscriptionKey,
         environment = environment
@@ -241,7 +241,7 @@ class DefaultSource @Inject constructor(
      * @param referenceId The reference ID of the transfer.
      * @param productSubscriptionKey The subscription key for the product.
      * @param environment The API environment (e.g., production, sandbox).
-     * @return A `Response` containing the parsed [io.rekast.sdk.model.MomoTransaction] transfer status.
+     * @return A `Response` containing the parsed [io.rekast.sdk.model.TransferStatus] transfer status.
      */
     suspend fun getTransferStatus(productType: String, apiVersion: String, referenceId: String, productSubscriptionKey: String, environment: String) = commonService.getTransferStatus(
         productType = productType,
@@ -257,18 +257,18 @@ class DefaultSource @Inject constructor(
      * @param productType The type of product for which to send the notification.
      * @param apiVersion The version of the API to use.
      * @param referenceId The reference ID of the request to pay.
-     * @param momoNotification The notification details.
+     * @param notifications The notification details.
      * @param productSubscriptionKey The subscription key for the product.
      * @param environment The API environment (e.g., production, sandbox).
      * @return A `Response` indicating the result of the notification request.
      */
-    suspend fun requestToPayDeliveryNotification(productType: String, apiVersion: String, referenceId: String, momoNotification: MomoNotification, productSubscriptionKey: String, environment: String) =
+    suspend fun requestToPayDeliveryNotification(productType: String, apiVersion: String, referenceId: String, notifications: Notifications, productSubscriptionKey: String, environment: String) =
         commonService.requestToPayDeliveryNotification(
             productType = productType,
             apiVersion = apiVersion,
             referenceId = referenceId,
-            momoNotification = momoNotification,
-            notificationMessage = momoNotification.notificationMessage,
+            notifications = notifications,
+            notificationMessage = notifications.notificationMessage,
             productSubscriptionKey = productSubscriptionKey,
             environment = environment
         )
@@ -437,7 +437,7 @@ class DefaultSource @Inject constructor(
      * @param apiVersion The version of the API to use (e.g., v2_0).
      * @param productSubscriptionKey The subscription key for the Remittance product.
      * @param environment The API environment (e.g., sandbox or production).
-     * @return A `Response` whose body is the parsed [io.rekast.sdk.model.MomoTransaction] cash transfer status.
+     * @return A `Response` whose body is the parsed [io.rekast.sdk.model.CashTransferStatus] cash transfer status.
      */
     suspend fun getCashTransferStatus(referenceId: String, apiVersion: String, productSubscriptionKey: String, environment: String) = remittanceService.getCashTransferStatus(
         referenceId = referenceId,
@@ -485,17 +485,17 @@ class DefaultSource @Inject constructor(
      *
      * @param apiVersion The version of the API to use.
      * @param referenceId The UUID V4 reference ID used when calling requestToWithdraw.
-     * @param momoNotification The notification payload containing the message to deliver.
+     * @param notifications The notification payload containing the message to deliver.
      * @param productSubscriptionKey The subscription key for the Collection product.
      * @param environment The API environment (e.g., sandbox or production).
      * @return A `Response` whose body contains the delivery result.
      */
-    suspend fun requestToWithdrawDeliveryNotification(apiVersion: String, referenceId: String, momoNotification: MomoNotification, productSubscriptionKey: String, environment: String) =
+    suspend fun requestToWithdrawDeliveryNotification(apiVersion: String, referenceId: String, notifications: Notifications, productSubscriptionKey: String, environment: String) =
         collectionService.requestToWithdrawDeliveryNotification(
             apiVersion = apiVersion,
             referenceId = referenceId,
-            momoNotification = momoNotification,
-            notificationMessage = momoNotification.notificationMessage,
+            notifications = notifications,
+            notificationMessage = notifications.notificationMessage,
             productSubscriptionKey = productSubscriptionKey,
             environment = environment
         )

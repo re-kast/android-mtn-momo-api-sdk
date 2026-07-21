@@ -163,7 +163,7 @@ class EnumsTest {
      * Verifies that [FrequencyTypes] exposes exactly three cadences: DAILY, WEEKLY, and MONTHLY.
      */
     @Test
-    fun `FrequencyType has exactly 3 entries`() {
+    fun `FrequencyTypes has exactly 3 entries`() {
         assertEquals(3, FrequencyTypes.entries.size)
     }
 
@@ -172,9 +172,44 @@ class EnumsTest {
      * through [FrequencyTypes.valueOf].
      */
     @Test
-    fun `FrequencyType all entries resolve by valueOf`() {
+    fun `FrequencyTypes all entries resolve by valueOf`() {
         for (entry in FrequencyTypes.entries) {
             assertEquals(entry, FrequencyTypes.valueOf(entry.name))
+        }
+    }
+
+    // ---- PayerIdentificationType ----
+
+    /**
+     * Verifies that [PayerIdentificationType] exposes exactly the ten identification-document
+     * types defined by the MTN MOMO cash transfer API.
+     */
+    @Test
+    fun `PayerIdentificationType has exactly 10 entries`() {
+        assertEquals(10, PayerIdentificationType.entries.size)
+    }
+
+    /**
+     * Verifies that [PayerIdentificationType] contains each expected constant so that a rename
+     * or accidental removal is caught.
+     */
+    @Test
+    fun `PayerIdentificationType contains the expected constants`() {
+        val names = PayerIdentificationType.entries.map { it.name }.toSet()
+        assertEquals(
+            setOf("PASS", "CPFA", "SRSSA", "NRIN", "OTHR", "DRLC", "SOCS", "AREG", "IDCD", "EMID"),
+            names
+        )
+    }
+
+    /**
+     * Verifies that all [PayerIdentificationType] constants round-trip through
+     * [PayerIdentificationType.valueOf] by their API name.
+     */
+    @Test
+    fun `PayerIdentificationType all entries resolve by valueOf`() {
+        for (entry in PayerIdentificationType.entries) {
+            assertEquals(entry, PayerIdentificationType.valueOf(entry.name))
         }
     }
 }

@@ -17,13 +17,13 @@ Sends a cross-border remittance to a recipient's Mobile Money account.
 
 ```kotlin
 defaultRepository.transfer(
-    productType = ProductType.REMITTANCE.productType,
+    productType = ProductTypes.REMITTANCE.productType,
     apiVersion = "v1_0",
-    momoTransaction = MomoTransaction(
+    transfer = Transfer(
         amount = "500",
         currency = "EUR",
         externalId = UUID.randomUUID().toString(),
-        payee = AccountHolder(partyIdType = "MSISDN", partyId = "256770000000"),
+        payee = Party(partyIdType = PartyTypes.MSISDN, partyId = "256770000000"),
         payerMessage = "Remittance from abroad",
         payeeNote = "Family support"
     ),
@@ -39,14 +39,14 @@ defaultRepository.transfer(
 }
 ```
 
-| Parameter                | Type              | Description                                          |
-|--------------------------|-------------------|------------------------------------------------------|
-| `productType`            | `String`          | `ProductType.REMITTANCE.productType`                 |
-| `apiVersion`             | `String`          | API version, e.g. `"v1_0"`                           |
-| `momoTransaction`        | `MomoTransaction` | Transfer details (amount, currency, payee, messages) |
-| `uuid`                   | `String`          | Unique reference ID — save this to poll for status   |
-| `productSubscriptionKey` | `String`          | Remittance primary subscription key                  |
-| `environment`            | `String`          | `"sandbox"` or `"production"`                        |
+| Parameter                | Type       | Description                                          |
+|--------------------------|------------|------------------------------------------------------|
+| `productType`            | `String`   | `ProductTypes.REMITTANCE.productType`                |
+| `apiVersion`             | `String`   | API version, e.g. `"v1_0"`                           |
+| `transfer`               | `Transfer` | Transfer details (amount, currency, payee, messages) |
+| `uuid`                   | `String`   | Unique reference ID — save this to poll for status   |
+| `productSubscriptionKey` | `String`   | Remittance primary subscription key                  |
+| `environment`            | `String`   | `"sandbox"` or `"production"`                        |
 
 ---
 
@@ -56,7 +56,7 @@ Retrieves the status of a previously initiated remittance transfer.
 
 ```kotlin
 defaultRepository.getTransferStatus(
-    productType = ProductType.REMITTANCE.productType,
+    productType = ProductTypes.REMITTANCE.productType,
     apiVersion = "v1_0",
     referenceId = transferUuid,
     productSubscriptionKey = remittancePrimaryKey,
@@ -70,13 +70,15 @@ defaultRepository.getTransferStatus(
 }
 ```
 
-| Parameter                | Type     | Description                          |
-|--------------------------|----------|--------------------------------------|
-| `productType`            | `String` | `ProductType.REMITTANCE.productType` |
-| `apiVersion`             | `String` | API version                          |
-| `referenceId`            | `String` | UUID used when calling `transfer`    |
-| `productSubscriptionKey` | `String` | Remittance primary subscription key  |
-| `environment`            | `String` | `"sandbox"` or `"production"`        |
+| Parameter                | Type     | Description                           |
+|--------------------------|----------|---------------------------------------|
+| `productType`            | `String` | `ProductTypes.REMITTANCE.productType` |
+| `apiVersion`             | `String` | API version                           |
+| `referenceId`            | `String` | UUID used when calling `transfer`     |
+| `productSubscriptionKey` | `String` | Remittance primary subscription key   |
+| `environment`            | `String` | `"sandbox"` or `"production"`         |
+
+Returns `Flow<NetworkResult<TransferStatus>>` — `TransferStatus` carries `amount`, `currency`, `financialTransactionId`, `externalId`, a `payee` (`Party`), `payerMessage`, `payeeNote`, a `status` of type `StatusTypes` (`PENDING`, `SUCCESSFUL`, `FAILED`), and a `reason` (`ErrorResponse` — `code` + `message`).
 
 ---
 
@@ -95,14 +97,23 @@ defaultRepository.cashTransfer(
         amount = "300",
         currency = "EUR",
         externalId = UUID.randomUUID().toString(),
-        payee = AccountHolder(partyIdType = "MSISDN", partyId = "256770000000"),
+        payee = Party(partyIdType = PartyTypes.MSISDN, partyId = "256770000000"),
         payerMessage = "Cash transfer",
         payeeNote = "Family support",
         // Optional KYC fields describing the sending party:
+        payerIdentificationType = PayerIdentificationType.PASS,
+        payerIdentificationNumber = "A1234567",
         payerIdentity = "256770000001",
         payerFirstName = "Jane",
         payerSurName = "Doe",
-        originatingCountry = "UG"
+        payerLanguageCode = "en",
+        payerEmail = "jane.doe@example.com",
+        payerMsisdn = "256770000001",
+        payerGender = "female",
+        // Optional foreign-exchange fields:
+        originatingCountry = "UG",
+        originalAmount = "1200000",
+        originalCurrency = "UGX"
     ),
     uuid = cashTransferUuid,
     productSubscriptionKey = remittancePrimaryKey,
@@ -151,3 +162,5 @@ defaultRepository.getCashTransferStatus(
 | `referenceId`            | `String` | UUID used when calling `cashTransfer`       |
 | `productSubscriptionKey` | `String` | Remittance primary subscription key         |
 | `environment`            | `String` | `"sandbox"` or `"production"`               |
+
+Returns `Flow<NetworkResult<CashTransferStatus>>` — `CashTransferStatus` mirrors the `CashTransfer` payload (amount, currency, `payee`, externalId, the `payer*` KYC fields, and the foreign-exchange fields) and adds the outcome fields `financialTransactionId`, a `status` string (`PENDING`, `SUCCESSFUL`, `FAILED`), and a `reason` string. The `payerIdentificationType` is a `PayerIdentificationType` enum and `orginatingCountry` is the (deliberately misspelled) MTN wire field mapped to the `originatingCountry` property.

@@ -21,7 +21,7 @@ import io.mockk.mockk
 import io.mockk.mockkObject
 import io.mockk.unmockkObject
 import io.mockk.verify
-import io.rekast.sdk.model.MomoTransaction
+import io.rekast.sdk.model.CashTransferStatus
 import io.rekast.sdk.repository.DefaultRepository
 import io.rekast.sdk.repository.data.NetworkResult
 import io.rekast.sdk.sample.utils.CredentialStorage
@@ -234,13 +234,13 @@ class CashTransferScreenViewModelTest {
     @Test
     fun `checkStatus with non-blank body prints payload`() = runTest {
         viewModel.referenceId.value = "ref-1"
-        val transaction = MomoTransaction(amount = "100", currency = "EUR", externalId = "ext-1", payerMessage = "msg", payeeNote = "note")
+        val cashTransferStatus = CashTransferStatus(amount = "100", currency = "EUR", externalId = "ext-1", payerMessage = "msg", payeeNote = "note")
         every { mockRepository.getCashTransferStatus(any(), any(), any(), any()) } returns
-            flowOf(NetworkResult.Success(transaction))
+            flowOf(NetworkResult.Success(cashTransferStatus))
 
         viewModel.checkStatus()
 
-        assertEquals(transaction.toString(), viewModel.result.value)
+        assertEquals(cashTransferStatus.toString(), viewModel.result.value)
     }
 
     /** A status success with a null response reports the placeholder rather than crashing. */
@@ -249,7 +249,7 @@ class CashTransferScreenViewModelTest {
         viewModel.referenceId.value = "ref-1"
         @Suppress("UNCHECKED_CAST")
         every { mockRepository.getCashTransferStatus(any(), any(), any(), any()) } returns
-            (flowOf(NetworkResult.Success(null)) as Flow<NetworkResult<MomoTransaction>>)
+            (flowOf(NetworkResult.Success(null)) as Flow<NetworkResult<CashTransferStatus>>)
 
         viewModel.checkStatus()
 

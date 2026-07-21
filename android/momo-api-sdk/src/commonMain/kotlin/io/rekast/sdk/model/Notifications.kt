@@ -24,4 +24,4 @@ import kotlinx.serialization.Serializable
  * @property notificationMessage The message associated with the notification.
  */
 @Serializable
-data class MomoNotification(@SerialName("notificationMessage") var notificationMessage: String)
+data class Notifications(@SerialName("notificationMessage") var notificationMessage: String)

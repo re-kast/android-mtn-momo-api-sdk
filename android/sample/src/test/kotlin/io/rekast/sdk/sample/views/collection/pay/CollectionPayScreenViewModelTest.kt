@@ -21,7 +21,7 @@ import io.mockk.mockk
 import io.mockk.mockkObject
 import io.mockk.unmockkObject
 import io.mockk.verify
-import io.rekast.sdk.model.MomoTransaction
+import io.rekast.sdk.model.RequestToPayStatus
 import io.rekast.sdk.repository.DefaultRepository
 import io.rekast.sdk.repository.data.NetworkResult
 import io.rekast.sdk.sample.utils.CredentialStorage
@@ -87,8 +87,8 @@ class CollectionPayScreenViewModelTest {
     }
 
     @Test
-    fun `initial state has null momoTransaction`() {
-        assertNull(viewModel.momoTransaction.value)
+    fun `initial state has null transaction`() {
+        assertNull(viewModel.requestToPayStatus.value)
     }
 
     @Test
@@ -157,7 +157,7 @@ class CollectionPayScreenViewModelTest {
 
         verify { mockRepository.requestToPay(any(), any(), any(), any()) }
         verify { mockRepository.requestToPayTransactionStatus(any(), any(), any()) }
-        assertNotNull(viewModel.momoTransaction.value)
+        assertNotNull(viewModel.requestToPayStatus.value)
         assertFalse(viewModel.showProgressBar.value!!)
     }
 
@@ -182,7 +182,7 @@ class CollectionPayScreenViewModelTest {
         viewModel.requestToPay()
 
         verify(exactly = 0) { mockRepository.requestToPayTransactionStatus(any(), any(), any()) }
-        assertNull(viewModel.momoTransaction.value)
+        assertNull(viewModel.requestToPayStatus.value)
         assertFalse(viewModel.showProgressBar.value!!)
     }
 
@@ -195,7 +195,7 @@ class CollectionPayScreenViewModelTest {
         viewModel.onAmountUpdated("100")
         viewModel.requestToPay()
 
-        assertNull(viewModel.momoTransaction.value)
+        assertNull(viewModel.requestToPayStatus.value)
         assertFalse(viewModel.showProgressBar.value!!)
     }
 
@@ -226,7 +226,7 @@ class CollectionPayScreenViewModelTest {
         viewModel.onAmountUpdated("100")
         viewModel.requestToPay()
 
-        assertNull(viewModel.momoTransaction.value)
+        assertNull(viewModel.requestToPayStatus.value)
     }
 
     /**
@@ -265,7 +265,7 @@ class CollectionPayScreenViewModelTest {
         viewModel.requestToPay()
 
         verify { mockRepository.requestToPayDeliveryNotification(any(), any(), any(), any(), any(), any()) }
-        assertNotNull(viewModel.momoTransaction.value)
+        assertNotNull(viewModel.requestToPayStatus.value)
     }
 
     /** A leading Loading emission is ignored and the terminal Success is used to complete the flow. */
@@ -280,7 +280,7 @@ class CollectionPayScreenViewModelTest {
         viewModel.onAmountUpdated("100")
         viewModel.requestToPay()
 
-        assertNotNull(viewModel.momoTransaction.value)
+        assertNotNull(viewModel.requestToPayStatus.value)
     }
 
     /** A non-blank financial ID exercises the ifBlank branch that keeps the value in the payload. */
@@ -308,7 +308,7 @@ class CollectionPayScreenViewModelTest {
         viewModel.onAmountUpdated("100")
         viewModel.requestToPay()
 
-        assertNull(viewModel.momoTransaction.value)
+        assertNull(viewModel.requestToPayStatus.value)
         assertFalse(viewModel.showProgressBar.value!!)
     }
 
@@ -318,16 +318,16 @@ class CollectionPayScreenViewModelTest {
         every { mockRepository.requestToPay(any(), any(), any(), any()) } returns flowOf(NetworkResult.Success(Unit))
         @Suppress("UNCHECKED_CAST")
         every { mockRepository.requestToPayTransactionStatus(any(), any(), any()) } returns
-            (flowOf(NetworkResult.Success(null)) as Flow<NetworkResult<MomoTransaction>>)
+            (flowOf(NetworkResult.Success(null)) as Flow<NetworkResult<RequestToPayStatus>>)
 
         viewModel.onPhoneNumberUpdated("256700000000")
         viewModel.onAmountUpdated("100")
         viewModel.requestToPay()
 
-        assertNull(viewModel.momoTransaction.value)
+        assertNull(viewModel.requestToPayStatus.value)
     }
 
-    private fun sampleTransaction() = MomoTransaction(
+    private fun sampleTransaction() = RequestToPayStatus(
         amount = "100",
         currency = "EUR",
         externalId = "ext-1",

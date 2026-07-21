@@ -16,6 +16,7 @@
 package io.rekast.sdk.model
 
 import io.rekast.sdk.utils.PartyTypes
+import io.rekast.sdk.utils.PayerIdentificationType
 import kotlinx.serialization.json.Json
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
@@ -35,7 +36,7 @@ class CashTransferTest {
         payee = Party(partyIdType = PartyTypes.MSISDN, partyId = "256770000000"),
         payerMessage = "Sending funds",
         payeeNote = "Received funds",
-        payerIdentificationType = "PASS",
+        payerIdentificationType = PayerIdentificationType.PASS,
         payerIdentificationNumber = "A1234567",
         payerIdentity = "256780000000",
         payerFirstName = "Jane",
@@ -87,7 +88,7 @@ class CashTransferTest {
               "payerSurName": "Doe",
               "payerLanguageCode": "en",
               "payerEmail": "john.doe@example.com",
-              "originatingCountry": "GH",
+              "orginatingCountry": "GH",
               "originalAmount": "450",
               "originalCurrency": "GHS"
             }

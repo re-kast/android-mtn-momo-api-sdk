@@ -21,7 +21,7 @@ import io.mockk.mockk
 import io.mockk.mockkObject
 import io.mockk.unmockkObject
 import io.mockk.verify
-import io.rekast.sdk.model.MomoTransaction
+import io.rekast.sdk.model.DepositStatus
 import io.rekast.sdk.repository.DefaultRepository
 import io.rekast.sdk.repository.data.NetworkResult
 import io.rekast.sdk.sample.utils.CredentialStorage
@@ -85,8 +85,8 @@ class DisbursementDepositScreenViewModelTest {
     }
 
     @Test
-    fun `initial state has null momoTransaction`() {
-        assertNull(viewModel.momoTransaction.value)
+    fun `initial state has null transaction`() {
+        assertNull(viewModel.depositStatus.value)
     }
 
     @Test
@@ -155,7 +155,7 @@ class DisbursementDepositScreenViewModelTest {
 
         verify { mockRepository.deposit(any(), any(), any(), any()) }
         verify { mockRepository.getDepositStatus(any(), any(), any()) }
-        assertNotNull(viewModel.momoTransaction.value)
+        assertNotNull(viewModel.depositStatus.value)
         assertFalse(viewModel.showProgressBar.value!!)
     }
 
@@ -180,7 +180,7 @@ class DisbursementDepositScreenViewModelTest {
         viewModel.deposit()
 
         verify(exactly = 0) { mockRepository.getDepositStatus(any(), any(), any()) }
-        assertNull(viewModel.momoTransaction.value)
+        assertNull(viewModel.depositStatus.value)
         assertFalse(viewModel.showProgressBar.value!!)
     }
 
@@ -193,7 +193,7 @@ class DisbursementDepositScreenViewModelTest {
         viewModel.onAmountUpdated("100")
         viewModel.deposit()
 
-        assertNull(viewModel.momoTransaction.value)
+        assertNull(viewModel.depositStatus.value)
         assertFalse(viewModel.showProgressBar.value!!)
     }
 
@@ -207,7 +207,7 @@ class DisbursementDepositScreenViewModelTest {
         viewModel.onAmountUpdated("100")
         viewModel.deposit()
 
-        assertNull(viewModel.momoTransaction.value)
+        assertNull(viewModel.depositStatus.value)
     }
 
     /** A leading Loading emission is ignored and the terminal Success is used to complete the flow. */
@@ -222,7 +222,7 @@ class DisbursementDepositScreenViewModelTest {
         viewModel.onAmountUpdated("100")
         viewModel.deposit()
 
-        assertNotNull(viewModel.momoTransaction.value)
+        assertNotNull(viewModel.depositStatus.value)
     }
 
     /** A non-blank financial ID exercises the ifBlank branch that keeps the value in the payload. */
@@ -250,7 +250,7 @@ class DisbursementDepositScreenViewModelTest {
         viewModel.onAmountUpdated("100")
         viewModel.deposit()
 
-        assertNull(viewModel.momoTransaction.value)
+        assertNull(viewModel.depositStatus.value)
         assertFalse(viewModel.showProgressBar.value!!)
     }
 
@@ -260,16 +260,16 @@ class DisbursementDepositScreenViewModelTest {
         every { mockRepository.deposit(any(), any(), any(), any()) } returns flowOf(NetworkResult.Success(Unit))
         @Suppress("UNCHECKED_CAST")
         every { mockRepository.getDepositStatus(any(), any(), any()) } returns
-            (flowOf(NetworkResult.Success(null)) as Flow<NetworkResult<MomoTransaction>>)
+            (flowOf(NetworkResult.Success(null)) as Flow<NetworkResult<DepositStatus>>)
 
         viewModel.onPhoneNumberUpdated("256700000000")
         viewModel.onAmountUpdated("100")
         viewModel.deposit()
 
-        assertNull(viewModel.momoTransaction.value)
+        assertNull(viewModel.depositStatus.value)
     }
 
-    private fun sampleTransaction() = MomoTransaction(
+    private fun sampleTransaction() = DepositStatus(
         amount = "100",
         currency = "EUR",
         externalId = "ext-1",

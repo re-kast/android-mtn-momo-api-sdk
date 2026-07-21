@@ -34,8 +34,7 @@ class InvoiceTest {
         currency = "EUR",
         validityDuration = "3600",
         intendedPayer = Party(partyIdType = PartyTypes.MSISDN, partyId = "256770000000"),
-        payerMessage = "Please pay this invoice",
-        payeeNote = "Invoice for services",
+        payee = Party(partyIdType = PartyTypes.MSISDN, partyId = "256780000000"),
         description = "Consulting services rendered"
     )
 
@@ -48,12 +47,14 @@ class InvoiceTest {
               "amount": "500",
               "currency": "EUR",
               "validityDuration": "3600",
-              "payerMessage": "Invoice for order #42",
-              "payeeNote": "Order payment",
               "description": "Monthly subscription",
               "intendedPayer": {
                 "partyIdType": "MSISDN",
                 "partyId": "256700000000"
+              },
+              "payee": {
+                "partyIdType": "MSISDN",
+                "partyId": "256711111111"
               }
             }
         """.trimIndent()
@@ -63,10 +64,10 @@ class InvoiceTest {
         assertEquals("500", result.amount)
         assertEquals("EUR", result.currency)
         assertEquals("3600", result.validityDuration)
-        assertEquals("Invoice for order #42", result.payerMessage)
         assertEquals("Monthly subscription", result.description)
         assertNotNull(result.intendedPayer)
         assertEquals("256700000000", result.intendedPayer?.partyId)
+        assertEquals("256711111111", result.payee?.partyId)
     }
 
     /** Verifies that [Invoice] optional fields default to null when absent. */
@@ -77,8 +78,7 @@ class InvoiceTest {
         assertNotNull(result)
         assertNull(result.validityDuration)
         assertNull(result.intendedPayer)
-        assertNull(result.payerMessage)
-        assertNull(result.payeeNote)
+        assertNull(result.payee)
         assertNull(result.description)
     }
 

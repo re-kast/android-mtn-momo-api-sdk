@@ -19,8 +19,9 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.lifecycle.MutableLiveData
-import io.rekast.sdk.model.MomoTransaction
+import io.rekast.sdk.model.ErrorResponse
 import io.rekast.sdk.model.Party
+import io.rekast.sdk.model.RequestToPayStatus
 import io.rekast.sdk.sample.ui.theme.AppTheme
 import io.rekast.sdk.utils.PartyTypes
 import io.rekast.sdk.utils.StatusTypes
@@ -32,74 +33,58 @@ import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
 
 /**
- * Compose UI tests for [PaymentDataDisplayComponent], run on the JVM via Robolectric.
+ * Compose UI tests for [RequestToPayStatusDisplayComponent], run on the JVM via Robolectric.
  *
- * Covers the empty (null transaction) branch where every [io.rekast.sdk.sample.ui.components.general.InfoRow]
- * is skipped, the populated branch with a payee (the "Payee" counterparty label), and the
- * payer-only branch (the "Payer" counterparty label).
+ * Covers the empty (null status) branch where every [io.rekast.sdk.sample.ui.components.general.InfoRow]
+ * is skipped, and the populated branch rendering the payer, amount, status, and failure reason.
  */
 @RunWith(RobolectricTestRunner::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 @Config(sdk = [34])
-class PaymentDataDisplayComponentTest {
+class RequestToPayStatusDisplayComponentTest {
 
     @get:Rule
     val composeRule = createComposeRule()
 
-    private fun setDisplay(transaction: MomoTransaction?) {
+    private fun setDisplay(status: RequestToPayStatus?) {
         composeRule.setContent {
             AppTheme {
-                PaymentDataDisplayComponent(
-                    title = "Transaction Summary",
-                    momoTransaction = MutableLiveData(transaction)
+                RequestToPayStatusDisplayComponent(
+                    title = "Request to Pay Status",
+                    status = MutableLiveData(status)
                 )
             }
         }
     }
 
-    /** With no transaction the card title shows but every value row is omitted. */
+    /** With no status the card title shows but every value row is omitted. */
     @Test
-    fun `renders title with no transaction`() {
+    fun `renders title with no status`() {
         setDisplay(null)
-        composeRule.onNodeWithText("Transaction Summary").assertIsDisplayed()
+        composeRule.onNodeWithText("Request to Pay Status").assertIsDisplayed()
         composeRule.onNodeWithText("1500").assertDoesNotExist()
     }
 
-    /** A transaction with a payee renders its fields and the "Payee" counterparty label. */
+    /** A populated status renders the payer, amount, status, and failure reason. */
     @Test
-    fun `renders transaction fields with payee`() {
+    fun `renders status fields with payer and reason`() {
         setDisplay(
-            MomoTransaction(
+            RequestToPayStatus(
                 amount = "1500",
                 currency = "EUR",
                 externalId = "947354",
-                payee = Party(partyIdType = PartyTypes.MSISDN, partyId = "256770000000"),
+                payer = Party(partyIdType = PartyTypes.MSISDN, partyId = "256770000000"),
                 payerMessage = "Payment for goods",
                 payeeNote = "Monthly subscription",
-                status = StatusTypes.SUCCESSFUL
+                status = StatusTypes.FAILED,
+                reason = ErrorResponse(code = "PAYER_NOT_FOUND", message = "Payer could not be reached")
             )
         )
         composeRule.onNodeWithText("1500").assertIsDisplayed()
         composeRule.onNodeWithText("EUR").assertIsDisplayed()
-        composeRule.onNodeWithText("SUCCESSFUL").assertIsDisplayed()
-        composeRule.onNodeWithText("Payee:").assertIsDisplayed()
-        composeRule.onNodeWithText("256770000000 -- msisdn").assertIsDisplayed()
-    }
-
-    /** A payer-only transaction (no payee) renders the "Payer" counterparty label. */
-    @Test
-    fun `renders payer label when payee absent`() {
-        setDisplay(
-            MomoTransaction(
-                amount = "2000",
-                currency = "UGX",
-                externalId = "111222",
-                payer = Party(partyIdType = PartyTypes.MSISDN, partyId = "256711111111"),
-                payerMessage = "Send",
-                payeeNote = "Note"
-            )
-        )
+        composeRule.onNodeWithText("FAILED").assertIsDisplayed()
         composeRule.onNodeWithText("Payer:").assertIsDisplayed()
-        composeRule.onNodeWithText("256711111111 -- msisdn").assertIsDisplayed()
+        composeRule.onNodeWithText("256770000000 -- msisdn").assertIsDisplayed()
+        composeRule.onNodeWithText("Payer could not be reached").assertIsDisplayed()
     }
 }

@@ -16,7 +16,7 @@
 package io.rekast.sdk.network.service.products
 
 import io.rekast.sdk.model.CashTransfer
-import io.rekast.sdk.model.MomoTransaction
+import io.rekast.sdk.model.CashTransferStatus
 import io.rekast.sdk.utils.Constants
 import retrofit2.Response
 import retrofit2.http.Body
@@ -63,7 +63,7 @@ sealed interface RemittanceService : CommonService {
      * @param apiVersion The API version to target (e.g., v2_0).
      * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Remittance product.
      * @param environment The target environment (e.g., sandbox or production).
-     * @return A `Response` whose body is the parsed [MomoTransaction].
+     * @return A `Response` whose body is the parsed [CashTransferStatus].
      */
     @GET(Constants.EndPoints.CASH_TRANSFER_STATUS)
     suspend fun getCashTransferStatus(
@@ -71,5 +71,5 @@ sealed interface RemittanceService : CommonService {
         @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
         @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
         @Header(Constants.Headers.X_TARGET_ENVIRONMENT) environment: String
-    ): Response<MomoTransaction>
+    ): Response<CashTransferStatus>
 }

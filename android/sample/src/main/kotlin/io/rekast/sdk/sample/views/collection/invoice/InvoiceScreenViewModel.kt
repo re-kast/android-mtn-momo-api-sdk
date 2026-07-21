@@ -33,7 +33,6 @@ import io.rekast.sdk.sample.utils.SampleConfig
 import io.rekast.sdk.sample.utils.SnackBarComponentConfiguration
 import io.rekast.sdk.sample.utils.SnackBarType
 import io.rekast.sdk.sample.utils.Utils
-import io.rekast.sdk.sample.utils.bodyText
 import io.rekast.sdk.sample.utils.valueOrEmpty
 import io.rekast.sdk.sample.utils.valueOrNullIfBlank
 import io.rekast.sdk.utils.PartyTypes
@@ -116,11 +115,9 @@ class InvoiceScreenViewModel @Inject constructor(
             currency = currency.valueOrEmpty().ifBlank { Constants.SANDBOX_CURRENCY },
             validityDuration = validityDuration.valueOrNullIfBlank(),
             intendedPayer = Party(partyIdType = PartyTypes.MSISDN, partyId = payerMsisdn.valueOrEmpty()),
-            payerMessage = null,
-            payeeNote = null,
             description = description.valueOrNullIfBlank()
         )
-        when (val response = defaultRepository.createInvoice(sampleConfig.apiVersionV1, invoice, reference, subscriptionKey, sampleConfig.environment).awaitTerminal()) {
+        when (val response = defaultRepository.createInvoice(sampleConfig.apiVersionV2, invoice, reference, subscriptionKey, sampleConfig.environment).awaitTerminal()) {
             is NetworkResult.Success -> {
                 referenceId.postValue(reference)
                 result.postValue("Invoice created.\nReference: $reference")
@@ -135,11 +132,11 @@ class InvoiceScreenViewModel @Inject constructor(
         }
     }
 
-    /** Fetches the status of the previously created invoice and prints the raw payload. */
+    /** Fetches the status of the previously created invoice and prints the parsed payload. */
     fun checkStatus() = withReference { reference, subscriptionKey ->
-        when (val response = defaultRepository.getInvoiceStatus(sampleConfig.apiVersionV1, reference, subscriptionKey, sampleConfig.environment).awaitTerminal()) {
+        when (val response = defaultRepository.getInvoiceStatus(sampleConfig.apiVersionV2, reference, subscriptionKey, sampleConfig.environment).awaitTerminal()) {
             is NetworkResult.Success -> {
-                result.postValue(response.bodyText().orEmpty().ifBlank { "No status body returned." })
+                result.postValue(response.response?.toString() ?: "No status body returned.")
                 emitSuccess(R.string.snackbar_invoice_status_fetched)
             }
 
@@ -153,7 +150,7 @@ class InvoiceScreenViewModel @Inject constructor(
 
     /** Cancels the previously created invoice. */
     fun cancelInvoice() = withReference { reference, subscriptionKey ->
-        when (val response = defaultRepository.cancelInvoice(sampleConfig.apiVersionV1, reference, subscriptionKey, sampleConfig.environment).awaitTerminal()) {
+        when (val response = defaultRepository.cancelInvoice(sampleConfig.apiVersionV2, reference, subscriptionKey, sampleConfig.environment).awaitTerminal()) {
             is NetworkResult.Success -> {
                 result.postValue("Invoice $reference cancelled.")
                 emitSuccess(R.string.snackbar_invoice_cancelled)

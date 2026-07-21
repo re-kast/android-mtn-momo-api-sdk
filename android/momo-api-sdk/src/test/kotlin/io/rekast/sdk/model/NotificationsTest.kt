@@ -16,27 +16,26 @@
 package io.rekast.sdk.model
 
 import kotlinx.serialization.SerializationException
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Test
 
-class MomoNotificationTest {
+class NotificationsTest {
 
     private val json = Json { ignoreUnknownKeys = true }
     private val jsonSkipDefaults = Json { encodeDefaults = false }
     private val jsonWithDefaults = Json { encodeDefaults = true }
 
-    private fun fullMomoNotification() = MomoNotification(
+    private fun fullMomoNotification() = Notifications(
         notificationMessage = "Your payment of 100 KES was successful"
     )
 
-    /** Verifies that [MomoNotification.notificationMessage] is mapped correctly from JSON. */
+    /** Verifies that [Notifications.notificationMessage] is mapped correctly from JSON. */
     @Test
     fun `MomoNotification fields are mapped correctly from JSON`() {
         val raw = """{ "notificationMessage": "Payment received successfully." }"""
-        val result = json.decodeFromString<MomoNotification>(raw)
+        val result = json.decodeFromString<Notifications>(raw)
         assertNotNull(result)
         assertEquals("Payment received successfully.", result.notificationMessage)
     }
@@ -44,12 +43,12 @@ class MomoNotificationTest {
     @Test
     fun `MomoNotification round-trips when fully populated`() {
         val original = fullMomoNotification()
-        assertEquals(original, jsonSkipDefaults.decodeFromString<MomoNotification>(jsonSkipDefaults.encodeToString(original)))
-        assertEquals(original, jsonWithDefaults.decodeFromString<MomoNotification>(jsonWithDefaults.encodeToString(original)))
+        assertEquals(original, jsonSkipDefaults.decodeFromString<Notifications>(jsonSkipDefaults.encodeToString(original)))
+        assertEquals(original, jsonWithDefaults.decodeFromString<Notifications>(jsonWithDefaults.encodeToString(original)))
     }
 
     @Test(expected = SerializationException::class)
     fun `MomoNotification decoding an empty object throws`() {
-        jsonSkipDefaults.decodeFromString<MomoNotification>("{}")
+        jsonSkipDefaults.decodeFromString<Notifications>("{}")
     }
 }

@@ -21,7 +21,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.rekast.sdk.model.MomoTransaction
+import io.rekast.sdk.model.Deposit
+import io.rekast.sdk.model.DepositStatus
 import io.rekast.sdk.model.Party
 import io.rekast.sdk.repository.DefaultRepository
 import io.rekast.sdk.repository.data.NetworkResult
@@ -34,7 +35,6 @@ import io.rekast.sdk.sample.utils.SnackBarComponentConfiguration
 import io.rekast.sdk.sample.utils.SnackBarType
 import io.rekast.sdk.sample.utils.Utils
 import io.rekast.sdk.sample.utils.valueOrEmpty
-import io.rekast.sdk.sample.utils.valueOrNullIfBlank
 import io.rekast.sdk.utils.PartyTypes
 import io.rekast.sdk.utils.ProductTypes
 import java.util.UUID
@@ -51,9 +51,9 @@ import timber.log.Timber
  *
  * On submit it runs the full Disbursement deposit flow against the SDK:
  * 1. `deposit` — sends money to the payee's wallet (HTTP 202).
- * 2. `getDepositStatus` — polls the outcome and posts it to [momoTransaction].
+ * 2. `getDepositStatus` — polls the outcome and posts it to [depositStatus].
  *
- * The screen shows the input form while [momoTransaction] is null and the result once it is set.
+ * The screen shows the input form while [depositStatus] is null and the result once it is set.
  * Authentication is handled automatically by the SDK's interceptor/authenticator, so the ViewModel
  * only guards on the presence of an access token before starting.
  */
@@ -68,8 +68,8 @@ class DisbursementDepositScreenViewModel @Inject constructor(
     /** Controls whether the circular progress indicator is shown instead of the form. */
     val showProgressBar = MutableLiveData(false)
 
-    /** Holds the completed [MomoTransaction] returned by the API; null while no request has succeeded. */
-    var momoTransaction: MutableLiveData<MomoTransaction?> = MutableLiveData(null)
+    /** Holds the [DepositStatus] returned by the API; null while no request has succeeded. */
+    var depositStatus: MutableLiveData<DepositStatus?> = MutableLiveData(null)
     private val _snackBarStateFlow = MutableSharedFlow<SnackBarComponentConfiguration>()
 
     /** Flow of [SnackBarComponentConfiguration] events to be displayed as snackbars. */
@@ -182,7 +182,7 @@ class DisbursementDepositScreenViewModel @Inject constructor(
 
     /**
      * Submits a Disbursement deposit, then polls the status and posts the resulting
-     * [MomoTransaction] to [momoTransaction].
+     * [DepositStatus] to [depositStatus].
      */
     fun deposit() {
         viewModelScope.launch(dispatchers.io()) {
@@ -196,7 +196,7 @@ class DisbursementDepositScreenViewModel @Inject constructor(
                 val referenceId = UUID.randomUUID().toString()
                 val subscriptionKey = Utils.getProductSubscriptionKeys(ProductTypes.DISBURSEMENTS, sampleConfig)
                 val submit = defaultRepository.deposit(
-                    momoTransaction = buildTransaction(),
+                    deposit = buildTransaction(),
                     apiVersion = sampleConfig.apiVersionV1,
                     productSubscriptionKey = subscriptionKey,
                     uuid = referenceId
@@ -222,7 +222,7 @@ class DisbursementDepositScreenViewModel @Inject constructor(
         }
     }
 
-    /** Polls the deposit status and posts the decoded transaction to [momoTransaction]. */
+    /** Polls the deposit status and posts the decoded transaction to [depositStatus]. */
     private suspend fun fetchStatus(referenceId: String, subscriptionKey: String) {
         val result = defaultRepository.getDepositStatus(
             referenceId = referenceId,
@@ -231,7 +231,7 @@ class DisbursementDepositScreenViewModel @Inject constructor(
         ).awaitTerminal()
         when (result) {
             is NetworkResult.Success -> {
-                momoTransaction.postValue(result.response)
+                depositStatus.postValue(result.response)
                 emitSuccess(R.string.snackbar_deposit_status_fetched)
             }
 
@@ -243,18 +243,13 @@ class DisbursementDepositScreenViewModel @Inject constructor(
     }
 
     /** Builds the deposit payload from the current form values. */
-    private fun buildTransaction() = MomoTransaction(
+    private fun buildTransaction() = Deposit(
         amount = amount.valueOrEmpty(),
         currency = Constants.SANDBOX_CURRENCY,
-        financialTransactionId = financialId.valueOrNullIfBlank(),
         externalId = UUID.randomUUID().toString(),
         payee = Party(partyIdType = PartyTypes.MSISDN, partyId = phoneNumber.valueOrEmpty()),
-        payer = null,
         payerMessage = payerMessage.valueOrEmpty(),
-        payeeNote = payerNote.valueOrEmpty(),
-        status = null,
-        reason = null,
-        referenceIdToRefund = null
+        payeeNote = payerNote.valueOrEmpty()
     )
 
     /**

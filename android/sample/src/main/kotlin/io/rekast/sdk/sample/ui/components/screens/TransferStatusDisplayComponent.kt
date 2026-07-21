@@ -28,7 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.MutableLiveData
-import io.rekast.sdk.model.MomoTransaction
+import io.rekast.sdk.model.TransferStatus
 import io.rekast.sdk.sample.R
 import io.rekast.sdk.sample.ui.components.general.CardTitle
 import io.rekast.sdk.sample.ui.components.general.InfoRow
@@ -37,23 +37,18 @@ import io.rekast.sdk.sample.utils.annotation.PreviewWithBackgroundExcludeGenerat
 import io.rekast.sdk.utils.StatusTypes
 
 /**
- * Renders a read-only summary of a completed MOMO transaction inside a card: amount, currency,
- * financial transaction ID, external ID, payer/payee, message, note, status, reason, and reference
- * ID to refund. Fields that are null or blank are omitted automatically.
+ * Renders a read-only summary of a transfer status inside a card: amount, currency, financial
+ * transaction ID, external ID, payee, message, note, status, and failure reason. Fields that are
+ * null or blank are omitted automatically.
  *
  * @param modifier Modifier applied to the root container.
- * @param title Card title displayed above the transaction details.
- * @param momoTransaction LiveData holding the [MomoTransaction] to display.
+ * @param title Card title displayed above the status details.
+ * @param status LiveData holding the [TransferStatus] to display.
  */
 @Composable
-fun PaymentDataDisplayComponent(modifier: Modifier = Modifier, title: String, momoTransaction: MutableLiveData<MomoTransaction?>) {
-    val transaction by momoTransaction.observeAsState()
-    val counterpartyLabel = if (transaction?.payee == null) {
-        stringResource(id = R.string.payer)
-    } else {
-        stringResource(id = R.string.payee)
-    }
-    val counterparty = (transaction?.payee ?: transaction?.payer)?.let { holder ->
+fun TransferStatusDisplayComponent(modifier: Modifier = Modifier, title: String, status: MutableLiveData<TransferStatus?>) {
+    val currentStatus by status.observeAsState()
+    val payee = currentStatus?.payee?.let { holder ->
         holder.partyId?.let { "$it -- ${holder.partyIdType.partyType}" }
     }
 
@@ -65,26 +60,25 @@ fun PaymentDataDisplayComponent(modifier: Modifier = Modifier, title: String, mo
     ) {
         CardTitle(title = title)
         Spacer(modifier = Modifier.height(12.dp))
-        InfoRow(label = stringResource(id = R.string.display_amount), value = transaction?.amount)
-        InfoRow(label = stringResource(id = R.string.currency), value = transaction?.currency)
-        InfoRow(label = stringResource(id = R.string.financial_transaction_id), value = transaction?.financialTransactionId)
-        InfoRow(label = stringResource(id = R.string.external_id), value = transaction?.externalId)
-        InfoRow(label = counterpartyLabel, value = counterparty)
-        InfoRow(label = stringResource(id = R.string.payment_message_display), value = transaction?.payerMessage)
-        InfoRow(label = stringResource(id = R.string.payment_note_display), value = transaction?.payeeNote)
-        InfoRow(label = stringResource(id = R.string.status), value = transaction?.status?.name)
-        InfoRow(label = stringResource(id = R.string.reason), value = transaction?.reason)
-        InfoRow(label = stringResource(id = R.string.reference_id_to_refund), value = transaction?.referenceIdToRefund)
+        InfoRow(label = stringResource(id = R.string.display_amount), value = currentStatus?.amount)
+        InfoRow(label = stringResource(id = R.string.currency), value = currentStatus?.currency)
+        InfoRow(label = stringResource(id = R.string.financial_transaction_id), value = currentStatus?.financialTransactionId)
+        InfoRow(label = stringResource(id = R.string.external_id), value = currentStatus?.externalId)
+        InfoRow(label = stringResource(id = R.string.payee), value = payee)
+        InfoRow(label = stringResource(id = R.string.payment_message_display), value = currentStatus?.payerMessage)
+        InfoRow(label = stringResource(id = R.string.payment_note_display), value = currentStatus?.payeeNote)
+        InfoRow(label = stringResource(id = R.string.status), value = currentStatus?.status?.name)
+        InfoRow(label = stringResource(id = R.string.reason), value = currentStatus?.reason?.message)
     }
 }
 
 @PreviewWithBackgroundExcludeGenerated
 @Composable
-fun PaymentDataDisplayComponentPreview() {
-    PaymentDataDisplayComponent(
-        title = stringResource(id = R.string.request_to_pay_title),
-        momoTransaction = MutableLiveData(
-            MomoTransaction(
+fun TransferStatusDisplayComponentPreview() {
+    TransferStatusDisplayComponent(
+        title = stringResource(id = R.string.request_to_transfer_title),
+        status = MutableLiveData(
+            TransferStatus(
                 amount = "1500",
                 currency = "EUR",
                 externalId = "947354",

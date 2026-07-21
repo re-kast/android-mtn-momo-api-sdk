@@ -59,7 +59,7 @@ class CollectionWithdrawScreenFragment : Fragment() {
                         snackStateFlow = collectionWithdrawScreenViewModel.snackBarStateFlow,
                         showProgressBar = !isBootstrapComplete || vmShowProgressBar,
                         collectionWithdrawScreenViewModel = collectionWithdrawScreenViewModel,
-                        momoTransaction = collectionWithdrawScreenViewModel.momoTransaction
+                        requestToWithdrawStatus = collectionWithdrawScreenViewModel.requestToWithdrawStatus
                     )
                 }
             }

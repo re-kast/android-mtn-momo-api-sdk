@@ -21,8 +21,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.rekast.sdk.model.MomoTransaction
-import io.rekast.sdk.model.Party
+import io.rekast.sdk.model.Refund
+import io.rekast.sdk.model.RefundStatus
 import io.rekast.sdk.repository.DefaultRepository
 import io.rekast.sdk.repository.data.NetworkResult
 import io.rekast.sdk.sample.R
@@ -35,7 +35,6 @@ import io.rekast.sdk.sample.utils.SnackBarType
 import io.rekast.sdk.sample.utils.Utils
 import io.rekast.sdk.sample.utils.valueOrEmpty
 import io.rekast.sdk.sample.utils.valueOrNullIfBlank
-import io.rekast.sdk.utils.PartyTypes
 import io.rekast.sdk.utils.ProductTypes
 import java.util.UUID
 import javax.inject.Inject
@@ -51,9 +50,9 @@ import timber.log.Timber
  *
  * On submit it runs the full Disbursement refund flow against the SDK:
  * 1. `refund` — reverses a prior transaction back to the payee (HTTP 202).
- * 2. `getRefundStatus` — polls the outcome and posts it to [momoTransaction].
+ * 2. `getRefundStatus` — polls the outcome and posts it to [refundStatus].
  *
- * The screen shows the input form while [momoTransaction] is null and the result once it is set.
+ * The screen shows the input form while [refundStatus] is null and the result once it is set.
  * Authentication is handled automatically by the SDK's interceptor/authenticator, so the ViewModel
  * only guards on the presence of an access token before starting.
  */
@@ -68,8 +67,8 @@ class DisbursementRefundScreenViewModel @Inject constructor(
     /** Controls whether the circular progress indicator is shown instead of the form. */
     val showProgressBar = MutableLiveData(false)
 
-    /** Holds the completed [MomoTransaction] returned by the API; null while no request has succeeded. */
-    var momoTransaction: MutableLiveData<MomoTransaction?> = MutableLiveData(null)
+    /** Holds the [RefundStatus] returned by the API; null while no request has succeeded. */
+    var refundStatus: MutableLiveData<RefundStatus?> = MutableLiveData(null)
     private val _snackBarStateFlow = MutableSharedFlow<SnackBarComponentConfiguration>()
 
     /** Flow of [SnackBarComponentConfiguration] events to be displayed as snackbars. */
@@ -182,7 +181,7 @@ class DisbursementRefundScreenViewModel @Inject constructor(
 
     /**
      * Submits a Disbursement refund, then polls the status and posts the resulting
-     * [MomoTransaction] to [momoTransaction].
+     * [RefundStatus] to [refundStatus].
      */
     fun refund() {
         viewModelScope.launch(dispatchers.io()) {
@@ -196,7 +195,7 @@ class DisbursementRefundScreenViewModel @Inject constructor(
                 val referenceId = UUID.randomUUID().toString()
                 val subscriptionKey = Utils.getProductSubscriptionKeys(ProductTypes.DISBURSEMENTS, sampleConfig)
                 val submit = defaultRepository.refund(
-                    momoTransaction = buildTransaction(),
+                    refund = buildTransaction(),
                     apiVersion = sampleConfig.apiVersionV1,
                     productSubscriptionKey = subscriptionKey,
                     uuid = referenceId
@@ -222,7 +221,7 @@ class DisbursementRefundScreenViewModel @Inject constructor(
         }
     }
 
-    /** Polls the refund status and posts the decoded transaction to [momoTransaction]. */
+    /** Polls the refund status and posts the decoded transaction to [refundStatus]. */
     private suspend fun fetchStatus(referenceId: String, subscriptionKey: String) {
         val result = defaultRepository.getRefundStatus(
             referenceId = referenceId,
@@ -231,7 +230,7 @@ class DisbursementRefundScreenViewModel @Inject constructor(
         ).awaitTerminal()
         when (result) {
             is NetworkResult.Success -> {
-                momoTransaction.postValue(result.response)
+                refundStatus.postValue(result.response)
                 emitSuccess(R.string.snackbar_refund_status_fetched)
             }
 
@@ -243,17 +242,12 @@ class DisbursementRefundScreenViewModel @Inject constructor(
     }
 
     /** Builds the refund payload from the current form values. */
-    private fun buildTransaction() = MomoTransaction(
+    private fun buildTransaction() = Refund(
         amount = amount.valueOrEmpty(),
         currency = Constants.SANDBOX_CURRENCY,
-        financialTransactionId = financialId.valueOrNullIfBlank(),
         externalId = UUID.randomUUID().toString(),
-        payee = Party(partyIdType = PartyTypes.MSISDN, partyId = phoneNumber.valueOrEmpty()),
-        payer = null,
         payerMessage = payerMessage.valueOrEmpty(),
         payeeNote = payerNote.valueOrEmpty(),
-        status = null,
-        reason = null,
         referenceIdToRefund = referenceIdToRefund.valueOrNullIfBlank()
     )
 

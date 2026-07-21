@@ -107,7 +107,7 @@ Exchanges the API key for a short-lived Bearer access token. Requires Basic Auth
 ```kotlin
 defaultRepository.getAccessToken(
     productSubscriptionKey = remittancePrimaryKey,
-    productType = ProductType.REMITTANCE.productType
+    productType = ProductTypes.REMITTANCE.productType
 ).collect { result ->
     when (result) {
         is NetworkResult.Success -> {
@@ -122,7 +122,7 @@ defaultRepository.getAccessToken(
 | Parameter                | Type     | Description                                                    |
 |--------------------------|----------|----------------------------------------------------------------|
 | `productSubscriptionKey` | `String` | Remittance primary subscription key                            |
-| `productType`            | `String` | Product type string, e.g. `ProductType.REMITTANCE.productType` |
+| `productType`            | `String` | Product type string, e.g. `ProductTypes.REMITTANCE.productType` |
 
 ---
 
@@ -140,7 +140,7 @@ val bcAuthorizeRequest = BcAuthorizeRequest(
 )
 
 defaultRepository.bcAuthorize(
-    productType = ProductType.REMITTANCE.productType,
+    productType = ProductTypes.REMITTANCE.productType,
     apiVersion = "v1_0",
     bcAuthorizeRequest = bcAuthorizeRequest,
     productSubscriptionKey = remittancePrimaryKey,
@@ -164,7 +164,7 @@ defaultRepository.bcAuthorize(
 
 | Parameter                | Type                 | Description                                                    |
 |--------------------------|----------------------|----------------------------------------------------------------|
-| `productType`            | `String`             | Product type string, e.g. `ProductType.REMITTANCE.productType` |
+| `productType`            | `String`             | Product type string, e.g. `ProductTypes.REMITTANCE.productType` |
 | `apiVersion`             | `String`             | API version, e.g. `"v1_0"`                                     |
 | `bcAuthorizeRequest`     | `BcAuthorizeRequest` | Login hint, scope, and access type                             |
 | `productSubscriptionKey` | `String`             | Remittance primary subscription key                            |
@@ -186,7 +186,7 @@ Exchanges the stored `auth_req_id` for an OAuth2 access token. Requires a valid 
 
 ```kotlin
 defaultRepository.getOauthAccessToken(
-    productType = ProductType.REMITTANCE.productType,
+    productType = ProductTypes.REMITTANCE.productType,
     productSubscriptionKey = remittancePrimaryKey,
     environment = "sandbox",
     backChannelAuthorizationRequestId = storedAuthReqId

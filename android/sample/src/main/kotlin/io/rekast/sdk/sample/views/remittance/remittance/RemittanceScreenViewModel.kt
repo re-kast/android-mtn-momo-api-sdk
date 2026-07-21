@@ -21,8 +21,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.rekast.sdk.model.MomoTransaction
 import io.rekast.sdk.model.Party
+import io.rekast.sdk.model.Transfer
+import io.rekast.sdk.model.TransferStatus
 import io.rekast.sdk.repository.DefaultRepository
 import io.rekast.sdk.repository.data.NetworkResult
 import io.rekast.sdk.sample.R
@@ -34,7 +35,6 @@ import io.rekast.sdk.sample.utils.SnackBarComponentConfiguration
 import io.rekast.sdk.sample.utils.SnackBarType
 import io.rekast.sdk.sample.utils.Utils
 import io.rekast.sdk.sample.utils.valueOrEmpty
-import io.rekast.sdk.sample.utils.valueOrNullIfBlank
 import io.rekast.sdk.utils.PartyTypes
 import io.rekast.sdk.utils.ProductTypes
 import java.util.UUID
@@ -51,9 +51,9 @@ import timber.log.Timber
  *
  * On submit it runs the full Remittance transfer flow against the SDK:
  * 1. `transfer` — sends money to the payee (HTTP 202).
- * 2. `getTransferStatus` — polls the outcome and posts it to [momoTransaction].
+ * 2. `getTransferStatus` — polls the outcome and posts it to [transferStatus].
  *
- * The screen shows the input form while [momoTransaction] is null and the result once it is set.
+ * The screen shows the input form while [transferStatus] is null and the result once it is set.
  * Authentication is handled automatically by the SDK's interceptor/authenticator, so the ViewModel
  * only guards on the presence of an access token before starting.
  */
@@ -68,8 +68,8 @@ class RemittanceScreenViewModel @Inject constructor(
     /** Controls whether the circular progress indicator is shown instead of the form. */
     val showProgressBar = MutableLiveData(false)
 
-    /** Holds the completed [MomoTransaction] returned by the API; null while no request has succeeded. */
-    var momoTransaction: MutableLiveData<MomoTransaction?> = MutableLiveData(null)
+    /** Holds the [TransferStatus] returned by the API; null while no request has succeeded. */
+    var transferStatus: MutableLiveData<TransferStatus?> = MutableLiveData(null)
     private val _snackBarStateFlow = MutableSharedFlow<SnackBarComponentConfiguration>()
 
     /** Flow of [SnackBarComponentConfiguration] events to be displayed as snackbars. */
@@ -182,7 +182,7 @@ class RemittanceScreenViewModel @Inject constructor(
 
     /**
      * Submits a Remittance transfer, then polls the status and posts the resulting
-     * [MomoTransaction] to [momoTransaction].
+     * [TransferStatus] to [transferStatus].
      */
     fun transferRemittance() {
         viewModelScope.launch(dispatchers.io()) {
@@ -198,7 +198,7 @@ class RemittanceScreenViewModel @Inject constructor(
                 val submit = defaultRepository.transfer(
                     productType = ProductTypes.REMITTANCE.productType,
                     apiVersion = sampleConfig.apiVersionV1,
-                    momoTransaction = buildTransaction(),
+                    transfer = buildTransaction(),
                     uuid = referenceId,
                     productSubscriptionKey = subscriptionKey,
                     environment = sampleConfig.environment
@@ -224,7 +224,7 @@ class RemittanceScreenViewModel @Inject constructor(
         }
     }
 
-    /** Polls the transfer status and posts the decoded transaction to [momoTransaction]. */
+    /** Polls the transfer status and posts the decoded transaction to [transferStatus]. */
     private suspend fun fetchStatus(referenceId: String, subscriptionKey: String) {
         val result = defaultRepository.getTransferStatus(
             productType = ProductTypes.REMITTANCE.productType,
@@ -235,7 +235,7 @@ class RemittanceScreenViewModel @Inject constructor(
         ).awaitTerminal()
         when (result) {
             is NetworkResult.Success -> {
-                momoTransaction.postValue(result.response)
+                transferStatus.postValue(result.response)
                 emitSuccess(R.string.snackbar_remittance_status_fetched)
             }
 
@@ -247,18 +247,13 @@ class RemittanceScreenViewModel @Inject constructor(
     }
 
     /** Builds the transfer payload from the current form values. */
-    private fun buildTransaction() = MomoTransaction(
+    private fun buildTransaction() = Transfer(
         amount = amount.valueOrEmpty(),
         currency = Constants.SANDBOX_CURRENCY,
-        financialTransactionId = financialId.valueOrNullIfBlank(),
         externalId = UUID.randomUUID().toString(),
         payee = Party(partyIdType = PartyTypes.MSISDN, partyId = phoneNumber.valueOrEmpty()),
-        payer = null,
         payerMessage = payerMessage.valueOrEmpty(),
-        payeeNote = payerNote.valueOrEmpty(),
-        status = null,
-        reason = null,
-        referenceIdToRefund = null
+        payeeNote = payerNote.valueOrEmpty()
     )
 
     /**

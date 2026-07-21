@@ -83,8 +83,8 @@ class ApprovedPreApprovalsScreenViewModel @Inject constructor(
         val subscriptionKey = Utils.getProductSubscriptionKeys(ProductTypes.COLLECTION, sampleConfig)
         when (
             val response = defaultRepository.getApprovedPreApprovals(
-                sampleConfig.apiVersionV1,
-                PartyTypes.MSISDN.partyType,
+                sampleConfig.apiVersionV2,
+                PartyTypes.MSISDN.name,
                 accountHolderId.valueOrEmpty(),
                 subscriptionKey,
                 sampleConfig.environment
