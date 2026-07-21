@@ -17,6 +17,8 @@ package io.rekast.sdk.network.service.products
 
 import io.rekast.sdk.model.CashTransfer
 import io.rekast.sdk.model.CashTransferStatus
+import io.rekast.sdk.model.Transfer
+import io.rekast.sdk.model.TransferStatus
 import io.rekast.sdk.utils.Constants
 import retrofit2.Response
 import retrofit2.http.Body
@@ -28,10 +30,28 @@ import retrofit2.http.Path
 /**
  * Retrofit service interface for the MTN MOMO Remittance product API.
  *
- * Extends [CommonService] with remittance-specific operations: cash transfer V2.
- * The V1 transfer endpoint is inherited from [CommonService] via [Constants.EndPoints.TRANSFER].
+ * Extends [CommonService] with remittance-specific operations: the V1 transfer and cash transfer V2.
  */
 sealed interface RemittanceService : CommonService {
+
+    /**
+     * Makes a request to transfer funds (Remittance V1).
+     *
+     * @param productType The API product ([io.rekast.sdk.utils.ProductTypes]).
+     * @param apiVersion The app Version (e.g., v1_0 or v2_0).
+     * @param transfer The transfer payload [Transfer].
+     * @param uuid The unique reference ID for the transfer.
+     * @param productSubscriptionKey The Product subscription Key (Ocp-Apim-Subscription-Key).
+     * @return A `Response` indicating the result of the transfer.
+     */
+    @POST(Constants.EndPoints.TRANSFER)
+    suspend fun transfer(
+        @Path(Constants.EndpointPaths.PRODUCT_TYPE) productType: String,
+        @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
+        @Body transfer: Transfer,
+        @Header(Constants.Headers.X_REFERENCE_ID) uuid: String,
+        @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String
+    ): Response<Unit>
 
     /**
      * Initiates a remittance cash transfer using the V2 endpoint, which supports extended
@@ -53,6 +73,23 @@ sealed interface RemittanceService : CommonService {
         @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
         @Header(Constants.Headers.X_REFERENCE_ID) uuid: String
     ): Response<Unit>
+
+    /**
+     * Makes a request to get the transfer status.
+     *
+     * @param productType The API product ([io.rekast.sdk.utils.ProductTypes]).
+     * @param apiVersion The app Version (e.g., v1_0 or v2_0).
+     * @param referenceId The transfer reference ID (UUID V4).
+     * @param productSubscriptionKey The Product subscription Key (Ocp-Apim-Subscription-Key).
+     * @return A `Response` whose body is the parsed [TransferStatus].
+     */
+    @GET(Constants.EndPoints.GET_TRANSFER_STATUS)
+    suspend fun getTransferStatus(
+        @Path(Constants.EndpointPaths.PRODUCT_TYPE) productType: String,
+        @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
+        @Path(Constants.EndpointPaths.REFERENCE_ID) referenceId: String,
+        @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String
+    ): Response<TransferStatus>
 
     /**
      * Retrieves the status of a previously initiated cash transfer.

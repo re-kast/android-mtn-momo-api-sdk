@@ -18,6 +18,7 @@ package io.rekast.sdk.repository
 import io.rekast.sdk.model.BcAuthorizeRequest
 import io.rekast.sdk.model.CashTransfer
 import io.rekast.sdk.model.Invoice
+import io.rekast.sdk.model.InvoiceCancellation
 import io.rekast.sdk.model.Notifications
 import io.rekast.sdk.model.Party
 import io.rekast.sdk.model.Payment
@@ -40,8 +41,8 @@ import javax.inject.Inject
  *
  * @property authenticationService The service for handling authentication-related API calls.
  * @property commonService The service for handling common API calls.
- * @property collectionService The service for Collection-product-specific API calls (invoice, pre-approval).
- * @property remittanceService The service for Remittance-product-specific API calls (cash transfer V2).
+ * @property collectionService The service for Collection-product-specific API calls (request-to-pay, invoice, pre-approval, request-to-pay delivery notification).
+ * @property remittanceService The service for Remittance-product-specific API calls (transfer, cash transfer V2).
  */
 class DefaultSource @Inject constructor(
     private val authenticationService: AuthenticationService,
@@ -211,7 +212,7 @@ class DefaultSource @Inject constructor(
      * @param productSubscriptionKey The subscription key for the product.
      * @return A `Response` indicating the result of the transfer.
      */
-    suspend fun transfer(productType: String, apiVersion: String, transfer: Transfer, uuid: String, productSubscriptionKey: String) = commonService.transfer(
+    suspend fun transfer(productType: String, apiVersion: String, transfer: Transfer, uuid: String, productSubscriptionKey: String) = remittanceService.transfer(
         productType = productType,
         apiVersion = apiVersion,
         transfer = transfer,
@@ -228,7 +229,7 @@ class DefaultSource @Inject constructor(
      * @param productSubscriptionKey The subscription key for the product.
      * @return A `Response` containing the parsed [io.rekast.sdk.model.TransferStatus] transfer status.
      */
-    suspend fun getTransferStatus(productType: String, apiVersion: String, referenceId: String, productSubscriptionKey: String) = commonService.getTransferStatus(
+    suspend fun getTransferStatus(productType: String, apiVersion: String, referenceId: String, productSubscriptionKey: String) = remittanceService.getTransferStatus(
         productType = productType,
         apiVersion = apiVersion,
         referenceId = referenceId,
@@ -245,14 +246,15 @@ class DefaultSource @Inject constructor(
      * @param productSubscriptionKey The subscription key for the product.
      * @return A `Response` indicating the result of the notification request.
      */
-    suspend fun requestToPayDeliveryNotification(productType: String, apiVersion: String, referenceId: String, notifications: Notifications, productSubscriptionKey: String) = commonService.requestToPayDeliveryNotification(
-        productType = productType,
-        apiVersion = apiVersion,
-        referenceId = referenceId,
-        notifications = notifications,
-        notificationMessage = notifications.notificationMessage,
-        productSubscriptionKey = productSubscriptionKey
-    )
+    suspend fun requestToPayDeliveryNotification(productType: String, apiVersion: String, referenceId: String, notifications: Notifications, productSubscriptionKey: String) =
+        collectionService.requestToPayDeliveryNotification(
+            productType = productType,
+            apiVersion = apiVersion,
+            referenceId = referenceId,
+            notifications = notifications,
+            notificationMessage = notifications.notificationMessage,
+            productSubscriptionKey = productSubscriptionKey
+        )
 
     /**
      * Initiates a backchannel (CIBA) authorization request.
@@ -335,15 +337,22 @@ class DefaultSource @Inject constructor(
     /**
      * Cancels a pending Collection invoice.
      *
-     * @param referenceId The UUID V4 reference ID used when calling [createInvoice].
+     * The invoice is identified by [externalId] (the value used when it was created).
+     *
+     * @param referenceId Per MTN: the UUID of the transaction used to get the result — uniquely identifies this invoice cancellation (URL path).
      * @param apiVersion The version of the API to use.
+     * @param externalId The `externalId` sent when the invoice was created; echoed in the request body.
+     * @param uuid The `X-Reference-Id` header. Per MTN: the UUID V4 resource ID of the transaction, used
+     *   e.g. for validating the status of the request.
      * @param productSubscriptionKey The subscription key for the Collection product.
      * @return A `Response` with an empty body; HTTP 200 indicates successful cancellation.
      */
-    suspend fun cancelInvoice(referenceId: String, apiVersion: String, productSubscriptionKey: String) = collectionService.cancelInvoice(
+    suspend fun cancelInvoice(referenceId: String, apiVersion: String, externalId: String, uuid: String, productSubscriptionKey: String) = collectionService.cancelInvoice(
         referenceId = referenceId,
         apiVersion = apiVersion,
-        productSubscriptionKey = productSubscriptionKey
+        invoiceCancellation = InvoiceCancellation(externalId = externalId),
+        productSubscriptionKey = productSubscriptionKey,
+        uuid = uuid
     )
 
     /**

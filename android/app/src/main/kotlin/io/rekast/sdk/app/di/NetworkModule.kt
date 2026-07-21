@@ -120,10 +120,21 @@ object NetworkModule {
     @Singleton
     fun providesHttpLoggingInterceptor(): HttpLoggingInterceptor = HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
 
-    /** Provides the [Json] instance used by the Retrofit converter factory; unknown keys are ignored. */
+    /**
+     * Provides the [Json] instance used by the Retrofit converter factory.
+     *
+     * - `ignoreUnknownKeys` — forward-compatible: extra fields the SDK does not model are skipped.
+     * - `coerceInputValues` — resilient enums: an unknown enum value (e.g. a new `reason`/`status` the
+     *   SDK's [io.rekast.sdk.utils.ApiErrorResponses]/[io.rekast.sdk.utils.StatusTypes] does not yet
+     *   list) is coerced to the property's default (`null`) instead of failing the whole response.
+     */
     @Provides
     @Singleton
-    fun provideJson(): Json = Json { ignoreUnknownKeys = true }
+    fun provideJson(): Json =
+        Json {
+            ignoreUnknownKeys = true
+            coerceInputValues = true
+        }
 
     /**
      * Provides the singleton [OkHttpClient] wired with (in chain order):
@@ -206,7 +217,7 @@ object NetworkModule {
     @Singleton
     fun getCommonService(retrofit: Retrofit): CommonService = retrofit.create(CommonService::class.java)
 
-    /** Provides the [RemittanceService] Retrofit service for Remittance product endpoints (cash transfer V2). */
+    /** Provides the [RemittanceService] Retrofit service for Remittance product endpoints (transfer, cash transfer V2). */
     @Provides
     @Singleton
     fun getRemittance(retrofit: Retrofit): RemittanceService = retrofit.create(RemittanceService::class.java)

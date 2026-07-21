@@ -19,8 +19,10 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkObject
+import io.mockk.slot
 import io.mockk.unmockkObject
 import io.mockk.verify
+import io.rekast.sdk.model.Invoice
 import io.rekast.sdk.model.InvoiceStatus
 import io.rekast.sdk.repository.DefaultRepository
 import io.rekast.sdk.repository.data.NetworkResult
@@ -98,6 +100,12 @@ class InvoiceScreenViewModelTest {
     fun `onPayerMsisdnChanged updates payer msisdn`() {
         viewModel.onPayerMsisdnChanged("256700000000")
         assertEquals("256700000000", viewModel.payerMsisdn.value)
+    }
+
+    @Test
+    fun `onPayeeMsisdnChanged updates payee msisdn`() {
+        viewModel.onPayeeMsisdnChanged("256700000001")
+        assertEquals("256700000001", viewModel.payeeMsisdn.value)
     }
 
     /** Verifies createInvoice calls the repository, stores a reference ID, and clears the progress bar. */
@@ -209,18 +217,35 @@ class InvoiceScreenViewModelTest {
     @Test
     fun `cancelInvoice success posts cancelled result`() = runTest {
         viewModel.referenceId.value = "ref-1"
-        every { mockRepository.cancelInvoice(any(), any(), any()) } returns flowOf(NetworkResult.Success(Unit))
+        every { mockRepository.cancelInvoice(any(), any(), any(), any(), any()) } returns flowOf(NetworkResult.Success(Unit))
 
         viewModel.cancelInvoice()
 
         assertEquals("Invoice ref-1 cancelled.", viewModel.result.value)
     }
 
+    /** Cancel reuses the `externalId` that was sent when the invoice was created, not a fresh one. */
+    @Test
+    fun `cancelInvoice reuses the externalId from creation`() = runTest {
+        val createdInvoice = slot<Invoice>()
+        every { mockRepository.createInvoice(any(), capture(createdInvoice), any(), any()) } returns flowOf(NetworkResult.Success(Unit))
+        val cancelExternalId = slot<String>()
+        every { mockRepository.cancelInvoice(any(), any(), capture(cancelExternalId), any(), any()) } returns flowOf(NetworkResult.Success(Unit))
+
+        viewModel.onAmountChanged("100")
+        viewModel.onPayerMsisdnChanged("256700000000")
+        viewModel.onPayeeMsisdnChanged("256700000001")
+        viewModel.createInvoice()
+        viewModel.cancelInvoice()
+
+        assertEquals(createdInvoice.captured.externalId, cancelExternalId.captured)
+    }
+
     /** Cancel error posts a failure message. */
     @Test
     fun `cancelInvoice error posts failure result`() = runTest {
         viewModel.referenceId.value = "ref-1"
-        every { mockRepository.cancelInvoice(any(), any(), any()) } returns flowOf(NetworkResult.Error("cant"))
+        every { mockRepository.cancelInvoice(any(), any(), any(), any(), any()) } returns flowOf(NetworkResult.Error("cant"))
 
         viewModel.cancelInvoice()
 
@@ -232,7 +257,7 @@ class InvoiceScreenViewModelTest {
     fun `cancelInvoice without reference does nothing`() = runTest {
         viewModel.cancelInvoice()
 
-        verify(exactly = 0) { mockRepository.cancelInvoice(any(), any(), any()) }
+        verify(exactly = 0) { mockRepository.cancelInvoice(any(), any(), any(), any(), any()) }
     }
 
     /** Cancel is skipped when the access token is blank. */
@@ -243,7 +268,7 @@ class InvoiceScreenViewModelTest {
 
         viewModel.cancelInvoice()
 
-        verify(exactly = 0) { mockRepository.cancelInvoice(any(), any(), any()) }
+        verify(exactly = 0) { mockRepository.cancelInvoice(any(), any(), any(), any(), any()) }
     }
 
     /**

@@ -131,6 +131,31 @@ defaultRepository.cashTransfer(
 | `uuid`                   | `String`       | Unique reference ID — save this to poll for status          |
 | `productSubscriptionKey` | `String`       | Remittance primary subscription key                         |
 
+### `CashTransfer` object fields
+
+The first six fields are required; every `payer*` KYC field and the foreign-exchange fields are optional (nullable) and are simply omitted from the request when left unset. The KYC fields identify the sending party and are what make the V2 `cashtransfer` suitable for cross-border compliance when the payer is not a registered MTN mobile money subscriber.
+
+| Field                       | Type                       | Required | Description                                                                                                                                          |
+|-----------------------------|----------------------------|----------|------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `amount`                    | `String`                   | Yes      | The transfer amount                                                                                                                                  |
+| `currency`                  | `String`                   | Yes      | ISO 4217 currency code for the transaction (e.g. `"EUR"`, `"UGX"`)                                                                                   |
+| `externalId`                | `String`                   | Yes      | Merchant-assigned reference used to correlate the transfer on the integrator side                                                                    |
+| `payee`                     | `Party`                    | Yes      | The party receiving the funds; `partyIdType` is a `PartyTypes` enum (e.g. `MSISDN`)                                                                  |
+| `payerMessage`              | `String`                   | Yes      | Message visible to the payer describing the purpose of the transfer                                                                                  |
+| `payeeNote`                 | `String`                   | Yes      | Note visible to the payee describing the purpose of the transfer                                                                                     |
+| `payerIdentificationType`   | `PayerIdentificationType?` | No (KYC) | Type of identification document (`PASS`, `NRIP`, `ALIP`, `ARIP`, `PMRP`, `PECP`, etc.)                                                               |
+| `payerIdentificationNumber` | `String?`                  | No (KYC) | Identification document number matching `payerIdentificationType`                                                                                    |
+| `payerIdentity`             | `String?`                  | No (KYC) | MSISDN of the sending party (payer)                                                                                                                  |
+| `payerFirstName`            | `String?`                  | No (KYC) | First name of the sending party                                                                                                                      |
+| `payerSurName`              | `String?`                  | No (KYC) | Surname of the sending party                                                                                                                         |
+| `payerLanguageCode`         | `String?`                  | No (KYC) | ISO 639-1 two-letter language code for the payer (e.g. `"en"`)                                                                                       |
+| `payerEmail`                | `String?`                  | No (KYC) | Email address of the sending party                                                                                                                   |
+| `payerMsisdn`               | `String?`                  | No (KYC) | Phone number of the sending party                                                                                                                    |
+| `payerGender`               | `String?`                  | No (KYC) | Gender code of the sending party (per ISO 20022)                                                                                                     |
+| `originatingCountry`        | `String?`                  | No (FX)  | ISO country code of the country the funds originate from. Serialized on the wire as `orginatingCountry` (the deliberately misspelled MTN field name) |
+| `originalAmount`            | `String?`                  | No (FX)  | The amount in the originating currency before conversion                                                                                             |
+| `originalCurrency`          | `String?`                  | No (FX)  | ISO 4217 currency code of the originating amount                                                                                                     |
+
 ---
 
 ## Get Cash Transfer Status

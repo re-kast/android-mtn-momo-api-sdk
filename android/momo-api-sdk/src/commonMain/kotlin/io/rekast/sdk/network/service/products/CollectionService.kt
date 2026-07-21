@@ -17,7 +17,9 @@ package io.rekast.sdk.network.service.products
 
 import io.rekast.sdk.model.ApprovedPreApprovals
 import io.rekast.sdk.model.Invoice
+import io.rekast.sdk.model.InvoiceCancellation
 import io.rekast.sdk.model.InvoiceStatus
+import io.rekast.sdk.model.Notifications
 import io.rekast.sdk.model.Payment
 import io.rekast.sdk.model.PaymentStatus
 import io.rekast.sdk.model.PreApproval
@@ -27,10 +29,12 @@ import io.rekast.sdk.model.RequestToPayStatus
 import io.rekast.sdk.model.RequestToWithdraw
 import io.rekast.sdk.model.RequestToWithdrawStatus
 import io.rekast.sdk.utils.Constants
+import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.HTTP
 import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.Path
@@ -57,6 +61,27 @@ sealed interface CollectionService : CommonService {
         @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
         @Header(Constants.Headers.X_REFERENCE_ID) uuid: String
     ): Response<Unit>
+
+    /**
+     * Makes a request to send a request-to-pay delivery notification.
+     *
+     * @param productType The API product ([io.rekast.sdk.utils.ProductTypes]).
+     * @param apiVersion The app Version (e.g., v1_0 or v2_0).
+     * @param referenceId The request-to-pay reference ID (UUID V4).
+     * @param notifications The notification message.
+     * @param notificationMessage The message to be sent to the user.
+     * @param productSubscriptionKey The Product subscription Key (Ocp-Apim-Subscription-Key).
+     * @return A `Response` whose body contains the result of the notification request as a `ResponseBody`.
+     */
+    @POST(Constants.EndPoints.REQUEST_TO_PAY_DELIVERY_NOTIFICATION)
+    suspend fun requestToPayDeliveryNotification(
+        @Path(Constants.EndpointPaths.PRODUCT_TYPE) productType: String,
+        @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
+        @Path(Constants.EndpointPaths.REFERENCE_ID) referenceId: String,
+        @Body notifications: Notifications,
+        @Header(Constants.Headers.NOTIFICATION_MESSAGE) notificationMessage: String,
+        @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String
+    ): Response<ResponseBody>
 
     /**
      * Initiates a request-to-withdraw, prompting the specified payer to approve a withdrawal.
@@ -226,16 +251,27 @@ sealed interface CollectionService : CommonService {
     /**
      * Cancels a pending invoice before it is paid or expires.
      *
-     * @param referenceId The UUID V4 reference ID used when calling [createInvoice].
+     * MTN's cancel-invoice endpoint is a `DELETE` that carries a JSON body ([InvoiceCancellation]),
+     * so this uses [@HTTP][retrofit2.http.HTTP] with `hasBody = true` rather than a plain `@DELETE`.
+     *
+     * The invoice being cancelled is identified by the body's `externalId` (the value used when the
+     * invoice was created).
+     *
+     * @param referenceId Per MTN: the UUID of the transaction used to get the result — uniquely identifies this invoice cancellation (URL path).
      * @param apiVersion The API version to target (e.g., v1_0 or v2_0).
+     * @param invoiceCancellation The request body; its `externalId` (reused from invoice creation) identifies the invoice.
      * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Collection product.
+     * @param uuid The `X-Reference-Id` header. Per MTN: the UUID V4 resource ID of the transaction, used
+     *   e.g. for validating the status of the request.
      * @return A `Response` with an empty body; HTTP 200 indicates successful cancellation.
      */
-    @DELETE(Constants.EndPoints.INVOICE_STATUS)
+    @HTTP(method = "DELETE", path = Constants.EndPoints.INVOICE_STATUS, hasBody = true)
     suspend fun cancelInvoice(
         @Path(Constants.EndpointPaths.REFERENCE_ID) referenceId: String,
         @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
-        @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String
+        @Body invoiceCancellation: InvoiceCancellation,
+        @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
+        @Header(Constants.Headers.X_REFERENCE_ID) uuid: String
     ): Response<Unit>
 
     /**

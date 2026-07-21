@@ -461,15 +461,22 @@ class DefaultRepository @Inject constructor(private val defaultSource: DefaultSo
     /**
      * Cancels a pending Collection invoice before it is paid or expires.
      *
+     * The invoice being cancelled is identified by [externalId] in the request body.
+     *
      * @param apiVersion The version of the API to use.
-     * @param referenceId The UUID V4 reference ID used when calling [createInvoice].
+     * @param referenceId Per MTN: the UUID of the transaction used to get the result — uniquely identifies this invoice cancellation (URL path).
+     * @param externalId The `externalId` sent when the invoice was created, echoed in the cancellation body.
+     * @param uuid The `X-Reference-Id` header. Per MTN: the UUID V4 resource ID of the transaction, used
+     *   e.g. for validating the status of the request.
      * @param productSubscriptionKey The subscription key for the Collection product.
      * @return A `Flow` emitting a [NetworkResult] with an empty [Unit] body on success.
      */
-    fun cancelInvoice(apiVersion: String, referenceId: String, productSubscriptionKey: String): Flow<NetworkResult<Unit>> = executeApiCall {
+    fun cancelInvoice(apiVersion: String, referenceId: String, externalId: String, uuid: String, productSubscriptionKey: String): Flow<NetworkResult<Unit>> = executeApiCall {
         defaultSource.cancelInvoice(
             referenceId = referenceId,
             apiVersion = apiVersion,
+            externalId = externalId,
+            uuid = uuid,
             productSubscriptionKey = productSubscriptionKey
         )
     }

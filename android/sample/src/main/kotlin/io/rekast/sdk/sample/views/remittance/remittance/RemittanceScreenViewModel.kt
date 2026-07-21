@@ -15,10 +15,8 @@
  */
 package io.rekast.sdk.sample.views.remittance.remittance
 
-import androidx.annotation.StringRes
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.rekast.sdk.model.Party
@@ -31,18 +29,12 @@ import io.rekast.sdk.sample.utils.Constants
 import io.rekast.sdk.sample.utils.CredentialStorage
 import io.rekast.sdk.sample.utils.DispatcherProvider
 import io.rekast.sdk.sample.utils.SampleConfig
-import io.rekast.sdk.sample.utils.SnackBarComponentConfiguration
-import io.rekast.sdk.sample.utils.SnackBarType
 import io.rekast.sdk.sample.utils.Utils
 import io.rekast.sdk.sample.utils.valueOrEmpty
 import io.rekast.sdk.sample.views.BaseScreenViewModel
 import io.rekast.sdk.utils.PartyTypes
 import io.rekast.sdk.utils.ProductTypes
 import javax.inject.Inject
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -191,7 +183,7 @@ class RemittanceScreenViewModel @Inject constructor(
                 val submit = defaultRepository.transfer(
                     productType = ProductTypes.REMITTANCE.productType,
                     apiVersion = sampleConfig.apiVersionV1,
-                    transfer = buildTransaction(),
+                    transfer = buildTransfer(),
                     uuid = referenceId,
                     productSubscriptionKey = subscriptionKey
                 ).awaitTerminal()
@@ -238,7 +230,7 @@ class RemittanceScreenViewModel @Inject constructor(
     }
 
     /** Builds the transfer payload from the current form values. */
-    private fun buildTransaction() = Transfer(
+    private fun buildTransfer() = Transfer(
         amount = amount.valueOrEmpty(),
         currency = Constants.SANDBOX_CURRENCY,
         externalId = generateUuid(),

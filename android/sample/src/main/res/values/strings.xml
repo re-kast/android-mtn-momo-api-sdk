@@ -97,6 +97,15 @@
     <string name="label_external_id">External ID</string>
     <string name="label_payer_first_name">Payer first name</string>
     <string name="label_payer_surname">Payer surname</string>
+    <string name="label_payer_identification_type">Payer ID type (e.g. PASS, DRLC, IDCD)</string>
+    <string name="label_payer_identification_number">Payer ID number</string>
+    <string name="label_payer_identity">Payer identity (MSISDN)</string>
+    <string name="label_payer_language_code">Payer language code (e.g. en)</string>
+    <string name="label_payer_email">Payer email</string>
+    <string name="label_payer_gender">Payer gender</string>
+    <string name="label_originating_country">Originating country</string>
+    <string name="label_original_amount">Original amount</string>
+    <string name="label_original_currency">Original currency</string>
 
     <string name="console_hint">Run an operation to see its reference ID and status here.</string>
 

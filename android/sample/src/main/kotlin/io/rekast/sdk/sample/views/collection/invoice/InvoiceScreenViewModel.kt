@@ -64,6 +64,13 @@ class InvoiceScreenViewModel @Inject constructor(
     /** The reference ID of the last created invoice; enables status/cancel actions. */
     val referenceId = MutableLiveData<String?>(null)
 
+    /**
+     * The `externalId` sent when the last invoice was created. Saved at creation and reused as the
+     * cancellation body's `externalId` (rather than generating a fresh one), so cancel correlates
+     * with the original invoice.
+     */
+    private var createdExternalId: String? = null
+
     /** Console output describing the outcome of the last operation. */
     val result = MutableLiveData<String?>(null)
 
@@ -85,6 +92,12 @@ class InvoiceScreenViewModel @Inject constructor(
         _payerMsisdn.value = value
     }
 
+    private val _payeeMsisdn = MutableLiveData(Constants.EMPTY_STRING)
+    val payeeMsisdn: LiveData<String> get() = _payeeMsisdn
+    fun onPayeeMsisdnChanged(value: String) {
+        _payeeMsisdn.value = value
+    }
+
     private val _validityDuration = MutableLiveData(Constants.EMPTY_STRING)
     val validityDuration: LiveData<String> get() = _validityDuration
     fun onValidityDurationChanged(value: String) {
@@ -100,18 +113,21 @@ class InvoiceScreenViewModel @Inject constructor(
     /** Creates an invoice with a fresh reference ID and stores that ID for status/cancel. */
     fun createInvoice() = launchOperation {
         val reference = generateUuid()
+        val externalId = generateUuid()
         val subscriptionKey = Utils.getProductSubscriptionKeys(ProductTypes.COLLECTION, sampleConfig)
         val invoice = Invoice(
-            externalId = generateUuid(),
+            externalId = externalId,
             amount = amount.valueOrEmpty(),
             currency = currency.valueOrEmpty().ifBlank { Constants.SANDBOX_CURRENCY },
             validityDuration = validityDuration.valueOrNullIfBlank(),
             intendedPayer = Party(partyIdType = PartyTypes.MSISDN, partyId = payerMsisdn.valueOrEmpty()),
+            payee = Party(partyIdType = PartyTypes.MSISDN, partyId = payeeMsisdn.valueOrEmpty()),
             description = description.valueOrNullIfBlank()
         )
         when (val response = defaultRepository.createInvoice(sampleConfig.apiVersionV2, invoice, reference, subscriptionKey).awaitTerminal()) {
             is NetworkResult.Success -> {
                 referenceId.postValue(reference)
+                createdExternalId = externalId
                 result.postValue("Invoice created.\nReference: $reference")
                 emitSuccess(R.string.snackbar_invoice_created)
             }
@@ -140,9 +156,14 @@ class InvoiceScreenViewModel @Inject constructor(
         }
     }
 
-    /** Cancels the previously created invoice. */
+    /**
+     * Cancels the previously created invoice. The invoice is identified by the `externalId` sent at
+     * creation (reused here); the path reference and the `X-Reference-Id` header are two independent
+     * fresh UUIDs generated for this cancellation request.
+     */
     fun cancelInvoice() = withReference { reference, subscriptionKey ->
-        when (val response = defaultRepository.cancelInvoice(sampleConfig.apiVersionV2, reference, subscriptionKey).awaitTerminal()) {
+        val externalId = createdExternalId ?: reference
+        when (val response = defaultRepository.cancelInvoice(sampleConfig.apiVersionV2, generateUuid(), externalId, generateUuid(), subscriptionKey).awaitTerminal()) {
             is NetworkResult.Success -> {
                 result.postValue("Invoice $reference cancelled.")
                 emitSuccess(R.string.snackbar_invoice_cancelled)

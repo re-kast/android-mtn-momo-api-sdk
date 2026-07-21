@@ -241,12 +241,33 @@ Returns `Flow<NetworkResult<InvoiceStatus>>` — `InvoiceStatus` carries `refere
 
 ## Cancel Invoice
 
-Cancels an active invoice.
+Cancels an active invoice. MTN's cancel-invoice endpoint is a `DELETE` that carries a JSON body
+(`{ "externalId": "..." }`), so you pass an `externalId`; the SDK wraps it in an `InvoiceCancellation`
+body and sends `uuid` as the required `X-Reference-Id` header.
+
+The parameters:
+
+- **`externalId` → the request body.** The **same value you used when creating the invoice** (save it at
+  creation and reuse it here). This is what ties the cancellation back to the original invoice.
+- **`uuid` → the `X-Reference-Id` header.** Per MTN, `X-Reference-Id` is:
+  > Format - UUID. Resource ID of the created request to pay transaction. This ID is used, for example,
+  > validating the status of the request. "Universal Unique ID" for the transaction generated using
+  > UUID version 4.
+- **`referenceId` → the URL path (`.../invoice/{referenceId}`).** Per MTN, the UUID of the transaction
+  used to get the result — an ID that uniquely identifies this invoice cancellation.
+
+:::note
+In the sample app we pass freshly generated UUIDs (`generateUuid()`) for both `referenceId` and `uuid`
+simply because it is a **sandbox/testing** example. In your own integration, supply the value that
+carries the meaning MTN describes above for `X-Reference-Id` rather than a throwaway UUID.
+:::
 
 ```kotlin
 defaultRepository.cancelInvoice(
     apiVersion = "v1_0",
-    referenceId = invoiceUuid,
+    referenceId = invoiceReferenceId,   // the UUID addressing this request (path)
+    externalId = invoiceExternalId,     // reused from invoice creation — identifies the invoice
+    uuid = xReferenceId,                // the X-Reference-Id header (see MTN definition above)
     productSubscriptionKey = collectionPrimaryKey
 ).collect { result ->
     when (result) {
@@ -257,11 +278,13 @@ defaultRepository.cancelInvoice(
 }
 ```
 
-| Parameter                | Type     | Description                         |
-|--------------------------|----------|-------------------------------------|
-| `apiVersion`             | `String` | API version                         |
-| `referenceId`            | `String` | UUID of the invoice to cancel       |
-| `productSubscriptionKey` | `String` | Collection primary subscription key |
+| Parameter                | Type     | Description                                                                                                                  |
+|--------------------------|----------|------------------------------------------------------------------------------------------------------------------------------|
+| `apiVersion`             | `String` | API version                                                                                                                  |
+| `referenceId`            | `String` | Per MTN, the UUID of the transaction used to get the result — uniquely identifies this invoice cancellation (URL path)       |
+| `externalId`             | `String` | The `externalId` used when creating the invoice; identifies the invoice to cancel                                            |
+| `uuid`                   | `String` | Sent as the `X-Reference-Id` header — per MTN, the UUID v4 resource ID of the transaction (used e.g. to validate its status) |
+| `productSubscriptionKey` | `String` | Collection primary subscription key                                                                                          |
 
 ---
 
@@ -418,4 +441,4 @@ defaultRepository.getPaymentStatus(
 | `referenceId`            | `String` | UUID used when calling `createPayment` |
 | `productSubscriptionKey` | `String` | Collection primary subscription key    |
 
-`getPaymentStatus(...)` returns `Flow<NetworkResult<PaymentStatus>>` (`referenceId`, a `status` of type `StatusTypes` (`CREATED`, `PENDING`, `SUCCESSFUL`, `FAILED`), `financialTransactionId`, and a `reason` of `code` + `message`).
+`getPaymentStatus(...)` returns `Flow<NetworkResult<PaymentStatus>>` (`referenceId`, a `status` of type `StatusTypes` (`CREATED`, `PENDING`, `SUCCESSFUL`, `FAILED`), `financialTransactionId`, and a `reason` of type `ApiErrorResponses` (e.g. `PAYEE_NOT_FOUND`) present when the payment did not succeed).

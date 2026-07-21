@@ -82,6 +82,31 @@ defaultRepository.getBasicUserInfo(
 | `accountHolder`          | `String` | MSISDN of the account holder  |
 | `productSubscriptionKey` | `String` | Primary subscription key      |
 
+This endpoint is available for every product. For **Remittance** it resolves to
+`/remittance/{apiVersion}/accountholder/msisdn/{accountHolder}/basicuserinfo` — call it with
+`productType = ProductTypes.REMITTANCE.productType` and the account holder MSISDN.
+
+**`BasicUserInfo` response fields**
+
+`BasicUserInfo` is a superset covering both response shapes: the OIDC-style payload returned by
+Collection/Disbursements (includes `sub`, `name`, `gender`, `updatedAt`) and the Remittance KYC
+payload (`givenName`, `familyName`, `birthDate`, `locale`, `status`), which omits `sub`/`name`.
+Every server-supplied field is therefore nullable, so a payload that omits any of them deserializes
+without failure.
+
+| Field              | Type      | Description                                                                                     |
+|--------------------|-----------|-------------------------------------------------------------------------------------------------|
+| `sub`              | `String?` | Subject identifier for the user. Absent in the Remittance KYC response                          |
+| `name`             | `String?` | Full name. Absent in the Remittance KYC response                                                |
+| `givenName`        | `String?` | Given name(s) / first name(s) (`given_name`)                                                    |
+| `familyName`       | `String?` | Surname(s) / last name(s) (`family_name`)                                                       |
+| `birthDate`        | `String?` | Account holder birth date (`birthdate`)                                                         |
+| `locale`           | `String?` | BCP47 [RFC5646] language tag, e.g. `en-US` or `en_US`                                           |
+| `gender`           | `String?` | Gender                                                                                          |
+| `status`           | `String?` | Account holder status (returned by the Remittance KYC response)                                 |
+| `updatedAt`        | `Int?`    | Last-updated timestamp as a Unix epoch integer in seconds (`updated_at`)                        |
+| `displayUpdatedAt` | `String`  | Human-readable form of `updatedAt`; computed locally (`@Transient`) — never part of the payload |
+
 ---
 
 ## Get User Info With Consent

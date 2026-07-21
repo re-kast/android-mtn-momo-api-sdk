@@ -15,10 +15,8 @@
  */
 package io.rekast.sdk.sample.views.disbursement.deposit
 
-import androidx.annotation.StringRes
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.rekast.sdk.model.Deposit
@@ -31,18 +29,12 @@ import io.rekast.sdk.sample.utils.Constants
 import io.rekast.sdk.sample.utils.CredentialStorage
 import io.rekast.sdk.sample.utils.DispatcherProvider
 import io.rekast.sdk.sample.utils.SampleConfig
-import io.rekast.sdk.sample.utils.SnackBarComponentConfiguration
-import io.rekast.sdk.sample.utils.SnackBarType
 import io.rekast.sdk.sample.utils.Utils
 import io.rekast.sdk.sample.utils.valueOrEmpty
 import io.rekast.sdk.sample.views.BaseScreenViewModel
 import io.rekast.sdk.utils.PartyTypes
 import io.rekast.sdk.utils.ProductTypes
 import javax.inject.Inject
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -189,7 +181,7 @@ class DisbursementDepositScreenViewModel @Inject constructor(
                 val referenceId = generateUuid()
                 val subscriptionKey = Utils.getProductSubscriptionKeys(ProductTypes.DISBURSEMENTS, sampleConfig)
                 val submit = defaultRepository.deposit(
-                    deposit = buildTransaction(),
+                    deposit = buildDeposit(),
                     apiVersion = sampleConfig.apiVersionV1,
                     productSubscriptionKey = subscriptionKey,
                     uuid = referenceId
@@ -236,7 +228,7 @@ class DisbursementDepositScreenViewModel @Inject constructor(
     }
 
     /** Builds the deposit payload from the current form values. */
-    private fun buildTransaction() = Deposit(
+    private fun buildDeposit() = Deposit(
         amount = amount.valueOrEmpty(),
         currency = Constants.SANDBOX_CURRENCY,
         externalId = generateUuid(),

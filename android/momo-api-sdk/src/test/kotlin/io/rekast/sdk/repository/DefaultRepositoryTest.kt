@@ -708,9 +708,9 @@ class DefaultRepositoryTest {
     /** Verifies that [DefaultRepository.cancelInvoice] emits Loading then Success. */
     @Test
     fun `cancelInvoice emits Loading then Success`() = runTest {
-        coEvery { defaultSource.cancelInvoice(any(), any(), any()) } returns Response.success(Unit)
+        coEvery { defaultSource.cancelInvoice(any(), any(), any(), any(), any()) } returns Response.success(Unit)
 
-        val results = repository.cancelInvoice("v1_0", "inv-ref-001", "sub-key").toList()
+        val results = repository.cancelInvoice("v1_0", "inv-ref-001", "ext-cancel-001", "uuid-cancel-001", "sub-key").toList()
 
         assertTrue(results.first() is NetworkResult.Loading)
         assertTrue(results.last() is NetworkResult.Success)
@@ -719,10 +719,10 @@ class DefaultRepositoryTest {
     /** Verifies that [DefaultRepository.cancelInvoice] emits Error on a non-2xx response. */
     @Test
     fun `cancelInvoice emits Error on failure`() = runTest {
-        coEvery { defaultSource.cancelInvoice(any(), any(), any()) } returns
+        coEvery { defaultSource.cancelInvoice(any(), any(), any(), any(), any()) } returns
             Response.error(404, "not found".toResponseBody("text/plain".toMediaType()))
 
-        val results = repository.cancelInvoice("v1_0", "inv-ref-001", "sub-key").toList()
+        val results = repository.cancelInvoice("v1_0", "inv-ref-001", "ext-cancel-001", "uuid-cancel-001", "sub-key").toList()
 
         assertTrue(results.last() is NetworkResult.Error)
     }

@@ -37,6 +37,7 @@ import io.rekast.sdk.sample.utils.valueOrEmpty
 import io.rekast.sdk.sample.utils.valueOrNullIfBlank
 import io.rekast.sdk.sample.views.BaseScreenViewModel
 import io.rekast.sdk.utils.PartyTypes
+import io.rekast.sdk.utils.PayerIdentificationType
 import io.rekast.sdk.utils.ProductTypes
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
@@ -109,6 +110,74 @@ class CashTransferScreenViewModel @Inject constructor(
         _payerSurName.value = value
     }
 
+    private val _payerIdentificationType = MutableLiveData(Constants.EMPTY_STRING)
+    val payerIdentificationType: LiveData<String> get() = _payerIdentificationType
+    fun onPayerIdentificationTypeChanged(value: String) {
+        _payerIdentificationType.value = value
+    }
+
+    private val _payerIdentificationNumber = MutableLiveData(Constants.EMPTY_STRING)
+    val payerIdentificationNumber: LiveData<String> get() = _payerIdentificationNumber
+    fun onPayerIdentificationNumberChanged(value: String) {
+        _payerIdentificationNumber.value = value
+    }
+
+    private val _payerIdentity = MutableLiveData(Constants.EMPTY_STRING)
+    val payerIdentity: LiveData<String> get() = _payerIdentity
+    fun onPayerIdentityChanged(value: String) {
+        _payerIdentity.value = value
+    }
+
+    private val _payerLanguageCode = MutableLiveData(Constants.EMPTY_STRING)
+    val payerLanguageCode: LiveData<String> get() = _payerLanguageCode
+    fun onPayerLanguageCodeChanged(value: String) {
+        _payerLanguageCode.value = value
+    }
+
+    private val _payerEmail = MutableLiveData(Constants.EMPTY_STRING)
+    val payerEmail: LiveData<String> get() = _payerEmail
+    fun onPayerEmailChanged(value: String) {
+        _payerEmail.value = value
+    }
+
+    private val _payerMsisdn = MutableLiveData(Constants.EMPTY_STRING)
+    val payerMsisdn: LiveData<String> get() = _payerMsisdn
+    fun onPayerMsisdnChanged(value: String) {
+        _payerMsisdn.value = value
+    }
+
+    private val _payerGender = MutableLiveData(Constants.EMPTY_STRING)
+    val payerGender: LiveData<String> get() = _payerGender
+    fun onPayerGenderChanged(value: String) {
+        _payerGender.value = value
+    }
+
+    private val _originatingCountry = MutableLiveData(Constants.EMPTY_STRING)
+    val originatingCountry: LiveData<String> get() = _originatingCountry
+    fun onOriginatingCountryChanged(value: String) {
+        _originatingCountry.value = value
+    }
+
+    private val _originalAmount = MutableLiveData(Constants.EMPTY_STRING)
+    val originalAmount: LiveData<String> get() = _originalAmount
+    fun onOriginalAmountChanged(value: String) {
+        _originalAmount.value = value
+    }
+
+    private val _originalCurrency = MutableLiveData(Constants.EMPTY_STRING)
+    val originalCurrency: LiveData<String> get() = _originalCurrency
+    fun onOriginalCurrencyChanged(value: String) {
+        _originalCurrency.value = value
+    }
+
+    /**
+     * Parses the free-text payer ID type into a [PayerIdentificationType], or `null` when blank or not
+     * a recognised constant (e.g. `pass` → [PayerIdentificationType.PASS]).
+     */
+    private fun parsePayerIdentificationType(): PayerIdentificationType? = payerIdentificationType.valueOrNullIfBlank()?.let { raw ->
+        runCatching { PayerIdentificationType.valueOf(raw.trim().uppercase()) }.getOrNull()
+    }
+
     /** Sends a cash transfer with a fresh reference ID and stores that ID for the status action. */
     fun sendCashTransfer() = launchOperation {
         val reference = generateUuid()
@@ -120,10 +189,20 @@ class CashTransferScreenViewModel @Inject constructor(
             payee = Party(partyIdType = PartyTypes.MSISDN, partyId = payeeMsisdn.valueOrEmpty()),
             payerMessage = payerMessage.valueOrEmpty(),
             payeeNote = payeeNote.valueOrEmpty(),
+            payerIdentificationType = parsePayerIdentificationType(),
+            payerIdentificationNumber = payerIdentificationNumber.valueOrNullIfBlank(),
+            payerIdentity = payerIdentity.valueOrNullIfBlank(),
             payerFirstName = payerFirstName.valueOrNullIfBlank(),
-            payerSurName = payerSurName.valueOrNullIfBlank()
+            payerSurName = payerSurName.valueOrNullIfBlank(),
+            payerLanguageCode = payerLanguageCode.valueOrNullIfBlank(),
+            payerEmail = payerEmail.valueOrNullIfBlank(),
+            payerMsisdn = payerMsisdn.valueOrNullIfBlank(),
+            payerGender = payerGender.valueOrNullIfBlank(),
+            originatingCountry = originatingCountry.valueOrNullIfBlank(),
+            originalAmount = originalAmount.valueOrNullIfBlank(),
+            originalCurrency = originalCurrency.valueOrNullIfBlank()
         )
-        when (val response = defaultRepository.cashTransfer(sampleConfig.apiVersionV1, cashTransfer, reference, subscriptionKey).awaitTerminal()) {
+        when (val response = defaultRepository.cashTransfer(sampleConfig.apiVersionV2, cashTransfer, reference, subscriptionKey).awaitTerminal()) {
             is NetworkResult.Success -> {
                 referenceId.postValue(reference)
                 result.postValue("Cash transfer sent.\nReference: $reference")
@@ -140,7 +219,7 @@ class CashTransferScreenViewModel @Inject constructor(
 
     /** Fetches the status of the previously sent cash transfer and prints the raw payload. */
     fun checkStatus() = withReference { reference, subscriptionKey ->
-        when (val response = defaultRepository.getCashTransferStatus(sampleConfig.apiVersionV1, reference, subscriptionKey).awaitTerminal()) {
+        when (val response = defaultRepository.getCashTransferStatus(sampleConfig.apiVersionV2, reference, subscriptionKey).awaitTerminal()) {
             is NetworkResult.Success -> {
                 result.postValue(response.response?.toString() ?: "No status body returned.")
                 emitSuccess(R.string.snackbar_cash_transfer_status_fetched)
