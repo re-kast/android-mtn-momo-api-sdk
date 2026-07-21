@@ -95,7 +95,7 @@
   <div class="breadcrumbs"><a href="../../index.html">sample</a><span class="delimiter">/</span><a href="../index.html">io.rekast.sdk.sample.views.remittance.remittance</a><span class="delimiter">/</span><span class="current">RemittanceScreenViewModel</span></div>
   <div class="cover ">
     <h1 class="cover"><span>Remittance</span><wbr><span>Screen</span><wbr><span>View</span><wbr><span><span>Model</span></span></h1>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":sample/main"><div class="symbol monospace"><span class="token keyword">class </span><a href="index.html">RemittanceScreenViewModel</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">defaultRepository<span class="token operator">: </span>ERROR CLASS: Symbol not found for DefaultRepository<span class="token punctuation">, </span></span><span class="parameter ">credentialStorage<span class="token operator">: </span><a href="../../io.rekast.sdk.sample.utils/-credential-storage/index.html">CredentialStorage</a><span class="token punctuation">, </span></span><span class="parameter ">dispatchers<span class="token operator">: </span><a href="../../io.rekast.sdk.sample.utils/-dispatcher-provider/index.html">DispatcherProvider</a><span class="token punctuation">, </span></span><span class="parameter ">sampleConfig<span class="token operator">: </span><a href="../../io.rekast.sdk.sample.utils/-sample-config/index.html">SampleConfig</a></span></span><span class="token punctuation">)</span> : <span data-unresolved-link="/<ERROR CLASS> ERROR CLASS: Symbol not found for ViewModel///PointingToDeclaration/">&lt;ERROR CLASS&gt; ERROR CLASS: Symbol not found for ViewModel</span></div><p class="paragraph">ViewModel for the Remittance Transfer screen.</p><p class="paragraph">On submit it runs the full Remittance transfer flow against the SDK:</p><ol><li><p class="paragraph"><code class="lang-kotlin">transfer</code> — sends money to the payee (HTTP 202).</p></li><li><p class="paragraph"><code class="lang-kotlin">getTransferStatus</code> — polls the outcome and posts it to <a href="momo-transaction.html">momoTransaction</a>.</p></li></ol><p class="paragraph">The screen shows the input form while <a href="momo-transaction.html">momoTransaction</a> is null and the result once it is set. Authentication is handled automatically by the SDK's interceptor/authenticator, so the ViewModel only guards on the presence of an access token before starting.</p></div></div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":sample/main"><div class="symbol monospace"><span class="token keyword">class </span><a href="index.html">RemittanceScreenViewModel</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">defaultRepository<span class="token operator">: </span>ERROR CLASS: Symbol not found for DefaultRepository<span class="token punctuation">, </span></span><span class="parameter ">credentialStorage<span class="token operator">: </span><a href="../../io.rekast.sdk.sample.utils/-credential-storage/index.html">CredentialStorage</a><span class="token punctuation">, </span></span><span class="parameter ">dispatchers<span class="token operator">: </span><a href="../../io.rekast.sdk.sample.utils/-dispatcher-provider/index.html">DispatcherProvider</a><span class="token punctuation">, </span></span><span class="parameter ">sampleConfig<span class="token operator">: </span><a href="../../io.rekast.sdk.sample.utils/-sample-config/index.html">SampleConfig</a></span></span><span class="token punctuation">)</span> : <span data-unresolved-link="/<ERROR CLASS> ERROR CLASS: Symbol not found for ViewModel///PointingToDeclaration/">&lt;ERROR CLASS&gt; ERROR CLASS: Symbol not found for ViewModel</span></div><p class="paragraph">ViewModel for the Remittance Transfer screen.</p><p class="paragraph">On submit it runs the full Remittance transfer flow against the SDK:</p><ol><li><p class="paragraph"><code class="lang-kotlin">transfer</code> — sends money to the payee (HTTP 202).</p></li><li><p class="paragraph"><code class="lang-kotlin">getTransferStatus</code> — polls the outcome and posts it to <a href="transfer-status.html">transferStatus</a>.</p></li></ol><p class="paragraph">The screen shows the input form while <a href="transfer-status.html">transferStatus</a> is null and the result once it is set. Authentication is handled automatically by the SDK's interceptor/authenticator, so the ViewModel only guards on the presence of an access token before starting.</p></div></div>
   </div>
   <div class="tabbedcontent">
     <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
@@ -162,21 +162,6 @@
               <div>
                 <div class="title">
                   <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":sample/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="financial-id.html">financialId</a><span class="token operator">: </span>ERROR CLASS: Symbol not found for LiveData&lt;kotlin/String&gt;</div><div class="brief "><p class="paragraph">The current financial ID entered in the form.</p></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="1361679917%2FProperties%2F326565223" anchor-label="momoTransaction" id="1361679917%2FProperties%2F326565223" data-filterable-set=":sample/main"></a>
-          <div class="table-row table-row_content" data-filterable-current=":sample/main" data-filterable-set=":sample/main">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="momo-transaction.html"><span>momo</span><wbr><span><span>Transaction</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1361679917%2FProperties%2F326565223"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":sample/main"><div class="symbol monospace"><span class="token keyword">var </span><a href="momo-transaction.html">momoTransaction</a><span class="token operator">: </span>ERROR CLASS: Symbol not found for MutableLiveData&lt;ERROR CLASS: Symbol not found for MomoTransaction?&gt;</div><div class="brief "><p class="paragraph">Holds the completed MomoTransaction returned by the API; null while no request has succeeded.</p></div></div></div>
                 </div>
               </div>
             </div>
@@ -267,6 +252,21 @@
               <div>
                 <div class="title">
                   <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":sample/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="snack-bar-state-flow.html">snackBarStateFlow</a><span class="token operator">: </span>ERROR CLASS: Symbol not found for SharedFlow&lt;io/rekast/sdk/sample/utils/SnackBarComponentConfiguration&gt;</div><div class="brief "><p class="paragraph">Flow of <a href="../../io.rekast.sdk.sample.utils/-snack-bar-component-configuration/index.html">SnackBarComponentConfiguration</a> events to be displayed as snackbars.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="965868214%2FProperties%2F326565223" anchor-label="transferStatus" id="965868214%2FProperties%2F326565223" data-filterable-set=":sample/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":sample/main" data-filterable-set=":sample/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="transfer-status.html"><span>transfer</span><wbr><span><span>Status</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="965868214%2FProperties%2F326565223"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":sample/main"><div class="symbol monospace"><span class="token keyword">var </span><a href="transfer-status.html">transferStatus</a><span class="token operator">: </span>ERROR CLASS: Symbol not found for MutableLiveData&lt;ERROR CLASS: Symbol not found for TransferStatus?&gt;</div><div class="brief "><p class="paragraph">Holds the TransferStatus returned by the API; null while no request has succeeded.</p></div></div></div>
                 </div>
               </div>
             </div>
@@ -390,7 +390,7 @@
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":sample/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="transfer-remittance.html"><span class="token function">transferRemittance</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Submits a Remittance transfer, then polls the status and posts the resulting MomoTransaction to <a href="momo-transaction.html">momoTransaction</a>.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":sample/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="transfer-remittance.html"><span class="token function">transferRemittance</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Submits a Remittance transfer, then polls the status and posts the resulting TransferStatus to <a href="transfer-status.html">transferStatus</a>.</p></div></div></div>
                 </div>
               </div>
             </div>

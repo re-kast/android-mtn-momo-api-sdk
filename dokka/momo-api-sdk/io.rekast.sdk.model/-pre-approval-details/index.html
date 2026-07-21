@@ -1,0 +1,406 @@
+<!doctype html>
+<html class="no-js" lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>PreApprovalDetails</title>
+<link href="../../../images/logo-icon.svg" rel="icon" type="image/svg"><script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js", "js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+      if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      } else {
+        const savedDarkMode = JSON.parse(storage)
+        if (savedDarkMode === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      }
+    </script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../ui-kit/ui-kit.min.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/safe-local-storage_blocking.js"></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async></script>
+<script type="text/javascript" src="../../../ui-kit/ui-kit.min.js" defer></script>
+<link href="../../../images/logo-icon.svg">
+<link href="../../../styles/rekast.css" rel="Stylesheet"></head>
+<body>
+<div class="root">
+    <header class="navigation theme-dark" id="navigation-wrapper" role="banner">
+<a class="library-name--link" href="../../../index.html" tabindex="1">
+                    | MTN MOMO ANDROID SDK
+            </a>        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle" type="button">Toggle table of contents
+        </button>
+        <div class="navigation-controls--break ui-kit_mobile-only"></div>
+        <div class="library-version" id="library-version">
+        </div>
+        <div class="navigation-controls">
+        <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
+                <button class="platform-tag platform-selector jvm-like" data-active="" aria-pressed="true" data-filter=":momo-api-sdk/commonMain">Common</button>
+            <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
+                <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox" data-role="dropdown-toggle" aria-controls="platform-tags-listbox" aria-haspopup="listbox" aria-expanded="false" aria-label="Toggle source sets"></button>
+                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox" aria-label="Target filter">
+                    <div class="dropdown--header"><span>Target filter</span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close target filter">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                        <li role="option" class="dropdown--option platform-selector-option jvm-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":momo-api-sdk/commonMain" data-filter=":momo-api-sdk/commonMain">
+                                <span class="checkbox--icon"></span>
+                                Common
+                            </label>
+                        </li>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </ul>
+            <button class="navigation-controls--btn navigation-controls--btn_theme" id="theme-toggle-button" type="button">Switch theme
+            </button>
+            <div class="navigation-controls--btn navigation-controls--btn_search" id="searchBar" role="button">Search in
+                API
+            </div>
+        </div>
+    </header>
+    <div id="container">
+        <nav id="leftColumn" class="sidebar" data-item-type="SECTION" data-item-config="{&quot;defaultSize&quot;: 280, &quot;minSize&quot;: 200, &quot;maxSize&quot;: 400}">
+            <a class="toc--skip-link" href="#main">Skip to content</a>
+            <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
+                <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list" data-role="dropdown-listbox" aria-label="Table of contents">
+                    <div class="dropdown--header">
+                            <span>
+                                    | MTN MOMO ANDROID SDK
+                            </span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                    <div class="sidebar--inner" id="sideMenu"></div>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </nav>
+        <div id="resizer" class="resizer" data-item-type="BAR"></div>
+        <div id="main" data-item-type="SECTION" role="main">
+<div class="main-content" data-page-type="classlike" id="content" pageids="momo-api-sdk::io.rekast.sdk.model/PreApprovalDetails///PointingToDeclaration//-1458242499">
+  <div class="breadcrumbs"><a href="../../index.html">momo-api-sdk</a><span class="delimiter">/</span><a href="../index.html">io.rekast.sdk.model</a><span class="delimiter">/</span><span class="current">PreApprovalDetails</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>Pre</span><wbr><span>Approval</span><wbr><span><span>Details</span></span></h1>
+    <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+      <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":momo-api-sdk/commonMain" data-filterable-set=":momo-api-sdk/commonMain" data-active="" data-toggle=":momo-api-sdk/commonMain">Common</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":momo-api-sdk/commonMain"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">class </span><a href="index.html">PreApprovalDetails</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>preApprovalId<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>toFri<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>fromFri<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>fromCurrency<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>createdTime<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>status<span class="token operator">: </span><a href="../../io.rekast.sdk.utils/-status-types/index.html">StatusTypes</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>message<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>approvedTime<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>expiryTime<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>frequency<span class="token operator">: </span><a href="../../io.rekast.sdk.utils/-frequency-types/index.html">FrequencyTypes</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>startDate<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>lastUsedDate<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>offer<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>externalId<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>maxDebitAmount<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null</span></span><span class="token punctuation">)</span></div><p class="paragraph">Represents a single pre-approval record returned by the MTN MOMO Collection API, e.g. an entry in the list from <code class="lang-kotlin">getApprovedPreApprovals</code>.</p><p class="paragraph">The fields the API guarantees (per the schema) are non-nullable; every other field is optional and defaults to <code class="lang-kotlin">null</code>, so partial payloads never break deserialization.</p></div>    </div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="CONSTRUCTOR">
+        <h2 class="tableheader">Constructors</h2>
+        <div class="table"><a data-name="-174361106%2FConstructors%2F-1458242499" anchor-label="PreApprovalDetails" id="-174361106%2FConstructors%2F-1458242499" data-filterable-set=":momo-api-sdk/commonMain"></a>
+          <div class="table-row table-row_content" data-togglable="CONSTRUCTOR" data-filterable-current=":momo-api-sdk/commonMain" data-filterable-set=":momo-api-sdk/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-pre-approval-details.html"><span>Pre</span><wbr><span>Approval</span><wbr><span><span>Details</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-174361106%2FConstructors%2F-1458242499"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":momo-api-sdk/commonMain" data-filterable-set=":momo-api-sdk/commonMain" data-active="" data-toggle=":momo-api-sdk/commonMain">Common</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":momo-api-sdk/commonMain"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">preApprovalId<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">toFri<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">fromFri<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">fromCurrency<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">createdTime<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">status<span class="token operator">: </span><a href="../../io.rekast.sdk.utils/-status-types/index.html">StatusTypes</a><span class="token punctuation">, </span></span><span class="parameter ">message<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">approvedTime<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">expiryTime<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">frequency<span class="token operator">: </span><a href="../../io.rekast.sdk.utils/-frequency-types/index.html">FrequencyTypes</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">startDate<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">lastUsedDate<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">offer<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">externalId<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">maxDebitAmount<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null</span></span><span class="token punctuation">)</span></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="PROPERTY">
+        <h2 class="tableheader">Properties</h2>
+        <div class="table"><a data-name="1435773660%2FProperties%2F-1458242499" anchor-label="approvedTime" id="1435773660%2FProperties%2F-1458242499" data-filterable-set=":momo-api-sdk/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":momo-api-sdk/commonMain" data-filterable-set=":momo-api-sdk/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="approved-time.html"><span>approved</span><wbr><span><span>Time</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1435773660%2FProperties%2F-1458242499"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":momo-api-sdk/commonMain" data-filterable-set=":momo-api-sdk/commonMain" data-active="" data-toggle=":momo-api-sdk/commonMain">Common</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":momo-api-sdk/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="approved-time.html">approvedTime</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">The ISO 8601 date-time at which the pre-approval was approved.</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="734996069%2FProperties%2F-1458242499" anchor-label="createdTime" id="734996069%2FProperties%2F-1458242499" data-filterable-set=":momo-api-sdk/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":momo-api-sdk/commonMain" data-filterable-set=":momo-api-sdk/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="created-time.html"><span>created</span><wbr><span><span>Time</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="734996069%2FProperties%2F-1458242499"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":momo-api-sdk/commonMain" data-filterable-set=":momo-api-sdk/commonMain" data-active="" data-toggle=":momo-api-sdk/commonMain">Common</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":momo-api-sdk/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="created-time.html">createdTime</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div><div class="brief "><p class="paragraph">The ISO 8601 date-time at which the pre-approval was created.</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-460928352%2FProperties%2F-1458242499" anchor-label="expiryTime" id="-460928352%2FProperties%2F-1458242499" data-filterable-set=":momo-api-sdk/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":momo-api-sdk/commonMain" data-filterable-set=":momo-api-sdk/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="expiry-time.html"><span>expiry</span><wbr><span><span>Time</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-460928352%2FProperties%2F-1458242499"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":momo-api-sdk/commonMain" data-filterable-set=":momo-api-sdk/commonMain" data-active="" data-toggle=":momo-api-sdk/commonMain">Common</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":momo-api-sdk/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="expiry-time.html">expiryTime</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">The ISO 8601 date-time at which the pre-approval expires.</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1912906310%2FProperties%2F-1458242499" anchor-label="externalId" id="-1912906310%2FProperties%2F-1458242499" data-filterable-set=":momo-api-sdk/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":momo-api-sdk/commonMain" data-filterable-set=":momo-api-sdk/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="external-id.html"><span>external</span><wbr><span><span>Id</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1912906310%2FProperties%2F-1458242499"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":momo-api-sdk/commonMain" data-filterable-set=":momo-api-sdk/commonMain" data-active="" data-toggle=":momo-api-sdk/commonMain">Common</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":momo-api-sdk/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="external-id.html">externalId</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">The external reference ID.</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="814316542%2FProperties%2F-1458242499" anchor-label="frequency" id="814316542%2FProperties%2F-1458242499" data-filterable-set=":momo-api-sdk/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":momo-api-sdk/commonMain" data-filterable-set=":momo-api-sdk/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="frequency.html"><span><span>frequency</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="814316542%2FProperties%2F-1458242499"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":momo-api-sdk/commonMain" data-filterable-set=":momo-api-sdk/commonMain" data-active="" data-toggle=":momo-api-sdk/commonMain">Common</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":momo-api-sdk/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="frequency.html">frequency</a><span class="token operator">: </span><a href="../../io.rekast.sdk.utils/-frequency-types/index.html">FrequencyTypes</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">How often the pre-approval may be used (<a href="../../io.rekast.sdk.utils/-frequency-types/index.html">FrequencyTypes</a>: DAILY, WEEKLY, MONTHLY).</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1377062661%2FProperties%2F-1458242499" anchor-label="fromCurrency" id="1377062661%2FProperties%2F-1458242499" data-filterable-set=":momo-api-sdk/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":momo-api-sdk/commonMain" data-filterable-set=":momo-api-sdk/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="from-currency.html"><span>from</span><wbr><span><span>Currency</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1377062661%2FProperties%2F-1458242499"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":momo-api-sdk/commonMain" data-filterable-set=":momo-api-sdk/commonMain" data-active="" data-toggle=":momo-api-sdk/commonMain">Common</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":momo-api-sdk/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="from-currency.html">fromCurrency</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div><div class="brief "><p class="paragraph">The ISO 4217 currency of the sending account holder.</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="327699303%2FProperties%2F-1458242499" anchor-label="fromFri" id="327699303%2FProperties%2F-1458242499" data-filterable-set=":momo-api-sdk/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":momo-api-sdk/commonMain" data-filterable-set=":momo-api-sdk/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="from-fri.html"><span>from</span><wbr><span><span>Fri</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="327699303%2FProperties%2F-1458242499"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":momo-api-sdk/commonMain" data-filterable-set=":momo-api-sdk/commonMain" data-active="" data-toggle=":momo-api-sdk/commonMain">Common</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":momo-api-sdk/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="from-fri.html">fromFri</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div><div class="brief "><p class="paragraph">The Financial Resource Identifier of the sending account.</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="571921887%2FProperties%2F-1458242499" anchor-label="lastUsedDate" id="571921887%2FProperties%2F-1458242499" data-filterable-set=":momo-api-sdk/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":momo-api-sdk/commonMain" data-filterable-set=":momo-api-sdk/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="last-used-date.html"><span>last</span><wbr><span>Used</span><wbr><span><span>Date</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="571921887%2FProperties%2F-1458242499"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":momo-api-sdk/commonMain" data-filterable-set=":momo-api-sdk/commonMain" data-active="" data-toggle=":momo-api-sdk/commonMain">Common</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":momo-api-sdk/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="last-used-date.html">lastUsedDate</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">The ISO 8601 date-time the pre-approval was last used.</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-964636832%2FProperties%2F-1458242499" anchor-label="maxDebitAmount" id="-964636832%2FProperties%2F-1458242499" data-filterable-set=":momo-api-sdk/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":momo-api-sdk/commonMain" data-filterable-set=":momo-api-sdk/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="max-debit-amount.html"><span>max</span><wbr><span>Debit</span><wbr><span><span>Amount</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-964636832%2FProperties%2F-1458242499"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":momo-api-sdk/commonMain" data-filterable-set=":momo-api-sdk/commonMain" data-active="" data-toggle=":momo-api-sdk/commonMain">Common</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":momo-api-sdk/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="max-debit-amount.html">maxDebitAmount</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">The maximum debit amount allowed (a non-negative amount).</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1614501133%2FProperties%2F-1458242499" anchor-label="message" id="-1614501133%2FProperties%2F-1458242499" data-filterable-set=":momo-api-sdk/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":momo-api-sdk/commonMain" data-filterable-set=":momo-api-sdk/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="message.html"><span><span>message</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1614501133%2FProperties%2F-1458242499"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":momo-api-sdk/commonMain" data-filterable-set=":momo-api-sdk/commonMain" data-active="" data-toggle=":momo-api-sdk/commonMain">Common</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":momo-api-sdk/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="message.html">message</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div><div class="brief "><p class="paragraph">The pre-approval message.</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-542630530%2FProperties%2F-1458242499" anchor-label="offer" id="-542630530%2FProperties%2F-1458242499" data-filterable-set=":momo-api-sdk/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":momo-api-sdk/commonMain" data-filterable-set=":momo-api-sdk/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="offer.html"><span><span>offer</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-542630530%2FProperties%2F-1458242499"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":momo-api-sdk/commonMain" data-filterable-set=":momo-api-sdk/commonMain" data-active="" data-toggle=":momo-api-sdk/commonMain">Common</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":momo-api-sdk/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="offer.html">offer</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">The offer description.</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="2093558969%2FProperties%2F-1458242499" anchor-label="preApprovalId" id="2093558969%2FProperties%2F-1458242499" data-filterable-set=":momo-api-sdk/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":momo-api-sdk/commonMain" data-filterable-set=":momo-api-sdk/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="pre-approval-id.html"><span>pre</span><wbr><span>Approval</span><wbr><span><span>Id</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2093558969%2FProperties%2F-1458242499"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":momo-api-sdk/commonMain" data-filterable-set=":momo-api-sdk/commonMain" data-active="" data-toggle=":momo-api-sdk/commonMain">Common</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":momo-api-sdk/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="pre-approval-id.html">preApprovalId</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div><div class="brief "><p class="paragraph">The ID of the pre-approval.</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1439617194%2FProperties%2F-1458242499" anchor-label="startDate" id="1439617194%2FProperties%2F-1458242499" data-filterable-set=":momo-api-sdk/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":momo-api-sdk/commonMain" data-filterable-set=":momo-api-sdk/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="start-date.html"><span>start</span><wbr><span><span>Date</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1439617194%2FProperties%2F-1458242499"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":momo-api-sdk/commonMain" data-filterable-set=":momo-api-sdk/commonMain" data-active="" data-toggle=":momo-api-sdk/commonMain">Common</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":momo-api-sdk/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="start-date.html">startDate</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">The start date of the pre-approval.</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-915511538%2FProperties%2F-1458242499" anchor-label="status" id="-915511538%2FProperties%2F-1458242499" data-filterable-set=":momo-api-sdk/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":momo-api-sdk/commonMain" data-filterable-set=":momo-api-sdk/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="status.html"><span><span>status</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-915511538%2FProperties%2F-1458242499"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":momo-api-sdk/commonMain" data-filterable-set=":momo-api-sdk/commonMain" data-active="" data-toggle=":momo-api-sdk/commonMain">Common</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":momo-api-sdk/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="status.html">status</a><span class="token operator">: </span><a href="../../io.rekast.sdk.utils/-status-types/index.html">StatusTypes</a></div><div class="brief "><p class="paragraph">The pre-approval status (<a href="../../io.rekast.sdk.utils/-status-types/index.html">StatusTypes</a>: APPROVED, CANCELLED, EXPIRED, REJECTED, PENDING).</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="355435000%2FProperties%2F-1458242499" anchor-label="toFri" id="355435000%2FProperties%2F-1458242499" data-filterable-set=":momo-api-sdk/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":momo-api-sdk/commonMain" data-filterable-set=":momo-api-sdk/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="to-fri.html"><span>to</span><wbr><span><span>Fri</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="355435000%2FProperties%2F-1458242499"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":momo-api-sdk/commonMain" data-filterable-set=":momo-api-sdk/commonMain" data-active="" data-toggle=":momo-api-sdk/commonMain">Common</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":momo-api-sdk/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="to-fri.html">toFri</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div><div class="brief "><p class="paragraph">The Financial Resource Identifier of the receiving account.</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    <div class="footer">
+        <div class="footer--container">
+            <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
+            <div class="footer--content">
+                <div>
+                    <span>Generated by </span>
+                    <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
+                        Dokka
+                    </a>
+                    <div>© Re.Kast Limited</div>
+                </div>
+            </div>
+        </div>
+    </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

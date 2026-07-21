@@ -28,9 +28,11 @@ io.rekast.sdk.sample.ui.theme
 io.rekast.sdk.sample.utils
 io.rekast.sdk.sample.utils.annotation
 io.rekast.sdk.sample.views
+io.rekast.sdk.sample.views.collection.approval.approved
+io.rekast.sdk.sample.views.collection.approval.pre
 io.rekast.sdk.sample.views.collection.invoice
 io.rekast.sdk.sample.views.collection.pay
-io.rekast.sdk.sample.views.collection.preapproval
+io.rekast.sdk.sample.views.collection.payment
 io.rekast.sdk.sample.views.collection.withdraw
 io.rekast.sdk.sample.views.disbursement.deposit
 io.rekast.sdk.sample.views.disbursement.refund

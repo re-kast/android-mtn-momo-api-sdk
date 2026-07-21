@@ -1,0 +1,391 @@
+<!doctype html>
+<html class="no-js" lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>PaymentScreenViewModel</title>
+<link href="../../../images/logo-icon.svg" rel="icon" type="image/svg"><script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js", "js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+      if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      } else {
+        const savedDarkMode = JSON.parse(storage)
+        if (savedDarkMode === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      }
+    </script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../ui-kit/ui-kit.min.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/safe-local-storage_blocking.js"></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async></script>
+<script type="text/javascript" src="../../../ui-kit/ui-kit.min.js" defer></script>
+<link href="../../../images/logo-icon.svg">
+<link href="../../../styles/rekast.css" rel="Stylesheet"></head>
+<body>
+<div class="root">
+    <header class="navigation theme-dark" id="navigation-wrapper" role="banner">
+<a class="library-name--link" href="../../../index.html" tabindex="1">
+                    | MTN MOMO ANDROID SDK
+            </a>        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle" type="button">Toggle table of contents
+        </button>
+        <div class="navigation-controls--break ui-kit_mobile-only"></div>
+        <div class="library-version" id="library-version">
+        </div>
+        <div class="navigation-controls">
+        <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
+                <button class="platform-tag platform-selector jvm-like" data-active="" aria-pressed="true" data-filter=":sample/main">Sample</button>
+            <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
+                <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox" data-role="dropdown-toggle" aria-controls="platform-tags-listbox" aria-haspopup="listbox" aria-expanded="false" aria-label="Toggle source sets"></button>
+                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox" aria-label="Target filter">
+                    <div class="dropdown--header"><span>Target filter</span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close target filter">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                        <li role="option" class="dropdown--option platform-selector-option jvm-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":sample/main" data-filter=":sample/main">
+                                <span class="checkbox--icon"></span>
+                                Sample
+                            </label>
+                        </li>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </ul>
+            <button class="navigation-controls--btn navigation-controls--btn_theme" id="theme-toggle-button" type="button">Switch theme
+            </button>
+            <div class="navigation-controls--btn navigation-controls--btn_search" id="searchBar" role="button">Search in
+                API
+            </div>
+        </div>
+    </header>
+    <div id="container">
+        <nav id="leftColumn" class="sidebar" data-item-type="SECTION" data-item-config="{&quot;defaultSize&quot;: 280, &quot;minSize&quot;: 200, &quot;maxSize&quot;: 400}">
+            <a class="toc--skip-link" href="#main">Skip to content</a>
+            <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
+                <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list" data-role="dropdown-listbox" aria-label="Table of contents">
+                    <div class="dropdown--header">
+                            <span>
+                                    | MTN MOMO ANDROID SDK
+                            </span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                    <div class="sidebar--inner" id="sideMenu"></div>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </nav>
+        <div id="resizer" class="resizer" data-item-type="BAR"></div>
+        <div id="main" data-item-type="SECTION" role="main">
+<div class="main-content" data-page-type="classlike" id="content" pageids="sample::io.rekast.sdk.sample.views.collection.payment/PaymentScreenViewModel///PointingToDeclaration//326565223">
+  <div class="breadcrumbs"><a href="../../index.html">sample</a><span class="delimiter">/</span><a href="../index.html">io.rekast.sdk.sample.views.collection.payment</a><span class="delimiter">/</span><span class="current">PaymentScreenViewModel</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>Payment</span><wbr><span>Screen</span><wbr><span>View</span><wbr><span><span>Model</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":sample/main"><div class="symbol monospace"><span class="token keyword">class </span><a href="index.html">PaymentScreenViewModel</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">defaultRepository<span class="token operator">: </span>ERROR CLASS: Symbol not found for DefaultRepository<span class="token punctuation">, </span></span><span class="parameter ">credentialStorage<span class="token operator">: </span><a href="../../io.rekast.sdk.sample.utils/-credential-storage/index.html">CredentialStorage</a><span class="token punctuation">, </span></span><span class="parameter ">dispatchers<span class="token operator">: </span><a href="../../io.rekast.sdk.sample.utils/-dispatcher-provider/index.html">DispatcherProvider</a><span class="token punctuation">, </span></span><span class="parameter ">sampleConfig<span class="token operator">: </span><a href="../../io.rekast.sdk.sample.utils/-sample-config/index.html">SampleConfig</a></span></span><span class="token punctuation">)</span> : <span data-unresolved-link="/<ERROR CLASS> ERROR CLASS: Symbol not found for ViewModel///PointingToDeclaration/">&lt;ERROR CLASS&gt; ERROR CLASS: Symbol not found for ViewModel</span></div><p class="paragraph">ViewModel for the Collection Payment (V2) screen. Showcases <code class="lang-kotlin">createPayment</code> → <code class="lang-kotlin">getPaymentStatus</code> against the SDK, keyed on a locally generated reference ID.</p><p class="paragraph">The last operation's outcome (reference ID, status payload, or error) is exposed via <a href="result.html">result</a> and rendered in a console panel so the flow is visible to developers exploring the SDK.</p></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="CONSTRUCTOR">
+        <h2 class="tableheader">Constructors</h2>
+        <div class="table"><a data-name="-1258731458%2FConstructors%2F326565223" anchor-label="PaymentScreenViewModel" id="-1258731458%2FConstructors%2F326565223" data-filterable-set=":sample/main"></a>
+          <div class="table-row table-row_content" data-togglable="CONSTRUCTOR" data-filterable-current=":sample/main" data-filterable-set=":sample/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-payment-screen-view-model.html"><span>Payment</span><wbr><span>Screen</span><wbr><span>View</span><wbr><span><span>Model</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1258731458%2FConstructors%2F326565223"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":sample/main"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">defaultRepository<span class="token operator">: </span>ERROR CLASS: Symbol not found for DefaultRepository<span class="token punctuation">, </span></span><span class="parameter ">credentialStorage<span class="token operator">: </span><a href="../../io.rekast.sdk.sample.utils/-credential-storage/index.html">CredentialStorage</a><span class="token punctuation">, </span></span><span class="parameter ">dispatchers<span class="token operator">: </span><a href="../../io.rekast.sdk.sample.utils/-dispatcher-provider/index.html">DispatcherProvider</a><span class="token punctuation">, </span></span><span class="parameter ">sampleConfig<span class="token operator">: </span><a href="../../io.rekast.sdk.sample.utils/-sample-config/index.html">SampleConfig</a></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="PROPERTY">
+        <h2 class="tableheader">Properties</h2>
+        <div class="table"><a data-name="1915425965%2FProperties%2F326565223" anchor-label="amount" id="1915425965%2FProperties%2F326565223" data-filterable-set=":sample/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":sample/main" data-filterable-set=":sample/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="amount.html"><span><span>amount</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1915425965%2FProperties%2F326565223"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":sample/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="amount.html">amount</a><span class="token operator">: </span>ERROR CLASS: Symbol not found for LiveData&lt;kotlin/String&gt;</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="374666516%2FProperties%2F326565223" anchor-label="currency" id="374666516%2FProperties%2F326565223" data-filterable-set=":sample/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":sample/main" data-filterable-set=":sample/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="currency.html"><span><span>currency</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="374666516%2FProperties%2F326565223"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":sample/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="currency.html">currency</a><span class="token operator">: </span>ERROR CLASS: Symbol not found for LiveData&lt;kotlin/String&gt;</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="480950280%2FProperties%2F326565223" anchor-label="customerReference" id="480950280%2FProperties%2F326565223" data-filterable-set=":sample/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":sample/main" data-filterable-set=":sample/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="customer-reference.html"><span>customer</span><wbr><span><span>Reference</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="480950280%2FProperties%2F326565223"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":sample/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="customer-reference.html">customerReference</a><span class="token operator">: </span>ERROR CLASS: Symbol not found for LiveData&lt;kotlin/String&gt;</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1472020899%2FProperties%2F326565223" anchor-label="receiverMessage" id="-1472020899%2FProperties%2F326565223" data-filterable-set=":sample/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":sample/main" data-filterable-set=":sample/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="receiver-message.html"><span>receiver</span><wbr><span><span>Message</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1472020899%2FProperties%2F326565223"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":sample/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="receiver-message.html">receiverMessage</a><span class="token operator">: </span>ERROR CLASS: Symbol not found for LiveData&lt;kotlin/String&gt;</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="37153647%2FProperties%2F326565223" anchor-label="referenceId" id="37153647%2FProperties%2F326565223" data-filterable-set=":sample/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":sample/main" data-filterable-set=":sample/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="reference-id.html"><span>reference</span><wbr><span><span>Id</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="37153647%2FProperties%2F326565223"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":sample/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="reference-id.html">referenceId</a><span class="token operator">: </span>ERROR CLASS: Unresolved name: MutableLiveData</div><div class="brief "><p class="paragraph">The reference ID of the last created payment; enables the status action.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="47740040%2FProperties%2F326565223" anchor-label="result" id="47740040%2FProperties%2F326565223" data-filterable-set=":sample/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":sample/main" data-filterable-set=":sample/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="result.html"><span><span>result</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="47740040%2FProperties%2F326565223"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":sample/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="result.html">result</a><span class="token operator">: </span>ERROR CLASS: Unresolved name: MutableLiveData</div><div class="brief "><p class="paragraph">Console output describing the outcome of the last operation.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="138891294%2FProperties%2F326565223" anchor-label="senderNote" id="138891294%2FProperties%2F326565223" data-filterable-set=":sample/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":sample/main" data-filterable-set=":sample/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="sender-note.html"><span>sender</span><wbr><span><span>Note</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="138891294%2FProperties%2F326565223"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":sample/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="sender-note.html">senderNote</a><span class="token operator">: </span>ERROR CLASS: Symbol not found for LiveData&lt;kotlin/String&gt;</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1757082836%2FProperties%2F326565223" anchor-label="showProgressBar" id="-1757082836%2FProperties%2F326565223" data-filterable-set=":sample/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":sample/main" data-filterable-set=":sample/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="show-progress-bar.html"><span>show</span><wbr><span>Progress</span><wbr><span><span>Bar</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1757082836%2FProperties%2F326565223"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":sample/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="show-progress-bar.html">showProgressBar</a><span class="token operator">: </span>ERROR CLASS: Unresolved name: MutableLiveData</div><div class="brief "><p class="paragraph">Controls whether the circular progress indicator is shown.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1317987397%2FProperties%2F326565223" anchor-label="snackBarStateFlow" id="-1317987397%2FProperties%2F326565223" data-filterable-set=":sample/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":sample/main" data-filterable-set=":sample/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="snack-bar-state-flow.html"><span>snack</span><wbr><span>Bar</span><wbr><span>State</span><wbr><span><span>Flow</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1317987397%2FProperties%2F326565223"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":sample/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="snack-bar-state-flow.html">snackBarStateFlow</a><span class="token operator">: </span>ERROR CLASS: Symbol not found for SharedFlow&lt;io/rekast/sdk/sample/utils/SnackBarComponentConfiguration&gt;</div><div class="brief "><p class="paragraph">Flow of snackbar events to be displayed.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="FUNCTION">
+        <h2 class="tableheader">Functions</h2>
+        <div class="table"><a data-name="-1075562341%2FFunctions%2F326565223" anchor-label="checkStatus" id="-1075562341%2FFunctions%2F326565223" data-filterable-set=":sample/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":sample/main" data-filterable-set=":sample/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="check-status.html"><span>check</span><wbr><span><span>Status</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1075562341%2FFunctions%2F326565223"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":sample/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="check-status.html"><span class="token function">checkStatus</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Fetches the status of the previously created payment and prints the raw payload.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1127221835%2FFunctions%2F326565223" anchor-label="createPayment" id="1127221835%2FFunctions%2F326565223" data-filterable-set=":sample/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":sample/main" data-filterable-set=":sample/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="create-payment.html"><span>create</span><wbr><span><span>Payment</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1127221835%2FFunctions%2F326565223"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":sample/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="create-payment.html"><span class="token function">createPayment</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Creates a payment with a fresh reference ID and stores that ID for the status action.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1143492236%2FFunctions%2F326565223" anchor-label="onAmountChanged" id="1143492236%2FFunctions%2F326565223" data-filterable-set=":sample/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":sample/main" data-filterable-set=":sample/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="on-amount-changed.html"><span>on</span><wbr><span>Amount</span><wbr><span><span>Changed</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1143492236%2FFunctions%2F326565223"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":sample/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="on-amount-changed.html"><span class="token function">onAmountChanged</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">value<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1672155443%2FFunctions%2F326565223" anchor-label="onCurrencyChanged" id="1672155443%2FFunctions%2F326565223" data-filterable-set=":sample/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":sample/main" data-filterable-set=":sample/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="on-currency-changed.html"><span>on</span><wbr><span>Currency</span><wbr><span><span>Changed</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1672155443%2FFunctions%2F326565223"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":sample/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="on-currency-changed.html"><span class="token function">onCurrencyChanged</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">value<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1642714245%2FFunctions%2F326565223" anchor-label="onCustomerReferenceChanged" id="1642714245%2FFunctions%2F326565223" data-filterable-set=":sample/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":sample/main" data-filterable-set=":sample/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="on-customer-reference-changed.html"><span>on</span><wbr><span>Customer</span><wbr><span>Reference</span><wbr><span><span>Changed</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1642714245%2FFunctions%2F326565223"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":sample/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="on-customer-reference-changed.html"><span class="token function">onCustomerReferenceChanged</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">value<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1942438426%2FFunctions%2F326565223" anchor-label="onReceiverMessageChanged" id="1942438426%2FFunctions%2F326565223" data-filterable-set=":sample/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":sample/main" data-filterable-set=":sample/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="on-receiver-message-changed.html"><span>on</span><wbr><span>Receiver</span><wbr><span>Message</span><wbr><span><span>Changed</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1942438426%2FFunctions%2F326565223"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":sample/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="on-receiver-message-changed.html"><span class="token function">onReceiverMessageChanged</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">value<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1606308099%2FFunctions%2F326565223" anchor-label="onSenderNoteChanged" id="-1606308099%2FFunctions%2F326565223" data-filterable-set=":sample/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":sample/main" data-filterable-set=":sample/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="on-sender-note-changed.html"><span>on</span><wbr><span>Sender</span><wbr><span>Note</span><wbr><span><span>Changed</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1606308099%2FFunctions%2F326565223"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":sample/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="on-sender-note-changed.html"><span class="token function">onSenderNoteChanged</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">value<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    <div class="footer">
+        <div class="footer--container">
+            <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
+            <div class="footer--content">
+                <div>
+                    <span>Generated by </span>
+                    <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
+                        Dokka
+                    </a>
+                    <div>© Re.Kast Limited</div>
+                </div>
+            </div>
+        </div>
+    </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
