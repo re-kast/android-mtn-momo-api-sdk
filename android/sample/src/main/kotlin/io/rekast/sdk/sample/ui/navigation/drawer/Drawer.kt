@@ -78,7 +78,9 @@ fun Drawer(scope: CoroutineScope, scaffoldState: ScaffoldState, navController: N
             NavigationDrawerItem.CollectionRequestToPay,
             NavigationDrawerItem.CollectionRequestToWithdraw,
             NavigationDrawerItem.CollectionInvoice,
-            NavigationDrawerItem.CollectionPreApproval
+            NavigationDrawerItem.CollectionPreApproval,
+            NavigationDrawerItem.CollectionApprovedPreApprovals,
+            NavigationDrawerItem.CollectionPayment
         ),
         R.string.section_disbursement to listOf(
             NavigationDrawerItem.DisbursementDeposit,

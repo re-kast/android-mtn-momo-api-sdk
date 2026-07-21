@@ -25,14 +25,14 @@ import kotlinx.serialization.Serializable
  * without requiring explicit per-transaction approval. The authorisation expires after [validityTime]
  * seconds. Subsequent charges against the pre-approval use the standard Request-to-Pay flow.
  *
- * @property payer The [AccountHolder] granting the pre-approval.
+ * @property payer The [Party] granting the pre-approval.
  * @property payerCurrency The ISO 4217 currency in which the payer's account is denominated (e.g., `"EUR"`).
  * @property payerMessage A short message displayed to the payer during the pre-approval consent prompt.
  * @property validityTime Seconds until the pre-approval expires.
  */
 @Serializable
 data class PreApproval(
-    @SerialName("payer") val payer: AccountHolder,
+    @SerialName("payer") val payer: Party,
     @SerialName("payerCurrency") val payerCurrency: String,
     @SerialName("payerMessage") val payerMessage: String? = null,
     @SerialName("validityTime") val validityTime: Int

@@ -15,7 +15,7 @@
  */
 package io.rekast.sdk.sample.utils
 
-import io.rekast.sdk.utils.ProductType
+import io.rekast.sdk.utils.ProductTypes
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -58,42 +58,42 @@ class UtilsTest {
     @Test
     fun `getProductSubscriptionKeys returns collectionPrimaryKey for COLLECTION when not blank`() {
         val config = buildConfig(collectionPrimaryKey = "col-primary-key")
-        val result = Utils.getProductSubscriptionKeys(ProductType.COLLECTION, config)
+        val result = Utils.getProductSubscriptionKeys(ProductTypes.COLLECTION, config)
         assertEquals("col-primary-key", result)
     }
 
     @Test
     fun `getProductSubscriptionKeys falls back to collectionSecondaryKey when collectionPrimaryKey is blank`() {
         val config = buildConfig(collectionPrimaryKey = "", collectionSecondaryKey = "col-secondary-key")
-        val result = Utils.getProductSubscriptionKeys(ProductType.COLLECTION, config)
+        val result = Utils.getProductSubscriptionKeys(ProductTypes.COLLECTION, config)
         assertEquals("col-secondary-key", result)
     }
 
     @Test
     fun `getProductSubscriptionKeys returns remittancePrimaryKey for REMITTANCE when not blank`() {
         val config = buildConfig(remittancePrimaryKey = "rem-primary-key")
-        val result = Utils.getProductSubscriptionKeys(ProductType.REMITTANCE, config)
+        val result = Utils.getProductSubscriptionKeys(ProductTypes.REMITTANCE, config)
         assertEquals("rem-primary-key", result)
     }
 
     @Test
     fun `getProductSubscriptionKeys falls back to remittanceSecondaryKey when remittancePrimaryKey is blank`() {
         val config = buildConfig(remittancePrimaryKey = "", remittanceSecondaryKey = "rem-secondary-key")
-        val result = Utils.getProductSubscriptionKeys(ProductType.REMITTANCE, config)
+        val result = Utils.getProductSubscriptionKeys(ProductTypes.REMITTANCE, config)
         assertEquals("rem-secondary-key", result)
     }
 
     @Test
     fun `getProductSubscriptionKeys returns disbursementsPrimaryKey for DISBURSEMENTS when not blank`() {
         val config = buildConfig(disbursementsPrimaryKey = "dis-primary-key")
-        val result = Utils.getProductSubscriptionKeys(ProductType.DISBURSEMENTS, config)
+        val result = Utils.getProductSubscriptionKeys(ProductTypes.DISBURSEMENTS, config)
         assertEquals("dis-primary-key", result)
     }
 
     @Test
     fun `getProductSubscriptionKeys falls back to disbursementsSecondaryKey when disbursementsPrimaryKey is blank`() {
         val config = buildConfig(disbursementsPrimaryKey = "", disbursementsSecondaryKey = "dis-secondary-key")
-        val result = Utils.getProductSubscriptionKeys(ProductType.DISBURSEMENTS, config)
+        val result = Utils.getProductSubscriptionKeys(ProductTypes.DISBURSEMENTS, config)
         assertEquals("dis-secondary-key", result)
     }
 }

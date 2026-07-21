@@ -21,6 +21,7 @@ import io.mockk.mockk
 import io.mockk.mockkObject
 import io.mockk.unmockkObject
 import io.mockk.verify
+import io.rekast.sdk.model.TransferStatus
 import io.rekast.sdk.repository.DefaultRepository
 import io.rekast.sdk.repository.data.NetworkResult
 import io.rekast.sdk.sample.utils.CredentialStorage
@@ -36,9 +37,6 @@ import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.ResponseBody
-import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.After
 import org.junit.Assert
 import org.junit.Before
@@ -89,8 +87,8 @@ class RemittanceScreenViewModelTest {
     }
 
     @Test
-    fun `initial state has null momoTransaction`() {
-        Assert.assertNull(viewModel.momoTransaction.value)
+    fun `initial state has null transaction`() {
+        Assert.assertNull(viewModel.transferStatus.value)
     }
 
     @Test
@@ -149,24 +147,19 @@ class RemittanceScreenViewModelTest {
     /** Verifies transferRemittance submits, polls status, posts the transaction, and clears the progress bar. */
     @Test
     fun `transferRemittance submits then fetches status and posts transaction`() = runTest {
-        every { mockRepository.transfer(any(), any(), any(), any(), any(), any()) } returns flowOf(
+        every { mockRepository.transfer(any(), any(), any(), any(), any()) } returns flowOf(
             NetworkResult.Success(Unit)
         )
-        every { mockRepository.getTransferStatus(any(), any(), any(), any(), any()) } returns
-            flowOf(
-                NetworkResult.Success(
-                    """{"amount":"100","currency":"EUR","externalId":"ext-1","payerMessage":"msg","payeeNote":"note","status":"SUCCESSFUL"}"""
-                        .toResponseBody("application/json".toMediaType())
-                )
-            )
+        every { mockRepository.getTransferStatus(any(), any(), any(), any()) } returns
+            flowOf(NetworkResult.Success(sampleTransaction()))
 
         viewModel.onPhoneNumberUpdated("256700000000")
         viewModel.onAmountUpdated("100")
         viewModel.transferRemittance()
 
-        verify { mockRepository.transfer(any(), any(), any(), any(), any(), any()) }
-        verify { mockRepository.getTransferStatus(any(), any(), any(), any(), any()) }
-        Assert.assertNotNull(viewModel.momoTransaction.value)
+        verify { mockRepository.transfer(any(), any(), any(), any(), any()) }
+        verify { mockRepository.getTransferStatus(any(), any(), any(), any()) }
+        Assert.assertNotNull(viewModel.transferStatus.value)
         Assert.assertFalse(viewModel.showProgressBar.value!!)
     }
 
@@ -177,126 +170,114 @@ class RemittanceScreenViewModelTest {
 
         viewModel.transferRemittance()
 
-        verify(exactly = 0) { mockRepository.transfer(any(), any(), any(), any(), any(), any()) }
+        verify(exactly = 0) { mockRepository.transfer(any(), any(), any(), any(), any()) }
         Assert.assertFalse(viewModel.showProgressBar.value!!)
     }
 
     /** A submit error does not poll for status and leaves the transaction null. */
     @Test
     fun `transferRemittance error path does not fetch status`() = runTest {
-        every { mockRepository.transfer(any(), any(), any(), any(), any(), any()) } returns flowOf(NetworkResult.Error("boom"))
+        every { mockRepository.transfer(any(), any(), any(), any(), any()) } returns flowOf(NetworkResult.Error("boom"))
 
         viewModel.onPhoneNumberUpdated("256700000000")
         viewModel.onAmountUpdated("100")
         viewModel.transferRemittance()
 
-        verify(exactly = 0) { mockRepository.getTransferStatus(any(), any(), any(), any(), any()) }
-        Assert.assertNull(viewModel.momoTransaction.value)
+        verify(exactly = 0) { mockRepository.getTransferStatus(any(), any(), any(), any()) }
+        Assert.assertNull(viewModel.transferStatus.value)
         Assert.assertFalse(viewModel.showProgressBar.value!!)
     }
 
     /** An exception during submit is caught and the progress bar is cleared. */
     @Test
     fun `transferRemittance exception path clears progress bar`() = runTest {
-        every { mockRepository.transfer(any(), any(), any(), any(), any(), any()) } throws RuntimeException("network down")
+        every { mockRepository.transfer(any(), any(), any(), any(), any()) } throws RuntimeException("network down")
 
         viewModel.onPhoneNumberUpdated("256700000000")
         viewModel.onAmountUpdated("100")
         viewModel.transferRemittance()
 
-        Assert.assertNull(viewModel.momoTransaction.value)
+        Assert.assertNull(viewModel.transferStatus.value)
         Assert.assertFalse(viewModel.showProgressBar.value!!)
     }
 
     /** A status error after a successful submit leaves the transaction null. */
     @Test
     fun `transferRemittance status error leaves transaction null`() = runTest {
-        every { mockRepository.transfer(any(), any(), any(), any(), any(), any()) } returns flowOf(NetworkResult.Success(Unit))
-        every { mockRepository.getTransferStatus(any(), any(), any(), any(), any()) } returns flowOf(NetworkResult.Error("status boom"))
+        every { mockRepository.transfer(any(), any(), any(), any(), any()) } returns flowOf(NetworkResult.Success(Unit))
+        every { mockRepository.getTransferStatus(any(), any(), any(), any()) } returns flowOf(NetworkResult.Error("status boom"))
 
         viewModel.onPhoneNumberUpdated("256700000000")
         viewModel.onAmountUpdated("100")
         viewModel.transferRemittance()
 
-        Assert.assertNull(viewModel.momoTransaction.value)
-    }
-
-    /** A status body that cannot be parsed posts a null transaction rather than crashing. */
-    @Test
-    fun `transferRemittance status with unparseable body posts null transaction`() = runTest {
-        every { mockRepository.transfer(any(), any(), any(), any(), any(), any()) } returns flowOf(NetworkResult.Success(Unit))
-        every { mockRepository.getTransferStatus(any(), any(), any(), any(), any()) } returns
-            flowOf(NetworkResult.Success("not-json".toResponseBody("application/json".toMediaType())))
-
-        viewModel.onPhoneNumberUpdated("256700000000")
-        viewModel.onAmountUpdated("100")
-        viewModel.transferRemittance()
-
-        Assert.assertNull(viewModel.momoTransaction.value)
+        Assert.assertNull(viewModel.transferStatus.value)
     }
 
     /** A leading Loading emission is ignored and the terminal Success is used to complete the flow. */
     @Test
     fun `transferRemittance ignores loading emission before terminal success`() = runTest {
-        every { mockRepository.transfer(any(), any(), any(), any(), any(), any()) } returns
+        every { mockRepository.transfer(any(), any(), any(), any(), any()) } returns
             flowOf(NetworkResult.Loading(), NetworkResult.Success(Unit))
-        every { mockRepository.getTransferStatus(any(), any(), any(), any(), any()) } returns
-            flowOf(
-                NetworkResult.Loading(),
-                NetworkResult.Success(
-                    """{"amount":"100","currency":"EUR","externalId":"ext-1","payerMessage":"msg","payeeNote":"note","status":"SUCCESSFUL"}"""
-                        .toResponseBody("application/json".toMediaType())
-                )
-            )
+        every { mockRepository.getTransferStatus(any(), any(), any(), any()) } returns
+            flowOf(NetworkResult.Loading(), NetworkResult.Success(sampleTransaction()))
 
         viewModel.onPhoneNumberUpdated("256700000000")
         viewModel.onAmountUpdated("100")
         viewModel.transferRemittance()
 
-        Assert.assertNotNull(viewModel.momoTransaction.value)
+        Assert.assertNotNull(viewModel.transferStatus.value)
     }
 
     /** A non-blank financial ID exercises the ifBlank branch that keeps the value in the payload. */
     @Test
     fun `transferRemittance with non-blank financial id completes`() = runTest {
-        every { mockRepository.transfer(any(), any(), any(), any(), any(), any()) } returns flowOf(NetworkResult.Success(Unit))
-        every { mockRepository.getTransferStatus(any(), any(), any(), any(), any()) } returns
-            flowOf(NetworkResult.Success("{}".toResponseBody("application/json".toMediaType())))
+        every { mockRepository.transfer(any(), any(), any(), any(), any()) } returns flowOf(NetworkResult.Success(Unit))
+        every { mockRepository.getTransferStatus(any(), any(), any(), any()) } returns
+            flowOf(NetworkResult.Success(sampleTransaction()))
 
         viewModel.onPhoneNumberUpdated("256700000000")
         viewModel.onAmountUpdated("100")
         viewModel.onFinancialIdUpdated("FIN-123")
         viewModel.transferRemittance()
 
-        verify { mockRepository.transfer(any(), any(), any(), any(), any(), any()) }
+        verify { mockRepository.transfer(any(), any(), any(), any(), any()) }
         Assert.assertFalse(viewModel.showProgressBar.value!!)
     }
 
     /** An exception carrying no message is caught and the progress bar is still cleared. */
     @Test
     fun `transferRemittance exception with null message clears progress bar`() = runTest {
-        every { mockRepository.transfer(any(), any(), any(), any(), any(), any()) } throws RuntimeException()
+        every { mockRepository.transfer(any(), any(), any(), any(), any()) } throws RuntimeException()
 
         viewModel.onPhoneNumberUpdated("256700000000")
         viewModel.onAmountUpdated("100")
         viewModel.transferRemittance()
 
-        Assert.assertNull(viewModel.momoTransaction.value)
+        Assert.assertNull(viewModel.transferStatus.value)
         Assert.assertFalse(viewModel.showProgressBar.value!!)
     }
 
     /** A successful status with a null response body posts a null transaction rather than crashing. */
     @Test
     fun `transferRemittance status with null body posts null transaction`() = runTest {
-        every { mockRepository.transfer(any(), any(), any(), any(), any(), any()) } returns flowOf(NetworkResult.Success(Unit))
+        every { mockRepository.transfer(any(), any(), any(), any(), any()) } returns flowOf(NetworkResult.Success(Unit))
         @Suppress("UNCHECKED_CAST")
-        every { mockRepository.getTransferStatus(any(), any(), any(), any(), any()) } returns
-            (flowOf(NetworkResult.Success(null)) as Flow<NetworkResult<ResponseBody>>)
+        every { mockRepository.getTransferStatus(any(), any(), any(), any()) } returns
+            (flowOf(NetworkResult.Success(null)) as Flow<NetworkResult<TransferStatus>>)
 
         viewModel.onPhoneNumberUpdated("256700000000")
         viewModel.onAmountUpdated("100")
         viewModel.transferRemittance()
 
-        Assert.assertNull(viewModel.momoTransaction.value)
+        Assert.assertNull(viewModel.transferStatus.value)
     }
+
+    private fun sampleTransaction() = TransferStatus(
+        amount = "100",
+        currency = "EUR",
+        externalId = "ext-1",
+        payerMessage = "msg",
+        payeeNote = "note"
+    )
 }

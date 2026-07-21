@@ -90,10 +90,11 @@ class InvoiceScreenTest {
     }
 
     @Test
-    fun `enables create when amount and payer are set`() {
+    fun `enables create when amount, payer, and payee are set`() {
         val vm = viewModel()
         vm.onAmountChanged("100")
         vm.onPayerMsisdnChanged("256700000000")
+        vm.onPayeeMsisdnChanged("256700000001")
         setScreen(viewModel = vm)
         composeRule.onNodeWithText("Create").assertIsEnabled()
     }
@@ -102,6 +103,16 @@ class InvoiceScreenTest {
     fun `disables create when payer is blank`() {
         val vm = viewModel()
         vm.onAmountChanged("100")
+        vm.onPayeeMsisdnChanged("256700000001")
+        setScreen(viewModel = vm)
+        composeRule.onNodeWithText("Create").assertIsNotEnabled()
+    }
+
+    @Test
+    fun `disables create when payee is blank`() {
+        val vm = viewModel()
+        vm.onAmountChanged("100")
+        vm.onPayerMsisdnChanged("256700000000")
         setScreen(viewModel = vm)
         composeRule.onNodeWithText("Create").assertIsNotEnabled()
     }

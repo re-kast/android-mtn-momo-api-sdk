@@ -20,7 +20,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.lifecycle.MutableLiveData
 import io.mockk.mockk
-import io.rekast.sdk.model.MomoTransaction
+import io.rekast.sdk.model.RequestToWithdrawStatus
 import io.rekast.sdk.sample.ui.theme.AppTheme
 import io.rekast.sdk.sample.utils.DispatcherProvider
 import io.rekast.sdk.sample.utils.SnackBarComponentConfiguration
@@ -55,10 +55,10 @@ class CollectionWithdrawScreenTest {
         mockk(relaxed = true)
     )
 
-    private fun setScreen(showProgressBar: Boolean = false, momoTransaction: MutableLiveData<MomoTransaction?> = MutableLiveData(null)) {
+    private fun setScreen(showProgressBar: Boolean = false, requestToWithdrawStatus: MutableLiveData<RequestToWithdrawStatus?> = MutableLiveData(null)) {
         composeRule.setContent {
             AppTheme {
-                CollectionScreen(null, snackFlow, showProgressBar, viewModel(), momoTransaction)
+                CollectionScreen(null, snackFlow, showProgressBar, viewModel(), requestToWithdrawStatus)
             }
         }
     }
@@ -78,14 +78,14 @@ class CollectionWithdrawScreenTest {
     /** When a transaction result is present, the result summary (amount) is shown instead of the form. */
     @Test
     fun `renders result view when transaction present`() {
-        val sampleTransaction = MomoTransaction(
+        val sampleTransaction = RequestToWithdrawStatus(
             amount = "100",
             currency = "EUR",
             externalId = "ext-1",
             payerMessage = "msg",
             payeeNote = "note"
         )
-        setScreen(momoTransaction = MutableLiveData(sampleTransaction))
+        setScreen(requestToWithdrawStatus = MutableLiveData(sampleTransaction))
         composeRule.onNodeWithText("100").assertIsDisplayed()
     }
 }

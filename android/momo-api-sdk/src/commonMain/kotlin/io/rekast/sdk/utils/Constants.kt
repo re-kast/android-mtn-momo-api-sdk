@@ -42,9 +42,9 @@ object Constants {
         const val OCP_APIM_SUBSCRIPTION_KEY = "Ocp-Apim-Subscription-Key"
 
         /**
-         * The header key for the Momo callback URL.
+         * The header key for the optional callback URL to notify once the operation completes.
          */
-        const val X_MOMO_CALLBACK_URL = "X-MomoCallback-Url"
+        const val X_CALLBACK_URL = "X-Callback-Url"
 
         /**
          * The header key for the reference ID.
@@ -298,9 +298,20 @@ object Constants {
         const val PRE_APPROVAL_STATUS = "/collection/{apiVersion}/preapproval/{referenceId}"
 
         /**
-         * Endpoint for sending a delivery notification for a request-to-withdraw transaction.
+         * Endpoint for retrieving the list of approved pre-approvals for a given account holder.
          */
-        const val REQUEST_TO_WITHDRAW_DELIVERY_NOTIFICATION = "/collection/{apiVersion}/requesttowithdraw/{referenceId}/deliverynotification"
+        const val GET_APPROVED_PRE_APPROVALS =
+            "/collection/{apiVersion}/preapprovals/{accountHolderIdType}/{accountHolderId}"
+
+        /**
+         * Endpoint for creating a Collection payment (V2).
+         */
+        const val CREATE_PAYMENT = "/collection/{apiVersion}/payment"
+
+        /**
+         * Endpoint for retrieving the status of a Collection payment by reference ID.
+         */
+        const val PAYMENT_STATUS = "/collection/{apiVersion}/payment/{referenceId}"
     }
 
     /**

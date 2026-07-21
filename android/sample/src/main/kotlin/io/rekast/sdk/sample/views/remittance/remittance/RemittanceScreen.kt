@@ -22,12 +22,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.MutableLiveData
 import androidx.navigation.NavController
-import io.rekast.sdk.model.MomoTransaction
+import io.rekast.sdk.model.TransferStatus
 import io.rekast.sdk.sample.R
 import io.rekast.sdk.sample.ui.components.general.CircularProgressBarComponent
 import io.rekast.sdk.sample.ui.components.general.MomoScaffold
-import io.rekast.sdk.sample.ui.components.screens.PaymentDataDisplayComponent
 import io.rekast.sdk.sample.ui.components.screens.PaymentDataScreenComponent
+import io.rekast.sdk.sample.ui.components.screens.TransferStatusDisplayComponent
 import io.rekast.sdk.sample.utils.Constants
 import io.rekast.sdk.sample.utils.SnackBarComponentConfiguration
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -36,13 +36,13 @@ import kotlinx.coroutines.flow.asSharedFlow
 
 /**
  * Renders the Remittance Transfer screen, showing a payment capture form when no transaction
- * result is available, or a transaction summary once a [MomoTransaction] has been returned.
+ * result is available, or a transfer status summary once a [TransferStatus] has been returned.
  *
  * @param navController [NavController] used to navigate between destinations via the drawer.
  * @param snackStateFlow Flow emitting [SnackBarComponentConfiguration] messages to display.
  * @param showProgressBar Whether to display a loading indicator instead of the form; defaults to false.
  * @param remittanceScreenViewModel ViewModel providing form state and callbacks; may be null in previews.
- * @param momoTransaction LiveData holding the completed [MomoTransaction]; null triggers the capture form.
+ * @param transferStatus LiveData holding the completed [TransferStatus]; null triggers the capture form.
  */
 @Composable
 fun RemittanceScreen(
@@ -50,7 +50,7 @@ fun RemittanceScreen(
     snackStateFlow: SharedFlow<SnackBarComponentConfiguration>,
     showProgressBar: Boolean = false,
     remittanceScreenViewModel: RemittanceScreenViewModel?,
-    momoTransaction: MutableLiveData<MomoTransaction?>
+    transferStatus: MutableLiveData<TransferStatus?>
 ) {
     MomoScaffold(
         titleRes = R.string.remittance_screen,
@@ -67,7 +67,7 @@ fun RemittanceScreen(
                 val deliveryNote by remittanceScreenViewModel.deliveryNote.observeAsState(Constants.EMPTY_STRING)
                 val referenceIdToRefund by remittanceScreenViewModel.referenceIdToRefund.observeAsState(Constants.EMPTY_STRING)
 
-                if (momoTransaction.value == null) {
+                if (transferStatus.value == null) {
                     PaymentDataScreenComponent(
                         title = stringResource(id = R.string.request_to_transfer_title),
                         submitButtonText = stringResource(id = R.string.transfer_submit_button),
@@ -89,9 +89,9 @@ fun RemittanceScreen(
                         onDeliveryNoteUpdated = { remittanceScreenViewModel.onDeliveryNoteUpdated(it) }
                     )
                 } else {
-                    PaymentDataDisplayComponent(
+                    TransferStatusDisplayComponent(
                         title = stringResource(id = R.string.request_to_transfer_title),
-                        momoTransaction = momoTransaction
+                        status = transferStatus
                     )
                 }
             }
@@ -109,6 +109,6 @@ fun RemittanceScreenPreview() {
         snackStateFlow = MutableSharedFlow<SnackBarComponentConfiguration>().asSharedFlow(),
         showProgressBar = false,
         remittanceScreenViewModel = null,
-        momoTransaction = MutableLiveData(null)
+        transferStatus = MutableLiveData(null)
     )
 }

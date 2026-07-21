@@ -26,8 +26,9 @@ import io.mockk.mockkObject
 import io.mockk.slot
 import io.mockk.unmockkObject
 import io.rekast.sdk.model.AccountBalance
-import io.rekast.sdk.model.AccountHolder
+import io.rekast.sdk.model.AccountHolderStatus
 import io.rekast.sdk.model.BasicUserInfo
+import io.rekast.sdk.model.Party
 import io.rekast.sdk.model.UserInfoWithConsent
 import io.rekast.sdk.repository.DefaultRepository
 import io.rekast.sdk.repository.data.NetworkResult
@@ -35,7 +36,7 @@ import io.rekast.sdk.sample.utils.CredentialStorage
 import io.rekast.sdk.sample.utils.DispatcherProvider
 import io.rekast.sdk.sample.utils.SampleConfig
 import io.rekast.sdk.sample.utils.Utils
-import io.rekast.sdk.utils.ProductType
+import io.rekast.sdk.utils.ProductTypes
 import io.rekast.sdk.utils.Settings
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -46,8 +47,6 @@ import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -126,16 +125,16 @@ class HomeScreenViewModelTest {
         updatedAt = 1000000000
     )
 
-    private fun activeStatusBody() = """{"result":true}""".toResponseBody("application/json".toMediaType())
+    private fun activeStatus() = AccountHolderStatus(result = true)
 
     /** Stubs all four repository calls to return success, with the given consent profile. */
     private fun stubAllSuccess(consent: UserInfoWithConsent) {
-        coEvery { mockRepository.getUserInfoWithConsent(any(), any(), any(), any()) } returns flowOf(NetworkResult.Success(consent))
-        coEvery { mockRepository.getBasicUserInfo(any(), any(), any(), any(), any()) } returns flowOf(NetworkResult.Success(sampleBasicUserInfo()))
+        coEvery { mockRepository.getUserInfoWithConsent(any(), any(), any()) } returns flowOf(NetworkResult.Success(consent))
+        coEvery { mockRepository.getBasicUserInfo(any(), any(), any(), any()) } returns flowOf(NetworkResult.Success(sampleBasicUserInfo()))
         coEvery {
-            mockRepository.validateAccountHolderStatus(any(), any(), any<AccountHolder>(), any(), any())
-        } returns flowOf(NetworkResult.Success(activeStatusBody()))
-        coEvery { mockRepository.getAccountBalance(any(), any(), any(), any(), any()) } returns flowOf(NetworkResult.Success(AccountBalance("100.00", "EUR")))
+            mockRepository.validateAccountHolderStatus(any(), any(), any<Party>(), any())
+        } returns flowOf(NetworkResult.Success(activeStatus()))
+        coEvery { mockRepository.getAccountBalance(any(), any(), any(), any()) } returns flowOf(NetworkResult.Success(AccountBalance("100.00", "EUR")))
     }
 
     /** Verifies showProgressBar is initialised to false before any API call is made. */
@@ -163,10 +162,10 @@ class HomeScreenViewModelTest {
         vmWithNoToken.loadHomeData()
 
         assertFalse(vmWithNoToken.showProgressBar.value!!)
-        coVerify(exactly = 0) { mockRepository.getUserInfoWithConsent(any(), any(), any(), any()) }
-        coVerify(exactly = 0) { mockRepository.getBasicUserInfo(any(), any(), any(), any(), any()) }
-        coVerify(exactly = 0) { mockRepository.validateAccountHolderStatus(any(), any(), any<AccountHolder>(), any(), any()) }
-        coVerify(exactly = 0) { mockRepository.getAccountBalance(any(), any(), any(), any(), any()) }
+        coVerify(exactly = 0) { mockRepository.getUserInfoWithConsent(any(), any(), any()) }
+        coVerify(exactly = 0) { mockRepository.getBasicUserInfo(any(), any(), any(), any()) }
+        coVerify(exactly = 0) { mockRepository.validateAccountHolderStatus(any(), any(), any<Party>(), any()) }
+        coVerify(exactly = 0) { mockRepository.getAccountBalance(any(), any(), any(), any()) }
     }
 
     /**
@@ -180,10 +179,10 @@ class HomeScreenViewModelTest {
         viewModel.loadHomeData()
 
         coVerifyOrder {
-            mockRepository.getUserInfoWithConsent(any(), any(), any(), any())
-            mockRepository.getBasicUserInfo(any(), any(), any(), any(), any())
-            mockRepository.validateAccountHolderStatus(any(), any(), any<AccountHolder>(), any(), any())
-            mockRepository.getAccountBalance(any(), any(), any(), any(), any())
+            mockRepository.getUserInfoWithConsent(any(), any(), any())
+            mockRepository.getBasicUserInfo(any(), any(), any(), any())
+            mockRepository.validateAccountHolderStatus(any(), any(), any<Party>(), any())
+            mockRepository.getAccountBalance(any(), any(), any(), any())
         }
         assertNotNull(viewModel.userInfoWithConsent.value)
         assertNotNull(viewModel.basicUserInfo.value)
@@ -195,7 +194,7 @@ class HomeScreenViewModelTest {
     /**
      * Regression guard: the account balance must be fetched with the Collection product type and
      * subscription key, not Remittance. The MTN MoMo balance endpoint is only reliable with
-     * [ProductType.COLLECTION]; requesting it against Remittance commonly returns 401/404. See
+     * [ProductTypes.COLLECTION]; requesting it against Remittance commonly returns 401/404. See
      * [HomeScreenViewModel.fetchAccountBalance].
      */
     @Test
@@ -205,9 +204,9 @@ class HomeScreenViewModelTest {
 
         viewModel.loadHomeData()
 
-        coVerify { mockRepository.getAccountBalance(capture(balanceProductType), any(), any(), any(), any()) }
-        assertEquals(ProductType.COLLECTION.productType, balanceProductType.captured)
-        coVerify { Utils.getProductSubscriptionKeys(ProductType.COLLECTION, mockSampleConfig) }
+        coVerify { mockRepository.getAccountBalance(capture(balanceProductType), any(), any(), any()) }
+        assertEquals(ProductTypes.COLLECTION.productType, balanceProductType.captured)
+        coVerify { Utils.getProductSubscriptionKeys(ProductTypes.COLLECTION, mockSampleConfig) }
     }
 
     /**
@@ -217,15 +216,15 @@ class HomeScreenViewModelTest {
     @Test
     fun `loadHomeData threads consent phone number into account calls`() = runTest {
         val basicHolder = slot<String>()
-        val statusHolder = slot<AccountHolder>()
-        coEvery { mockRepository.getUserInfoWithConsent(any(), any(), any(), any()) } returns
+        val statusHolder = slot<Party>()
+        coEvery { mockRepository.getUserInfoWithConsent(any(), any(), any()) } returns
             flowOf(NetworkResult.Success(UserInfoWithConsent(sub = "sub-1", name = "Sand Box", phonenumber = "46123456789")))
-        coEvery { mockRepository.getBasicUserInfo(any(), any(), capture(basicHolder), any(), any()) } returns
+        coEvery { mockRepository.getBasicUserInfo(any(), any(), capture(basicHolder), any()) } returns
             flowOf(NetworkResult.Success(sampleBasicUserInfo()))
         coEvery {
-            mockRepository.validateAccountHolderStatus(any(), any(), capture(statusHolder), any(), any())
-        } returns flowOf(NetworkResult.Success(activeStatusBody()))
-        coEvery { mockRepository.getAccountBalance(any(), any(), any(), any(), any()) } returns
+            mockRepository.validateAccountHolderStatus(any(), any(), capture(statusHolder), any())
+        } returns flowOf(NetworkResult.Success(activeStatus()))
+        coEvery { mockRepository.getAccountBalance(any(), any(), any(), any()) } returns
             flowOf(NetworkResult.Success(AccountBalance("100.00", "EUR")))
 
         viewModel.loadHomeData()
@@ -239,7 +238,7 @@ class HomeScreenViewModelTest {
     fun `loadHomeData falls back to default account holder when consent has no phone number`() = runTest {
         val basicHolder = slot<String>()
         stubAllSuccess(UserInfoWithConsent(sub = "sub-1", name = "Sand Box"))
-        coEvery { mockRepository.getBasicUserInfo(any(), any(), capture(basicHolder), any(), any()) } returns
+        coEvery { mockRepository.getBasicUserInfo(any(), any(), capture(basicHolder), any()) } returns
             flowOf(NetworkResult.Success(sampleBasicUserInfo()))
 
         viewModel.loadHomeData()
@@ -265,39 +264,18 @@ class HomeScreenViewModelTest {
     /** Verifies the progress bar is still hidden and the pipeline completes even when every request fails. */
     @Test
     fun `loadHomeData hides progress bar even when all requests fail`() = runTest {
-        coEvery { mockRepository.getUserInfoWithConsent(any(), any(), any(), any()) } returns flowOf(NetworkResult.Error("403"))
-        coEvery { mockRepository.getBasicUserInfo(any(), any(), any(), any(), any()) } returns flowOf(NetworkResult.Error("404"))
+        coEvery { mockRepository.getUserInfoWithConsent(any(), any(), any()) } returns flowOf(NetworkResult.Error("403"))
+        coEvery { mockRepository.getBasicUserInfo(any(), any(), any(), any()) } returns flowOf(NetworkResult.Error("404"))
         coEvery {
-            mockRepository.validateAccountHolderStatus(any(), any(), any<AccountHolder>(), any(), any())
+            mockRepository.validateAccountHolderStatus(any(), any(), any<Party>(), any())
         } returns flowOf(NetworkResult.Error("500"))
-        coEvery { mockRepository.getAccountBalance(any(), any(), any(), any(), any()) } returns flowOf(NetworkResult.Error("500"))
+        coEvery { mockRepository.getAccountBalance(any(), any(), any(), any()) } returns flowOf(NetworkResult.Error("500"))
 
         viewModel.loadHomeData()
 
         assertFalse(viewModel.showProgressBar.value!!)
         assertNull(viewModel.basicUserInfo.value)
         assertNull(viewModel.accountBalance.value)
-    }
-
-    /**
-     * A successful account-status response whose body cannot be parsed into [AccountHolderStatus]
-     * exercises the parse-failure branch: the status is not posted, but the pipeline still
-     * completes and the progress bar is hidden.
-     */
-    @Test
-    fun `loadHomeData handles unparseable account status body`() = runTest {
-        val consent = UserInfoWithConsent(sub = "sub-1", name = "John Doe", phonenumber = "256770000000")
-        coEvery { mockRepository.getUserInfoWithConsent(any(), any(), any(), any()) } returns flowOf(NetworkResult.Success(consent))
-        coEvery { mockRepository.getBasicUserInfo(any(), any(), any(), any(), any()) } returns flowOf(NetworkResult.Success(sampleBasicUserInfo()))
-        coEvery {
-            mockRepository.validateAccountHolderStatus(any(), any(), any<AccountHolder>(), any(), any())
-        } returns flowOf(NetworkResult.Success("not-json".toResponseBody("application/json".toMediaType())))
-        coEvery { mockRepository.getAccountBalance(any(), any(), any(), any(), any()) } returns flowOf(NetworkResult.Success(AccountBalance("100.00", "EUR")))
-
-        viewModel.loadHomeData()
-
-        assertNull("Unparseable status must not be posted", viewModel.accountHolderStatus.value)
-        assertFalse(viewModel.showProgressBar.value!!)
     }
 
     /**
@@ -308,7 +286,7 @@ class HomeScreenViewModelTest {
     fun `loadHomeData falls back to default account holder when consent phone is blank`() = runTest {
         val basicHolder = slot<String>()
         stubAllSuccess(UserInfoWithConsent(sub = "sub-1", name = "Sand Box", phonenumber = ""))
-        coEvery { mockRepository.getBasicUserInfo(any(), any(), capture(basicHolder), any(), any()) } returns
+        coEvery { mockRepository.getBasicUserInfo(any(), any(), capture(basicHolder), any()) } returns
             flowOf(NetworkResult.Success(sampleBasicUserInfo()))
 
         viewModel.loadHomeData()
@@ -320,7 +298,7 @@ class HomeScreenViewModelTest {
     @Test
     fun `loadHomeData ignores loading emission before terminal success`() = runTest {
         stubAllSuccess(UserInfoWithConsent(sub = "sub-1", name = "Sand Box", phonenumber = "46123456789"))
-        coEvery { mockRepository.getUserInfoWithConsent(any(), any(), any(), any()) } returns
+        coEvery { mockRepository.getUserInfoWithConsent(any(), any(), any()) } returns
             flowOf(
                 NetworkResult.Loading(),
                 NetworkResult.Success(UserInfoWithConsent(sub = "sub-1", name = "Sand Box", phonenumber = "46123456789"))
@@ -340,7 +318,7 @@ class HomeScreenViewModelTest {
     fun `loadHomeData handles null basic user info body`() = runTest {
         stubAllSuccess(UserInfoWithConsent(sub = "sub-1", name = "Sand Box", phonenumber = "46123456789"))
         @Suppress("UNCHECKED_CAST")
-        coEvery { mockRepository.getBasicUserInfo(any(), any(), any(), any(), any()) } returns
+        coEvery { mockRepository.getBasicUserInfo(any(), any(), any(), any()) } returns
             (flowOf(NetworkResult.Success(null)) as Flow<NetworkResult<BasicUserInfo>>)
 
         viewModel.loadHomeData()

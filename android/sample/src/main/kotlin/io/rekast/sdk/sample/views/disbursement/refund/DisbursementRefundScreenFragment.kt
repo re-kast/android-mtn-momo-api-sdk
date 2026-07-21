@@ -31,7 +31,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import io.rekast.sdk.sample.ui.theme.AppTheme
-import io.rekast.sdk.sample.views.MainViewModel
+import io.rekast.sdk.sample.views.main.MainViewModel
 
 /**
  * Fragment that hosts the Disbursement Refund screen, rendering [DisbursementScreen] via Jetpack Compose.
@@ -59,7 +59,7 @@ class DisbursementRefundScreenFragment : Fragment() {
                         snackStateFlow = disbursementRefundScreenViewModel.snackBarStateFlow,
                         showProgressBar = !isBootstrapComplete || vmShowProgressBar,
                         disbursementRefundScreenViewModel = disbursementRefundScreenViewModel,
-                        momoTransaction = disbursementRefundScreenViewModel.momoTransaction
+                        refundStatus = disbursementRefundScreenViewModel.refundStatus
                     )
                 }
             }

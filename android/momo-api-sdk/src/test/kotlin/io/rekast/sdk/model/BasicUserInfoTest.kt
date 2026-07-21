@@ -19,6 +19,7 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
 import org.junit.Test
 
 /**
@@ -43,6 +44,7 @@ class BasicUserInfoTest {
         birthDate = "1990-01-15",
         locale = "en_US",
         gender = "male",
+        status = "ACTIVE",
         updatedAt = 1700000000
     )
 
@@ -122,6 +124,32 @@ class BasicUserInfoTest {
         val result = json.decodeFromString<BasicUserInfo>(jsonWithExtra)
         assertNotNull(result)
         assertEquals("s", result.sub)
+    }
+
+    /**
+     * The Remittance `.../accountholder/msisdn/{accountHolderMSISDN}/basicuserinfo` endpoint returns
+     * the KYC payload — given_name, family_name, birthdate, locale, and status — and omits `sub`/`name`.
+     * That response must deserialize without failure and map `status` correctly.
+     */
+    @Test
+    fun `deserializes the Remittance KYC basicuserinfo payload without sub or name`() {
+        val kycJson = """
+            {
+              "given_name": "Given",
+              "family_name": "Family",
+              "birthdate": "1970-01-01",
+              "locale": "sw-KE",
+              "status": "ACTIVE"
+            }
+        """.trimIndent()
+        val result = json.decodeFromString<BasicUserInfo>(kycJson)
+        assertEquals("Given", result.givenName)
+        assertEquals("Family", result.familyName)
+        assertEquals("1970-01-01", result.birthDate)
+        assertEquals("sw-KE", result.locale)
+        assertEquals("ACTIVE", result.status)
+        assertNull(result.sub)
+        assertNull(result.name)
     }
 
     @Test

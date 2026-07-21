@@ -20,7 +20,7 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import io.rekast.sdk.model.BackChannelAuthorize
+import io.rekast.sdk.model.BcAuthorizeResponse
 import io.rekast.sdk.model.authentication.AccessToken
 import io.rekast.sdk.model.authentication.Oauth2AccessToken
 import io.rekast.sdk.network.service.AuthenticationService
@@ -104,7 +104,7 @@ class TokenAuthenticatorTest {
     }
 
     private fun stubOauthTokenSuccess(token: String = "new-oauth-token") {
-        coEvery { mockAuthService.getOauth2AccessToken(any(), any(), any(), any(), any()) } returns
+        coEvery { mockAuthService.getOauth2AccessToken(any(), any(), any(), any()) } returns
             RetrofitResponse.success(
                 Oauth2AccessToken(
                     accessToken = token,
@@ -118,8 +118,8 @@ class TokenAuthenticatorTest {
     }
 
     private fun stubBcAuthorizeSuccess(authReqId: String = "bc-req-id-123") {
-        coEvery { mockAuthService.bcAuthorize(any(), any(), any(), any(), any(), any(), any()) } returns
-            RetrofitResponse.success(BackChannelAuthorize(authReqId = authReqId, interval = 5, expiresIn = 300))
+        coEvery { mockAuthService.bcAuthorize(any(), any(), any(), any(), any(), any()) } returns
+            RetrofitResponse.success(BcAuthorizeResponse(authReqId = authReqId, interval = 5, expiresIn = 300))
     }
 
     /**
@@ -245,7 +245,7 @@ class TokenAuthenticatorTest {
                 withArg { token -> assertEquals("new-oauth-token", token.accessToken) }
             )
         }
-        coVerify(exactly = 0) { mockAuthService.bcAuthorize(any(), any(), any(), any(), any(), any(), any()) }
+        coVerify(exactly = 0) { mockAuthService.bcAuthorize(any(), any(), any(), any(), any(), any()) }
     }
 
     /**
@@ -286,8 +286,8 @@ class TokenAuthenticatorTest {
         every { mockStorage.getBackChannelAuthorizationRequestId() } returns ""
         every { mockStorage.getLoginHint() } returns "ID:256770000000/MSISDN"
         stubAccessTokenSuccess()
-        coEvery { mockAuthService.bcAuthorize(any(), any(), any(), any(), any(), any(), any()) } returns
-            RetrofitResponse.success<BackChannelAuthorize>(null)
+        coEvery { mockAuthService.bcAuthorize(any(), any(), any(), any(), any(), any()) } returns
+            RetrofitResponse.success<BcAuthorizeResponse>(null)
 
         val result = authenticator.authenticate(null, buildUnauthorizedResponse(collectionUrl()))
 
@@ -325,7 +325,7 @@ class TokenAuthenticatorTest {
         every { mockStorage.getBackChannelAuthorizationRequestId() } returns ""
         every { mockStorage.getLoginHint() } returns "ID:256770000000/MSISDN"
         stubAccessTokenSuccess()
-        coEvery { mockAuthService.bcAuthorize(any(), any(), any(), any(), any(), any(), any()) } returns
+        coEvery { mockAuthService.bcAuthorize(any(), any(), any(), any(), any(), any()) } returns
             RetrofitResponse.error(500, "".toResponseBody(null))
 
         val result = authenticator.authenticate(null, buildUnauthorizedResponse(collectionUrl()))
@@ -360,7 +360,7 @@ class TokenAuthenticatorTest {
         every { mockStorage.getOauthAccessToken() } returns ""
         every { mockStorage.getBackChannelAuthorizationRequestId() } returns "stored-auth-req-id"
         stubAccessTokenSuccess()
-        coEvery { mockAuthService.getOauth2AccessToken(any(), any(), any(), any(), any()) } returns
+        coEvery { mockAuthService.getOauth2AccessToken(any(), any(), any(), any()) } returns
             RetrofitResponse.error(500, "".toResponseBody(null))
 
         val result = authenticator.authenticate(null, buildUnauthorizedResponse(collectionUrl()))
@@ -517,7 +517,7 @@ class TokenAuthenticatorTest {
         every { mockStorage.getOauthAccessToken() } returns ""
         every { mockStorage.getBackChannelAuthorizationRequestId() } returns "stored-auth-req-id"
         stubAccessTokenSuccess()
-        coEvery { mockAuthService.getOauth2AccessToken(any(), any(), any(), any(), any()) } throws RuntimeException("oauth down")
+        coEvery { mockAuthService.getOauth2AccessToken(any(), any(), any(), any()) } throws RuntimeException("oauth down")
 
         val result = authenticator.authenticate(null, buildUnauthorizedResponse(collectionUrl()))
 
@@ -537,7 +537,7 @@ class TokenAuthenticatorTest {
         every { mockStorage.getBackChannelAuthorizationRequestId() } returns ""
         every { mockStorage.getLoginHint() } returns "ID:256770000000/MSISDN"
         stubAccessTokenSuccess()
-        coEvery { mockAuthService.bcAuthorize(any(), any(), any(), any(), any(), any(), any()) } throws RuntimeException("bc down")
+        coEvery { mockAuthService.bcAuthorize(any(), any(), any(), any(), any(), any()) } throws RuntimeException("bc down")
 
         val result = authenticator.authenticate(null, buildUnauthorizedResponse(collectionUrl()))
 

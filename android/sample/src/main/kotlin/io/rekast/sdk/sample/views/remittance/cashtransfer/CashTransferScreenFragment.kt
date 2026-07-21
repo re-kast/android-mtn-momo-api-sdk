@@ -31,7 +31,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import io.rekast.sdk.sample.ui.theme.AppTheme
-import io.rekast.sdk.sample.views.MainViewModel
+import io.rekast.sdk.sample.views.main.MainViewModel
 
 /**
  * Fragment that hosts the Remittance Cash Transfer (V2) screen, rendering [CashTransferScreen] via Jetpack Compose.

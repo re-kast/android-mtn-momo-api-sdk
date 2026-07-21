@@ -168,7 +168,7 @@ class CredentialStorage @Inject constructor(@param:ApplicationContext private va
      * Persists the `auth_req_id` from a backchannel authorization response along with its expiry.
      *
      * @param authReqId The authorization request ID returned by the bc-authorize endpoint.
-     * @param expiresIn Seconds until the `auth_req_id` expires (from [io.rekast.sdk.model.BackChannelAuthorize.expiresIn]).
+     * @param expiresIn Seconds until the `auth_req_id` expires (from [io.rekast.sdk.model.BcAuthorizeResponse.expiresIn]).
      */
     fun saveBackChannelAuthorizationRequestId(authReqId: String, expiresIn: Int) {
         prefs.edit {

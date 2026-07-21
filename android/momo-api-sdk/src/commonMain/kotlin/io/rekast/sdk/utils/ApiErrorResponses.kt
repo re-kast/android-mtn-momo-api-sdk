@@ -15,11 +15,14 @@
  */
 package io.rekast.sdk.utils
 
+import kotlinx.serialization.Serializable
+
 /**
  * Enum class representing the various error responses from the MTN MOMO API.
  *
  * Each constant corresponds to a specific error that can occur during API interactions.
  */
+@Serializable
 enum class ApiErrorResponses {
     /**
      * Indicates that the payer was not found.

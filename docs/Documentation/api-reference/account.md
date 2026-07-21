@@ -7,6 +7,8 @@ sidebar_label: Account
 
 Account APIs retrieve subscriber information and validate account status. They are shared across all product types (Collection, Disbursements, Remittance) — pass the appropriate `productType` and `productSubscriptionKey` for the product you are using.
 
+> **Environment and cross-cutting headers are automatic.** You set the target environment once during SDK setup — `ApiConfig.environment`, which is sourced from `MOMO_ENVIRONMENT` in `local.properties`. On every request the SDK's `EnvironmentInterceptor` adds the required `X-Target-Environment` header, so **environment is never a per-call parameter**. Authentication headers (`Authorization`) are attached the same way by the SDK's interceptors.
+
 ---
 
 ## Get Account Balance
@@ -15,11 +17,10 @@ Returns the current balance of the product wallet.
 
 ```kotlin
 defaultRepository.getAccountBalance(
-    productType = ProductType.COLLECTION.productType,
+    productType = ProductTypes.COLLECTION.productType,
     apiVersion = "v1_0",
     currency = null,           // null returns balance in the account's default currency
-    productSubscriptionKey = collectionPrimaryKey,
-    environment = "sandbox"
+    productSubscriptionKey = collectionPrimaryKey
 ).collect { result ->
     when (result) {
         is NetworkResult.Success -> {
@@ -36,11 +37,10 @@ Pass a specific ISO-4217 currency code to `currency` to retrieve the balance in 
 
 ```kotlin
 defaultRepository.getAccountBalance(
-    productType = ProductType.REMITTANCE.productType,
+    productType = ProductTypes.REMITTANCE.productType,
     apiVersion = "v1_0",
     currency = "EUR",
-    productSubscriptionKey = remittancePrimaryKey,
-    environment = "sandbox"
+    productSubscriptionKey = remittancePrimaryKey
 ).collect { result -> /* ... */ }
 ```
 
@@ -50,7 +50,6 @@ defaultRepository.getAccountBalance(
 | `apiVersion`             | `String`  | API version, e.g. `"v1_0"`                                 |
 | `currency`               | `String?` | ISO-4217 currency code, or `null` for the default currency |
 | `productSubscriptionKey` | `String`  | Primary subscription key for the product                   |
-| `environment`            | `String`  | `"sandbox"` or `"production"`                              |
 
 ---
 
@@ -60,11 +59,10 @@ Retrieves the name and other non-sensitive profile fields for a given account ho
 
 ```kotlin
 defaultRepository.getBasicUserInfo(
-    productType = ProductType.COLLECTION.productType,
+    productType = ProductTypes.COLLECTION.productType,
     apiVersion = "v1_0",
     accountHolder = "256770000000",   // MSISDN
-    productSubscriptionKey = collectionPrimaryKey,
-    environment = "sandbox"
+    productSubscriptionKey = collectionPrimaryKey
 ).collect { result ->
     when (result) {
         is NetworkResult.Success -> {
@@ -83,7 +81,31 @@ defaultRepository.getBasicUserInfo(
 | `apiVersion`             | `String` | API version                   |
 | `accountHolder`          | `String` | MSISDN of the account holder  |
 | `productSubscriptionKey` | `String` | Primary subscription key      |
-| `environment`            | `String` | `"sandbox"` or `"production"` |
+
+This endpoint is available for every product. For **Remittance** it resolves to
+`/remittance/{apiVersion}/accountholder/msisdn/{accountHolder}/basicuserinfo` — call it with
+`productType = ProductTypes.REMITTANCE.productType` and the account holder MSISDN.
+
+**`BasicUserInfo` response fields**
+
+`BasicUserInfo` is a superset covering both response shapes: the OIDC-style payload returned by
+Collection/Disbursements (includes `sub`, `name`, `gender`, `updatedAt`) and the Remittance KYC
+payload (`givenName`, `familyName`, `birthDate`, `locale`, `status`), which omits `sub`/`name`.
+Every server-supplied field is therefore nullable, so a payload that omits any of them deserializes
+without failure.
+
+| Field              | Type      | Description                                                                                     |
+|--------------------|-----------|-------------------------------------------------------------------------------------------------|
+| `sub`              | `String?` | Subject identifier for the user. Absent in the Remittance KYC response                          |
+| `name`             | `String?` | Full name. Absent in the Remittance KYC response                                                |
+| `givenName`        | `String?` | Given name(s) / first name(s) (`given_name`)                                                    |
+| `familyName`       | `String?` | Surname(s) / last name(s) (`family_name`)                                                       |
+| `birthDate`        | `String?` | Account holder birth date (`birthdate`)                                                         |
+| `locale`           | `String?` | BCP47 [RFC5646] language tag, e.g. `en-US` or `en_US`                                           |
+| `gender`           | `String?` | Gender                                                                                          |
+| `status`           | `String?` | Account holder status (returned by the Remittance KYC response)                                 |
+| `updatedAt`        | `Int?`    | Last-updated timestamp as a Unix epoch integer in seconds (`updated_at`)                        |
+| `displayUpdatedAt` | `String`  | Human-readable form of `updatedAt`; computed locally (`@Transient`) — never part of the payload |
 
 ---
 
@@ -93,10 +115,9 @@ Retrieves full profile information for the authenticated subscriber. This is an 
 
 ```kotlin
 defaultRepository.getUserInfoWithConsent(
-    productType = ProductType.REMITTANCE.productType,
+    productType = ProductTypes.REMITTANCE.productType,
     apiVersion = "v1_0",
-    productSubscriptionKey = remittancePrimaryKey,
-    environment = "sandbox"
+    productSubscriptionKey = remittancePrimaryKey
 ).collect { result ->
     when (result) {
         is NetworkResult.Success -> {
@@ -109,12 +130,11 @@ defaultRepository.getUserInfoWithConsent(
 }
 ```
 
-| Parameter                | Type     | Description                                                                                                                  |
-|--------------------------|----------|------------------------------------------------------------------------------------------------------------------------------|
-| `productType`            | `String` | Product type string. Use the product whose subscription key you have provisioned (e.g. `ProductType.REMITTANCE.productType`) |
-| `apiVersion`             | `String` | API version                                                                                                                  |
-| `productSubscriptionKey` | `String` | Primary subscription key                                                                                                     |
-| `environment`            | `String` | `"sandbox"` or `"production"`                                                                                                |
+| Parameter                | Type     | Description                                                                                                                   |
+|--------------------------|----------|-------------------------------------------------------------------------------------------------------------------------------|
+| `productType`            | `String` | Product type string. Use the product whose subscription key you have provisioned (e.g. `ProductTypes.REMITTANCE.productType`) |
+| `apiVersion`             | `String` | API version                                                                                                                   |
+| `productSubscriptionKey` | `String` | Primary subscription key                                                                                                      |
 
 **`UserInfoWithConsent` response fields**
 
@@ -147,11 +167,10 @@ Checks whether a given account holder is registered and active on the MTN MoMo p
 
 ```kotlin
 defaultRepository.validateAccountHolderStatus(
-    productType = ProductType.COLLECTION.productType,
+    productType = ProductTypes.COLLECTION.productType,
     apiVersion = "v1_0",
-    accountHolder = AccountHolder(partyIdType = "MSISDN", partyId = "256770000000"),
-    productSubscriptionKey = collectionPrimaryKey,
-    environment = "sandbox"
+    party = Party(partyIdType = PartyTypes.MSISDN, partyId = "256770000000"),
+    productSubscriptionKey = collectionPrimaryKey
 ).collect { result ->
     when (result) {
         is NetworkResult.Success -> { /* account is active */ }
@@ -161,10 +180,9 @@ defaultRepository.validateAccountHolderStatus(
 }
 ```
 
-| Parameter                | Type            | Description                                                |
-|--------------------------|-----------------|------------------------------------------------------------|
-| `productType`            | `String`        | Product type string                                        |
-| `apiVersion`             | `String`        | API version                                                |
-| `accountHolder`          | `AccountHolder` | Account identifier — `partyIdType` is typically `"MSISDN"` |
-| `productSubscriptionKey` | `String`        | Primary subscription key                                   |
-| `environment`            | `String`        | `"sandbox"` or `"production"`                              |
+| Parameter                | Type     | Description                                                              |
+|--------------------------|----------|--------------------------------------------------------------------------|
+| `productType`            | `String` | Product type string                                                      |
+| `apiVersion`             | `String` | API version                                                              |
+| `party`                  | `Party`  | Account identifier; `partyIdType` is a `PartyTypes` enum (e.g. `MSISDN`) |
+| `productSubscriptionKey` | `String` | Primary subscription key                                                 |

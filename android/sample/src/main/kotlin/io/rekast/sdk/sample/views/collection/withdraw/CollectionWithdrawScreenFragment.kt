@@ -31,7 +31,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import io.rekast.sdk.sample.ui.theme.AppTheme
-import io.rekast.sdk.sample.views.MainViewModel
+import io.rekast.sdk.sample.views.main.MainViewModel
 
 /**
  * Fragment that hosts the Collection Request-to-Withdraw screen, rendering [CollectionScreen] via Jetpack Compose.
@@ -59,7 +59,7 @@ class CollectionWithdrawScreenFragment : Fragment() {
                         snackStateFlow = collectionWithdrawScreenViewModel.snackBarStateFlow,
                         showProgressBar = !isBootstrapComplete || vmShowProgressBar,
                         collectionWithdrawScreenViewModel = collectionWithdrawScreenViewModel,
-                        momoTransaction = collectionWithdrawScreenViewModel.momoTransaction
+                        requestToWithdrawStatus = collectionWithdrawScreenViewModel.requestToWithdrawStatus
                     )
                 }
             }

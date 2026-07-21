@@ -21,9 +21,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.rekast.sdk.model.AccountHolder
-import io.rekast.sdk.model.MomoNotification
-import io.rekast.sdk.model.MomoTransaction
+import io.rekast.sdk.model.Notifications
+import io.rekast.sdk.model.Party
+import io.rekast.sdk.model.RequestToPay
+import io.rekast.sdk.model.RequestToPayStatus
 import io.rekast.sdk.repository.DefaultRepository
 import io.rekast.sdk.repository.data.NetworkResult
 import io.rekast.sdk.sample.R
@@ -34,19 +35,16 @@ import io.rekast.sdk.sample.utils.SampleConfig
 import io.rekast.sdk.sample.utils.SnackBarComponentConfiguration
 import io.rekast.sdk.sample.utils.SnackBarType
 import io.rekast.sdk.sample.utils.Utils
-import io.rekast.sdk.sample.utils.bodyText
 import io.rekast.sdk.sample.utils.valueOrEmpty
-import io.rekast.sdk.sample.utils.valueOrNullIfBlank
-import io.rekast.sdk.utils.AccountHolderType
-import io.rekast.sdk.utils.ProductType
-import java.util.UUID
+import io.rekast.sdk.sample.views.BaseScreenViewModel
+import io.rekast.sdk.utils.PartyTypes
+import io.rekast.sdk.utils.ProductTypes
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
-import kotlinx.serialization.json.Json
 import timber.log.Timber
 
 /**
@@ -55,9 +53,9 @@ import timber.log.Timber
  * On submit it runs the full Collection request-to-pay flow against the SDK:
  * 1. `requestToPay` — asks the payer to approve a debit from their wallet (HTTP 202).
  * 2. An optional `requestToPayDeliveryNotification` when a delivery note is provided.
- * 3. `requestToPayTransactionStatus` — polls the outcome and posts it to [momoTransaction].
+ * 3. `requestToPayTransactionStatus` — polls the outcome ([RequestToPayStatus]) and posts it to [requestToPayStatus].
  *
- * The screen shows the input form while [momoTransaction] is null and the result once it is set.
+ * The screen shows the input form while [requestToPayStatus] is null and the result once it is set.
  * Authentication is handled automatically by the SDK's interceptor/authenticator, so the ViewModel
  * only guards on the presence of an access token before starting.
  */
@@ -67,18 +65,10 @@ class CollectionPayScreenViewModel @Inject constructor(
     private val credentialStorage: CredentialStorage,
     private val dispatchers: DispatcherProvider,
     private val sampleConfig: SampleConfig
-) : ViewModel() {
-    private val json = Json { ignoreUnknownKeys = true }
+) : BaseScreenViewModel() {
 
-    /** Controls whether the circular progress indicator is shown instead of the form. */
-    val showProgressBar = MutableLiveData(false)
-
-    /** Holds the completed [MomoTransaction] returned by the API; null while no request has succeeded. */
-    var momoTransaction: MutableLiveData<MomoTransaction?> = MutableLiveData(null)
-    private val _snackBarStateFlow = MutableSharedFlow<SnackBarComponentConfiguration>()
-
-    /** Flow of [SnackBarComponentConfiguration] events to be displayed as snackbars. */
-    val snackBarStateFlow: SharedFlow<SnackBarComponentConfiguration> = _snackBarStateFlow.asSharedFlow()
+    /** Holds the [RequestToPayStatus] returned by the API; null while no request has succeeded. */
+    var requestToPayStatus: MutableLiveData<RequestToPayStatus?> = MutableLiveData(null)
 
     private val _phoneNumber = MutableLiveData(Constants.EMPTY_STRING)
 
@@ -187,7 +177,7 @@ class CollectionPayScreenViewModel @Inject constructor(
 
     /**
      * Submits a Collection request-to-pay, optionally sends a delivery note, then polls the status
-     * and posts the resulting [MomoTransaction] to [momoTransaction].
+     * and posts the resulting [RequestToPayStatus] to [requestToPayStatus].
      */
     fun requestToPay() {
         viewModelScope.launch(dispatchers.io()) {
@@ -198,10 +188,10 @@ class CollectionPayScreenViewModel @Inject constructor(
             }
             showProgressBar.postValue(true)
             try {
-                val referenceId = UUID.randomUUID().toString()
-                val subscriptionKey = Utils.getProductSubscriptionKeys(ProductType.COLLECTION, sampleConfig)
+                val referenceId = generateUuid()
+                val subscriptionKey = Utils.getProductSubscriptionKeys(ProductTypes.COLLECTION, sampleConfig)
                 val submit = defaultRepository.requestToPay(
-                    momoTransaction = buildTransaction(),
+                    requestToPay = buildTransaction(),
                     apiVersion = sampleConfig.apiVersionV1,
                     productSubscriptionKey = subscriptionKey,
                     uuid = referenceId
@@ -228,7 +218,7 @@ class CollectionPayScreenViewModel @Inject constructor(
         }
     }
 
-    /** Polls the request-to-pay status and posts the decoded transaction to [momoTransaction]. */
+    /** Polls the request-to-pay status and posts the decoded transaction to [requestToPayStatus]. */
     private suspend fun fetchStatus(referenceId: String, subscriptionKey: String) {
         val result = defaultRepository.requestToPayTransactionStatus(
             referenceId = referenceId,
@@ -237,10 +227,7 @@ class CollectionPayScreenViewModel @Inject constructor(
         ).awaitTerminal()
         when (result) {
             is NetworkResult.Success -> {
-                val transaction = result.bodyText()?.let { body ->
-                    runCatching { json.decodeFromString<MomoTransaction>(body) }.getOrNull()
-                }
-                momoTransaction.postValue(transaction)
+                requestToPayStatus.postValue(result.response)
                 emitSuccess(R.string.snackbar_request_to_pay_status_fetched)
             }
 
@@ -254,12 +241,11 @@ class CollectionPayScreenViewModel @Inject constructor(
     /** Sends a delivery notification to the payer for the given request-to-pay reference. */
     private suspend fun sendDeliveryNotification(referenceId: String, subscriptionKey: String) {
         val result = defaultRepository.requestToPayDeliveryNotification(
-            productType = ProductType.COLLECTION.productType,
+            productType = ProductTypes.COLLECTION.productType,
             apiVersion = sampleConfig.apiVersionV1,
             referenceId = referenceId,
-            momoNotification = MomoNotification(notificationMessage = deliveryNote.valueOrEmpty()),
-            productSubscriptionKey = subscriptionKey,
-            environment = sampleConfig.environment
+            notifications = Notifications(notificationMessage = deliveryNote.valueOrEmpty()),
+            productSubscriptionKey = subscriptionKey
         ).awaitTerminal()
         when (result) {
             is NetworkResult.Success -> emitSuccess(R.string.snackbar_delivery_note_sent)
@@ -272,35 +258,13 @@ class CollectionPayScreenViewModel @Inject constructor(
     }
 
     /** Builds the request-to-pay payload from the current form values. */
-    private fun buildTransaction() = MomoTransaction(
+    private fun buildTransaction() = RequestToPay(
         amount = amount.valueOrEmpty(),
         currency = Constants.SANDBOX_CURRENCY,
-        financialTransactionId = financialId.valueOrNullIfBlank(),
-        externalId = UUID.randomUUID().toString(),
+        externalId = generateUuid(),
+        payer = Party(partyIdType = PartyTypes.MSISDN, partyId = phoneNumber.valueOrEmpty()),
         payee = null,
-        payer = AccountHolder(partyIdType = AccountHolderType.MSISDN.accountHolderType, partyId = phoneNumber.valueOrEmpty()),
         payerMessage = payerMessage.valueOrEmpty(),
-        payeeNote = payerNote.valueOrEmpty(),
-        status = null,
-        reason = null,
-        referenceIdToRefund = null
+        payeeNote = payerNote.valueOrEmpty()
     )
-
-    /**
-     * Collects this result [Flow] to completion and returns its terminal (non-[NetworkResult.Loading])
-     * emission, so a suspend caller can await the flow's final success or error.
-     */
-    private suspend fun <T> Flow<NetworkResult<T>>.awaitTerminal(): NetworkResult<T> {
-        var terminal: NetworkResult<T> = NetworkResult.Error("No response received")
-        collect { emission -> if (emission !is NetworkResult.Loading) terminal = emission }
-        return terminal
-    }
-
-    private fun emitSuccess(@StringRes messageResId: Int, vararg args: Any) = emitSnackBarState(SnackBarComponentConfiguration(messageResId = messageResId, messageArgs = args.toList(), type = SnackBarType.SUCCESS))
-
-    private fun emitError(@StringRes messageResId: Int, vararg args: Any) = emitSnackBarState(SnackBarComponentConfiguration(messageResId = messageResId, messageArgs = args.toList(), type = SnackBarType.ERROR))
-
-    private fun emitSnackBarState(snackBarComponentConfiguration: SnackBarComponentConfiguration) {
-        viewModelScope.launch { _snackBarStateFlow.emit(snackBarComponentConfiguration) }
-    }
 }

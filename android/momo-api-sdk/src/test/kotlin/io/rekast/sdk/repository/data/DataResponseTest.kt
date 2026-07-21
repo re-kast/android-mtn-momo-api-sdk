@@ -106,6 +106,45 @@ class DataResponseTest {
         assertTrue(result.message.contains("404"))
     }
 
+    /**
+     * Verifies that a JSON MoMo error body is parsed and the server's `code` and `message` are
+     * surfaced in the error text (rather than being discarded in favour of the HTTP reason phrase).
+     */
+    @Test
+    fun `safeApiCall surfaces the parsed server message from a JSON error body`() = runBlocking {
+        val json = """{"message":"Validity time must be at least 120 seconds","code":"PREAPPROVAL_TOO_SHORT_VALIDITY"}"""
+        val response = Response.error<String>(400, json.toResponseBody("application/json".toMediaType()))
+
+        val result = dataResponse.safeApiCall { response }
+
+        assertTrue(result is NetworkResult.Error)
+        assertTrue(result.message.contains("400"))
+        assertTrue(result.message.contains("PREAPPROVAL_TOO_SHORT_VALIDITY"))
+        assertTrue(result.message.contains("Validity time must be at least 120 seconds"))
+    }
+
+    /** Verifies a non-JSON error body is surfaced verbatim rather than being dropped. */
+    @Test
+    fun `safeApiCall surfaces a non-JSON error body verbatim`() = runBlocking {
+        val response = Response.error<String>(500, "upstream exploded".toResponseBody("text/plain".toMediaType()))
+
+        val result = dataResponse.safeApiCall { response }
+
+        assertTrue(result is NetworkResult.Error)
+        assertTrue(result.message.contains("upstream exploded"))
+    }
+
+    /** Verifies a blank error body falls back to just the HTTP status code and reason. */
+    @Test
+    fun `safeApiCall falls back to status when error body is blank`() = runBlocking {
+        val response = Response.error<String>(503, "".toResponseBody("text/plain".toMediaType()))
+
+        val result = dataResponse.safeApiCall { response }
+
+        assertTrue(result is NetworkResult.Error)
+        assertTrue(result.message.contains("503"))
+    }
+
     /** Verifies the provided suspend lambda is invoked exactly once per safeApiCall invocation. */
     @Test
     fun `safeApiCall with suspend lambda is called exactly once`() = runBlocking {
