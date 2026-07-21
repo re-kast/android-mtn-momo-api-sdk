@@ -21,8 +21,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.rekast.sdk.model.AccountHolder
 import io.rekast.sdk.model.CashTransfer
+import io.rekast.sdk.model.Party
 import io.rekast.sdk.repository.DefaultRepository
 import io.rekast.sdk.repository.data.NetworkResult
 import io.rekast.sdk.sample.R
@@ -33,11 +33,10 @@ import io.rekast.sdk.sample.utils.SampleConfig
 import io.rekast.sdk.sample.utils.SnackBarComponentConfiguration
 import io.rekast.sdk.sample.utils.SnackBarType
 import io.rekast.sdk.sample.utils.Utils
-import io.rekast.sdk.sample.utils.bodyText
 import io.rekast.sdk.sample.utils.valueOrEmpty
 import io.rekast.sdk.sample.utils.valueOrNullIfBlank
-import io.rekast.sdk.utils.AccountHolderType
-import io.rekast.sdk.utils.ProductType
+import io.rekast.sdk.utils.PartyTypes
+import io.rekast.sdk.utils.ProductTypes
 import java.util.UUID
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
@@ -121,12 +120,12 @@ class CashTransferScreenViewModel @Inject constructor(
     /** Sends a cash transfer with a fresh reference ID and stores that ID for the status action. */
     fun sendCashTransfer() = launchOperation {
         val reference = UUID.randomUUID().toString()
-        val subscriptionKey = Utils.getProductSubscriptionKeys(ProductType.REMITTANCE, sampleConfig)
+        val subscriptionKey = Utils.getProductSubscriptionKeys(ProductTypes.REMITTANCE, sampleConfig)
         val cashTransfer = CashTransfer(
             amount = amount.valueOrEmpty(),
             currency = currency.valueOrEmpty().ifBlank { Constants.SANDBOX_CURRENCY },
             externalId = UUID.randomUUID().toString(),
-            payee = AccountHolder(partyIdType = AccountHolderType.MSISDN.accountHolderType, partyId = payeeMsisdn.valueOrEmpty()),
+            payee = Party(partyIdType = PartyTypes.MSISDN, partyId = payeeMsisdn.valueOrEmpty()),
             payerMessage = payerMessage.valueOrEmpty(),
             payeeNote = payeeNote.valueOrEmpty(),
             payerFirstName = payerFirstName.valueOrNullIfBlank(),
@@ -151,7 +150,7 @@ class CashTransferScreenViewModel @Inject constructor(
     fun checkStatus() = withReference { reference, subscriptionKey ->
         when (val response = defaultRepository.getCashTransferStatus(sampleConfig.apiVersionV1, reference, subscriptionKey, sampleConfig.environment).awaitTerminal()) {
             is NetworkResult.Success -> {
-                result.postValue(response.bodyText().orEmpty().ifBlank { "No status body returned." })
+                result.postValue(response.response?.toString() ?: "No status body returned.")
                 emitSuccess(R.string.snackbar_cash_transfer_status_fetched)
             }
 
@@ -191,7 +190,7 @@ class CashTransferScreenViewModel @Inject constructor(
             emitError(R.string.snackbar_cash_transfer_required_first)
             return
         }
-        launchOperation { block(reference, Utils.getProductSubscriptionKeys(ProductType.REMITTANCE, sampleConfig)) }
+        launchOperation { block(reference, Utils.getProductSubscriptionKeys(ProductTypes.REMITTANCE, sampleConfig)) }
     }
 
     private suspend fun <T> Flow<NetworkResult<T>>.awaitTerminal(): NetworkResult<T> {

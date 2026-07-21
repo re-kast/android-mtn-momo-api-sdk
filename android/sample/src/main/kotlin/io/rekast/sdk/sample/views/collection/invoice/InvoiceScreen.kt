@@ -26,6 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -38,6 +39,7 @@ import io.rekast.sdk.sample.ui.components.general.MomoScaffold
 import io.rekast.sdk.sample.ui.components.screens.LabeledField
 import io.rekast.sdk.sample.ui.components.screens.OperationActionButton
 import io.rekast.sdk.sample.ui.components.screens.OperationConsole
+import io.rekast.sdk.sample.ui.theme.InfoColor
 import io.rekast.sdk.sample.utils.Constants
 import io.rekast.sdk.sample.utils.SnackBarComponentConfiguration
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -93,7 +95,9 @@ fun InvoiceScreen(navController: NavController?, snackStateFlow: SharedFlow<Snac
                                 text = stringResource(R.string.action_check_status),
                                 onClick = viewModel::checkStatus,
                                 enabled = !referenceId.isNullOrBlank(),
-                                modifier = Modifier.weight(1f)
+                                modifier = Modifier.weight(1f),
+                                backgroundColor = InfoColor,
+                                contentColor = Color.White
                             )
                             OperationActionButton(
                                 text = stringResource(R.string.action_cancel),

@@ -23,7 +23,8 @@ import kotlinx.serialization.Serializable
  *
  * @property code The error code returned by the API (maps to [io.rekast.sdk.utils.ApiErrorResponses]).
  * @property message A human-readable description of the error.
- * @property error The raw error identifier string from the API.
+ * @property error The raw error identifier string from the API. Optional — many MoMo error bodies
+ *   contain only `code` and `message`.
  */
 @Serializable
-data class ErrorResponse(@SerialName("code") var code: String, @SerialName("message") var message: String, @SerialName("error") var error: String)
+data class ErrorResponse(@SerialName("code") var code: String, @SerialName("message") var message: String, @SerialName("error") var error: String? = null)

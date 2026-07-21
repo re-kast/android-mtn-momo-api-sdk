@@ -29,6 +29,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
@@ -89,21 +90,30 @@ fun LabeledField(
 }
 
 /**
- * A full-width primary action button using the MTN accent color.
+ * A full-width primary action button using the MTN accent color by default.
  *
  * @param text The button label.
  * @param onClick Click callback.
  * @param modifier Modifier applied to the button.
  * @param enabled Whether the button is enabled; defaults to true.
+ * @param backgroundColor The button background; defaults to the theme secondary (MTN accent).
+ * @param contentColor The label/content color; defaults to the theme onSecondary.
  */
 @Composable
-fun OperationActionButton(text: String, onClick: () -> Unit, modifier: Modifier = Modifier, enabled: Boolean = true) {
+fun OperationActionButton(
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    backgroundColor: Color = MaterialTheme.colors.secondary,
+    contentColor: Color = MaterialTheme.colors.onSecondary
+) {
     Button(
         onClick = onClick,
         enabled = enabled,
         colors = ButtonDefaults.buttonColors(
-            backgroundColor = MaterialTheme.colors.secondary,
-            contentColor = MaterialTheme.colors.onSecondary
+            backgroundColor = backgroundColor,
+            contentColor = contentColor
         ),
         elevation = null,
         modifier = modifier.fillMaxWidth()

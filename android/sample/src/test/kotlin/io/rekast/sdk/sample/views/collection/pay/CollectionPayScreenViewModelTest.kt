@@ -21,6 +21,7 @@ import io.mockk.mockk
 import io.mockk.mockkObject
 import io.mockk.unmockkObject
 import io.mockk.verify
+import io.rekast.sdk.model.RequestToPayStatus
 import io.rekast.sdk.repository.DefaultRepository
 import io.rekast.sdk.repository.data.NetworkResult
 import io.rekast.sdk.sample.utils.CredentialStorage
@@ -37,7 +38,6 @@ import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.ResponseBody
 import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -87,8 +87,8 @@ class CollectionPayScreenViewModelTest {
     }
 
     @Test
-    fun `initial state has null momoTransaction`() {
-        assertNull(viewModel.momoTransaction.value)
+    fun `initial state has null transaction`() {
+        assertNull(viewModel.requestToPayStatus.value)
     }
 
     @Test
@@ -149,12 +149,7 @@ class CollectionPayScreenViewModelTest {
     fun `requestToPay submits then fetches status and posts transaction`() = runTest {
         every { mockRepository.requestToPay(any(), any(), any(), any()) } returns flowOf(NetworkResult.Success(Unit))
         every { mockRepository.requestToPayTransactionStatus(any(), any(), any()) } returns
-            flowOf(
-                NetworkResult.Success(
-                    """{"amount":"100","currency":"EUR","externalId":"ext-1","payerMessage":"msg","payeeNote":"note","status":"SUCCESSFUL"}"""
-                        .toResponseBody("application/json".toMediaType())
-                )
-            )
+            flowOf(NetworkResult.Success(sampleTransaction()))
 
         viewModel.onPhoneNumberUpdated("256700000000")
         viewModel.onAmountUpdated("100")
@@ -162,7 +157,7 @@ class CollectionPayScreenViewModelTest {
 
         verify { mockRepository.requestToPay(any(), any(), any(), any()) }
         verify { mockRepository.requestToPayTransactionStatus(any(), any(), any()) }
-        assertNotNull(viewModel.momoTransaction.value)
+        assertNotNull(viewModel.requestToPayStatus.value)
         assertFalse(viewModel.showProgressBar.value!!)
     }
 
@@ -187,7 +182,7 @@ class CollectionPayScreenViewModelTest {
         viewModel.requestToPay()
 
         verify(exactly = 0) { mockRepository.requestToPayTransactionStatus(any(), any(), any()) }
-        assertNull(viewModel.momoTransaction.value)
+        assertNull(viewModel.requestToPayStatus.value)
         assertFalse(viewModel.showProgressBar.value!!)
     }
 
@@ -200,7 +195,7 @@ class CollectionPayScreenViewModelTest {
         viewModel.onAmountUpdated("100")
         viewModel.requestToPay()
 
-        assertNull(viewModel.momoTransaction.value)
+        assertNull(viewModel.requestToPayStatus.value)
         assertFalse(viewModel.showProgressBar.value!!)
     }
 
@@ -211,7 +206,7 @@ class CollectionPayScreenViewModelTest {
         every { mockRepository.requestToPayDeliveryNotification(any(), any(), any(), any(), any(), any()) } returns
             flowOf(NetworkResult.Success("ok".toResponseBody("text/plain".toMediaType())))
         every { mockRepository.requestToPayTransactionStatus(any(), any(), any()) } returns
-            flowOf(NetworkResult.Success("{}".toResponseBody("application/json".toMediaType())))
+            flowOf(NetworkResult.Success(sampleTransaction()))
 
         viewModel.onPhoneNumberUpdated("256700000000")
         viewModel.onAmountUpdated("100")
@@ -231,21 +226,7 @@ class CollectionPayScreenViewModelTest {
         viewModel.onAmountUpdated("100")
         viewModel.requestToPay()
 
-        assertNull(viewModel.momoTransaction.value)
-    }
-
-    /** A status body that cannot be parsed posts a null transaction rather than crashing. */
-    @Test
-    fun `requestToPay status with unparseable body posts null transaction`() = runTest {
-        every { mockRepository.requestToPay(any(), any(), any(), any()) } returns flowOf(NetworkResult.Success(Unit))
-        every { mockRepository.requestToPayTransactionStatus(any(), any(), any()) } returns
-            flowOf(NetworkResult.Success("not-json".toResponseBody("application/json".toMediaType())))
-
-        viewModel.onPhoneNumberUpdated("256700000000")
-        viewModel.onAmountUpdated("100")
-        viewModel.requestToPay()
-
-        assertNull(viewModel.momoTransaction.value)
+        assertNull(viewModel.requestToPayStatus.value)
     }
 
     /**
@@ -256,12 +237,7 @@ class CollectionPayScreenViewModelTest {
     fun `requestToPay with delivery note handles failed delivery notification`() = runTest {
         every { mockRepository.requestToPay(any(), any(), any(), any()) } returns flowOf(NetworkResult.Success(Unit))
         every { mockRepository.requestToPayTransactionStatus(any(), any(), any()) } returns
-            flowOf(
-                NetworkResult.Success(
-                    """{"amount":"100","currency":"EUR","externalId":"ext-1","payerMessage":"msg","payeeNote":"note","status":"SUCCESSFUL"}"""
-                        .toResponseBody("application/json".toMediaType())
-                )
-            )
+            flowOf(NetworkResult.Success(sampleTransaction()))
         every { mockRepository.requestToPayDeliveryNotification(any(), any(), any(), any(), any(), any()) } returns
             flowOf(NetworkResult.Error("delivery failed"))
 
@@ -279,12 +255,7 @@ class CollectionPayScreenViewModelTest {
     fun `requestToPay with delivery note sends notification successfully`() = runTest {
         every { mockRepository.requestToPay(any(), any(), any(), any()) } returns flowOf(NetworkResult.Success(Unit))
         every { mockRepository.requestToPayTransactionStatus(any(), any(), any()) } returns
-            flowOf(
-                NetworkResult.Success(
-                    """{"amount":"100","currency":"EUR","externalId":"ext-1","payerMessage":"msg","payeeNote":"note","status":"SUCCESSFUL"}"""
-                        .toResponseBody("application/json".toMediaType())
-                )
-            )
+            flowOf(NetworkResult.Success(sampleTransaction()))
         every { mockRepository.requestToPayDeliveryNotification(any(), any(), any(), any(), any(), any()) } returns
             flowOf(NetworkResult.Success("ok".toResponseBody("text/plain".toMediaType())))
 
@@ -294,7 +265,7 @@ class CollectionPayScreenViewModelTest {
         viewModel.requestToPay()
 
         verify { mockRepository.requestToPayDeliveryNotification(any(), any(), any(), any(), any(), any()) }
-        assertNotNull(viewModel.momoTransaction.value)
+        assertNotNull(viewModel.requestToPayStatus.value)
     }
 
     /** A leading Loading emission is ignored and the terminal Success is used to complete the flow. */
@@ -303,19 +274,13 @@ class CollectionPayScreenViewModelTest {
         every { mockRepository.requestToPay(any(), any(), any(), any()) } returns
             flowOf(NetworkResult.Loading(), NetworkResult.Success(Unit))
         every { mockRepository.requestToPayTransactionStatus(any(), any(), any()) } returns
-            flowOf(
-                NetworkResult.Loading(),
-                NetworkResult.Success(
-                    """{"amount":"100","currency":"EUR","externalId":"ext-1","payerMessage":"msg","payeeNote":"note","status":"SUCCESSFUL"}"""
-                        .toResponseBody("application/json".toMediaType())
-                )
-            )
+            flowOf(NetworkResult.Loading(), NetworkResult.Success(sampleTransaction()))
 
         viewModel.onPhoneNumberUpdated("256700000000")
         viewModel.onAmountUpdated("100")
         viewModel.requestToPay()
 
-        assertNotNull(viewModel.momoTransaction.value)
+        assertNotNull(viewModel.requestToPayStatus.value)
     }
 
     /** A non-blank financial ID exercises the ifBlank branch that keeps the value in the payload. */
@@ -323,7 +288,7 @@ class CollectionPayScreenViewModelTest {
     fun `requestToPay with non-blank financial id completes`() = runTest {
         every { mockRepository.requestToPay(any(), any(), any(), any()) } returns flowOf(NetworkResult.Success(Unit))
         every { mockRepository.requestToPayTransactionStatus(any(), any(), any()) } returns
-            flowOf(NetworkResult.Success("{}".toResponseBody("application/json".toMediaType())))
+            flowOf(NetworkResult.Success(sampleTransaction()))
 
         viewModel.onPhoneNumberUpdated("256700000000")
         viewModel.onAmountUpdated("100")
@@ -343,7 +308,7 @@ class CollectionPayScreenViewModelTest {
         viewModel.onAmountUpdated("100")
         viewModel.requestToPay()
 
-        assertNull(viewModel.momoTransaction.value)
+        assertNull(viewModel.requestToPayStatus.value)
         assertFalse(viewModel.showProgressBar.value!!)
     }
 
@@ -353,12 +318,20 @@ class CollectionPayScreenViewModelTest {
         every { mockRepository.requestToPay(any(), any(), any(), any()) } returns flowOf(NetworkResult.Success(Unit))
         @Suppress("UNCHECKED_CAST")
         every { mockRepository.requestToPayTransactionStatus(any(), any(), any()) } returns
-            (flowOf(NetworkResult.Success(null)) as Flow<NetworkResult<ResponseBody>>)
+            (flowOf(NetworkResult.Success(null)) as Flow<NetworkResult<RequestToPayStatus>>)
 
         viewModel.onPhoneNumberUpdated("256700000000")
         viewModel.onAmountUpdated("100")
         viewModel.requestToPay()
 
-        assertNull(viewModel.momoTransaction.value)
+        assertNull(viewModel.requestToPayStatus.value)
     }
+
+    private fun sampleTransaction() = RequestToPayStatus(
+        amount = "100",
+        currency = "EUR",
+        externalId = "ext-1",
+        payerMessage = "msg",
+        payeeNote = "note"
+    )
 }

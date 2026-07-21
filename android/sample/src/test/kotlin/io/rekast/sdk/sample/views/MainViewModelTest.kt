@@ -19,7 +19,7 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
-import io.rekast.sdk.model.BackChannelAuthorize
+import io.rekast.sdk.model.BcAuthorizeResponse
 import io.rekast.sdk.model.authentication.AccessToken
 import io.rekast.sdk.model.authentication.ApiKey
 import io.rekast.sdk.model.authentication.ApiUser
@@ -347,7 +347,7 @@ class MainViewModelTest {
         // If the blank-authReqId branch fires first, bcAuthorize() is called. Mock it to succeed
         // so the flow continues through to getOauthAccessToken (which requires a stored authReqId).
         coEvery { mockRepository.bcAuthorize(any(), any(), any(), any(), any()) } returns flowOf(
-            NetworkResult.Success(BackChannelAuthorize(authReqId = "auth-req-001", interval = 5, expiresIn = 300))
+            NetworkResult.Success(BcAuthorizeResponse(authReqId = "auth-req-001", interval = 5, expiresIn = 300))
         )
         coEvery { mockRepository.getOauthAccessToken(any(), any(), any(), any()) } returns flowOf(
             NetworkResult.Error("Failed")

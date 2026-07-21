@@ -59,7 +59,7 @@ class RemittanceScreenFragment : Fragment() {
                         snackStateFlow = remittanceScreenViewModel.snackBarStateFlow,
                         showProgressBar = !isBootstrapComplete || vmShowProgressBar,
                         remittanceScreenViewModel = remittanceScreenViewModel,
-                        momoTransaction = remittanceScreenViewModel.momoTransaction
+                        transferStatus = remittanceScreenViewModel.transferStatus
                     )
                 }
             }

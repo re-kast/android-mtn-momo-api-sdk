@@ -59,7 +59,7 @@ class CollectionPayScreenFragment : Fragment() {
                         snackStateFlow = collectionPayScreenViewModel.snackBarStateFlow,
                         showProgressBar = !isBootstrapComplete || vmShowProgressBar,
                         collectionPayScreenViewModel = collectionPayScreenViewModel,
-                        momoTransaction = collectionPayScreenViewModel.momoTransaction
+                        requestToPayStatus = collectionPayScreenViewModel.requestToPayStatus
                     )
                 }
             }

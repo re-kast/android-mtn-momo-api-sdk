@@ -59,7 +59,7 @@ class DisbursementRefundScreenFragment : Fragment() {
                         snackStateFlow = disbursementRefundScreenViewModel.snackBarStateFlow,
                         showProgressBar = !isBootstrapComplete || vmShowProgressBar,
                         disbursementRefundScreenViewModel = disbursementRefundScreenViewModel,
-                        momoTransaction = disbursementRefundScreenViewModel.momoTransaction
+                        refundStatus = disbursementRefundScreenViewModel.refundStatus
                     )
                 }
             }

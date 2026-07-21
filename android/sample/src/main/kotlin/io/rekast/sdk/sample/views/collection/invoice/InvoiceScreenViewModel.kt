@@ -21,8 +21,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.rekast.sdk.model.AccountHolder
 import io.rekast.sdk.model.Invoice
+import io.rekast.sdk.model.Party
 import io.rekast.sdk.repository.DefaultRepository
 import io.rekast.sdk.repository.data.NetworkResult
 import io.rekast.sdk.sample.R
@@ -33,11 +33,10 @@ import io.rekast.sdk.sample.utils.SampleConfig
 import io.rekast.sdk.sample.utils.SnackBarComponentConfiguration
 import io.rekast.sdk.sample.utils.SnackBarType
 import io.rekast.sdk.sample.utils.Utils
-import io.rekast.sdk.sample.utils.bodyText
 import io.rekast.sdk.sample.utils.valueOrEmpty
 import io.rekast.sdk.sample.utils.valueOrNullIfBlank
-import io.rekast.sdk.utils.AccountHolderType
-import io.rekast.sdk.utils.ProductType
+import io.rekast.sdk.utils.PartyTypes
+import io.rekast.sdk.utils.ProductTypes
 import java.util.UUID
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
@@ -109,18 +108,16 @@ class InvoiceScreenViewModel @Inject constructor(
     /** Creates an invoice with a fresh reference ID and stores that ID for status/cancel. */
     fun createInvoice() = launchOperation {
         val reference = UUID.randomUUID().toString()
-        val subscriptionKey = Utils.getProductSubscriptionKeys(ProductType.COLLECTION, sampleConfig)
+        val subscriptionKey = Utils.getProductSubscriptionKeys(ProductTypes.COLLECTION, sampleConfig)
         val invoice = Invoice(
             externalId = UUID.randomUUID().toString(),
             amount = amount.valueOrEmpty(),
             currency = currency.valueOrEmpty().ifBlank { Constants.SANDBOX_CURRENCY },
             validityDuration = validityDuration.valueOrNullIfBlank(),
-            intendedPayer = AccountHolder(partyIdType = AccountHolderType.MSISDN.accountHolderType, partyId = payerMsisdn.valueOrEmpty()),
-            payerMessage = null,
-            payeeNote = null,
+            intendedPayer = Party(partyIdType = PartyTypes.MSISDN, partyId = payerMsisdn.valueOrEmpty()),
             description = description.valueOrNullIfBlank()
         )
-        when (val response = defaultRepository.createInvoice(sampleConfig.apiVersionV1, invoice, reference, subscriptionKey, sampleConfig.environment).awaitTerminal()) {
+        when (val response = defaultRepository.createInvoice(sampleConfig.apiVersionV2, invoice, reference, subscriptionKey, sampleConfig.environment).awaitTerminal()) {
             is NetworkResult.Success -> {
                 referenceId.postValue(reference)
                 result.postValue("Invoice created.\nReference: $reference")
@@ -135,11 +132,11 @@ class InvoiceScreenViewModel @Inject constructor(
         }
     }
 
-    /** Fetches the status of the previously created invoice and prints the raw payload. */
+    /** Fetches the status of the previously created invoice and prints the parsed payload. */
     fun checkStatus() = withReference { reference, subscriptionKey ->
-        when (val response = defaultRepository.getInvoiceStatus(sampleConfig.apiVersionV1, reference, subscriptionKey, sampleConfig.environment).awaitTerminal()) {
+        when (val response = defaultRepository.getInvoiceStatus(sampleConfig.apiVersionV2, reference, subscriptionKey, sampleConfig.environment).awaitTerminal()) {
             is NetworkResult.Success -> {
-                result.postValue(response.bodyText().orEmpty().ifBlank { "No status body returned." })
+                result.postValue(response.response?.toString() ?: "No status body returned.")
                 emitSuccess(R.string.snackbar_invoice_status_fetched)
             }
 
@@ -153,7 +150,7 @@ class InvoiceScreenViewModel @Inject constructor(
 
     /** Cancels the previously created invoice. */
     fun cancelInvoice() = withReference { reference, subscriptionKey ->
-        when (val response = defaultRepository.cancelInvoice(sampleConfig.apiVersionV1, reference, subscriptionKey, sampleConfig.environment).awaitTerminal()) {
+        when (val response = defaultRepository.cancelInvoice(sampleConfig.apiVersionV2, reference, subscriptionKey, sampleConfig.environment).awaitTerminal()) {
             is NetworkResult.Success -> {
                 result.postValue("Invoice $reference cancelled.")
                 emitSuccess(R.string.snackbar_invoice_cancelled)
@@ -195,7 +192,7 @@ class InvoiceScreenViewModel @Inject constructor(
             emitError(R.string.snackbar_invoice_required_first)
             return
         }
-        launchOperation { block(reference, Utils.getProductSubscriptionKeys(ProductType.COLLECTION, sampleConfig)) }
+        launchOperation { block(reference, Utils.getProductSubscriptionKeys(ProductTypes.COLLECTION, sampleConfig)) }
     }
 
     private suspend fun <T> Flow<NetworkResult<T>>.awaitTerminal(): NetworkResult<T> {

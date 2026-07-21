@@ -140,8 +140,13 @@
 
     <fragment
         android:id="@+id/preApprovalScreenFragment"
-        android:name="io.rekast.sdk.sample.views.collection.preapproval.PreApprovalScreenFragment"
+        android:name="io.rekast.sdk.sample.views.collection.approval.pre.PreApprovalScreenFragment"
         android:label="@string/pre_approval_screen" />
+
+    <fragment
+        android:id="@+id/approvedPreApprovalsScreenFragment"
+        android:name="io.rekast.sdk.sample.views.collection.approval.approved.ApprovedPreApprovalsScreenFragment"
+        android:label="@string/approved_pre_approvals_screen" />
 
     <fragment
         android:id="@+id/cashTransferScreenFragment"
@@ -157,4 +162,11 @@
         android:id="@+id/settingsScreenFragment"
         android:name="io.rekast.sdk.sample.views.settings.SettingsScreenFragment"
         android:label="@string/settings_screen" />
+    <navigation android:id="@+id/navigation"
+        app:startDestination="@id/paymentScreenFragment">
+        <fragment
+            android:id="@+id/paymentScreenFragment"
+            android:name="io.rekast.sdk.sample.views.collection.payment.PaymentScreenFragment"
+            android:label="@string/payment_screen" />
+    </navigation>
 </navigation>

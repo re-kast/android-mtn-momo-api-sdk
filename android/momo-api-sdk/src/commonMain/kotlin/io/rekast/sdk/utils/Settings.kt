@@ -15,12 +15,8 @@
  */
 package io.rekast.sdk.utils
 
-import io.rekast.sdk.model.MomoTransaction
 import java.util.UUID
 import javax.inject.Inject
-import kotlinx.serialization.json.Json
-import okhttp3.ResponseBody
-import retrofit2.Response
 
 /**
  * Contains general settings used in the library.
@@ -69,17 +65,6 @@ class Settings @Inject constructor() {
         } else {
             phoneNumber
         }
-    }
-
-    /**
-     * Generates a MomoTransaction object from the given response.
-     *
-     * @param response The response containing the transaction data.
-     * @return A MomoTransaction object, or null if the response body is empty.
-     */
-    fun generateTransactionFromResponse(response: Response<ResponseBody?>): MomoTransaction? {
-        val responseData: String = response.body()!!.source().readUtf8()
-        return Json.decodeFromString(responseData)
     }
 
     /**

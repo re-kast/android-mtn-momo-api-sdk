@@ -15,7 +15,7 @@ Returns the current balance of the product wallet.
 
 ```kotlin
 defaultRepository.getAccountBalance(
-    productType = ProductType.COLLECTION.productType,
+    productType = ProductTypes.COLLECTION.productType,
     apiVersion = "v1_0",
     currency = null,           // null returns balance in the account's default currency
     productSubscriptionKey = collectionPrimaryKey,
@@ -36,7 +36,7 @@ Pass a specific ISO-4217 currency code to `currency` to retrieve the balance in 
 
 ```kotlin
 defaultRepository.getAccountBalance(
-    productType = ProductType.REMITTANCE.productType,
+    productType = ProductTypes.REMITTANCE.productType,
     apiVersion = "v1_0",
     currency = "EUR",
     productSubscriptionKey = remittancePrimaryKey,
@@ -60,7 +60,7 @@ Retrieves the name and other non-sensitive profile fields for a given account ho
 
 ```kotlin
 defaultRepository.getBasicUserInfo(
-    productType = ProductType.COLLECTION.productType,
+    productType = ProductTypes.COLLECTION.productType,
     apiVersion = "v1_0",
     accountHolder = "256770000000",   // MSISDN
     productSubscriptionKey = collectionPrimaryKey,
@@ -93,7 +93,7 @@ Retrieves full profile information for the authenticated subscriber. This is an 
 
 ```kotlin
 defaultRepository.getUserInfoWithConsent(
-    productType = ProductType.REMITTANCE.productType,
+    productType = ProductTypes.REMITTANCE.productType,
     apiVersion = "v1_0",
     productSubscriptionKey = remittancePrimaryKey,
     environment = "sandbox"
@@ -111,7 +111,7 @@ defaultRepository.getUserInfoWithConsent(
 
 | Parameter                | Type     | Description                                                                                                                  |
 |--------------------------|----------|------------------------------------------------------------------------------------------------------------------------------|
-| `productType`            | `String` | Product type string. Use the product whose subscription key you have provisioned (e.g. `ProductType.REMITTANCE.productType`) |
+| `productType`            | `String` | Product type string. Use the product whose subscription key you have provisioned (e.g. `ProductTypes.REMITTANCE.productType`) |
 | `apiVersion`             | `String` | API version                                                                                                                  |
 | `productSubscriptionKey` | `String` | Primary subscription key                                                                                                     |
 | `environment`            | `String` | `"sandbox"` or `"production"`                                                                                                |
@@ -147,9 +147,9 @@ Checks whether a given account holder is registered and active on the MTN MoMo p
 
 ```kotlin
 defaultRepository.validateAccountHolderStatus(
-    productType = ProductType.COLLECTION.productType,
+    productType = ProductTypes.COLLECTION.productType,
     apiVersion = "v1_0",
-    accountHolder = AccountHolder(partyIdType = "MSISDN", partyId = "256770000000"),
+    party = Party(partyIdType = PartyTypes.MSISDN, partyId = "256770000000"),
     productSubscriptionKey = collectionPrimaryKey,
     environment = "sandbox"
 ).collect { result ->
@@ -165,6 +165,6 @@ defaultRepository.validateAccountHolderStatus(
 |--------------------------|-----------------|------------------------------------------------------------|
 | `productType`            | `String`        | Product type string                                        |
 | `apiVersion`             | `String`        | API version                                                |
-| `accountHolder`          | `AccountHolder` | Account identifier — `partyIdType` is typically `"MSISDN"` |
+| `party`                  | `Party`         | Account identifier; `partyIdType` is a `PartyTypes` enum (e.g. `MSISDN`)   |
 | `productSubscriptionKey` | `String`        | Primary subscription key                                   |
 | `environment`            | `String`        | `"sandbox"` or `"production"`                              |

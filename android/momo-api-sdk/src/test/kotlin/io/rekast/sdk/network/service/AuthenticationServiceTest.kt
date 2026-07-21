@@ -15,7 +15,7 @@
  */
 package io.rekast.sdk.network.service
 
-import io.rekast.sdk.model.BackChannelAuthorize
+import io.rekast.sdk.model.BcAuthorizeResponse
 import io.rekast.sdk.model.ProviderCallBackHost
 import io.rekast.sdk.model.authentication.AccessToken
 import io.rekast.sdk.model.authentication.ApiKey
@@ -65,7 +65,7 @@ class AuthenticationServiceTest {
             lastGrantType = grantType
             return err()
         }
-        override suspend fun bcAuthorize(productType: String, apiVersion: String, loginHint: String, scope: String, accessType: String, productSubscriptionKey: String, environment: String): Response<BackChannelAuthorize> =
+        override suspend fun bcAuthorize(productType: String, apiVersion: String, loginHint: String, scope: String, accessType: String, productSubscriptionKey: String, environment: String): Response<BcAuthorizeResponse> =
             err()
     }
 
