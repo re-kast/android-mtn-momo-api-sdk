@@ -21,7 +21,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.rekast.sdk.model.Notifications
 import io.rekast.sdk.model.Party
 import io.rekast.sdk.model.RequestToWithdraw
 import io.rekast.sdk.model.RequestToWithdrawStatus
@@ -52,8 +51,7 @@ import timber.log.Timber
  *
  * On submit it runs the full Collection request-to-withdraw flow against the SDK:
  * 1. `requestToWithdraw` — asks the payer to approve a withdrawal from their wallet (HTTP 202).
- * 2. An optional `requestToWithdrawDeliveryNotification` when a delivery note is provided.
- * 3. `requestToWithdrawTransactionStatus` — polls the outcome and posts it to [requestToWithdrawStatus].
+ * 2. `requestToWithdrawTransactionStatus` — polls the outcome and posts it to [requestToWithdrawStatus].
  *
  * The screen shows the input form while [requestToWithdrawStatus] is null and the result once it is set.
  * Authentication is handled automatically by the SDK's interceptor/authenticator, so the ViewModel
@@ -106,12 +104,6 @@ class CollectionWithdrawScreenViewModel @Inject constructor(
     val payerNote: LiveData<String>
         get() = _payerNote
 
-    private val _deliveryNote = MutableLiveData(Constants.EMPTY_STRING)
-
-    /** The current delivery note entered in the form. */
-    val deliveryNote: LiveData<String>
-        get() = _deliveryNote
-
     /**
      * Updates the phone number field value.
      *
@@ -158,15 +150,6 @@ class CollectionWithdrawScreenViewModel @Inject constructor(
     }
 
     /**
-     * Updates the delivery note field value.
-     *
-     * @param deliveryNote The new delivery note string.
-     */
-    fun onDeliveryNoteUpdated(deliveryNote: String) {
-        _deliveryNote.value = deliveryNote
-    }
-
-    /**
      * Updates the reference ID to refund field value.
      *
      * @param referenceIdToRefund The new reference ID to refund string.
@@ -200,7 +183,6 @@ class CollectionWithdrawScreenViewModel @Inject constructor(
                     is NetworkResult.Success -> {
                         Timber.d("Request to withdraw accepted (ref=%s)", referenceId)
                         emitSuccess(R.string.snackbar_request_to_withdraw_submitted)
-                        if (!deliveryNote.valueOrEmpty().isBlank()) sendDeliveryNotification(referenceId, subscriptionKey)
                         fetchStatus(referenceId, subscriptionKey)
                     }
 
@@ -234,24 +216,6 @@ class CollectionWithdrawScreenViewModel @Inject constructor(
             else -> {
                 Timber.e("Request to withdraw status failed: %s", result.message)
                 emitError(R.string.snackbar_request_to_withdraw_status_failed, result.message)
-            }
-        }
-    }
-
-    /** Sends a delivery notification to the payer for the given request-to-withdraw reference. */
-    private suspend fun sendDeliveryNotification(referenceId: String, subscriptionKey: String) {
-        val result = defaultRepository.requestToWithdrawDeliveryNotification(
-            apiVersion = sampleConfig.apiVersionV1,
-            referenceId = referenceId,
-            notifications = Notifications(notificationMessage = deliveryNote.valueOrEmpty()),
-            productSubscriptionKey = subscriptionKey
-        ).awaitTerminal()
-        when (result) {
-            is NetworkResult.Success -> emitSuccess(R.string.snackbar_delivery_note_sent)
-
-            else -> {
-                Timber.e("Delivery note failed: %s", result.message)
-                emitError(R.string.snackbar_delivery_note_failed, result.message)
             }
         }
     }

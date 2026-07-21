@@ -18,7 +18,6 @@ package io.rekast.sdk.network.service.products
 import io.rekast.sdk.model.ApprovedPreApprovals
 import io.rekast.sdk.model.Invoice
 import io.rekast.sdk.model.InvoiceStatus
-import io.rekast.sdk.model.Notifications
 import io.rekast.sdk.model.Payment
 import io.rekast.sdk.model.PaymentStatus
 import io.rekast.sdk.model.PreApproval
@@ -28,7 +27,6 @@ import io.rekast.sdk.model.RequestToPayStatus
 import io.rekast.sdk.model.RequestToWithdraw
 import io.rekast.sdk.model.RequestToWithdrawStatus
 import io.rekast.sdk.utils.Constants
-import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -132,25 +130,6 @@ sealed interface CollectionService : CommonService {
         @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
         @Header(Constants.Headers.X_REFERENCE_ID) uuid: String
     ): Response<Unit>
-
-    /**
-     * Sends a delivery notification for a request-to-withdraw transaction.
-     *
-     * @param referenceId The UUID V4 reference ID used when calling [requestToWithdraw].
-     * @param apiVersion The API version to target (e.g., v1_0 or v2_0).
-     * @param notifications The notification payload containing the message to deliver.
-     * @param notificationMessage The notification message text (also sent as a header per MTN API spec).
-     * @param productSubscriptionKey The Ocp-Apim-Subscription-Key for the Collection product.
-     * @return A `Response` whose body contains the delivery result as a `ResponseBody`.
-     */
-    @POST(Constants.EndPoints.REQUEST_TO_WITHDRAW_DELIVERY_NOTIFICATION)
-    suspend fun requestToWithdrawDeliveryNotification(
-        @Path(Constants.EndpointPaths.API_VERSION) apiVersion: String,
-        @Path(Constants.EndpointPaths.REFERENCE_ID) referenceId: String,
-        @Body notifications: Notifications,
-        @Header(Constants.Headers.NOTIFICATION_MESSAGE) notificationMessage: String,
-        @Header(Constants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String
-    ): Response<ResponseBody>
 
     /**
      * Retrieves the status of a previously initiated request-to-pay transaction.

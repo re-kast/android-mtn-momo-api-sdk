@@ -582,22 +582,4 @@ class DefaultRepository @Inject constructor(private val defaultSource: DefaultSo
             productSubscriptionKey = productSubscriptionKey
         )
     }
-
-    /**
-     * Sends a delivery notification to the payer for an existing request-to-withdraw transaction.
-     *
-     * @param apiVersion The version of the API to use.
-     * @param referenceId The UUID V4 reference ID of the original request-to-withdraw transaction.
-     * @param notifications The notification payload containing the message to deliver.
-     * @param productSubscriptionKey The subscription key for the Collection product.
-     * @return A `Flow` emitting a [NetworkResult] with the raw result as a `ResponseBody`.
-     */
-    fun requestToWithdrawDeliveryNotification(apiVersion: String, referenceId: String, notifications: Notifications, productSubscriptionKey: String): Flow<NetworkResult<ResponseBody>> = executeApiCall {
-        defaultSource.requestToWithdrawDeliveryNotification(
-            apiVersion = apiVersion,
-            referenceId = referenceId,
-            notifications = notifications,
-            productSubscriptionKey = productSubscriptionKey
-        )
-    }
 }

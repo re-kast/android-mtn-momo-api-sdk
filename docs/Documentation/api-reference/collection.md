@@ -175,34 +175,6 @@ defaultRepository.requestToPayDeliveryNotification(
 
 ---
 
-## Request to Withdraw Delivery Notification
-
-Sends a delivery notification to the payer after a successful `requestToWithdraw`.
-
-```kotlin
-defaultRepository.requestToWithdrawDeliveryNotification(
-    apiVersion = "v1_0",
-    referenceId = transactionUuid,
-    notifications = Notifications(notificationMessage = "Your withdrawal was processed."),
-    productSubscriptionKey = collectionPrimaryKey
-).collect { result ->
-    when (result) {
-        is NetworkResult.Success -> { /* notification sent */ }
-        is NetworkResult.Error   -> { /* failed */ }
-        is NetworkResult.Loading -> { /* in progress */ }
-    }
-}
-```
-
-| Parameter                | Type            | Description                                       |
-|--------------------------|-----------------|---------------------------------------------------|
-| `apiVersion`             | `String`        | API version, e.g. `"v1_0"`                        |
-| `referenceId`            | `String`        | UUID of the original `requestToWithdraw`          |
-| `notifications`          | `Notifications` | Notification message body (`notificationMessage`) |
-| `productSubscriptionKey` | `String`        | Collection primary subscription key               |
-
----
-
 ## Create Invoice
 
 Creates a payment invoice that a customer can pay via the USSD menu or MoMo app.

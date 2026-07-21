@@ -208,4 +208,4 @@ defaultRepository.getRefundStatus(
 
 Returns `Flow<NetworkResult<RefundStatus>>` — `RefundStatus` carries `amount`, `currency`, `financialTransactionId`, `externalId`, a `payee` (`Party`), `payerMessage`, `payeeNote`, a `status` of type `StatusTypes` (`PENDING`, `SUCCESSFUL`, `FAILED`), and a `reason` (`ErrorResponse` — `code` + `message`).
 
-> **Cash transfers** — the V2 cross-border `cashTransfer` / `getCashTransferStatus` operations are documented under [Remittance](./remittance). **Withdrawal delivery notifications** — `requestToWithdrawDeliveryNotification` is documented under [Collection](./collection).
+> **Cash transfers** — the V2 cross-border `cashTransfer` / `getCashTransferStatus` operations are documented under [Remittance](./remittance).

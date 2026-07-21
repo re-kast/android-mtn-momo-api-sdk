@@ -436,21 +436,4 @@ class DefaultSource @Inject constructor(
         apiVersion = apiVersion,
         productSubscriptionKey = productSubscriptionKey
     )
-
-    /**
-     * Sends a delivery notification for a request-to-withdraw transaction.
-     *
-     * @param apiVersion The version of the API to use.
-     * @param referenceId The UUID V4 reference ID used when calling requestToWithdraw.
-     * @param notifications The notification payload containing the message to deliver.
-     * @param productSubscriptionKey The subscription key for the Collection product.
-     * @return A `Response` whose body contains the delivery result.
-     */
-    suspend fun requestToWithdrawDeliveryNotification(apiVersion: String, referenceId: String, notifications: Notifications, productSubscriptionKey: String) = collectionService.requestToWithdrawDeliveryNotification(
-        apiVersion = apiVersion,
-        referenceId = referenceId,
-        notifications = notifications,
-        notificationMessage = notifications.notificationMessage,
-        productSubscriptionKey = productSubscriptionKey
-    )
 }

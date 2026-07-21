@@ -65,7 +65,6 @@ fun CollectionScreen(
                 val amount by collectionWithdrawScreenViewModel.amount.observeAsState(Constants.EMPTY_STRING)
                 val paymentMessage by collectionWithdrawScreenViewModel.payerMessage.observeAsState(Constants.EMPTY_STRING)
                 val paymentNote by collectionWithdrawScreenViewModel.payerNote.observeAsState(Constants.EMPTY_STRING)
-                val deliveryNote by collectionWithdrawScreenViewModel.deliveryNote.observeAsState(Constants.EMPTY_STRING)
                 val referenceIdToRefund by collectionWithdrawScreenViewModel.referenceIdToRefund.observeAsState(Constants.EMPTY_STRING)
 
                 if (requestToWithdrawStatus.value == null) {
@@ -79,7 +78,8 @@ fun CollectionScreen(
                         amount = amount,
                         paymentMessage = paymentMessage,
                         paymentNote = paymentNote,
-                        deliveryNote = deliveryNote,
+                        deliveryNote = Constants.EMPTY_STRING,
+                        showDeliveryTextField = false,
                         onRequestPayButtonClicked = { collectionWithdrawScreenViewModel.requestToWithdraw() },
                         onPhoneNumberUpdated = { collectionWithdrawScreenViewModel.onPhoneNumberUpdated(it) },
                         onFinancialIdUpdated = { collectionWithdrawScreenViewModel.onFinancialIdUpdated(it) },
@@ -87,7 +87,7 @@ fun CollectionScreen(
                         onAmountUpdated = { collectionWithdrawScreenViewModel.onAmountUpdated(it) },
                         onPayerMessageUpdated = { collectionWithdrawScreenViewModel.onPayerMessageUpdated(it) },
                         onPayerNoteUpdated = { collectionWithdrawScreenViewModel.onPayerNoteUpdated(it) },
-                        onDeliveryNoteUpdated = { collectionWithdrawScreenViewModel.onDeliveryNoteUpdated(it) }
+                        onDeliveryNoteUpdated = {}
                     )
                 } else {
                     RequestToWithdrawStatusDisplayComponent(

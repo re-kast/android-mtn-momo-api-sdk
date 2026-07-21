@@ -870,50 +870,6 @@ class DefaultRepositoryTest {
         assertTrue(results.last() is NetworkResult.Error)
     }
 
-    /**
-     * Verifies that [DefaultRepository.requestToWithdrawDeliveryNotification] emits
-     * [NetworkResult.Loading] then [NetworkResult.Success].
-     */
-    @Test
-    fun `requestToWithdrawDeliveryNotification emits Loading then Success`() = runTest {
-        val body = mockk<ResponseBody>(relaxed = true)
-        val notification = Notifications(notificationMessage = "Withdrawal approved")
-        coEvery {
-            defaultSource.requestToWithdrawDeliveryNotification(any(), any(), any(), any())
-        } returns Response.success(body)
-
-        val results = repository.requestToWithdrawDeliveryNotification(
-            "v1_0",
-            "ref-001",
-            notification,
-            "sub-key"
-        ).toList()
-
-        assertTrue(results.first() is NetworkResult.Loading)
-        assertTrue(results.last() is NetworkResult.Success)
-    }
-
-    /**
-     * Verifies that [DefaultRepository.requestToWithdrawDeliveryNotification] emits
-     * [NetworkResult.Error] when the source returns a non-2xx response.
-     */
-    @Test
-    fun `requestToWithdrawDeliveryNotification emits Error on failure`() = runTest {
-        val notification = Notifications(notificationMessage = "Withdrawal approved")
-        coEvery {
-            defaultSource.requestToWithdrawDeliveryNotification(any(), any(), any(), any())
-        } returns Response.error(404, "not found".toResponseBody("text/plain".toMediaType()))
-
-        val results = repository.requestToWithdrawDeliveryNotification(
-            "v1_0",
-            "ref-001",
-            notification,
-            "sub-key"
-        ).toList()
-
-        assertTrue(results.last() is NetworkResult.Error)
-    }
-
     /*
      * The transaction methods below (requestToPay, requestToWithdraw, deposit, refund and their
      * status queries) delegate directly to the sealed [CollectionService] / [DisbursementsService]
