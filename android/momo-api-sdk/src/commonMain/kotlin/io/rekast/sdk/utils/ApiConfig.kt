@@ -28,4 +28,4 @@ package io.rekast.sdk.utils
  * @property apiVersion The MTN MoMo API version string used in URL path segments (e.g. `v1_0`).
  * @property allowInsecureTls When true, bypasses SSL certificate validation. Use only for local testing with self-signed certificates.
  */
-data class ApiConfig(val baseUrl: String, val apiUserId: String, val environment: String, val apiVersion: String = "v1_0")
+data class ApiConfig(val baseUrl: String, val apiUserId: String, val environment: String, val apiVersion: String = "v1_0", val allowInsecureTls: Boolean = false)
