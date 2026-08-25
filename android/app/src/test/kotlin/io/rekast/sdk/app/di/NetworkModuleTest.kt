@@ -119,11 +119,12 @@ class NetworkModuleTest {
         assertNotNull(client)
 
         // Verify it is not the unsafe client by asserting the hostname verifier does not trust everything
-        val isUnsafe = try {
-            client.hostnameVerifier.verify("any-hostname.example.com", null)
-        } catch (e: NullPointerException) {
-            false
-        }
+        val isUnsafe =
+            try {
+                client.hostnameVerifier.verify("any-hostname.example.com", null)
+            } catch (e: NullPointerException) {
+                false
+            }
         org.junit.Assert.assertFalse(isUnsafe)
     }
 
