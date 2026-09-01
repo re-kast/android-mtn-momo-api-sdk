@@ -60,7 +60,8 @@ class NetworkModuleTest {
         ApiConfig(
             baseUrl = "http://10.0.2.2:8080/",
             apiUserId = "user-id",
-            environment = "sandbox"
+            environment = "sandbox",
+            allowInsecureTls = true
         )
 
     /**
@@ -103,11 +104,11 @@ class NetworkModuleTest {
     }
 
     /**
-     * Verifies that [NetworkModule.provideOkHttpClient] returns a non-null [okhttp3.OkHttpClient]
-     * when the base URL uses the `https` scheme (standard TLS client path).
+     * Verifies that [NetworkModule.provideOkHttpClient] returns a standard [okhttp3.OkHttpClient]
+     * when [ApiConfig.allowInsecureTls] is false.
      */
     @Test
-    fun `provideOkHttpClient returns non-null client for https base URL`() {
+    fun `provideOkHttpClient returns standard client when allowInsecureTls is false`() {
         val client =
             NetworkModule.provideOkHttpClient(
                 httpLoggingInterceptor = NetworkModule.providesHttpLoggingInterceptor(),
@@ -116,14 +117,23 @@ class NetworkModuleTest {
                 config = httpsConfig
             )
         assertNotNull(client)
+
+        // Verify it is not the unsafe client by asserting the hostname verifier does not trust everything
+        val isUnsafe =
+            try {
+                client.hostnameVerifier.verify("any-hostname.example.com", null)
+            } catch (e: NullPointerException) {
+                false
+            }
+        org.junit.Assert.assertFalse(isUnsafe)
     }
 
     /**
-     * Verifies that [NetworkModule.provideOkHttpClient] returns a non-null [okhttp3.OkHttpClient]
-     * when the base URL uses the `http` scheme (unsafe client path used for local/emulator targets).
+     * Verifies that [NetworkModule.provideOkHttpClient] returns an unsafe [okhttp3.OkHttpClient]
+     * when [ApiConfig.allowInsecureTls] is true (bypassing SSL verification for local testing).
      */
     @Test
-    fun `provideOkHttpClient returns non-null client for http base URL`() {
+    fun `provideOkHttpClient returns unsafe client when allowInsecureTls is true`() {
         val client =
             NetworkModule.provideOkHttpClient(
                 httpLoggingInterceptor = NetworkModule.providesHttpLoggingInterceptor(),
@@ -132,6 +142,9 @@ class NetworkModuleTest {
                 config = httpConfig
             )
         assertNotNull(client)
+
+        // Verify hostname verifier is the unsafe one which always returns true
+        assertTrue(client.hostnameVerifier.verify("any-hostname.example.com", null))
     }
 
     /**
