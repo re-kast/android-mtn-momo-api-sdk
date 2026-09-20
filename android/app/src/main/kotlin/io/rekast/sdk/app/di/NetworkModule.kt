@@ -156,10 +156,13 @@ object NetworkModule {
         config: ApiConfig
     ): OkHttpClient {
         val builder =
-            if (config.baseUrl.startsWith("https")) {
-                OkHttpClient.Builder()
-            } else {
+            if (config.allowInsecureTls) {
+                require(BuildConfig.DEBUG) {
+                    "allowInsecureTls must only be enabled in DEBUG builds to prevent security vulnerabilities."
+                }
                 UnsafeOkHttpClient().unsafeOkHttpClient
+            } else {
+                OkHttpClient.Builder()
             }
 
         builder.addInterceptor(BasicAuthenticationInterceptor(credentialProvider))
