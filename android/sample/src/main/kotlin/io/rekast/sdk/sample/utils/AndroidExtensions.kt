@@ -15,7 +15,6 @@
  */
 package io.rekast.sdk.sample.utils
 
-import android.app.Activity
 import android.content.Context
 import android.graphics.Color
 import android.net.ConnectivityManager
@@ -23,9 +22,6 @@ import android.net.NetworkCapabilities
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.SnackbarResult
 import androidx.compose.ui.graphics.Color as ComposeColor
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.updatePadding
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collectLatest
 
@@ -41,18 +37,6 @@ fun String?.parseColor(): androidx.compose.ui.graphics.Color {
         return ComposeColor(Color.parseColor(this))
     }
     return ComposeColor.Unspecified
-}
-
-/**
- * This is required to fix keyboard overlapping content in a Composable screen. This functionality
- * is applied after the setContent function of the activity is called.
- */
-fun Activity.applyWindowInsetListener() {
-    ViewCompat.setOnApplyWindowInsetsListener(this.findViewById(android.R.id.content)) { view, insets ->
-        val bottom = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
-        view.updatePadding(bottom = bottom)
-        insets
-    }
 }
 
 /** This function checks if the device is online */

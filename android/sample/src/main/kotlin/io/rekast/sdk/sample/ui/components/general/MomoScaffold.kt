@@ -16,10 +16,12 @@
 package io.rekast.sdk.sample.ui.components.general
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material.DrawerValue
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
@@ -67,22 +69,25 @@ fun MomoScaffold(@StringRes titleRes: Int, navController: NavController?, snackS
         snackStateFlow.hookSnackBar(scaffoldState, context, onDisplay = { snackBarType = it.type })
     }
 
-    Scaffold(
-        scaffoldState = scaffoldState,
-        topBar = { TopBar(scope = scope, scaffoldState = scaffoldState, title = titleRes) },
-        drawerBackgroundColor = MaterialTheme.colors.primarySurface,
-        drawerContentColor = MaterialTheme.colors.onPrimary,
-        drawerContent = {
-            navController?.let { Drawer(scope = scope, scaffoldState = scaffoldState, navController = it) }
-        },
-        drawerGesturesEnabled = true,
-        backgroundColor = MaterialTheme.colors.background,
-        snackbarHost = { snackBarHostState ->
-            SnackBarComponent(snackBarHostState = snackBarHostState, type = snackBarType)
-        }
-    ) { padding ->
-        Box(modifier = Modifier.fillMaxSize().padding(padding)) {
-            content(padding)
+    Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colors.primarySurface)) {
+        Scaffold(
+            modifier = Modifier.fillMaxSize().safeDrawingPadding(),
+            scaffoldState = scaffoldState,
+            topBar = { TopBar(scope = scope, scaffoldState = scaffoldState, title = titleRes) },
+            drawerBackgroundColor = MaterialTheme.colors.primarySurface,
+            drawerContentColor = MaterialTheme.colors.onPrimary,
+            drawerContent = {
+                navController?.let { Drawer(scope = scope, scaffoldState = scaffoldState, navController = it) }
+            },
+            drawerGesturesEnabled = true,
+            backgroundColor = MaterialTheme.colors.background,
+            snackbarHost = { snackBarHostState ->
+                SnackBarComponent(snackBarHostState = snackBarHostState, type = snackBarType)
+            }
+        ) { padding ->
+            Box(modifier = Modifier.fillMaxSize().padding(padding)) {
+                content(padding)
+            }
         }
     }
 }

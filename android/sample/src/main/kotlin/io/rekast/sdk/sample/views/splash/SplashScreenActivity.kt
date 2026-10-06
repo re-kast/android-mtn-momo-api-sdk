@@ -20,12 +20,12 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material.ExperimentalMaterialApi
 import dagger.hilt.android.AndroidEntryPoint
 import io.rekast.sdk.sample.ui.theme.AppTheme
-import io.rekast.sdk.sample.utils.applyWindowInsetListener
 import io.rekast.sdk.sample.views.main.MainActivity
 import io.rekast.sdk.sample.views.main.MainViewModel
 
@@ -48,8 +48,8 @@ class SplashScreenActivity : AppCompatActivity() {
      * then launches [MainActivity] after a 3-second delay.
      */
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
-        applyWindowInsetListener()
 
         setContent {
             AppTheme { SplashScreen() }

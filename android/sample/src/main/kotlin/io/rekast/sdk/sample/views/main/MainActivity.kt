@@ -16,6 +16,7 @@
 package io.rekast.sdk.sample.views.main
 
 import android.os.Bundle
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material.ExperimentalMaterialApi
@@ -43,6 +44,7 @@ open class MainActivity : AppCompatActivity() {
      * @param savedInstanceState The saved instance state bundle.
      */
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         setContentView(FragmentContainerView(this).apply { id = R.id.navigation_host })
         if (savedInstanceState == null) {
